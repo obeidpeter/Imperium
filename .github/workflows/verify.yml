@@ -3,9 +3,8 @@
 # checks and character audits) on every pull request and on main: on Node 20,
 # the oldest version the project supports (package.json "engines"), and on
 # Node 22. There are no dependencies to install. Five more jobs drive the
-# production build in headless Chromium: the browser smoke test
-# (scripts/browser-smoke.mjs, then the real-time checks of
-# scripts/realtime-polish-smoke.mjs and cavalry-controls-smoke.mjs), the twelve-chapter screenshot benchmark
+# production build in headless Chromium: paused-order checks first, then the
+# browser smoke test and real-time/cavalry controls, the twelve-chapter screenshot benchmark
 # (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact,
 # the usability and save-protection checks (scripts/usability-smoke.mjs), followed
 # by the Chapter V courtyard pilot acceptance (scripts/ch5-pilot-smoke.mjs)
@@ -63,13 +62,13 @@ jobs:
       - run: npm install --no-save --no-package-lock playwright@1.56.1
       - run: npx playwright install --with-deps chromium
       - run: npm run build
+      - name: Paused orders, cancellation and recorded debriefs
+        run: npm run smoke:orders
       - run: npm run smoke
       - name: Real-time controls and unobstructed layouts
         run: node scripts/realtime-polish-smoke.mjs
       - name: Cavalry selection, command keys and remapping
         run: npm run smoke:cavalry
-      - name: Paused orders, cancellation and recorded debriefs
-        run: npm run smoke:orders
       - uses: actions/upload-artifact@v7
         if: always()
         with:

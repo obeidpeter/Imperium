@@ -110,8 +110,25 @@ try{
     assert.deepEqual(await page.locator('.rt-debrief li p').allTextContents(),expected.moments.map(m=>m.text),'The result quotes actual retained events');
     assert.ok(expected.moments.length>0&&expected.moments.length<=3);if(status==='lost'){
       await page.locator('.rt-retry-help summary').click();assert.equal(await page.locator('.rt-defeat-help').textContent(),expected.advice);
-      await page.getByRole('button',{name:'Retry battle',exact:true}).click();await page.waitForSelector('.rt-scene[data-ready="true"]');
-      assert.equal(await page.evaluate(()=>window.__realtime.world().status),'active');
+      const retryState=()=>page.evaluate(()=>{const world=window.__realtime.world();return {
+        encounterId:world?.encounterId,status:world?.status,tick:world?.tick,paused:window.__realtime.paused(),
+        result:!!document.querySelector('.rt-result'),ready:!!document.querySelector('.rt-scene[data-ready="true"]'),
+        saveStatus:[...document.querySelectorAll('.save-status')].map(el=>el.textContent.trim())
+      };});
+      const endedWorld=await page.evaluateHandle(()=>window.__realtime.world());report.retry={before:await retryState()};
+      try{
+        assert.equal(report.retry.before.status,'lost');
+        await page.getByRole('button',{name:'Retry battle',exact:true}).click();
+        // Retry persists before loading the new world into the existing ready
+        // scene. Its old ready attribute alone does not mark that transition.
+        await page.waitForFunction(previous=>{const world=window.__realtime?.world();return world&&world!==previous&&world.status==='active'
+          &&!document.querySelector('.rt-result')&&!!document.querySelector('.rt-scene[data-ready="true"]');},endedWorld);
+        if(!await page.evaluate(()=>window.__realtime.paused()))await page.locator('[data-role="pauseButton"]').click();
+        await page.waitForFunction(()=>window.__realtime.paused()&&document.querySelector('[data-role="pauseButton"]')?.getAttribute('aria-pressed')==='true');
+        const after=await retryState();assert.equal(after.status,'active');assert.equal(after.encounterId,state.encounter.id);
+        assert.ok(after.tick<report.retry.before.tick,'Retry restores the encounter checkpoint instead of retaining the ended world');
+        assert.equal(after.paused,true);assert.equal(after.result,false);assert.equal(after.ready,true);
+      }finally{report.retry.after=await retryState();await endedWorld.dispose();}
     }else assert.equal(await page.locator('.rt-result [data-cmd="commit"]').count(),1);
     record(`${status}: recorded debrief and ${status==='lost'?'specific retry advice and legal Retry':'unchanged Continue flow'}`);await page.context().close();
   }
