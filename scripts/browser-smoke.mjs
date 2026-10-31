@@ -236,19 +236,27 @@ async function performanceCheck(){
   const page=await open({acceptDownloads:true});await newGameDrill(page);await view(page,'3d');
   const hint=await text(page,'#command-hint'),quality=await page.evaluate(()=>document.documentElement.dataset.quality??'');
   await settingsCommand(page,'performance-check');await page.waitForSelector('.performance-check');
-  await page.keyboard.press('e');await page.keyboard.press('Enter');
+  const focused=()=>page.evaluate(()=>({tag:document.activeElement?.tagName,id:document.activeElement?.id,
+    text:document.activeElement?.textContent?.trim().slice(0,100),visibility:document.visibilityState}));
+  const inputFocus={beforeGameKey:await focused()};await page.keyboard.press('e');inputFocus.beforeEnter=await focused();await page.keyboard.press('Enter');
   await page.waitForSelector('#modal[open][data-panel="performance-check"]',{timeout:900000});
   assert.equal(await page.locator('.performance-check').count(),0,'The status band is gone');
   const [download]=await Promise.all([page.waitForEvent('download'),page.click('[data-cmd="performance-check-save"]')]);
-  const report=JSON.parse(await (await import('node:fs/promises')).readFile(await download.path(),'utf8'));
-  assert.equal(report.tool,'imperium-performance-check');assert.equal(report.complete,true);
+  const fs=await import('node:fs/promises'),report=JSON.parse(await fs.readFile(await download.path(),'utf8'));
+  const evidence=new URL('../tests/visual-results/performance-check/',import.meta.url);await fs.mkdir(evidence,{recursive:true});
+  await fs.writeFile(new URL('report.json',evidence),JSON.stringify(report,null,2)+'\n');
+  const summary={complete:report.complete,interrupted:report.interrupted,cancelled:report.cancelled??null,status:report.recommendationStatus,inputFocus,
+    tiers:report.tiers?.map(t=>({tier:t.tier,buildMs:t.buildMs,frames:t.tour?.frames,p95:t.tour?.intervalMs?.p95,
+      steady:t.steady?.map(w=>({frames:w.frames,complete:w.complete})),meetsTarget:t.meetsTarget}))};
+  await fs.writeFile(new URL('diagnostics.json',evidence),JSON.stringify(summary,null,2)+'\n');
+  assert.equal(report.tool,'imperium-performance-check');assert.equal(report.complete,true,`Performance check must complete all tiers: ${JSON.stringify(summary)}`);
   assert.deepEqual(report.tiers.map(t=>t.tier).sort(),['balanced','high','performance']);
   for(const tier of report.tiers){assert.ok(tier.rebuilt&&tier.tour.frames>0,`${tier.tier} was built and measured`);assert.equal(tier.firstFramePrograms,0,`${tier.tier}: nothing compiled by the first frame`);}
   assert.ok(['performance','balanced','high'].includes(report.recommendation));
   await page.click('#modal [data-cmd="close-modal"] >> nth=0');
   assert.equal(await text(page,'#command-hint'),hint,'No command reached the board during the check');
   if(quality)assert.equal(await page.evaluate(()=>document.documentElement.dataset.quality??''),quality,'The player\'s quality is back');
-  await page.context().close();console.log(`ok - performance check: three qualities rebuilt and measured with no first-frame compiles, the board untouched, results saved (recommends ${report.recommendation})`);
+  await page.context().close();console.log(`ok - performance check: three qualities rebuilt and measured with no first-frame compiles, the board untouched, results saved (status: ${report.recommendationStatus}; recorded tier: ${report.recommendation})`);
 }
 
 // The 0.40 real-time arena (Phase 0): the development menu sends the

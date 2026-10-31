@@ -85,7 +85,7 @@ test('the performance check rebuilds each tier, turns the camera, restores the p
   const {runPerformanceCheck,CHECK_TOUR}=await import('../src/ui/performance-check.js');
   let clock=0,adaptive=[];const interval={performance:20,balanced:16,high:40};
   const encounter={id:'ch7-legion',units:[{id:'hero',x:1,y:1}]},before=JSON.stringify(encounter);
-  const stage={quality:'balanced',chapter:7,figureStyle:'sculpted',encounter,orbit:{yaw:0},ready:Promise.resolve(),log:null,views:[],deviceReport:{renderer:'Test GPU',software:false},
+  const stage={quality:'balanced',chapter:7,figureStyle:'sculpted',encounter,orbit:{yaw:0},cameraSettled:true,ready:Promise.resolve(),log:null,views:[],deviceReport:{renderer:'Test GPU',identity:'unmasked',software:false},
     renderer:{info:{programs:new Array(60)},extensions:{has:()=>false}},gpuTimer:{stats:()=>({supported:true})},
     applyQuality(q){this.quality=q;this.ready=new Promise(done=>setTimeout(done,0));},
     startFrameLog(){this.log={frames:[],gpu:[]};return this.log;},stopFrameLog(){const l=this.log;this.log=null;return l;},
@@ -98,7 +98,7 @@ test('the performance check rebuilds each tier, turns the camera, restores the p
   const report=await runPerformanceCheck(controller,{current:'balanced',adaptive:true,app:{version:'test'},now:()=>clock,nextFrame,longTasks:{entries:[],supported:true,dispose(){}},facts:()=>({hardwareConcurrency:8}),onProgress:p=>progress.push(`${p.step}:${p.tier}`),simulation});
   assert.deepEqual(report.tiers.map(t=>t.tier),['performance','high','balanced']);
   assert.ok(report.tiers.every(t=>t.rebuilt&&Number.isFinite(t.buildMs)),'every tier is a fresh build');
-  assert.deepEqual(progress,['build:performance','tour:performance','build:high','tour:high','build:balanced','tour:balanced','simulation:undefined']);
+  assert.deepEqual(progress,['build:performance','tour:performance','build:high','tour:high','build:balanced','tour:balanced','steady:balanced','simulation:undefined']);
   assert.equal(report.simulation.actors82.p95,.6,'the real-time tick is timed after the tiers');
   assert.equal(stage.quality,'balanced','the player\'s tier is in place at the end');assert.deepEqual(adaptive,[false,true],'adaptive resolution is off while measuring, then restored');
   assert.ok(stage.orbit.yaw>Math.PI*2*2,'the camera turned throughout');
@@ -106,6 +106,8 @@ test('the performance check rebuilds each tier, turns the camera, restores the p
   const byTier=Object.fromEntries(report.tiers.map(t=>[t.tier,t]));
   assert.equal(byTier.performance.meetsTarget,true);assert.equal(byTier.balanced.meetsTarget,true);assert.equal(byTier.high.meetsTarget,false);
   assert.equal(report.recommendation,'balanced');assert.equal(report.complete,true);
+  assert.equal(report.recommendationStatus,'measured');assert.equal(report.interrupted,false);
+  assert.deepEqual(byTier.balanced.steady.map(w=>w.frames),[240,240]);assert.ok(byTier.balanced.steady[1].from>=byTier.balanced.steady[0].to,'repeat windows do not overlap');
   assert.equal(byTier.high.tour.fps,25);assert.ok(byTier.balanced.tour.gpuMs.p95>0);
   assert.equal(report.device.renderer,'Test GPU');assert.equal(report.device.hardwareConcurrency,8);assert.equal(report.battle.encounter,'ch7-legion');
   assert.equal(JSON.stringify(encounter),before,'the encounter is untouched');
@@ -114,6 +116,17 @@ test('the performance check rebuilds each tier, turns the camera, restores the p
   let calls=0;stage.quality='performance';adaptive=[];
   const partial=await runPerformanceCheck(controller,{current:'performance',adaptive:false,now:()=>clock,nextFrame,isCancelled:()=>++calls>40,longTasks:{entries:[],supported:false,dispose(){}},facts:()=>({}),simulation});
   assert.equal(partial.complete,false);assert.equal(partial.simulation,null,'a cancelled check skips the tick timing');assert.equal(stage.quality,'performance');assert.deepEqual(adaptive,[false,false]);
+  assert.equal(partial.recommendationStatus,'incomplete');
+  const hidden=await runPerformanceCheck(controller,{current:'performance',now:()=>clock,nextFrame,isVisible:()=>false,longTasks:{entries:[],supported:false,dispose(){}},facts:()=>({}),simulation});
+  assert.equal(hidden.interrupted,true);assert.equal(hidden.recommendationStatus,'incomplete');assert.ok(hidden.tiers.every(t=>!t.meetsTarget));
+  let visible=true,changed,removed=false;
+  const flicker=await runPerformanceCheck(controller,{current:'performance',now:()=>clock,isVisible:()=>visible,
+    watchVisibility:listener=>{changed=listener;return ()=>{removed=true;};},
+    nextFrame:async()=>{visible=false;changed();visible=true;changed();await nextFrame();},longTasks:{entries:[],supported:false,dispose(){}},facts:()=>({}),simulation});
+  assert.equal(flicker.interrupted,true,'a complete hide/show between frames is retained');assert.equal(flicker.complete,false);assert.equal(stage.quality,'performance');assert.ok(removed,'visibility listener is disposed');
+  stage.deviceReport={renderer:'WebKit WebGL',identity:'masked',software:false};
+  const masked=await runPerformanceCheck(controller,{current:'performance',now:()=>clock,nextFrame,longTasks:{entries:[],supported:false,dispose(){}},facts:()=>({}),simulation});
+  assert.equal(masked.complete,true);assert.equal(masked.recommendationStatus,'unknown-renderer','good frame times without a GPU identity cannot qualify the hardware');
   // A battle that goes away ends the check with an error.
   await assert.rejects(runPerformanceCheck({stage:null,quality(){},adaptive(){}}),/Open a 3D battle/);
 });
@@ -123,6 +136,10 @@ test('Settings offers the performance check, and the page takes no game input wh
   const shown=[],panels=createPanels(()=>({settings:{},showModal:(title,body)=>shown.push(body)}));
   panels.showSettings();assert.match(shown[0],/<button data-cmd="performance-check">Run performance check<\/button>/);
   panels.showPerformanceCheck({tiers:[],recommendation:'balanced',current:'balanced',complete:false,device:{renderer:null,software:false}});assert.match(shown[1],/data-cmd="performance-check-save">Save results \(JSON\)/);
+  panels.showPerformanceCheck({tiers:[],recommendation:'balanced',recommendationStatus:'software',complete:true,device:{renderer:'SwiftShader',software:true}});
+  assert.match(shown[2],/cannot recommend a quality/);assert.doesNotMatch(shown[2],/data-cmd="performance-check-use"/,'software measurements cannot offer a hardware quality recommendation');
+  panels.showPerformanceCheck({tiers:[],recommendation:'balanced',recommendationStatus:'unknown-renderer',complete:true,device:{renderer:'WebKit WebGL',software:false}});
+  assert.match(shown[3],/hardware performance is unverified/);assert.doesNotMatch(shown[3],/data-cmd="performance-check-use"/);
   // The band holds keys back before the board sees them: Escape cancels, Enter and Space still press Cancel.
   const element=()=>Object.assign(new EventTarget(),{children:[],attributes:{},textContent:'',setAttribute(k,v){this.attributes[k]=v;},append(...nodes){this.children.push(...nodes);},remove(){this.removed=true;},focus(){focused=this;}});
   let focused=null;const win=new EventTarget(),body=element(),doc={body,createElement:element};

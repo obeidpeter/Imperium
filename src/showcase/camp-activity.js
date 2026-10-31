@@ -11,6 +11,12 @@ export function sampleCampActivity(world,actor,{time=0,reducedMotion=false}={}){
   if(!routine||!actor.alive||actor.moving||actor.action)return null;
   const hero=world.actors.find(a=>a.id===world.heroId);
   if(hero&&Math.hypot(actor.x-hero.x,actor.z-hero.z)<3.2)return null;
-  const phase=reducedMotion?.5:(Math.sin((Number.isFinite(time)?time:0)*.7+actor.id.length)+1)/2;
+  // Unequal work/rest beats and a stable per-person offset avoid a camp of
+  // synchronized swaying figures. No position or interaction target moves.
+  let seed=0;for(const ch of actor.id)seed=(seed*31+ch.charCodeAt(0))>>>0;
+  const duration={watch:14,work:9,carry:12,rest:17}[routine],seconds=Number.isFinite(time)?Math.max(0,time):0;
+  const cycle=((seconds+seed%97/7)%duration)/duration;
+  const active=cycle<.68?cycle/.68:1,beat=active>=1?0:Math.sin(active*Math.PI)**2;
+  const phase=reducedMotion?.5:routine==='work'?beat*(.82+.18*Math.sin(active*Math.PI*6)):routine==='watch'?.5+.5*Math.sin(cycle*Math.PI*2)**3:beat;
   return {motion:`camp-${routine}`,phase};
 }

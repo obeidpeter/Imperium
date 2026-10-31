@@ -13,7 +13,7 @@ import {alliedPlans,fieldIntelligence} from '../core/realtime/intel.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {chapterScene} from './art.js';
 import {TRADER_STOCK} from '../data/camps.js';
-import {errandList} from '../core/dialogue.js';
+import {errandGuidanceList} from './errand-guidance.js';
 import {ATTRIBUTE_EFFECTS,attributeImprovement,attributeMilestone,equipmentComparison} from './soldier-comparison.js';
 import {itemArt} from './item-art.js';
 
@@ -237,15 +237,26 @@ export function adoptPanel(state,{grants=null}={}){
 }
 
 // Q: the mission's orders — the objective and its progress, the capabilities still to demonstrate, and errands.
-export function missionOrdersPanel(state,{world=null,requirements=''}={}){
+export function missionOrdersPanel(state,{world=null,requirements='',trackedErrand=null}={}){
   const chapter=CHAPTERS.find(c=>c.id===state.chapter),e=state.encounter,m=world?.mission;
   const objective=m?.objective??m?.label??e?.objective??chapter?.objective??'';
-  const errands=errandList(state).filter(e=>e.stage!=='done');
+  const errands=errandGuidanceList(state).filter(e=>e.stage!=='done'),current=errands.filter(e=>e.status!=='past'),past=errands.filter(e=>e.status==='past');
+  const inCamp=state.phase==='camp'&&!state.archiveReplay;
   return `<div class="mission-orders"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p>
     <h3>${esc(e?.title??chapter?.title??'')}</h3><p>${esc(objective)}</p>${world?`<p><strong>${esc(missionProgress(world))}</strong></p>`:''}
     ${world&&world.kind!=='camp'?disclosure('mission-intelligence','Enemy intelligence & allied plans',fieldIntelligencePanel(world)):''}
     <h3>To demonstrate this chapter</h3><div class="journal-requirements">${requirements}</div>
-    <h3>Errands</h3>${errands.length?`<ul>${errands.map(e=>`<li><strong>${esc(e.title)}</strong> (${esc(e.giver)}): ${esc(e.summary)}</li>`).join('')}</ul>`:'<p>No errands in hand.</p>'}</div>`;
+    <h3>Optional errands</h3>${current.length?`<ul class="errand-list">${current.map(e=>`<li data-errand="${esc(e.id)}"><div><strong>${esc(e.title)}</strong><p data-errand-step>${esc(e.text)}</p>${e.destination?.placeName?`<small>${esc(e.destination.placeName)}</small>`:''}</div><div class="errand-actions">`+
+      `${inCamp&&e.destination?`<button data-cmd="errand-destination" data-id="${esc(e.id)}">${esc(e.destination.label)}</button>`:''}`+
+      `${inCamp&&e.trackable?`<button data-cmd="${trackedErrand===e.id?'untrack-errand':'track-errand'}" data-id="${esc(e.id)}" aria-label="${trackedErrand===e.id?'Stop tracking':'Track'} ${esc(e.title)}" aria-pressed="${trackedErrand===e.id}">${trackedErrand===e.id?'Tracking · stop':'Track'}</button>`:''}</div></li>`).join('')}</ul>`:'<p>No active errands in this camp.</p>'}
+    ${past.length?disclosure('past-errands',`Earlier unfinished errands (${past.length})`,`<ul>${past.map(e=>`<li><strong>${esc(e.title)}</strong> — ${esc(e.text)}</li>`).join('')}</ul>`):''}</div>`;
+}
+/** Shown only after the player chooses one task in Mission orders. */
+export function trackedErrandPanel(guide){
+  if(!guide)return '';
+  return `<div class="tracked-errand-copy"><small>TRACKED ERRAND · ${esc(guide.title)}</small><p role="status" aria-live="polite" data-tracked-step>${esc(guide.text)}</p></div>`+
+    `<div class="errand-actions">${guide.destination?`<button id="tracked-errand-go" data-cmd="errand-destination" data-id="${esc(guide.id)}" aria-label="${esc(guide.destination.label)}">${guide.destination.kind==='record'?'Read report':guide.destination.kind==='panel'?'Equipment':'Go to destination'}</button>`:''}`+
+    `<button id="tracked-errand-stop" class="text-link" data-cmd="untrack-errand" data-id="${esc(guide.id)}">Stop tracking</button></div>`;
 }
 // The field intelligence (guide "Knowing the enemy") and Allied plans & visible
 // threats, in words (intel.js); the panel is drawn again as the field changes.

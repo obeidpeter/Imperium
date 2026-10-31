@@ -1,0 +1,319 @@
+{
+  "version": 1,
+  "id": "cast-quintus",
+  "method": "Blender local near-face subdivision and bounded relief fairing, anatomical skin-weight refinement; original UV samples and KTX2 payloads retained",
+  "tool": "scripts/assets/refine-character.mjs",
+  "blenderTool": "scripts/assets/refine-character.py",
+  "blenderVersion": "5.2.2 LTS",
+  "inputSha256": "f0386d3be10918fce00ab8a8f2ab6713162baef0b05e86a66f4350c4397d7387",
+  "sha256": "4cb4975655ae07c7fdb21dae79ce879389ffaa459f731ef10e2e9157927a92aa",
+  "bytesBefore": 397788,
+  "bytes": 398940,
+  "gzipBytesBefore": 368777,
+  "gzipBytes": 369544,
+  "textures": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 9043,
+      "sha256": "4751a97699539be64c0a6f08f88a247dfe076e96e96520d7f7ec6f287be8b474"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 50599,
+      "sha256": "362177091256f6784b7d1c34406d423e314a626a812eec275659cbc7af7240a8"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 14924,
+      "sha256": "baf355094c1ac7e6e310d874ab909ee2313a24ec47c39b96b35c32e52a7add66"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 17874,
+      "sha256": "b0b57e69e219ba9058ea919126e79c56d14d038fbe8943352cd763909e43cd4e"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 49318,
+      "sha256": "b0abdbf042f5daed795f778664f746b00215866a24dc9d73b506df11315a80be"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 12544,
+      "sha256": "d4b4d310948b7f7d6f4f80825e1e0be888204192615d5a1689e8465d0c56c445"
+    }
+  ],
+  "protectedGeometry": [
+    {
+      "mesh": "body",
+      "primitive": 0,
+      "vertices": 7175,
+      "indices": "d27a5a80021f8f41d5ba2f4305d6ed97ac01d126c6f1784d38665f63943445b9",
+      "uv": "ef40038b00b3f9cdc9408d8f8fbae0351859c49cafe159157686f42417048570",
+      "identityPlane": "1e09b480f0f6aca569b3921d890a84fd22870ce4d883888a50dbd41cff72cf3c",
+      "nonFacePositions": "6e8774e3332bbb49857695bf8d04a5eee8f3933e094607aa626cd9699a5e8097",
+      "colours": [],
+      "contacts": "55bd4f2b15260f09651a4e6987c163fd38fc3753ed4962cedb61805abab7b053"
+    },
+    {
+      "mesh": "body-overview",
+      "primitive": 0,
+      "vertices": 2248,
+      "indices": "c227fc249fce7ac6cac2fc9ea120fb67f8167f29722ae118e691805f19506742",
+      "uv": "379813b182fa8ecb3a5d2bc87cae55c4237c1dbf26e8a6e93c51dd4b67081a56",
+      "identityPlane": "21c163f2b445aeb9e4401091a039e1c8bb219647e16ea2de64d1c1ac57954383",
+      "nonFacePositions": "74f72e41a3b2bd1cb33fe5bf5d789a38319e13a07386b41a587f0cb1e5fd6873",
+      "colours": [
+        [
+          "COLOR_0",
+          "fcf0fc96f81296a55ebf56911989e65faac2cbf60c86a59ae10e4dbe50c42e4f"
+        ]
+      ],
+      "contacts": "5a31cfcff3e22145eb2e2ba558e34840f37e420945d56997551d434cb4a64c5e"
+    },
+    {
+      "mesh": "cast-head",
+      "primitive": 0,
+      "vertices": 1497,
+      "indices": "2311a410bb4b0794644d146ba0fc08ca2e520ffdaf0317e6bcee70db060a4fc4",
+      "uv": "01f14b98c34baf2cff72e6cc962dce4b6ecc6c026ca0e4d179dd98f58e18a829",
+      "identityPlane": "44c3f52d357efcc79944ad29e6a185e522c0d5c3cd973963fe9feb1915d201a5",
+      "nonFacePositions": "49f7b64f8ce7699f78815ad70c58986adbfab4b8ad17fdad15601201b8464d9d",
+      "colours": [],
+      "contacts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "mesh": "cast-head-overview",
+      "primitive": 0,
+      "vertices": 224,
+      "indices": "68b1a685f386afb542b8489592296dba83fd8ca8766343af99eed4f672e30acd",
+      "uv": "43451324e0582eb0160f32d606402dbc0dd9d20a9037dd0fc8d20b46e9ea1a56",
+      "identityPlane": "dab18a514bf78dc66b3fe1bf801d09bed68f585db2f419dbc8beb8962e54bf3b",
+      "nonFacePositions": "b9a5c33758e2db69c5fde05e69022ba074a90b85e49332f22ac2de963d8eda07",
+      "colours": [
+        [
+          "COLOR_0",
+          "35b1fb2bd4d35a8b83e7f889201389ea311deea7d933153995159f9072e0bb90"
+        ],
+        [
+          "COLOR_1",
+          "b0371d886652e9f34eb319db4beedc3a287b9089f586885de0359d11274bb9aa"
+        ]
+      ],
+      "contacts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "unchanged": {
+    "textures": true,
+    "originalUvs": true,
+    "originalColours": true,
+    "identityPlane": true,
+    "nonFacePositions": true,
+    "bindPose": true,
+    "nodeHierarchy": true,
+    "materials": true,
+    "handsAndSoles": true
+  },
+  "meshes": [
+    {
+      "mesh": "body",
+      "primitive": 0,
+      "sourceVertices": 7175,
+      "vertices": 7175,
+      "sourceTriangles": 10527,
+      "triangles": 10527,
+      "addedVertices": 0,
+      "changedPositions": 0,
+      "changedWeights": 1533,
+      "maxDisplacement": 0,
+      "facialVertices": 0,
+      "shoulderVertices": 1533,
+      "robeVertices": 0,
+      "weightVertices": 1533
+    },
+    {
+      "mesh": "body-overview",
+      "primitive": 0,
+      "sourceVertices": 2248,
+      "vertices": 2248,
+      "sourceTriangles": 2407,
+      "triangles": 2407,
+      "addedVertices": 0,
+      "changedPositions": 0,
+      "changedWeights": 513,
+      "maxDisplacement": 0,
+      "facialVertices": 0,
+      "shoulderVertices": 513,
+      "robeVertices": 0,
+      "weightVertices": 513
+    },
+    {
+      "mesh": "cast-head",
+      "primitive": 0,
+      "sourceVertices": 1497,
+      "vertices": 1497,
+      "sourceTriangles": 1607,
+      "triangles": 1607,
+      "addedVertices": 0,
+      "changedPositions": 229,
+      "changedWeights": 0,
+      "maxDisplacement": 0.0015000000000000013,
+      "facialVertices": 230,
+      "shoulderVertices": 0,
+      "robeVertices": 0,
+      "weightVertices": 0
+    },
+    {
+      "mesh": "cast-head-overview",
+      "primitive": 0,
+      "sourceVertices": 224,
+      "vertices": 224,
+      "sourceTriangles": 399,
+      "triangles": 399,
+      "addedVertices": 0,
+      "changedPositions": 33,
+      "changedWeights": 0,
+      "maxDisplacement": 0.0015000000000000013,
+      "facialVertices": 33,
+      "shoulderVertices": 0,
+      "robeVertices": 0,
+      "weightVertices": 0
+    }
+  ],
+  "poseVerification": {
+    "id": "cast-quintus",
+    "method": "Production-rig injected poses; edge strain is absolute log length ratio, excluding edges shorter than 2 mm. No gameplay mutations.",
+    "baseline": {
+      "poses": {
+        "idle:0": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.025409608708589063,
+            "p95": 0.09000801452368187,
+            "p99": 0.14298646926130962,
+            "max": 0.357051058965153
+          }
+        },
+        "speak:0.33": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.07376321493728333,
+            "p95": 0.24492975408270865,
+            "p99": 0.4723066531345282,
+            "max": 1.2628046565811104
+          }
+        },
+        "rally:0.38": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.13617497091858977,
+            "p95": 0.5536825577830632,
+            "p99": 1.0551931837699724,
+            "max": 2.0502694177181406
+          }
+        },
+        "block:0.09": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.07175921676366787,
+            "p95": 0.2757304895364875,
+            "p99": 0.38871980791886196,
+            "max": 1.166139936780246
+          }
+        },
+        "walk:0.25": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.03817232891648824,
+            "p95": 0.12282261996209244,
+            "p99": 0.18535067065427693,
+            "max": 0.7601668199677627
+          }
+        },
+        "walk:0.75": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.03791580228707087,
+            "p95": 0.1232749704521679,
+            "p99": 0.2286631424913272,
+            "max": 0.7424506281598847
+          }
+        }
+      },
+      "contactSha256": "8770685c3849dd0d03e28ef233ab228e4b815e89ad3019cc529950e05eda3570"
+    },
+    "refined": {
+      "poses": {
+        "idle:0": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.023939389402492933,
+            "p95": 0.08077594716948312,
+            "p99": 0.11972947365810138,
+            "max": 0.357051058965153
+          }
+        },
+        "speak:0.33": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.07019133359457595,
+            "p95": 0.22776255284171756,
+            "p99": 0.44566324198554985,
+            "max": 1.2353876699294357
+          }
+        },
+        "rally:0.38": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.13649015364919237,
+            "p95": 0.5559385985103773,
+            "p99": 1.0748128186751573,
+            "max": 3.051629158728854
+          }
+        },
+        "block:0.09": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.0671693255712665,
+            "p95": 0.2485009031796232,
+            "p99": 0.3664371279938835,
+            "max": 1.2269753431545074
+          }
+        },
+        "walk:0.25": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.035598897907959524,
+            "p95": 0.10837184760491027,
+            "p99": 0.17482635837953178,
+            "max": 0.7145271577320697
+          }
+        },
+        "walk:0.75": {
+          "shoulder": {
+            "edges": 3446,
+            "mean": 0.03567513667967237,
+            "p95": 0.11205063196777196,
+            "p99": 0.19791596219859894,
+            "max": 0.7424506281598847
+          }
+        }
+      },
+      "contactSha256": "8770685c3849dd0d03e28ef233ab228e4b815e89ad3019cc529950e05eda3570"
+    },
+    "summary": {
+      "shoulder": {
+        "mean": {
+          "before": 0.06386585708861485,
+          "after": 0.061510706134193266,
+          "improvement": 0.03687652623456972
+        },
+        "p95": {
+          "before": 0.2350747343900336,
+          "after": 0.2222334135456472,
+          "improvement": 0.05462654622457297
+        }
+      }
+    }
+  }
+}

@@ -228,6 +228,8 @@ function createActorRig(unit={},options={},reuseGroup=null){
     const tablet=part(left.hand,'courtyard-stores-tablet',0,-.04,.025);
     mesh(tablet,new T.BoxGeometry(.15,.025,.21),leather);
     mesh(tablet,new T.BoxGeometry(.125,.005,.18),black,0,.015,0);
+    const stylus=part(right.hand,'courtyard-writing-stylus',-.015,-.055,.045);
+    mesh(stylus,new T.CylinderGeometry(.003,.004,.14,6),bronze).rotation.z=-.4;
   }
 
   function makeShield(){

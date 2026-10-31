@@ -68,6 +68,20 @@ jobs:
         run: node scripts/realtime-polish-smoke.mjs
       - name: Cavalry selection, command keys and remapping
         run: npm run smoke:cavalry
+      - name: Paused orders, cancellation and recorded debriefs
+        run: npm run smoke:orders
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: order-review-smoke
+          path: tests/visual-results/order-review/
+          retention-days: 14
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: performance-check-report
+          path: tests/visual-results/performance-check/
+          retention-days: 14
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -100,6 +114,14 @@ jobs:
       - run: npm run build
       - name: Usability, navigation and save protection
         run: npm run smoke:usability
+      - name: Tracked errand guidance and legal camp destinations
+        run: npm run smoke:errands
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: errand-guidance-smoke
+          path: tests/visual-results/errand-guidance/
+          retention-days: 14
       - name: Chapter V courtyard and fortress pilot acceptance
         run: npm run smoke:ch5-pilot -- --river-gate
       - name: World-first layouts, camera controls and company stories

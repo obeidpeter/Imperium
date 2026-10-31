@@ -1,6 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createFrameCadence,createGpuTimer,createResolutionBudget} from '../src/showcase/frame-budget.js';
+import {createFrameCadence,createGpuTimer,createResolutionBudget,isQuietStage,QUIET_AFTER_MS} from '../src/showcase/frame-budget.js';
+
+test('quiet rendering requires the unchanged idle conditions and never includes a live world',()=>{
+  const still={cameraSettled:true,wokeAt:100};assert.equal(QUIET_AFTER_MS,1200);
+  assert.equal(isQuietStage(still,1300),false);assert.equal(isQuietStage(still,1301),true);
+  for(const change of [{live:{}},{animation:{}},{drag:{}},{pendingHover:{}},{discessio:{done:false}},{cameraSettled:false}]){
+    assert.equal(isQuietStage({...still,...change},5000),false,JSON.stringify(change));
+  }
+  assert.equal(isQuietStage({...still,discessio:{done:true}},5000),true);
+  assert.equal(isQuietStage({cameraSettled:true},1201),true,'Unchanged default wake time');
+});
 
 test('GPU timer is bounded, asynchronous, excludes warmup and discards disjoint results',()=>{
   const deleted=[],ended=[],extension={TIME_ELAPSED_EXT:3,GPU_DISJOINT_EXT:4};let id=0,ready=false,disjoint=false;

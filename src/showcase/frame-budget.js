@@ -1,3 +1,9 @@
+// Shared by stage drawing and the device check: quiet legacy scenes may draw
+// at half rate, but live worlds and moving cameras retain their tier target.
+export const QUIET_AFTER_MS=1200;
+export const isQuietStage=(stage,now)=>!!(!stage.live&&!stage.animation&&!stage.drag&&!stage.pendingHover&&
+  !(stage.discessio&&!stage.discessio.done)&&stage.cameraSettled&&now-(stage.wokeAt??0)>QUIET_AFTER_MS);
+
 // Asynchronous GPU measurements. No gl.finish(), readPixels(), or waiting on a
 // query: unavailable/disjoint/context-lost results are simply discarded.
 export function createGpuTimer(gl,{warmup=24,every=4,maxPending=4}={}){

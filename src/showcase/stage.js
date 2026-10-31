@@ -4,7 +4,7 @@ import {applyPairedContacts} from './paired-contact.js';
 import {createFrameProfile} from './frame-profile.js';
 import * as T from '../../vendor/three/three.module.js';
 import {createSceneryOcclusion} from './environment-occlusion.js';
-import {createFrameCadence,createGpuTimer,createResolutionBudget} from './frame-budget.js';
+import {createFrameCadence,createGpuTimer,createResolutionBudget,isQuietStage} from './frame-budget.js';
 import {createPaintedLighting,paintedLight} from './painted-actor.js';
 import {followerCount} from './formation.js';
 import {createBattleRemains} from './battle-remains.js';
@@ -49,8 +49,6 @@ import {stageOverlays} from './stage-overlays.js';
 export {sideOnYaw,actionFraming,diagonalYaw,labelRole,namedFigure,figureStyleFinish,voterPosture};
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t*t*(3-2*t);
-// Quiet (half-rate) drawing begins this long after the last input or change.
-const QUIET_AFTER_MS=1200;
 // Frame targets divide common refresh rates; see createFrameCadence.
 export const STAGE_QUALITY=Object.freeze({performance:{ratio:1,shadow:1024,fps:30},balanced:{ratio:1.5,shadow:2048,fps:60},high:{ratio:2,shadow:2048,fps:60}});
 const QUALITY=STAGE_QUALITY;
@@ -529,7 +527,7 @@ export class BattleStage{
     // While nothing moves (no motion, input or camera change for a moment), a
     // 60 fps target draws every other frame: breathing, cloth, cloud and water
     // read the same at 30, for half the GPU work, heat and battery.
-    const quiet=!this.live&&!this.animation&&!this.drag&&!this.pendingHover&&!(this.discessio&&!this.discessio.done)&&this.cameraSettled&&now-(this.wokeAt??0)>QUIET_AFTER_MS;
+    const quiet=isQuietStage(this,now);
     if(quiet&&QUALITY[this.quality].fps>30&&(this.quietSkip=!this.quietSkip))return;
     const sincePaint=this.lastPaint?now-this.lastPaint:0,dt=Math.min(.08,sincePaint/1000||.016);this.lastPaint=now;
     if(sincePaint&&!quiet&&!this.gpuTimer?.stats().supported)this.resolutionBudget?.recordInterval(sincePaint,this.cadence.expectedMs);this.elapsed+=dt;

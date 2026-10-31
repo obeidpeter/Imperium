@@ -1279,3 +1279,9 @@ Negative prompt:
 ```text
 armour, chainmail, helmet, weapon, toga, cloak, hood, laurel, wreath, crown, gold, jewellery, scroll, staff, modern suit, fantasy, cartoon
 ```
+
+## Local character refinement, 2026-10-31
+
+The existing character assets were refined locally in Blender 5.2.2 LTS without new Tripo tasks or credits. Sixteen shipped bodies cover the hero's recruit, legionary, officer and commander bodies and all twelve named cast members. Hero/Aelia near faces receive local subdivision and bounded relief fairing; the remaining own faces receive conservative fairing. Both detail levels receive shoulder-weight cleanup, and Aelia receives a central robe-weight correction. Original KTX2 texture payloads and original UV samples are retained; no texture quality was reduced. Original prompts above remain verbatim.
+
+The [character refinement record](character-art-refinement.md) documents exact coverage, tool commands, source/export hashes, pose measurements, protected identity/contact channels, visual review and remaining baked-face, painted-neck and overview-UV limitations. Asset-manifest entries link their individual `char-<id>-refinement.json` reports. Shared starts, stops, blocks and hit recovery remain original authored animation in `scripts/character-sources/performance-v034.json`, with authoritative contact/release times preserved.

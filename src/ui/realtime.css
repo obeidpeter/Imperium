@@ -1,6 +1,26 @@
 /* Real-time command desk: the canvas owns an unobstructed rectangle. All text,
    controls, tutorials and conversations have their own layout space. The stage
    measures .rt-scene, so no fragile camera/HUD pixel offsets are needed. */
+.rt-order-review{padding:1rem;border-block:1px solid var(--rt-line);background:var(--rt-panel)}
+.rt-order-review[hidden]{display:none}
+.rt-order-review .rt-list-head{flex-wrap:wrap;align-items:flex-start}.rt-order-review .rt-list-head h2{flex:1 1 12rem}.rt-order-review .rt-list-head button{flex:0 0 auto;white-space:nowrap}
+.rt-order-help{margin-block:0 1rem;color:var(--rt-muted)}.rt-order-help summary{min-block-size:2.75rem;cursor:pointer;padding-block:.5rem}.rt-order-help p{max-inline-size:65ch}
+.rt-order-review>p{max-inline-size:75ch;margin:.5rem 0 1rem;color:var(--rt-muted)}
+.rt-order-rows{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr));gap:.7rem}
+.rt-order-row{border:1px solid var(--rt-line);border-radius:.4rem;padding:.8rem;min-inline-size:0}
+.rt-order-row>header,.rt-moment-heading{display:flex;flex-wrap:wrap;gap:.35rem .8rem;justify-content:space-between;align-items:baseline}
+.rt-order-row h3,.rt-order-row p{margin:.2rem 0 .6rem}.rt-order-row header>span{font-size:.85em;color:var(--rt-bronze)}
+.rt-order-row :is(p,h3,dt,dd){overflow-wrap:anywhere}
+.rt-order-row dl{margin:.6rem 0;display:grid;gap:.3rem}.rt-order-row dl>div{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:.5rem}
+.rt-order-row dt{color:var(--rt-muted)}.rt-order-row dd{margin:0;overflow-wrap:anywhere}
+.rt-order-current{font-size:.9em;color:var(--rt-muted)}.rt-order-actions{display:flex;flex-wrap:wrap;gap:.4rem}
+.rt-order-actions button{min-block-size:2.75rem;white-space:normal}
+@media(max-width:540px){.rt-order-row dl>div{display:block}.rt-order-row dt{overflow-wrap:normal;word-break:normal;font-size:.85em}.rt-order-row dd{margin-block:.12rem .4rem}.rt-order-review .rt-list-head h2{flex-basis:100%}}
+.rt-debrief{margin:1rem 0}.rt-debrief ol{padding:0;list-style:none;display:grid;gap:.55rem}
+.rt-debrief li{padding:.7rem .85rem;border-inline-start:3px solid var(--gold,#b69757);background:#59605214;border-radius:.2rem}
+.rt-debrief li p{margin:.25rem 0 0}.rt-moment-heading span,.rt-debrief-note{font-size:.85em;opacity:.8}
+.rt-debrief-note{margin:.4rem 0}.rt-moment-heading span{font-variant-numeric:tabular-nums}
+.rt-time:has([data-role="orderReviewButton"]:not([hidden])){flex-wrap:wrap;min-inline-size:0;max-inline-size:100%}
 .realtime-frame{display:grid;gap:.5rem;padding-block-end:2rem}
 .rt-chronicle-bar{display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:.4rem .9rem 0}
 .rt-host{display:block}
@@ -201,7 +221,7 @@
 .rt-result h2{margin:.25rem 0}.rt-result-actions{position:sticky;top:0;z-index:2;background:#f4eedf;padding:.45rem 0}
 .rt-result-actions button{min-block-size:3rem;min-inline-size:12rem}
 .rt-result details{margin-block:.4rem}.rt-result summary{min-block-size:2.75rem;cursor:pointer;display:flex;align-items:center}
-.realtime-frame:not([data-outcome="active"]) .rt-field :is(.rt-hud,.rt-support,.rt-time,.rt-status-strip,.rt-vote-summary,.rt-coalition-details,.rt-notice){display:none}
+.realtime-frame:not([data-outcome="active"]) .rt-field :is(.rt-hud,.rt-support,.rt-time,.rt-status-strip,.rt-vote-summary,.rt-coalition-details,.rt-notice,.rt-order-review){display:none}
 .realtime-frame:not([data-outcome="active"]) .rt-scene{block-size:15rem;pointer-events:none}
 @container (max-width:900px){
   .rt-field .rt-standard{flex-basis:6.6rem;grid-template-columns:auto 1fr;justify-items:stretch}

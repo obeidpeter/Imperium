@@ -356,7 +356,10 @@ of this table.
   something, read a tally or a track, or bring back the right answer: a
   wrong answer costs nothing, and you can look again. Each rewards
   training points, kit or standing, once; five award titles no other
-  deed gives. None ever blocks the story.
+  deed gives. None ever blocks the story. In camp, choose **Track** beside
+  an active errand in mission orders to keep its next step above the scene.
+  Track one at a time; use its destination button when available, or
+  **Stop tracking** to hide the reminder without abandoning the errand.
 
 - **Some replies depend on who your soldier is**: his attributes,
   decorations, titles, training and the army's or the public's
@@ -1171,7 +1174,11 @@ struck stops the work. Using an object spends no Command and no Stamina.
 
 - After each encounter the **After-Action Chronicle** names
   distinguished service and turning points and, after a defeat, gives a
-  concrete tactical diagnosis.
+  concrete tactical diagnosis. A real-time battle's result also shows up
+  to three **Key recorded moments**, with their times, from the retained
+  battle log. These are highlights, not a complete replay; older or sparse
+  saves may show fewer. Retry advice follows recorded events or the
+  mission's unmet requirement.
 
 # Companions and command
 
@@ -1253,13 +1260,27 @@ start of every round**. Your own soldier's actions never spend them.
 
 - Giving an order sets its Command aside at once, from the round in
   which you give it. If you replace the order before it is carried out,
-  the Command comes back.
+  its reserved Command can return in that same round; earlier-round
+  points do not carry forward.
 
 - Squads without a new order follow their standing orders and show their
   intentions.
 
 - A squad starts a new order after a short delay, about a second, which
   high Authority shortens.
+
+While paused after deployment, choose **Review orders** beside Resume to
+see each friendly squad's order, destination or target, formation, reserved
+Command and delay. **Replace…** opens that squad's action list; the world
+stays paused until you resume.
+
+**Cancel unapplied** removes both queued orders and any order still on its
+way to that squad. Its current order and formation continue. Command
+reserved this round returns unless it still pays for other squads in a
+shared formation; points from an earlier round cannot return. To stop an
+order already in effect, issue **Hold · 1 Command** or replace it with
+another order. Hold takes the usual delivery delay; it is not an instant
+stop.
 
 ## Orders
 

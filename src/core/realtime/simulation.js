@@ -12,7 +12,7 @@ import {missionTick,missionProgress} from './mission.js';
 import {makeActor} from './actors.js';
 import {exchangeSquads,moveSquads,spawnSquad,squadById,squadsOf,squadsRound} from './squads.js';
 import {ENEMY_PLANS} from '../../data/realtime-squads.js';
-import {createCommand,giveOrder,orderEffects,orderProblem,refillCommand,reserveOrder} from './command.js';
+import {cancelOrderProblem,cancelOrders,createCommand,giveOrder,orderEffects,orderProblem,refillCommand,reserveOrder} from './command.js';
 import {carryOut,decideSquad,planDoctrine} from './squad-ai.js';
 import {specialistStanding} from './specialists.js';
 import {specialistTarget} from './party.js';
@@ -112,6 +112,7 @@ export function commandProblem(world,command){
     case 'travel':return world.kind==='camp'&&Number.isFinite(p.x)&&Number.isFinite(p.z)?null:'NO_TARGET';
     // Orders to squads (command.js): the soldier gives them while he stands.
     case 'order':return actor.id===world.heroId?orderProblem(world,p):'NO_TARGET';
+    case 'cancelOrder':return actor.id===world.heroId?cancelOrderProblem(world,p):'NO_TARGET';
     case 'setDrawn':return world.kind==='camp'&&world.peaceful===true&&p.drawn?'PEACEFUL_CAMP':null;
     case 'stop':case 'setWalk':case 'warCry':return null;
     case 'setOptions':return null;
@@ -122,6 +123,9 @@ export function commandProblem(world,command){
 // changes nothing. A newer order to the same actor replaces a queued one.
 export function queueCommand(world,command){
   const reason=commandProblem(world,command);if(reason)return {ok:false,reason,message:REASONS[reason]};
+  // Reservation edits are immediate, as with reserveOrder below. No new
+  // command kind is persisted; current-version snapshots remain compatible.
+  if(command.kind==='cancelOrder'){const refunded=cancelOrders(world,command.payload);world.seq++;return {ok:true,reason:null,refunded};}
   const queued={tick:world.tick,actorId:command.actorId,kind:command.kind,payload:JSON.parse(JSON.stringify(command.payload??{})),seq:world.seq++};
   // A squad order sets its Command aside now and replaces any order queued for the same squads.
   if(command.kind==='order'){reserveOrder(world,queued);world.queue.push(queued);return {ok:true,reason:null};}

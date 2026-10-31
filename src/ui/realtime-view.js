@@ -11,6 +11,7 @@ import {missionDefeatCause as defeatCause,missionDefeatHelp as defeatHelp} from 
 import {victoryReason} from './field-experience.js';
 import {commitSoldierRewards} from '../core/soldier.js';
 import {archiveMutators} from './encounter-view.js';
+import {debriefMarkup,realtimeDebrief} from './realtime-debrief.js';
 
 export {defeatCause,defeatHelp};
 
@@ -88,6 +89,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
       <div class="rt-time" role="group" aria-label="Time">
         <span class="rt-paused" data-role="pausedBand" hidden>Paused</span>
         <button data-role="pauseButton" class="rt-pause" type="button" data-shortcut="pause" aria-keyshortcuts="${key('pause')}" aria-pressed="false">Pause</button>
+        ${!camp&&!chamber?'<button data-role="orderReviewButton" type="button" aria-expanded="false" aria-controls="rt-order-review" hidden>Review orders</button>':''}
         ${chamber?`<button data-role="yieldButton" class="rt-yield" type="button" data-shortcut="yield_floor" aria-keyshortcuts="${key('yield_floor')}" data-title="End the hour now; a speech not yet given is lost" title="End the hour now; a speech not yet given is lost (${key('yield_floor')})">End hour</button>`:''}
         <span class="rt-speed-state" data-role="speedState" hidden>Half speed</span>
       </div>
@@ -110,6 +112,10 @@ export function fieldMarkup({state,keymap,kind='field'}){
       </div>
       ${chamber?'<aside class="rt-talk" data-role="conversation" aria-labelledby="rt-talk-title" hidden></aside>':''}
     </div>
+    ${!camp&&!chamber?`<section id="rt-order-review" class="rt-order-review" data-role="orderReview" aria-labelledby="rt-order-review-title" hidden>
+      <div class="rt-list-head"><h2 id="rt-order-review-title" data-role="orderReviewTitle" tabindex="-1">Orders while paused</h2><button type="button" data-role="closeOrderReview" aria-label="Close order review">Close</button></div>
+      <p>Change or cancel orders before resuming.</p><details class="rt-order-help"><summary>Command costs and cancellation</summary><p>Replace opens the squad’s actions. Cancel keeps its current action and returns only this round’s reservation. A shared formation keeps its cost until its last waiting squad is cancelled.</p></details>
+      <div class="rt-order-rows" data-role="orderReviewRows"></div></section>`:''}
     <footer class="rt-hud" tabindex="-1">
       <div class="rt-unit-dock" aria-label="Choose your unit">
         <p class="rt-selection-label" data-role="selectionLabel"></p>
@@ -200,6 +206,7 @@ export function realtimeResult(state,{keymap}={}){
   if(spoils.length&&!practice)rows.push(['Taken from the field',spoils.join(', ')]);
   if(practice)rows.push(['Rounds',`${e.turn} in this practice, ${practice.recordedTurns} in your chronicle`]);
   const lines=world.log.slice(-6).map(l=>`<li>${esc(l.text)}</li>`).join('');
+  const debrief=realtimeDebrief(world,{keymap});
   // What the fallen still carry: searched here, the pack receives it when the result is recorded.
   const bodies=won&&!practice?world.actors.filter(a=>!a.alive&&a.side==='enemy'&&a.loot?.length):[];
   const search=bodies.length?`<section class="rt-search" aria-labelledby="rt-search-title"><h3 id="rt-search-title">Search the fallen</h3><ul class="rt-loot">${bodies.map(b=>
@@ -212,7 +219,8 @@ export function realtimeResult(state,{keymap}={}){
     ${rewards?`<p class="rt-reward-summary">Earned: <strong>${rewards.tp} training points</strong>${rewards.denarii?` · ${rewards.denarii} denarii`:''}${rewards.decorations.length?` · ${rewards.decorations.length} decorations`:''}. Collected equipment is kept when you continue.</p>`:''}
     <div class="panel-actions rt-result-actions">${practice?`<button class="primary" data-cmd="retry">${won?'Practise again':'Retry battle'}</button><button data-cmd="exit-archive">Return to chronicle →</button>`
       :won?'<button class="primary" data-cmd="commit">Continue →</button>':'<button class="primary" data-cmd="retry">Retry battle</button>'}</div>
-    ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p><details class="rt-retry-help"><summary>Advice for retrying</summary><p class="rt-defeat-help">${esc(defeatHelp(world,keymap))}</p><button type="button" data-close-disclosure>Close advice</button></details>`}
+    ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p><details class="rt-retry-help"><summary>Advice for retrying</summary><p class="rt-defeat-help">${esc(debrief.advice)}</p><button type="button" data-close-disclosure>Close advice</button></details>`}
+    ${debriefMarkup(debrief)}
     ${search?`<details class="rt-result-loot"><summary>Collect spoils · ${bodies.length} ${bodies.length===1?'body':'bodies'}</summary>${search}</details>`:''}
     <details class="rt-result-details"><summary>Battle details &amp; rewards</summary>
       <dl class="result-record">${rows.map(([dt,dd])=>`<div><dt>${esc(dt)}</dt><dd>${esc(dd)}</dd></div>`).join('')}</dl>

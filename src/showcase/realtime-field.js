@@ -21,6 +21,7 @@ import {missionReadout} from '../ui/realtime-mission-readout.js';
 import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,revealAbility} from '../ui/realtime-hud.js';
 import {fieldNotice,missionAbilities,missionAbilityHint,opportunityReadout} from '../ui/field-experience.js';
 import {commandSoundCue} from '../ui/adaptive-score.js';
+import {createOrderReview} from '../ui/squad-order-review.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
 // campaign's battles, camps and chambers and by the standalone arena. It owns the
@@ -147,6 +148,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const makeChamber=()=>kind==='chamber'?createChamberControl({world:()=>world,dom,say,message,presenter:()=>presenter,canvas,keymap,rules:callbacks.chamber,
     takeControl:id=>takeControl(id),pick:p=>pickAt(p),paused:()=>clock.paused&&!stepping(clock),announce:text=>{if(dom.announcer)dom.announcer.textContent=text;}}):null;
   let chamber=null;
+  const orderReview=createOrderReview({dom,world:()=>world,paused:()=>clock.paused&&!stepping(clock),issue:command=>issue(command),say,
+    opening:()=>{if(listOpen)toggleList(false);},
+    replace:id=>{squads?.select({squadId:id});toggleList(true,id);},
+    changed:()=>{squads?.update(true);readoutAt=-Infinity;saveResume('orders');}});
   function issue(command){
     const outcome=queueCommand(world,command);
     if(!outcome.ok)say(REASONS[outcome.reason]??'That cannot be done now.',{warning:true});else{hurryClock(clock);showPlanned();}
@@ -317,7 +322,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     for(const [role,text]of [['lessonStep',l.step],['lessonTitle',l.title],['lessonBody',l.body]]){const el=dom.lesson.querySelector(`[data-role="${role}"]`);if(el)el.textContent=text;}
   }
   function updateHud(now){
-    if(disposed)return;showLesson();refreshReadouts(now);
+    if(disposed)return;orderReview.update();showLesson();refreshReadouts(now);
     if(dom.notice&&now>noticeUntil)dom.notice.hidden=true;
     if(chamber){
       // The chamber's HUD is its own (the hour, the speakers, the speeches and the coalition); Pause still stops its walks.
@@ -407,9 +412,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(o.command.kind==='control'){takeControl(o.command.actorId);return;}
     const outcome=issue(o.command);if(outcome.ok){say(`${o.label}.`,{announce:true});listKey='';renderList();}
   }
-  function toggleList(open=!listOpen){
+  function toggleList(open=!listOpen,actorId=world.controlled){
     listOpen=open;if(dom.commandList)dom.commandList.hidden=!open;dom.listButton?.setAttribute('aria-pressed',String(open));listKey='';
-    if(open){listActor=world.controlled;renderList();dom.listOptions?.querySelector('button:not(:disabled)')?.focus({preventScroll:true});}
+    if(open){orderReview.close({focus:false});listActor=actorId;renderList();dom.listOptions?.querySelector('button:not(:disabled)')?.focus({preventScroll:true});}
     else dom.listButton?.focus({preventScroll:true});
   }
 
@@ -609,7 +614,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       case 'interact_nearest':{const it=nearestUse(world);if(it?.command)issue(it.command);else say(it?.message||'Nothing to use within 3 metres.');return true;}
       // Esc clears one layer at a time: what is armed, the target, the squads selected; then the Menu.
       case 'cancel_or_menu':
-        if(armed||force){armed=null;force=false;say('Cancelled.');}else if(keyTarget){keyTarget=null;targetState='';say('Target cleared.');}else if(listOpen){toggleList(false);canvas.focus({preventScroll:true});}else if(squads?.clear()){}else callbacks.onMenu?.();return true;
+        if(orderReview.open){orderReview.close();}else if(armed||force){armed=null;force=false;say('Cancelled.');}else if(keyTarget){keyTarget=null;targetState='';say('Target cleared.');}else if(listOpen){toggleList(false);canvas.focus({preventScroll:true});}else if(squads?.clear()){}else callbacks.onMenu?.();return true;
       case 'camera_follow':follow();say('Following your soldier.');return true;
       case 'camera_overview':if(stage?.cameraView==='overview')follow();else stage?.home();return true;
       case 'camera_horizon':stage?.horizon();return true;
@@ -748,7 +753,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       world=next;base=nextBase;ended=world.status!=='active';shown=shownKey(world);logShown=0;hudKey='';partyKey='';barKey='';keyTarget=null;armed=null;force=false;noticeUntil=0;if(dom.notice)dom.notice.hidden=true;
       eventMessage=null;hoverPoint=null;hoverDirty=false;hoverEnemy=null;pressMove=false;edge=null;arrows.clear();ability='strike';targetState='';readoutAt=-Infinity;missionWarningKey='';warnedAt.clear();
       pausedFor=null;resumePending=false;lastNow=0;lessonKey=null;listKey='';listActor=null;threatKey='';intentionsShown=false;marks={};seen.paused=false;seen.slowed=false;
-      Object.assign(clock,createClock({speed:clock.speed}));toggleList(false);
+      Object.assign(clock,createClock({speed:clock.speed}));orderReview.close({focus:false});toggleList(false);
       for(const role of ['eventLine','messageLine','targetLine','announcer','missionWarning','deadlineLine','orderStatus']){write(dom[role],'');dom[role]?.classList.remove('warning');}
       canvas.dataset.cursor='walk';applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();chamber?.reset();disarmAdvance();showDeployment();rescueBriefing();
       if(stage){stage.sync(sceneEncounter());stage.rebuildRemains?.();resetPresenter();firstView();}updateHud(performance.now());resumeResult();
@@ -769,7 +774,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     setMarks(next){marks=next??{};presenter?.setMarks(marks);},
     snapshot:()=>snapshotWorld(world),
     dispose(){
-      unbindDisclosures();
+      unbindDisclosures();orderReview.dispose();
       disposed=true;chamber?.dispose();input?.dispose();presenter?.dispose();stage?.setLive(null);
       document.removeEventListener('keydown',onKey);document.removeEventListener('keyup',onKeyUp);canvas.removeEventListener('blur',onBlur);
       canvas.removeEventListener('pointermove',onEdge);canvas.removeEventListener('pointerleave',onLeave);document.body.classList.remove('labels-full');
