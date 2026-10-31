@@ -39,6 +39,10 @@ The **final `829f71810b36` native-window check passes**, starting each sample fr
 
 The final in-game performance smoke also passes on the Intel renderer in **71 seconds**, without forcing SwiftShader, using the same scenario and assertions as the software run. It reports `measured`, recommends Performance, and records zero first-frame shader compilations. The Performance tour qualifies at 33.5 ms p95; Balanced and High tours each record 33.1 ms p95 and do not qualify for their 60 fps target. Balanced's two complete quiet windows record 33.5 and 33.4 ms p95 against the correct 30 fps target. The first is invalidated by a camera/cadence change; the second is settled and stable. Neither that invalid sample nor software rendering is used to certify a higher tier. Hardware and software reports remain separate at `tests/visual-results/performance-check-native/report.json` and `tests/visual-results/performance-check/report.json`.
 
+Those local observations used 1280×900. A later GitHub SwiftShader run at that viewport exceeded the production 30-second frame watchdog and correctly exported `frame-timeout`. The automated performance-check functionality scenario now explicitly uses 640×480 at DPR 1 to bound software rasterization work. It still requires all three tiers, actual rendered frames, zero first-frame shader compilation, unchanged game state, restored settings and JSON export. Production watchdogs and rendering budgets are unchanged; the native Windows device harness remains at 1280×900. The smaller CI scenario is not hardware-performance evidence.
+
+Two consecutive fresh-browser runs of that scenario pass with Playwright 1.56.1 / Chromium 141, matching CI, in **165 and 185 seconds**. Both complete all three tiers without interruption or browser errors, retain the unchanged input/restoration assertions, and identify software rendering. Their responsive canvas and drawing buffer are 349×312 within the stated viewport. No tier is represented as a hardware-performance pass.
+
 The other production checks ran sequentially to avoid competing renderer workloads:
 
 - Real-time controls, targeting, rescue and layout: **20 checks pass**.

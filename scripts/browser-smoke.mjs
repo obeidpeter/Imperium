@@ -233,7 +233,15 @@ async function phoneTouch(){
 // nothing compiled by its first frame, the player's quality comes back, and
 // the results save as JSON through the page's own download.
 async function performanceCheck(){
-  const page=await open({acceptDownloads:true});await newGameDrill(page);await view(page,'3d');
+  // This checks the three-tier UI lifecycle under SwiftShader, not hardware
+  // frame rates. Keep its pixel workload bounded; desktop/phone layouts and
+  // full-size scene budgets have their own scenarios and benchmarks.
+  const viewport={width:640,height:480};
+  const page=await open({acceptDownloads:true,viewport,deviceScaleFactor:1});await newGameDrill(page);await view(page,'3d');
+  const canvasSize=()=>page.locator('#battle-board').evaluate(canvas=>{const r=canvas.getBoundingClientRect();return {
+    css:{width:r.width,height:r.height},buffer:{width:canvas.width,height:canvas.height}
+  };});
+  const canvasBefore=await canvasSize();
   const hint=await text(page,'#command-hint'),quality=await page.evaluate(()=>document.documentElement.dataset.quality??'');
   await settingsCommand(page,'performance-check');await page.waitForSelector('.performance-check');
   const focused=()=>page.evaluate(()=>({tag:document.activeElement?.tagName,id:document.activeElement?.id,
@@ -245,11 +253,14 @@ async function performanceCheck(){
   const fs=await import('node:fs/promises'),report=JSON.parse(await fs.readFile(await download.path(),'utf8'));
   const evidence=new URL('../tests/visual-results/performance-check/',import.meta.url);await fs.mkdir(evidence,{recursive:true});
   await fs.writeFile(new URL('report.json',evidence),JSON.stringify(report,null,2)+'\n');
-  const summary={complete:report.complete,interrupted:report.interrupted,cancelled:report.cancelled??null,status:report.recommendationStatus,inputFocus,
+  const summary={method:'Software-rendered functional check at 640×480, DPR 1; not hardware-performance evidence',
+    complete:report.complete,interrupted:report.interrupted,interruptionReason:report.interruptionReason??null,cancelled:report.cancelled??null,status:report.recommendationStatus,inputFocus,
+    viewport:report.device.viewport,devicePixelRatio:report.device.devicePixelRatio,canvasBefore,canvasAfter:await canvasSize(),
     tiers:report.tiers?.map(t=>({tier:t.tier,buildMs:t.buildMs,frames:t.tour?.frames,p95:t.tour?.intervalMs?.p95,
       steady:t.steady?.map(w=>({frames:w.frames,complete:w.complete})),meetsTarget:t.meetsTarget}))};
   await fs.writeFile(new URL('diagnostics.json',evidence),JSON.stringify(summary,null,2)+'\n');
   assert.equal(report.tool,'imperium-performance-check');assert.equal(report.complete,true,`Performance check must complete all tiers: ${JSON.stringify(summary)}`);
+  assert.deepEqual(report.device.viewport,viewport);assert.equal(report.device.devicePixelRatio,1);
   assert.deepEqual(report.tiers.map(t=>t.tier).sort(),['balanced','high','performance']);
   for(const tier of report.tiers){assert.ok(tier.rebuilt&&tier.tour.frames>0,`${tier.tier} was built and measured`);assert.equal(tier.firstFramePrograms,0,`${tier.tier}: nothing compiled by the first frame`);}
   assert.ok(['performance','balanced','high'].includes(report.recommendation));
