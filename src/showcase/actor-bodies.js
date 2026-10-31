@@ -4,6 +4,7 @@ import {installCloudShadows} from './atmosphere.js';
 import {actorBodyUrl} from '../ui/actor-body-catalog.js';
 import {clipBodyAtNeck,sculptGeneratedHead,generatedIdentityMaterial,fitGeneratedNeck,FOLLOWER_IDENTITY,setFollowerHead,IDENTITY_HEAD_BODY} from './generated-identity.js';
 import {castAgeing} from './actor-identity.js';
+import {aeliaFaceGeometry,aeliaFaceMaterial} from './generated-own-face.js';
 
 // The game's joints a generated body is skinned to, named as bind-character.py
 // exports them; the rig itself repeats elbow, hand, knee and ankle on each side.
@@ -140,6 +141,9 @@ export function mountActorBody(group,body,{skeletons,identity=null,headBody=null
     mesh.bind(skeleton);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),2);return mesh;
   };
   let worn=body;
+  if(body?.id==='cast-aelia'&&identity?.key==='aelia'&&!headBody){
+    worn=Object.fromEntries(['near','overview'].map(level=>{const geometry=aeliaFaceGeometry(body[level].geometry),material=aeliaFaceMaterial(body[level].material);geometries?.add(geometry);materials?.add(material);return [level,{...body[level],geometry,material}];}));
+  }
   if(body&&headBody&&identity){
     // Every generated neck but the donor's own is seated under the shared head's.
     if(!headlessBodies.has(body))headlessBodies.set(body,Object.fromEntries(['near','overview'].map(level=>{const geometry=clipBodyAtNeck(body[level].geometry);if(body.id!==IDENTITY_HEAD_BODY)fitGeneratedNeck(geometry);return [level,{...body[level],geometry}];})));

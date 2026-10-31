@@ -62,7 +62,7 @@ export const COMMAND=freeze({capacity:freeze({4:1,5:3,6:4,7:5,8:5,9:6,10:6,11:6,
   // The order delay: 1 s, less 0.05 s per point of Authority above 10, at least 0.25 s; none with Clear orders.
   delay:freeze({base:1,perAuthority:.05,min:.25})});
 
-// Orders: what each costs and what it does. The command card's keys 1–6.
+// Orders: what each costs and what it does. The command card's slots 1–9.
 export const ORDERS=freeze({
   advance:freeze({id:'advance',name:'Advance',cost:1,summary:'March to the place, keeping the formation.'}),
   attack:freeze({id:'attack',name:'Attack',cost:1,summary:'Engage that enemy group.'}),

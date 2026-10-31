@@ -1,0 +1,273 @@
+{
+  "tool": "scripts/assets/repack-prop.mjs",
+  "inputSha256": "e82b48f4d99b1ee41e6dd95bcbe3e6b1ab9d3d727df51042ea6258e8c47bc56c",
+  "sha256": "6eebad6612b9debfc52603f5b9e649f2510f070bae6b3e9bfaebfad03436c79d",
+  "bytesBefore": 311028,
+  "bytes": 288080,
+  "gzipBytesBefore": 187615,
+  "gzipBytes": 181748,
+  "quantizedVertices": {
+    "NORMAL": 8778
+  },
+  "maxNormalAngleDegrees": 0.3151728508565514,
+  "maxUvError": 0,
+  "positionsAndTopologyUnchanged": true,
+  "texturesUnchanged": true,
+  "sceneUnchanged": true,
+  "materialsUnchanged": true,
+  "meshoptStoredValuesUnchanged": true,
+  "positionTriangles": [
+    {
+      "mesh": "Cube.146",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 300,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "3ee4eef0122141aa0379c074856f1a912d0639e9f1fa275f5ce92db278fc63d8"
+    },
+    {
+      "mesh": "stretched_canvas",
+      "primitive": 0,
+      "material": 1,
+      "triangles": 12,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "707657b0311107a30e6751fcf61474166a4afdddac0d3c27a0bfcf1bf52a844b"
+    },
+    {
+      "mesh": "Cube.215",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 120,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "527fc267ea257dbc0f0b01069c09e23c483b9ba76651bcc143c328a5f78f2e8c"
+    },
+    {
+      "mesh": "Cube.012",
+      "primitive": 0,
+      "material": 1,
+      "triangles": 296,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "caeb89d85fbf56c7a9e7deb5285371d4a65d641259378e3ebc0924dad5bed87d"
+    },
+    {
+      "mesh": "Cube.008",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 120,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "0e781e0c8bb63eefdc4c02c8f9fd8221caee5b6d8855aa35b5941c1f75f8d9f4"
+    },
+    {
+      "mesh": "Cube.166",
+      "primitive": 0,
+      "material": 2,
+      "triangles": 440,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "b85c2f73c97f08253fcb28c9730b4df7cd8c7fb4977e0c2d994c38d1078bf112"
+    },
+    {
+      "mesh": "woven_canopy.002",
+      "primitive": 0,
+      "material": 1,
+      "triangles": 248,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "764e5b5ed3832bea7a8adceb0a8d4d28542049a75673de562063d8734bed058a"
+    },
+    {
+      "mesh": "clay_oven",
+      "primitive": 0,
+      "material": 2,
+      "triangles": 256,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "370f3966447d4a5b649b4d901bf2b66283e3849261c7a02e44beb839d20ab95a"
+    },
+    {
+      "mesh": "Cube.136",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 156,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "6bdb2ddf713451038c99eff8d574d6679293487fd5fe45490da805554db84d65"
+    },
+    {
+      "mesh": "Cube.122",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 156,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "663ab78c47919abdeb306686e41a7c5d3dd6a1e0d84825e59a781209c7a6791f"
+    },
+    {
+      "mesh": "woven_canopy.001",
+      "primitive": 0,
+      "material": 1,
+      "triangles": 248,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "8270ee545e475e0b8f4d693b634fc3ca3c5a8aaf6a6767c40972202aca0dc338"
+    },
+    {
+      "mesh": "Cube.025",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 156,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "e241107f4b7d822a7445b9b41e3a0ded1d4f69cae2d0b60e825d68166add63e5"
+    },
+    {
+      "mesh": "pitched_canvas",
+      "primitive": 0,
+      "material": 1,
+      "triangles": 20,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "9a6bd74ef0ff27d8d234f241c9bc9ebe1fd8bcdbff871aa70bf8200f4dfd9fce"
+    },
+    {
+      "mesh": "Cube.016",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 36,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "533a4f93bab6ccb946687bd5239aec78632badf8cdeba2bd8b6a71df5c983df8"
+    },
+    {
+      "mesh": "Cube.206",
+      "primitive": 0,
+      "material": 2,
+      "triangles": 88,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "313038e7d72d6434ae5c4c228337e307fe5bcc110dfe1b5f07c911350b415dd0"
+    },
+    {
+      "mesh": "pitched_roof.002",
+      "primitive": 0,
+      "material": 3,
+      "triangles": 348,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "c13726b4f2aebf7d25b5bfe122be4300a6ace52b2b7a82383dae5a6b30304aba"
+    },
+    {
+      "mesh": "Cube.074",
+      "primitive": 0,
+      "material": 2,
+      "triangles": 368,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "36c265022d54a60e0af096ecf63785c64182007be380992c798aa1530d490c42"
+    },
+    {
+      "mesh": "Cube.107",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 48,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "8a3283a22ab8b0200ff8c2b333cb8035a10ba7de3f2d67ab70c1333dbaecaf2a"
+    },
+    {
+      "mesh": "Cube.181",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 396,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "c922ce96a46a367bee46f1e672172071b70d13c4793fa5c7ccdd46b9ed0eb2a0"
+    },
+    {
+      "mesh": "pitched_roof",
+      "primitive": 0,
+      "material": 3,
+      "triangles": 348,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "cc5e126cd15f3351f6fc86893320c0b946ecd3ec661bdaf54a29abbd571c5cd4"
+    },
+    {
+      "mesh": "Cube.067",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 192,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "97eacf606753d88aee65def61aa270d60336492eece46f2dba8e707a8da28adc"
+    }
+  ],
+  "textures": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 31874,
+      "sha256": "998e2155389fec95b7ba72edcc45755b0be69e848ab612164c6c099c946d3476"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 5861,
+      "sha256": "517888943ad78751b66b9fe84fdb5bcfc5a7028be22f1c43aa5ec991f9d41c40"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 25327,
+      "sha256": "f1147e9721198609591de5067ede2549d0facafddb8268865d084bb2c33b2e46"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 7094,
+      "sha256": "54ea187329566f465c1b4b00891fc13539ceded9900a3312cbd8b50e55f419a8"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 23947,
+      "sha256": "199722e41f5a4c95fc599aed9ca16bc6525a9738aeb8c4aa08b88e797abcd60b"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 6038,
+      "sha256": "60c774d521aea3452c79aaff2207a8294b39e93caefbc350f0a277ca1c4b030b"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 28795,
+      "sha256": "54808091df75be3b2c725982c329d53b914dab792cdb521e83b4d957a6e93105"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 5863,
+      "sha256": "b29f375e67945f0b3a9c570058b43dff70b6589c7aa85a93e51d330a4c3b9e02"
+    }
+  ]
+}

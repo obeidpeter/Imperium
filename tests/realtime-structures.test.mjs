@@ -131,6 +131,28 @@ test('a repaired fortified bridge is demolished only by forced work, and then th
   assert.equal(engineers.objects[0].state,'demolished','engineers demolish it in one work action');
 });
 
+test('bridge demolition reports its work total and resumes exactly without adding a saved work limit',()=>{
+  const w=bridged(),command={actorId:'hero',kind:'interact',payload:{objectId:'bridge',force:true}};
+  assert.equal(queueCommand(w,command).ok,true);
+  for(let i=0;i<200&&w.objects[0].progress!==1;i++)step(w);
+  assert.equal(w.objects[0].progress,1);
+  assert.ok(w.log.some(e=>e.text==='hero works on Footbridge: 1 of 2 stages complete.'));
+  assert.equal(Object.hasOwn(w.objects[0],'required'),false,'existing saves need no new field');
+  const resumed=restoreWorld(snapshotWorld(w));validateWorld(resumed,fail);
+  assert.equal(queueCommand(w,command).ok,true);assert.equal(queueCommand(resumed,command).ok,true);
+  for(let i=0;i<200&&w.objects[0].state!=='demolished';i++){step(w);step(resumed);}
+  assert.equal(w.objects[0].state,'demolished');assert.equal(worldHash(resumed),worldHash(w));
+  assert.ok(w.log.some(e=>e.text==='hero demolishes Footbridge. The crossing is deep water again for both armies.'));
+  assert.ok(w.log.every(e=>!e.text.includes('undefined')));
+
+  const engineers=bridged();engineers.actors[0].effects={engineering:true};
+  assert.equal(queueCommand(engineers,command).ok,true);
+  for(let i=0;i<200&&engineers.objects[0].state!=='demolished';i++)step(engineers);
+  assert.equal(engineers.objects[0].state,'demolished');
+  assert.ok(engineers.log.some(e=>e.text==='hero demolishes Footbridge. The crossing is deep water again for both armies.'));
+  assert.ok(engineers.log.every(e=>!e.text.includes('undefined')&&!e.text.includes('1 of 2')),'engineers finish in one action');
+});
+
 // The generic engineering position on a walled field: one platform (a tower) beside the wall.
 function towered(){
   const terrain=Array.from({length:12},()=>Array.from({length:32},(_,x)=>x===7?'wall':'grass'));

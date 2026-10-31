@@ -29,9 +29,11 @@ export function updateActorExpressionMorphs(meshes,expression,input={}){
   const strained=['hit','hurt','yield','withdrawn'].includes(input.motion),active=['attack','strike','brace','formation','block'].includes(input.motion);
   for(const mesh of meshes){
     if(!mesh.geometry.userData.expressionMorphs||!mesh.morphTargetInfluences)continue;
-    mesh.morphTargetInfluences[0]=clamp(expression.jawOpen);
+    mesh.morphTargetInfluences[0]=input.reducedMotion?0:clamp(expression.jawOpen);
     mesh.morphTargetInfluences[1]=input.reducedMotion?0:clamp(active?.6+expression.lidFocus:expression.lidFocus*2);
     mesh.morphTargetInfluences[2]=input.reducedMotion?0:strained?.65:0;
-    if(mesh.geometry.userData.expressionMorphs==='generated-head-correctives-v041')mesh.morphTargetInfluences[3]=input.reducedMotion?0:clamp(input.blink??0);
+    const blink=mesh.morphTargetDictionary?.blink;
+    if(Number.isInteger(blink))mesh.morphTargetInfluences[blink]=input.reducedMotion?0:clamp(input.blink??0);
+    if(mesh.material?.userData.aeliaBlink)mesh.material.userData.aeliaBlink.value=input.reducedMotion?0:clamp(input.blink??0);
   }
 }

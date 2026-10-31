@@ -5,7 +5,7 @@
 # Node 22. There are no dependencies to install. Five more jobs drive the
 # production build in headless Chromium: the browser smoke test
 # (scripts/browser-smoke.mjs, then the real-time checks of
-# scripts/realtime-polish-smoke.mjs), the twelve-chapter screenshot benchmark
+# scripts/realtime-polish-smoke.mjs and cavalry-controls-smoke.mjs), the twelve-chapter screenshot benchmark
 # (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact,
 # the usability and save-protection checks (scripts/usability-smoke.mjs), followed
 # by the Chapter V courtyard pilot acceptance (scripts/ch5-pilot-smoke.mjs)
@@ -66,11 +66,20 @@ jobs:
       - run: npm run smoke
       - name: Real-time controls and unobstructed layouts
         run: node scripts/realtime-polish-smoke.mjs
+      - name: Cavalry selection, command keys and remapping
+        run: npm run smoke:cavalry
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: realtime-polish-smoke
           path: tests/visual-results/realtime-polish/
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: cavalry-controls-smoke
+          path: tests/visual-results/cavalry-controls/
           retention-days: 14
 
   usability:

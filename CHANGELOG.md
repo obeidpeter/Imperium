@@ -2,6 +2,14 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Camp, character and control follow-up — 31 October ([report](docs/camp-character-followup.md))
+
+- Bridge demolition shows its two-stage progress and announces when the crossing becomes deep water again.
+- Squad orders describe the full card, including cavalry's Charge and Feigned retreat. The visible keys and accessibility labels follow remapped shortcuts. Chromium now checks cavalry selection, default/remapped orders and invalid inputs.
+- Eleven props recover Chapter VII download space through bounded normal/UV packing, preserving their textures, triangle positions, materials and placement. Existing download limits remain unchanged.
+- Severianus's generated body is included in Chapter XII's offline download, with coverage for the legal patron-support route.
+- Aelia gains restrained expressions on her own generated face, preserving her neutral appearance, hair and earrings.
+
 ### Worlds and gameplay, release 8: the five camp figures ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/camps-release8-report.md#the-five-figures-30-october))
 
 The last of release 8's living camps: the named people it brought into the camps now wear their own generated bodies and faces, as the rest of the cast has since release 6.

@@ -6424,15 +6424,23 @@
           "normalizationScale": 0.9629630309891193,
           "paidCalls": 0
         },
-        "sourceBlend": "art-source/models/legionary-cookstation-supported.blend"
+        "sourceBlend": "art-source/models/legionary-cookstation-supported.blend",
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/legionary-cookstation-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.36808464418422987,
+          "maxUvError": 0.000007629510948348184
+        }
       },
       "usage": "A compact Roman military field cook station",
       "loading": "Deferred chapter packs 1, 3, 7. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 281264,
-        "gzipBytes": 267926,
-        "sha256": "c45b0ac506ad515d373164f61691b6b1b4d686997e3e25e684444a44d2ec6078",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 217736,
+        "gzipBytes": 207073,
+        "sha256": "e085a84b46930acbc16b1662e62a7c0e097a00a685c0a67e0085f320bc85a6e4",
         "triangles": 5964,
         "textures": 3,
         "textureEdge": 512,
@@ -6478,15 +6486,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/equipment-rack-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3617843812634567,
+          "maxUvError": 0.000007629447282719859
         }
       },
       "usage": "A practical Roman military equipment maintenance rack",
       "loading": "Deferred chapter packs 1, 4, 7. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 232580,
-        "gzipBytes": 224716,
-        "sha256": "f693a1b33f385afe56c3f838f59fcd72c8fe96da1a1ff15d4ca558a3c2480ad4",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 182468,
+        "gzipBytes": 175665,
+        "sha256": "6686ed9bb1ed39912c4edcf9236009c6e63e4929224afab73c88a5583a2e2da4",
         "triangles": 5880,
         "textures": 3,
         "textureEdge": 512,
@@ -6532,15 +6548,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/courier-table-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3745205272451345,
+          "maxUvError": 0.000007629195348857198
         }
       },
       "usage": "A Roman military courier sorting table made of weathered oak trestles and thick boards. On the tabletop lie three rolled parchment packets tied with leather cord, two small closed wax-tablet folios and a closed brown leather messenger satchel. Four sturdy legs and a low cross brace, clearly readable open space underneath.",
       "loading": "Deferred chapter packs 3, 7, 11. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 257084,
-        "gzipBytes": 248061,
-        "sha256": "8ad9ff5bcb8f9ab6a70b11e875d921f21478c062530f70f507e9daeb456d2137",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 195684,
+        "gzipBytes": 189057,
+        "sha256": "d4a3faae63ef0dd242a3732a29687f207e039577655b6d6f4c8b08b813295233",
         "triangles": 4900,
         "textures": 3,
         "textureEdge": 512,
@@ -7018,15 +7042,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/command-table-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.36383469205026725,
+          "maxUvError": 0.0000076292048987181005
         }
       },
       "usage": "A Roman command pavilion table, broad sturdy dark oak trestles and plank top covered by a cream parchment map without readable writing. Small plain wooden counters, two rolled maps and a shallow bronze weight sit on top. One burgundy wool cloth strip drapes over an edge. Four short legs with clearly open space beneath, practical third century military furniture, no modern objects.",
       "loading": "Deferred chapter packs 7, 12. Shared model cache at Balanced/High; safe exterior scenery or validated blocked service pads, with complete procedural fallback.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 246568,
-        "gzipBytes": 237957,
-        "sha256": "346764e3b4a79c1e81fbae841a3d5552ddf3058204b23d21cfb28df32946f040",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 187840,
+        "gzipBytes": 180624,
+        "sha256": "414ba4015a0167d511dd6c8b2523108c116543993996ababb7311b9ae1ed9550",
         "triangles": 5880,
         "textures": 3,
         "textureEdge": 512,
@@ -7406,15 +7438,23 @@
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           },
           "geometryUnchanged": true
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/italian-marching-kit-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3151728508565514,
+          "maxUvError": 0
         }
       },
       "usage": "Region-specific hub, battlefield and civic surroundings. Model roots stand at ground level and solid footprints stay outside the rules board.",
       "loading": "Shared deferred chapter packs 6, 7 at Balanced/High. Individual procedural fallbacks remain until successful replacement.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 311028,
-        "gzipBytes": 187428,
-        "sha256": "e82b48f4d99b1ee41e6dd95bcbe3e6b1ab9d3d727df51042ea6258e8c47bc56c",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 288080,
+        "gzipBytes": 181748,
+        "sha256": "6eebad6612b9debfc52603f5b9e649f2510f070bae6b3e9bfaebfad03436c79d",
         "triangles": 4352,
         "textures": 8,
         "textureEdge": 512,
@@ -12089,15 +12129,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/landmark-adda-bridge-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.35666149735807806,
+          "maxUvError": 0.000007629132820152762
         }
       },
       "usage": "The bridge over the Adda: the nearest of Chapter VII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
       "loading": "Deferred chapter pack 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 168120,
-        "gzipBytes": 160024,
-        "sha256": "8fd74200ec31e3274e0f28d42eeac03b3873b3cb5d3647b974e617da96caba3e",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 108000,
+        "gzipBytes": 102337,
+        "sha256": "7bd66c4fc537c2b8ce56dfa1f71034c5ecbfa5f360ee098eab9a2cb1252fc6cf",
         "triangles": 4899,
         "textures": 1,
         "textureEdge": 256,
@@ -12160,15 +12208,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/landmark-mediolanum-walls-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3666996989588075,
+          "maxUvError": 0.000007627794705644675
         }
       },
       "usage": "The walls of Mediolanum: the middle of Chapter VII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
       "loading": "Deferred chapter pack 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 143996,
-        "gzipBytes": 137744,
-        "sha256": "d5baf046084b9da3030bdb6fd683d7b77dda1ef0c21654ff47cde35018e2b8a8",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 95580,
+        "gzipBytes": 90382,
+        "sha256": "a56d7b41548d60d6cfa7a6f04c40943eada9f55d2f3f213714a569bb83b97ddc",
         "triangles": 4900,
         "textures": 1,
         "textureEdge": 256,
@@ -12223,15 +12279,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/landmark-roadside-tomb-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3641349377510996,
+          "maxUvError": 0.000007625222160634326
         }
       },
       "usage": "A tall tomb beside the road: the farthest of Chapter VII’s landmarks on the horizon (LANDMARK_LAYOUT in src/ui/world-layouts.js), on Balanced and High: the horizon scales it to its kind’s height, turns it to the board and sets it on the lowest ground under its own extent, in place of the code-built outline (src/showcase/environment-horizon.js). Decorative only: it casts no shadow, takes no picks and changes no route.",
       "loading": "Deferred chapter pack 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the code-built outline.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 116664,
-        "gzipBytes": 111470,
-        "sha256": "8e6e523b2e74d4af05b7ec751ba5fdbb01b3ec2e11a6839e79eafb89bb561d46",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 78804,
+        "gzipBytes": 74266,
+        "sha256": "917c042314453e2221c8bbc30fb226ac1641f09536f01b5985a1933363b0037f",
         "triangles": 3920,
         "textures": 1,
         "textureEdge": 256,
@@ -13277,15 +13341,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/life-amphora-rack-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.3627380865442238,
+          "maxUvError": 0.000007627935224741034
         }
       },
       "usage": "Life about the camps and towns: wine and oil amphorae, set out beyond the board with the baggage of Chapters VII, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
       "loading": "Deferred chapter packs 7, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 191972,
-        "gzipBytes": 183859,
-        "sha256": "4c480f77e02ead7414f47ab5a5f1edb814ba3976ade0ac61770e05de1ad0fd6f",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 151220,
+        "gzipBytes": 145087,
+        "sha256": "de0fc3927e56daf0f0ea4fcec8cccdf3c4a4fd8f39efc8d3befb9b804bce3501",
         "triangles": 2940,
         "textures": 3,
         "textureEdge": 512,
@@ -13332,15 +13404,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/life-beehives-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.35735006969706107,
+          "maxUvError": 0.000007629507310369377
         }
       },
       "usage": "Life about the camps and towns: a farm's beehives, set out beyond the board with the baggage of Chapters III and VII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
       "loading": "Deferred chapter packs 3 and 7 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 212912,
-        "gzipBytes": 205444,
-        "sha256": "fb6689ae6bc6117095aa04bacfbe0aaa48a0c9fb31a2c9bb75a04f25edcea259",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 172668,
+        "gzipBytes": 166785,
+        "sha256": "aa21c4a7742acf991d0c457372f603bd038da6480549c576a1c2a6fafd0dd1d1",
         "triangles": 2940,
         "textures": 3,
         "textureEdge": 512,
@@ -13782,15 +13862,23 @@
             "mipmaps": true,
             "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
           }
+        },
+        "geometryRepack": {
+          "tool": "scripts/assets/repack-prop.mjs",
+          "report": "art-source/models/reports/life-travel-carriage-geometry-pack.json",
+          "date": "2026-10-31",
+          "method": "Existing compressed GLB decoded, normals stored as normalized signed bytes and in-range UVs as normalized 16-bit integers, then meshopt packed; float positions, triangle winding, texture bytes, material properties and node transforms checked unchanged",
+          "maxNormalAngleDegrees": 0.35974112974334155,
+          "maxUvError": 0.000007629298123368322
         }
       },
       "usage": "Life about the camps and towns: a traveller's covered carriage, set out beyond the board with the baggage of Chapters VII, XI and XII (LIFE_PROP_CHAPTERS, src/showcase/environment-regional-world.js), never on a camp’s service pad nor round a council’s board. Decorative only: it takes no picks and changes no route.",
       "loading": "Deferred chapter packs 7, 11 and 12 at Balanced/High, preloaded with the scene’s scenery. Performance and a failed download keep the scene without it.",
       "export": {
-        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 234324,
-        "gzipBytes": 227056,
-        "sha256": "803e078eee2f0768161d8bb3997471a8fdfa013ee6fcf0be35cedb2e6a076c91",
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized normal/UV attributes (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 191824,
+        "gzipBytes": 186395,
+        "sha256": "0c79a4dcab5cd6a59e2a0c699a9ea293cf95527c1bfb32d3d1c4eb6784e87e41",
         "triangles": 2940,
         "textures": 3,
         "textureEdge": 512,
@@ -14125,7 +14213,7 @@
         }
       },
       "usage": "Marcus Aurelius Severianus, the equestrian patron whose favours follow the soldier's career, in the camps of Chapters VI to XI, and in XII's court when he backs the soldier: his own face, hair and build, in a rich civilian's striped tunic. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
-      "loading": "Deferred local GLB in the offline groups of Chapters VI, VII, VIII, IX, X and XI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Severianus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VI, VII, VIII, IX, X, XI and XII (including his conditional support appearance) (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Severianus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 391728,
@@ -14486,7 +14574,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-30T09:04:54.365Z",
+  "updatedAt": "2026-10-31T14:04:09.270Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -14513,7 +14601,7 @@
     "src": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 56650385,
-  "totalModelBytes": 41464835,
+  "totalBundledAssetBytes": 56123777,
+  "totalModelBytes": 40938227,
   "derivedGeometryBytes": 47428
 }

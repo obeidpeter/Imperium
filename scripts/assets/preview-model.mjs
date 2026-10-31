@@ -47,6 +47,7 @@ try{
 }catch(error){window.result={ok:false,error:String(error)};}
 </script>`;
 const server=http.createServer((req,res)=>{
+  if(req.url==='/favicon.ico'){res.writeHead(204);res.end();return;}
   if(req.url==='/'){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(page);return;}
   if(req.url==='/model.glb'){res.writeHead(200,{'content-type':'model/gltf-binary'});res.end(bytes);return;}
   if(req.url.startsWith('/vendor/three/')||req.url==='/src/showcase/model-loader.js')return serveRequest(req,res,root);

@@ -184,7 +184,14 @@ async function menuAndSettings(page,label){
     text:document.body.innerText.slice(0,500)
   }));
   await page.reload();const afterReload=await reloadState();
-  try{await page.locator('[data-cmd="continue"]:visible').first().click();}
+  // Exercise keyboard resume after reload. Pointer Continue remains covered by
+  // ordinaryModeChoice and the browser smoke's campaign/Practice save reloads.
+  try{
+    const continuation=page.getByRole('button',{name:'Continue your chronicle'}).first();
+    await continuation.waitFor({state:'visible'});await continuation.focus();
+    assert.equal(await continuation.evaluate(el=>el===document.activeElement),true,'Continue receives keyboard focus after reload');
+    await page.keyboard.press('Enter');
+  }
   catch(error){await writeFile(`${output}${label}-reload-diagnostic.json`,JSON.stringify({elapsedMs:Date.now()-reloadStarted,afterReload,atFailure:await reloadState()},null,2)+'\n');throw error;}
   await page.waitForSelector('.camp-page');
   await menuCommand(page,'settings');

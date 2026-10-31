@@ -16,6 +16,7 @@
     "autoplay:expanded": "node scripts/expanded-autoplay.mjs",
     "smoke": "node scripts/browser-smoke.mjs",
     "smoke:polish": "node scripts/realtime-polish-smoke.mjs",
+    "smoke:cavalry": "node scripts/cavalry-controls-smoke.mjs",
     "smoke:usability": "node scripts/usability-smoke.mjs",
     "smoke:immersive": "node scripts/immersive-interface-smoke.mjs",
     "smoke:siege": "node scripts/campaign-world-smoke.mjs",

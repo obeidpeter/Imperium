@@ -130,7 +130,7 @@ Release 6 gives the named men, the chamber's members, the camp's staff, Roman ca
 Limitations:
 
 - The fit moves the body onto the game's proportions: the game's arms are longer and its shoulders wider than most generated figures', and some shins stretch by a few centimetres.
-- Faces are part of the generated texture: no blinking, gaze or expression morphs, and one face per body.
+- Base faces are part of the generated texture, with one face per body. The later named-character renderer adds bounded expression morphs to fitted heads. Aelia retains her own generated head and uses small expression offsets plus feathered eyelid closure sampled from her own skin/PBR maps; neutral geometry and rendering remain unchanged. These are procedural expressions, not facial capture, gaze tracking or phoneme lip sync. Other unmodified generated faces retain their baked expression.
 - Colours are baked, so a body cannot take a figure's palette. Shields, cloaks and crests stay the game's own and keep their colours and heraldry.
 - Weights come from Tripo's rig. Long robes deform with the legs, and an extreme pose can crease a shoulder.
 
@@ -141,6 +141,10 @@ Limitations:
 - **Textures** become KTX2 (`KHR_texture_basisu`): Basis Universal ETC1S at the encoder's default quality (128), with mipmaps. Colour maps are encoded as sRGB, normal maps with the encoder's normal-map settings, and metal/roughness maps as linear data. In the game each texture is transcoded to a format the GPU keeps compressed: ETC2 on most phones, BC7 or BC1 on most computers, about a quarter to an eighth of the memory of the decoded image. A 1,024 px colour map takes 0.7–1.4 MB of GPU memory instead of 5.6 MB, and needs no mipmaps made on upload.
 - **Geometry** is reordered for the codec and packed with meshopt (`EXT_meshopt_compression`), with no filters and no new quantization, so every stored value is kept. The tool reads both models back and refuses to write unless every triangle, with all its attributes, is unchanged.
 - **Report.** The input and output bytes (raw and gzip), the encoder version and settings, and each texture's use, size, original bytes, KTX2 bytes and the encoder's measured error (PSNR, in dB).
+
+**Existing prop geometry.** [`repack-prop.mjs`](../scripts/assets/repack-prop.mjs) applies the character pipeline's bounded normal/UV quantization to an already-compressed static prop, without running the texture encoder again. With the existing `ASSET_MODULES` setup, run `node scripts/assets/repack-prop.mjs <original-compressed.glb> <runtime.glb> --report <geometry-pack.json>`. It refuses skins, animations and morph targets; verifies identical float positions and triangle winding, texture bytes, materials, texture sampling and node hierarchy; and checks every stored quantized attribute after meshopt decoding. Reports retain the original file digest, so the manifest's `geometryRepack` links to the earlier texture-compression provenance instead of replacing it.
+
+On 2026-10-31 this recovered **492,655 gzip bytes** across Chapter VII's eleven unquantized props (three Italian landmarks, the Italian marching kit, four service props and three daily-life props). Every map and triangle remains present, with no texture resizing or mesh simplification. The precision tradeoff is bounded: worst normal-angle change **0.3746°**, worst UV change **0.000007630**, below 0.008 texel even on a 1,024-pixel map. Per-model checks are in `art-source/models/reports/*-geometry-pack.json`; [`prop-geometry-pack.test.mjs`](../tests/prop-geometry-pack.test.mjs) independently reloads the shipped meshes and verifies their original position triangles, texture hashes and savings.
 
 ETC1S trades download size for memory: a KTX2 image is two to three times the size of the WebP it replaces, and it barely shrinks under gzip, while meshopt geometry is a little smaller than before. Data maps fare worst, since ETC1S suits colour better than independent channels.
 

@@ -792,9 +792,22 @@ async function realtimePractice(){
   const page=await open();
   await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'2d'}));}catch{}});
   await page.goto(base);await settingsCommand(page,'restore');await restoreCamp(page,battleCampCode('ch8-parley'));
+  // The camp markup precedes its runtime and first-visit autosave. Capture the
+  // chronicle only after that legitimate discovery, with the player paused:
+  // closing Export must not give the camp time to change the baseline.
+  await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
+  if(!await page.evaluate(()=>window.__realtime.paused()))await page.locator('[data-role="pauseButton"]').click();
+  await page.waitForFunction(()=>window.__realtime.paused()&&document.querySelector('[data-role="pauseButton"]')?.getAttribute('aria-pressed')==='true');
+  await revealControl(page,'[data-cmd="archive-replay"][data-id="ch4-gate"]');
+  await page.waitForFunction(()=>{
+    const practice=document.querySelector('[data-cmd="archive-replay"][data-id="ch4-gate"]');
+    return practice&&!practice.disabled&&[...document.querySelectorAll('.save-status')].every(el=>!/Saving/.test(el.textContent));
+  });
   const chronicle=async()=>{await settingsCommand(page,'export');const code=await page.locator('#save-code').inputValue();
     await page.click('#modal [data-cmd="close-modal"] >> nth=0');return codePayload(code);};
   const primary=await chronicle();
+  assert.equal(JSON.parse(primary).soldier.flags['visited:8:gate'],true,'The initial camp visit is saved before the Practice baseline');
+  assert.equal(await page.evaluate(()=>window.__realtime.paused()),true,'Export preserves the player’s camp pause');
   await (await revealControl(page,'[data-cmd="archive-replay"][data-id="ch4-gate"]')).click();
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
   assert.match(await text(page,'.archive-banner'),/Chronicle record: \d+ rounds/,'The battle is practised in real time, under the Archive’s banner');

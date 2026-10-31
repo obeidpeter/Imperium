@@ -104,5 +104,21 @@ export function keyLabel(binding){
   return [...parts,base].join('+');
 }
 export const actionLabel=(action,keymap=DEFAULT_KEYMAP)=>keymap[action]?.map(keyLabel).join(' or ')??'';
+// ARIA uses KeyboardEvent key names, with `Plus` for the plus key and spaces
+// between alternatives. Display labels such as "Num +", "Esc" or an arrow
+// glyph are not shortcut tokens. This changes metadata only, never dispatch.
+const ARIA_KEY_NAMES={Space:'Space',Escape:'Escape',Enter:'Enter',Comma:',',Period:'.',Equal:'=',Minus:'-',BracketLeft:'[',BracketRight:']',
+  Slash:'/',Backslash:'\\',Semicolon:';',Quote:"'",Backquote:'`',NumpadAdd:'Plus',NumpadSubtract:'-',NumpadMultiply:'*',NumpadDivide:'/',
+  NumpadDecimal:'.',NumpadComma:',',NumpadEqual:'=',NumpadEnter:'Enter'};
+function ariaBinding(binding){
+  const parts=String(binding).split('+'),code=parts.pop();
+  // A modifier alone cannot be represented by aria-keyshortcuts, which needs
+  // exactly one non-modifier key. The visible binding still describes it.
+  if(!code||/^(Shift|Control|Alt|Meta)(Left|Right)?$/.test(code))return '';
+  const printable=/^(Key[A-Z]|Digit\d)$/.test(code)?layout?.get?.(code)??(/^Key/.test(code)?learnt.get(code):null):null;
+  const base=printable?.trim()||ARIA_KEY_NAMES[code]||code.replace(/^Key|^Digit|^Numpad(?=\d$)/,'');
+  return [...parts,base==='+'?'Plus':base.length===1?base.toUpperCase():base].join('+');
+}
+export const ariaKeyShortcuts=(action,keymap=DEFAULT_KEYMAP)=>(keymap[action]??[]).map(ariaBinding).filter(Boolean).join(' ');
 // The first of an action's keys, for a message that names one.
 export const firstKeyLabel=(action,keymap=DEFAULT_KEYMAP)=>keyLabel(keymap[action]?.[0]??'');

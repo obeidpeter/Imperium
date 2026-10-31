@@ -130,7 +130,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
       <div class="rt-ability-area">
         <p class="rt-current"><span>${chamber?'Selected speech':'Selected action'}</span><strong data-role="currentAbility">${chamber?'Persuade':'Strike'}</strong></p>
         <div class="rt-ability-bar" data-role="abilityBar" role="${chamber?'toolbar':'group'}" aria-label="${chamber?'Speeches':'Actions'}"></div>
-        ${chamber?'':`<div class="rt-ability-bar rt-card" data-role="commandCard" role="toolbar" aria-label="Orders for the selected squads (1 to 6)" hidden></div>`}
+        ${chamber?'':`<div class="rt-ability-bar rt-card" data-role="commandCard" role="toolbar" aria-label="Squad orders" hidden></div>`}
         <div class="rt-tools">
           <button data-role="listButton" type="button" aria-pressed="false" aria-controls="rt-command-list" title="Every ${chamber?'speech, walk and conversation':'action'} as a list">All actions</button>
         ${chamber?`<div class="rt-toggles" role="group" aria-label="The motion">

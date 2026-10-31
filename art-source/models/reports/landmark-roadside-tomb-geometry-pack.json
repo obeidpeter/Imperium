@@ -1,0 +1,39 @@
+{
+  "tool": "scripts/assets/repack-prop.mjs",
+  "inputSha256": "8e6e523b2e74d4af05b7ec751ba5fdbb01b3ec2e11a6839e79eafb89bb561d46",
+  "sha256": "917c042314453e2221c8bbc30fb226ac1641f09536f01b5985a1933363b0037f",
+  "bytesBefore": 116664,
+  "bytes": 78804,
+  "gzipBytesBefore": 111473,
+  "gzipBytes": 74266,
+  "quantizedVertices": {
+    "NORMAL": 3663,
+    "TEXCOORD_0": 3663
+  },
+  "maxNormalAngleDegrees": 0.3641349377510996,
+  "maxUvError": 0.000007625222160634326,
+  "positionsAndTopologyUnchanged": true,
+  "texturesUnchanged": true,
+  "sceneUnchanged": true,
+  "materialsUnchanged": true,
+  "meshoptStoredValuesUnchanged": true,
+  "positionTriangles": [
+    {
+      "mesh": "tripo_mesh_8389b598-ae00-47a4-a42c-d4788c18fb3c.002",
+      "primitive": 0,
+      "material": 0,
+      "triangles": 3920,
+      "attributes": [
+        "POSITION"
+      ],
+      "sha256": "a8d26186d71e4c76b896586a967bacce0881cc1ed340b29c75d4d59eb24c08cc"
+    }
+  ],
+  "textures": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 13483,
+      "sha256": "90ec528f1414657ea76b5480e8af17c3594872b73cbd70e764f426ad5b29fdeb"
+    }
+  ]
+}
