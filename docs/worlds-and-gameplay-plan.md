@@ -23,7 +23,9 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 7 | Missions and cavalry | merged ([#39](https://github.com/obeidpeter/Imperium/pull/39); [report](missions-release7-report.md)) |
 | 8 | Living camps | merged ([#40](https://github.com/obeidpeter/Imperium/pull/40); [report](camps-release8-report.md)); its five figures followed on 30 October ([report](camps-release8-report.md#the-five-figures-30-october)) |
 | 9 | Landmarks and set pieces | merged ([#41](https://github.com/obeidpeter/Imperium/pull/41); [report](landmarks-release9-report.md)) |
-| 10 | Gate 4 and 0.40.0 | in progress; the owner's play-through, decision on the turn-based mode and Performance-check files are awaited |
+| 10 | Gate 4 and 0.40.0 | in progress: Practice in real time and the [Gate 4 checklist](gate4-playthrough.md) merged ([#42](https://github.com/obeidpeter/Imperium/pull/42)); the owner's play-through, decision on the turn-based mode and Performance-check files are awaited |
+
+**Merged beside the releases.** On 31 October the owner merged [#44](https://github.com/obeidpeter/Imperium/pull/44), written with Codex. It reviewed release 8's five figures and followed them up: Severianus's body in Chapter XII's offline pack, Aelia's blinks and expressions on her own face, and eleven of Chapter VII's props repacked for download room ([follow-up](camp-character-followup.md)). It added **Review orders** for paused squad battles, errand tracking in camp, recorded moments in battle results and service courts in the camps ([command and camp refinement](command-camp-refinement.md)). It refined sixteen of the generated bodies in Blender, the soldier's four and the twelve named people's, and gave the figures new starts, stops, shield blocks and hit recovery ([character refinement](character-art-refinement.md)), and rebuilt the Performance check to warm up, measure twice and stop when its tab is hidden. Release 10 builds on it.
 
 ## The revision of releases 4–10 (approved 27 October 2026)
 
@@ -223,6 +225,7 @@ Already done (#32, #33): nine company stories, three playable situations, field 
 - **The conversations, errands and defeat pages** of the later camps are data in `src/data/living-camps.js`: 18 errands, two a chapter from IV, each worth 2 training points, five of them awarding the titles no deed awarded. The audited ceiling rises from 237 to 273 training points.
 - **Named people without a generated body** are drawn procedurally with their own faces rather than in the civilian traveller's body (`actor-body-catalog.js`). The camp's women are drawn as women (`actor-kit.js`): a body fits only a figure of its own sex, and the woman's figure is in every chapter's pack.
 - **The five figures** moved here from release 6 followed on 30 October, after the owner approved their credits: Severianus, Paullus and Theon in their civilian dress and Quintus in his mail, each with his own face on the shared head, and Aelia with her own generated head (the shared head is a man's). The four men's maps are a level below release 6's, which keeps Chapters VII and XII within their 24 MB downloads. The credits were 225 of the 315 allowed ([ledger](../art-source/models/worlds-plan-credits.json), [art record](art-generation.md#the-five-camp-figures--30-october-2026)).
+- **Followed up in #44** (31 October): Severianus's body is in Chapter XII's offline pack, where he stands with the patron's support; Aelia blinks and changes expression on her own face; and eleven of Chapter VII's props were repacked. Chapter VII now has 0.52 MB of its 24 MB to spare, and XII, the largest download, 0.24 MB. The three civilians' neck seam, left where release 8 took away their neckcloth, remains visible in close views ([follow-up](camp-character-followup.md), [character refinement](character-art-refinement.md#remaining-art-limits)).
 
 #### 9. Landmarks and set pieces
 
@@ -250,6 +253,12 @@ Already done (#33): New Game offers both modes and recommends real time, and Set
 - **Practice and the standalone skirmish** in real time.
 - **The owner's decision** on the turn-based mode: keep it as an option, or retire it after 0.40.0.
 - **Release 0.40.0:** the changelog, README and guide, with the owner's Performance-check files from a phone and a laptop recorded as device evidence.
+
+**As built so far.**
+- **Practice in real time** ([#42](https://github.com/obeidpeter/Imperium/pull/42)): a completed battle is practised on the live field and a Contest in the chamber, as the campaign plays; practice is never saved and records nothing. The standalone skirmish was already the real-time arena.
+- **The [Gate 4 checklist](gate4-playthrough.md)** for the owner's play-through, chapter by chapter, with the finale's routes, Practice, the settings, accessibility and the device checks. It was updated after #44 for its order review, errand tracking, battle debriefs and the new Performance check.
+- **From #44:** the Performance check now warms each quality up, measures the player's own twice, stops when its tab is hidden, and recommends no quality from software rendering. Automated Windows runs (Intel Graphics through ANGLE and Direct3D 11) recommended Performance, with Balanced and High below their 60 fps target ([Windows observations](command-camp-refinement.md#windows-observations)). Their report files stay on the owner's computer; for 0.40.0 they are sent or committed under `docs/evidence/`.
+- **Waiting on the owner:** the play-through on Standard and Story, the decision on the turn-based mode, and Performance-check files from a phone and a laptop. Then what the play-through finds is fixed, real time becomes the default, and 0.40.0 is released.
 
 ### Order
 
@@ -290,8 +299,8 @@ As first approved:
 
 ### What the owner provides
 
-1. **Performance-check files** from a phone and a laptop (Settings → Performance check). They are still outstanding from releases 1 and 2, and the tiers are tuned from them.
-2. **The Gate 4 play-through** after release 8, as first approved. Release 9 is built meanwhile.
+1. **Performance-check files** from a phone and a laptop (Settings → Graphics → Performance diagnostics → Run performance check, its tab kept in front). They are still outstanding from releases 1 and 2, and the tiers are tuned from them. The Windows reports #44 made stay on the owner's computer until sent or committed.
+2. **The Gate 4 play-through** after release 8, as first approved, with the [Gate 4 checklist](gate4-playthrough.md). Release 9 was built meanwhile.
 3. **Content review** of release 8's errands and cast lines (optional).
 4. **Parallel work:** if Codex keeps working on the game, which areas it takes, so the releases don't collide. Each release stands alone, apart from the order above.
 5. **Tripo:** the key stays available as a network secret in this environment.

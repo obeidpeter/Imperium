@@ -2,6 +2,8 @@
 
 **Status: prepared, not played.** This is a checklist for the owner's play-through, release 10 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md). Nothing in it has been done by a person yet. The bot's sweeps and the browser checks do not count as a play-through.
 
+Updated on 1 November for [#44](https://github.com/obeidpeter/Imperium/pull/44): its order review, errand tracking and battle debriefs have rows below, and the Performance check now asks for its tab to stay in front.
+
 Gate 4 decides three things:
 
 - **Whether real time becomes the default.** New Game already preselects **Real-time with pause**, but a chronicle continued or restored without a chosen mode still plays in turns. Real time becomes the default for those too only after this play-through, once what it finds is fixed.
@@ -13,7 +15,7 @@ The [playtest kit](playtest-kit.md) is for a first-time player watched by an obs
 ## Before you start
 
 1. Use the live site, or build and serve it yourself: `npm run build`, then `npm run preview`. To play on a phone on the same network, use `HOST=0.0.0.0 npm run preview` and open the address it prints.
-2. Write down the build: the commit you built (`git log -1 --format=%h`) or the date you opened the live site.
+2. Write down the build: the commit you built (`git log -1 --format=%h`) or the date you opened the live site. Use `a011365` (31 October) or later, which has #44's changes.
 3. Begin a **New Game** with **Real-time with pause**:
    - the first time on **Standard**;
    - the second time on **Story**, ideally played by someone less experienced, as the 0.40 brief asks.
@@ -35,7 +37,7 @@ Mark anything that stops play, loses progress or saves the wrong thing as **bloc
 
 | Chapter | Where | What to try | Notes |
 | --- | --- | --- | --- |
-| I · The Oath | Camp: the legionary base at Novae | Walk, talk to Varro and Lucan, use the drill field, choose the javelin decision. The oath ceremony in its five story beats. | |
+| I · The Oath | Camp: the legionary base at Novae | Walk, talk to Varro and Lucan, use the drill field, choose the javelin decision. Take Varro's errand, **Track** it in Mission orders (**Q**) and follow its step above the camp. The oath ceremony in its five story beats. | |
 | | The drill yard (the drill) | The guided opening's lessons: move, pause, slow time, a target, a queued action, resume. | |
 | | Fire on the boundary road | The first real fight. | |
 | II · First Blood | Camp: the march camp on the causeway | Lucan's decision. | |
@@ -45,7 +47,7 @@ Mark anything that stops play, loses progress or saves the wrong thing as **bloc
 | | The silent station (recover) | | |
 | | Names on the road (escort) | | |
 | IV · Hold the Line | Camp: the frontier ford court | Squads and their orders appear. An errand or two, the trader. | |
-| | The gate with the broken drum (the escalade) | Throwing down the ladders; the gate's integrity. | |
+| | The gate with the broken drum (the escalade) | Throwing down the ladders; the gate's integrity. Pause and open **Review orders**: cancel one squad's queued order and replace another's. | |
 | | Across the wall walk (escort) | | |
 | V · The Centurion | Camp: the Euphrates staging courtyard | The engineer's preparation; the countermine or the families. | |
 | | The cracked tower (siege) | The countermine against the siege works. | |
@@ -56,12 +58,12 @@ Mark anything that stops play, loses progress or saves the wrong thing as **bloc
 | VII · A Legion to Lead | Camp: the council camp before Milan | The plot against Gallienus. | |
 | | The officers' table (Contest) | The chamber: walking, talking, asking a member's interest, Persuade, yielding the hour, the rivals' hour. | |
 | | A legion at your word | Deployment before the battle, then the legion. | |
-| VIII · Beyond the Frontier | Camp: the Danube ferry assembly | Aelia's demand; the ferry loads. | |
+| VIII · Beyond the Frontier | Camp: the Danube ferry assembly | Aelia's demand; the ferry loads. Her seed-jar errand, tracked from collecting the jar to returning it. Aelia now blinks and changes expression. | |
 | | Words above the ford (Contest) | | |
 | | The last boats (escort) | | |
-| | The far bank (the crossing under fire) | Forcing the ford under the volleys, then holding the landing. | |
+| | The far bank (the crossing under fire) | Forcing the ford under the volleys, then holding the landing. If you repair the bridge, demolish it again: two stages, or one with an engineer beside you. | |
 | IX · Rome's Sword | Camp: the surrender court on campaign | The terms of surrender. | |
-| | The turning cavalry (the feigned retreat) | Your horse's charge and feigned retreat; drawing the armoured horse onto the line. | |
+| | The turning cavalry (the feigned retreat) | Your horse's charge and feigned retreat; drawing the armoured horse onto the line. The order card shows both, under your keys. | |
 | | The road to the keys | | |
 | X · The Province | Camp: the governor's relief courtyard | The convoys' allocation and the land judgment. | |
 | | Grain under guard (the relief convoy) | The road you chose in camp. | |
@@ -69,7 +71,7 @@ Mark anything that stops play, loses progress or saves the wrong thing as **bloc
 | XI · The Senate | Camp: the service-record portico at Rome | Severianus's offer. | |
 | | The accounts of a soldier (Contest, in the Curia) | | |
 | | The petition for the broad stripe (Contest, in the Curia) | | |
-| XII · The Purple | Camp: the loyal standards court | Your terms before the confrontation. | |
+| XII · The Purple | Camp: the loyal standards court | Your terms before the confrontation. Severianus stands in the court only if he backs you. | |
 | | Whose name on the decree? (Contest, in the Curia) | | |
 | | The road to the purple (the finale) | Your route, before Aurelian's walls. Then the accession in its story beats, and the ending: does the oath come back? | |
 
@@ -99,6 +101,9 @@ In the bot's sweeps the backer's and the battle's routes last 8 of the finale's 
 | Keys | Remapping one key in Settings → Controls, and using it in a fight. | |
 | Saves | A quick save (F2), a named save, Load, and a save code exported and restored. | |
 | Help | **?** in a fight, a chamber and a camp. Does the help match the game? | |
+| Review orders | Pause in a squad battle and choose **Review orders** beside Resume. Each squad shows its order, destination, Command and delay. Try **Cancel unapplied**, **Replace…** and **Hold · 1 Command**, then resume. Could you tell what each squad would do? | |
+| Errand tracking | In Mission orders (**Q**), **Track** one errand. Its next step shows above the camp. Use its button to go there, reload the page, then **Stop tracking**. Did the step change by itself when the task moved on? | |
+| After a battle | The result's **Key recorded moments**, and after a defeat **Advice for retrying**. Did they help you choose what to do differently? | |
 
 ## Accessibility (the 0.40 brief's manual checks)
 
@@ -107,21 +112,23 @@ In the bot's sweeps the backer's and the battle's routes last 8 of the finale's 
 | Keyboard only | Chapters I–II, the standing orders of III, a formation in V, the deployment of VII, a Contest and a kit change, without the mouse. | |
 | Screen reader | NVDA or VoiceOver: a battle's actions and a Contest's vote are read out, and nothing traps the focus. | |
 | Colour | High contrast (Settings → Readability) and the blocs without colour. | |
-| Text size | Game text at 200%: nothing hidden or cut off. | |
+| Text size | Game text at 200%: nothing hidden or cut off, the order review and the tracked errand included. | |
 | Reduced motion | The ceremonies keep their first view; the scene holds still. | |
 
 ## On a phone and a laptop
 
 On each device, in a large battle (Chapter VII or XII):
 
-1. Menu → Settings → Graphics → **Performance diagnostics** → **Run performance check**.
-2. Save the results file and send it. It records the frame times and the simulation's tick on that device, and the tiers are tuned from it.
+1. Menu → Settings → Graphics → **Performance diagnostics** → **Run performance check**. Keep the game's tab in front until it finishes. It builds, warms up and measures each quality, then measures yours twice more: one to three minutes in all. Switching tabs or locking the phone stops it as interrupted: run it again.
+2. Save the results file and send it. It records the frame times, the graphics chip and the simulation's tick on that device, and the tiers are tuned from it. A check that reports software rendering or an unidentified graphics chip cannot recommend a quality; send it anyway.
 3. Play a few minutes by touch on the phone, and note anything hard to reach or read.
 
 | Device | Model, system and browser | File sent | Notes |
 | --- | --- | --- | --- |
 | Phone | | | |
 | Laptop | | | |
+
+Automated runs on the owner's Windows computer on 31 October (Intel Graphics through ANGLE and Direct3D 11) are summarised in [Windows observations](command-camp-refinement.md#windows-observations). There the check recommended Performance, and Balanced and High missed their 60 fps target. They are not a play-through. Their report files (`tests/visual-results/windows-device-headed/` and `tests/visual-results/performance-check-native/`) stay on that computer, as git ignores those folders: send them with the two files, or commit them under `docs/evidence/`, so 0.40.0 can cite them.
 
 ## After the play-through
 
