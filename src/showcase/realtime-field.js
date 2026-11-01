@@ -774,7 +774,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     },
     // A panel, conversation or dialog pauses the world (Pause in panels), and gives it back.
     pauseFor(reason){if(!clock.paused){setPaused(clock,true);pausedFor=reason;saveResume('pause');}},
-    release(reason){if(pausedFor&&(!reason||pausedFor===reason)){pausedFor=null;if(!ended&&!deploying(world)){setPaused(clock,false);resumePending=true;}}if(!ended)canvas.focus({preventScroll:true});},
+    release(reason,{focus=true}={}){if(pausedFor&&(!reason||pausedFor===reason)){pausedFor=null;if(!ended&&!deploying(world)){setPaused(clock,false);resumePending=true;}}if(!ended&&focus)canvas.focus({preventScroll:true});},
     get paused(){return clock.paused&&!stepping(clock);},
     // A pause the player chose (P), not one a panel holds: the page carries it into a field built again (app.js).
     get pausedByPlayer(){return clock.paused&&!stepping(clock)&&!pausedFor&&!ended;},

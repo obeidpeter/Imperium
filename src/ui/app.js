@@ -286,13 +286,12 @@ let pageOverlay='';
 function fullWorld(){return !!fieldTarget();}
 const OVERLAY_SECTIONS={records:'.chamber-records',services:'#camp-services'};
 function togglePageOverlay(name){
-  const fromMenu=modal.open;if(fromMenu)modal.close();
+  // Chosen from the Menu: the Menu closes, and the list (or the world) takes the focus here and now.
+  if(modal.open){modalFocusPlaced=true;modal.close();}
   pageOverlay=pageOverlay===name?'':name;render();
   const shown=pageOverlay?app.querySelector(`main[data-overlay="${pageOverlay}"] ${OVERLAY_SECTIONS[pageOverlay]??''}`):null;
   for(const b of app.querySelectorAll('[data-cmd="page-overlay"]'))b.setAttribute('aria-expanded',String(b.dataset.id===pageOverlay));
   const target=shown??field?.element?.querySelector('canvas');if(shown)shown.tabIndex=-1;
-  // The Menu's close event comes later and gives focus back to what opened it: here, the list (or the world).
-  if(fromMenu)modalReturn=target?{element:target}:null;
   target?.focus({preventScroll:true});
 }
 // Esc from the scene closes a page overlay before it opens the Menu.
@@ -959,7 +958,7 @@ async function replaceCampaign({load,save,message}){
     }finally{saving=false;}
   });
 }
-let modalReturn=null;
+let modalReturn=null,modalFocusPlaced=false;
 function showModal(title,body,{menu=false,back='menu',pause=false}={}){
   const panelId=title.toLowerCase().replace(/[^a-z]+/g,'-');
   const samePanel=modal.open&&modal.dataset.panel===panelId;
@@ -1033,13 +1032,16 @@ modal.addEventListener('close',()=>{
   // A reply can close this dialog and another camp desk can reopen it before
   // the queued native close event arrives. That old event must not erase the
   // new conversation, release its pause or move focus into the background.
+  // The page may already have placed the focus itself when it closed the dialog (release 12: the Menu closing for
+  // the camp's list); the event comes later, by when the player may have moved on, so it leaves the focus alone.
+  const placed=modalFocusPlaced;modalFocusPlaced=false;
   if(modal.open)return;
   disposeSoldierPreview();
   rebinding=null;const prior=modalReturn;modalReturn=null;
-  const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
+  const el=placed?null:prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
-  else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
-  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');
+  else if(!placed){const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
+  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel',{focus:!placed});
   // The world takes the focus back (release), unless it returns into a list open over the world (release 12):
   // the camp's list, or the chamber's members, keeps it for the keyboard.
   if(el?.isConnected&&pageOverlay&&el.closest(OVERLAY_SECTIONS[pageOverlay]??'#none'))el.focus({preventScroll:true});
