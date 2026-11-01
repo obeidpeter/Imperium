@@ -285,11 +285,14 @@ let pageOverlay='';
 function fullWorld(){return !!fieldTarget();}
 const OVERLAY_SECTIONS={records:'.chamber-records',services:'#camp-services'};
 function togglePageOverlay(name){
-  if(modal.open)modal.close();
+  const fromMenu=modal.open;if(fromMenu)modal.close();
   pageOverlay=pageOverlay===name?'':name;render();
   const shown=pageOverlay?app.querySelector(`main[data-overlay="${pageOverlay}"] ${OVERLAY_SECTIONS[pageOverlay]??''}`):null;
   for(const b of app.querySelectorAll('[data-cmd="page-overlay"]'))b.setAttribute('aria-expanded',String(b.dataset.id===pageOverlay));
-  if(shown){shown.tabIndex=-1;shown.focus({preventScroll:true});}else field?.element?.querySelector('canvas')?.focus({preventScroll:true});
+  const target=shown??field?.element?.querySelector('canvas');if(shown)shown.tabIndex=-1;
+  // The Menu's close event comes later and gives focus back to what opened it: here, the list (or the world).
+  if(fromMenu)modalReturn=target?{element:target}:null;
+  target?.focus({preventScroll:true});
 }
 // Esc from the scene closes a page overlay before it opens the Menu.
 const menuOrClose=()=>{if(pageOverlay){togglePageOverlay(pageOverlay);return;}showNavigation();};
@@ -1035,7 +1038,11 @@ modal.addEventListener('close',()=>{
   const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
   else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
-  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');soldierPanel=null;conversation=null;delete modal.dataset.soldier;delete modal.dataset.conversation;
+  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');
+  // The world takes the focus back (release), unless it returns into a list open over the world (release 12):
+  // the camp's list, or the chamber's members, keeps it for the keyboard.
+  if(el?.isConnected&&pageOverlay&&el.closest(OVERLAY_SECTIONS[pageOverlay]??'#none'))el.focus({preventScroll:true});
+  soldierPanel=null;conversation=null;delete modal.dataset.soldier;delete modal.dataset.conversation;
 });
 async function showExport(){showExportCode(await saveCode(Game.codeState(archivePrimaryState??state)));}
 // Settings → Run performance check. The battle is measured where it stands:
