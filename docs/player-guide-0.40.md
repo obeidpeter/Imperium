@@ -1502,6 +1502,11 @@ Confidence for each supply missing.
 
 ## Reading the chamber
 
+- One row above the floor counts your support and projects the vote
+  after the rivals' hour. **Votes & delegates** opens the coalition
+  panel below it; **Members** opens the motion, the members and the
+  promises made, over the chamber (**Esc** closes it).
+
 - The **coalition panel** separates committed members from wavering
   support and shows the promises you have left.
 
