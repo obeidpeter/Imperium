@@ -143,6 +143,10 @@ These are the genre's conventions, built in Imperium's own Roman style. Nothing 
   - **The unheard oath.** In the finale's oath route, an oath sworn with no rival band in reach says so, naming the nearest band and how far it is.
   - **The oath's reach, forecast.** Before the oath is sworn, the Rally button says whether a band is in reach, or how far the nearest one is.
 - **Two pull requests:** first the layout, walking to places, the 2D view switch and the oath's messages; then the camera.
+- **As built in the first pull request** ([report](fullscreen-release12-report.md)):
+  - What used to follow the world opens **in place over it**, rather than in the one dialog: help, tips and the battle log at its top-left corner, All actions and order review at its right edge, a fight's result and the chamber's members in the middle, and the camp's list under **Menu → Camp**. The player sees the same thing; their focus, pause and live updates stay as they were. The Menu, Settings, the panels (I C J Q L M R A) and conversations stay in the dialog.
+  - Talking to a person from the camp list takes the soldier to that person at once, as map travel does, rather than walking there.
+  - The pixel cap is a budget per quality: at most the pixels of a 1,920 × 800 view at that quality's own resolution.
 
 #### 13. The inventory
 

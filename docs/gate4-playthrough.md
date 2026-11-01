@@ -93,7 +93,7 @@ In the bot's sweeps the backer's and the battle's routes last 8 of the finale's 
 
 | Check | What to try | Notes |
 | --- | --- | --- |
-| Practice a battle | In a camp, Camp services → **Practice your completed encounters** (or the practice post on the drill field). A battle opens on the live field. Change the weather with the War-Room Mutators, play it, then **Return to chronicle**: the camp should be exactly as you left it. | |
+| Practice a battle | In a camp, **Menu → Camp** → **Practice your completed encounters** (or the practice post on the drill field). A battle opens on the live field. Change the weather with the War-Room Mutators, play it, then **Return to chronicle**: the camp should be exactly as you left it. | |
 | Practice a Contest | A Contest from Chapter VII on opens in the chamber. | |
 | F2 in practice | Should say practice is not saved. | |
 | The standalone skirmish | From the title screen, **Try a standalone skirmish** opens the real-time arena. | |
@@ -108,6 +108,8 @@ In the bot's sweeps the backer's and the battle's routes last 8 of the finale's 
 | The armourer (release 11) | Talk to Bassus beside the quartermaster in two camps. Buy a fine piece, wear it, and check **Against squads** in the character panel (**C**). Was it worth its price? | |
 | Battlefield containers (release 11) | In a battle with a locked strongbox, take its key from the field, open it during the fight, then **Search the field** after the victory. Try **Retry** after taking something: it should be back. | |
 | Champions (release 11) | In a squad battle from Chapter IV, the enemy's champion comes for your soldier. Did he feel like a fair test of your kit, too easy, or too hard? Take what he carries. | |
+| The full-screen world (release 12) | In a camp, a battle and a Contest, the world fills the window and nothing scrolls. Use the bar's buttons for the panels (**Kit**, **Character**, **Journal**, **Orders**, **Chronicle**, **Map**, **Company**, **Decorations**, **Help**). Open help, the battle log, **All actions** and **Review orders** over the world, and close each with **Esc**. Was anything you needed hard to find? | |
+| Walking to places (release 12) | In two camps, use the people and services by walking to them. Then open **Menu → Camp**, choose a person, and **March out** from the list. Did you miss the old list beside the scene? | |
 | Kit and difficulty (release 11) | Over the play-through: did better kit make battles feel easier? Was a soldier in only the issued kit able to keep up? The bot wins nearly everything with any kit; your view sets the final feel. | |
 
 ## Accessibility (the 0.40 brief's manual checks)
@@ -117,7 +119,7 @@ In the bot's sweeps the backer's and the battle's routes last 8 of the finale's 
 | Keyboard only | Chapters I–II, the standing orders of III, a formation in V, the deployment of VII, a Contest and a kit change, without the mouse. | |
 | Screen reader | NVDA or VoiceOver: a battle's actions and a Contest's vote are read out, and nothing traps the focus. | |
 | Colour | High contrast (Settings → Readability) and the blocs without colour. | |
-| Text size | Game text at 200%: nothing hidden or cut off, the order review and the tracked errand included. | |
+| Text size | Game text at 200%: nothing hidden or cut off, the order review, the camp list and the tracked errand included. The world itself never scrolls (release 12). | |
 | Reduced motion | The ceremonies keep their first view; the scene holds still. | |
 
 ## On a phone and a laptop
@@ -126,7 +128,7 @@ On each device, in a large battle (Chapter VII or XII):
 
 1. Menu → Settings → Graphics → **Performance diagnostics** → **Run performance check**. Keep the game's tab in front until it finishes. It builds, warms up and measures each quality, then measures yours twice more: one to three minutes in all. Switching tabs or locking the phone stops it as interrupted: run it again.
 2. Save the results file and send it. It records the frame times, the graphics chip and the simulation's tick on that device, and the tiers are tuned from it. A check that reports software rendering or an unidentified graphics chip cannot recommend a quality; send it anyway.
-3. Play a few minutes by touch on the phone, and note anything hard to reach or read.
+3. Play a few minutes by touch on the phone, and note anything hard to reach or read: the **Panels** button, the actions along the bar and the camp list (release 12) included.
 
 | Device | Model, system and browser | File sent | Notes |
 | --- | --- | --- | --- |
