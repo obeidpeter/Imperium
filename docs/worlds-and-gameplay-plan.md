@@ -141,7 +141,8 @@ These are the genre's conventions, built in Imperium's own Roman style. Nothing 
 - **Added by the owner (1 November):**
   - **The 2D view switch.** Switching the battle view from 3D to 2D during a session left the field blank, on main too: the 2D view was given the 3D view's canvas. Each view gets a canvas of its own kind, with the controls rebound, and a browser check switches both ways.
   - **The unheard oath.** In the finale's oath route, an oath sworn with no rival band in reach says so, naming the nearest band and how far it is.
-- **Two pull requests:** first the layout, walking to places, the 2D view switch and the unheard oath; then the camera.
+  - **The oath's reach, forecast.** Before the oath is sworn, the Rally button says whether a band is in reach, or how far the nearest one is.
+- **Two pull requests:** first the layout, walking to places, the 2D view switch and the oath's messages; then the camera.
 
 #### 13. The inventory
 
