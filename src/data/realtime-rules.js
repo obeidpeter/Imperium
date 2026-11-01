@@ -86,7 +86,7 @@ export const SHIELDS=Object.freeze({scutum:Object.freeze({name:'Scutum',block:.3
   round:Object.freeze({name:'Round shield',block:.2}),
   // Release 11's finer and named shields.
   scutum_rim:Object.freeze({name:'Iron-rimmed scutum',block:.34}),scutum_light:Object.freeze({name:'Painted oval shield',block:.31}),
-  parma_bossed:Object.freeze({name:'Bossed parma',block:.23}),cavalry_oval:Object.freeze({name:'Cavalry shield',block:.26}),
+  parma_bossed:Object.freeze({name:'Bossed parma',block:.23}),cavalry_oval:Object.freeze({name:'Cavalry shield',block:.29}),
   scutum_victory:Object.freeze({name:'Victory shield',block:.36})});
 
 // Kit lives in items.js (§3.13); the rules read it from there.

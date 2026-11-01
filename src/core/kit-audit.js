@@ -117,8 +117,9 @@ export function kitAuditProblems(){
   const problems=[];
   for(const {chapter,items}of SMITH)for(const id of items)if(ITEMS[id].value>incomeCeiling(chapter))problems.push(`${id}: ${ITEMS[id].value} d is beyond Chapter ${chapter}'s ceiling.`);
   for(const i of Object.values(ITEMS).filter(x=>x.grade&&x.slot)){
-    const chapter=SMITH.find(s=>s.items.includes(i.id))?.chapter??12,place=placeOf(i.id);
-    const standard=quartermasterStock(chapter).filter(id=>!ITEMS[id].grade&&placeOf(id)===place&&!(ITEMS[id].weapon&&WEAPONS[ITEMS[id].weapon]?.ranged));
+    // Compared within its family: a spatha with spathae, an oval shield with oval shields.
+    const chapter=SMITH.find(s=>s.items.includes(i.id))?.chapter??12,place=placeOf(i.id),family=id=>ITEMS[id].visuals?.weapon??ITEMS[id].visuals?.shield??null;
+    const standard=quartermasterStock(chapter).filter(id=>!ITEMS[id].grade&&placeOf(id)===place&&family(id)===family(i.id)&&!(ITEMS[id].weapon&&WEAPONS[ITEMS[id].weapon]?.ranged));
     const best=standard.reduce((m,id)=>Math.max(m,itemScore(id)),-Infinity);
     if(standard.length&&itemScore(i.id)<=best)problems.push(`${i.id} (${itemScore(i.id).toFixed(1)}) does not beat the standard ${place} (${best.toFixed(1)}).`);
   }
