@@ -26,7 +26,7 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 9 | Landmarks and set pieces | merged ([#41](https://github.com/obeidpeter/Imperium/pull/41); [report](landmarks-release9-report.md)) |
 | 10 | Gate 4 and 0.40.0 | in progress: Practice in real time and the [Gate 4 checklist](gate4-playthrough.md) merged ([#42](https://github.com/obeidpeter/Imperium/pull/42)); the owner's play-through, decision on the turn-based mode and Performance-check files follow releases 11–14 |
 | 11 | Chests, the smith and the armoury | merged ([#46](https://github.com/obeidpeter/Imperium/pull/46); [report](chests-release11-report.md)) |
-| 12 | The full-screen world and the camera | in progress, in two pull requests: the layout first, then the camera |
+| 12 | The full-screen world and the camera | in progress: the full-screen world merged ([#47](https://github.com/obeidpeter/Imperium/pull/47); [report](fullscreen-release12-report.md)); the fixed camera follows in a second pull request |
 | 13 | The inventory | planned |
 | 14 | Walking between areas | planned |
 
