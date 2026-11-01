@@ -578,7 +578,11 @@ html[data-world="full"] .rt-chamber-strip>.rt-vote-summary>p{margin:0}
 html[data-world="full"] .rt-chamber-strip>.rt-vote-summary>p:first-child{order:0;flex:none;font-weight:700;color:var(--rt-focus);font-size:calc(.85rem * var(--text-scale,1))}
 html[data-world="full"] .rt-chamber-strip>.rt-vote-summary>p:last-child{order:1;flex:1 1 12rem;min-inline-size:0;color:var(--rt-muted);font-size:calc(.78rem * var(--text-scale,1))}
 html[data-world="full"] .rt-chamber-strip>.rt-coalition-details{order:2;flex:none;padding:0;background:none}
-html[data-world="full"] .rt-chamber-strip>.rt-coalition-details[open]{flex-basis:100%;order:4}
+/* Votes & delegates drops down over the chamber, as Mission details does; a conversation opens above it. */
+html[data-world="full"] .rt-chamber-strip>.rt-coalition-details[open]>.rt-detail-body{position:absolute;z-index:7;inset-inline:.5rem;inset-block-start:100%;
+  max-inline-size:none;max-block-size:min(60dvh,30rem);overflow:auto;overscroll-behavior:contain;background:#25262a;border:1px solid var(--rt-line);border-radius:.4rem;
+  padding:.4rem .6rem;box-shadow:0 .6rem 1.6rem #000a}
+html[data-world="full"] .rt-workspace>.rt-talk{z-index:8}
 html[data-world="full"] .rt-chamber-strip>.rt-coalition-details>summary{min-block-size:2rem;padding-block:0}
 html[data-world="full"] .rt-chamber-strip>.rt-records{order:2;flex:none;min-block-size:2rem;padding:.15rem .6rem}
 html[data-world="full"] .realtime-frame:not([data-outcome="active"]) .rt-chamber-strip{display:none}

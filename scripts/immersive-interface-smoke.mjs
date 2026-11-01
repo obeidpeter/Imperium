@@ -62,7 +62,7 @@ async function measure(page,label,{camp=false,desktop=false,scale=1}={}){
     const canvas=document.querySelector('#rt-board').getBoundingClientRect(),rect=el=>{const b=el.getBoundingClientRect();return {x:b.x,y:b.y,w:b.width,h:b.height};};
     // Release 12: the strip, the bar and the deployment controls never cover the world. Help, tips, the log,
     // All actions, a conversation and the camp list open over it by design, inside the world's own area.
-    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-deploy,.rt-chronicle-bar,.rt-field>.rt-status-strip,.rt-vote-summary')].filter(el=>el.checkVisibility({checkVisibilityCSS:true}));
+    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-deploy,.rt-chronicle-bar,.rt-field>.rt-status-strip,.rt-chamber-strip')].filter(el=>el.checkVisibility({checkVisibilityCSS:true}));
     return {viewport:{width:innerWidth,height:innerHeight},world:document.documentElement.dataset.world,
       documentWidth:document.documentElement.scrollWidth,documentHeight:document.documentElement.scrollHeight,canvas:rect(document.querySelector('#rt-board')),
       overlap:panels.filter(el=>{const b=el.getBoundingClientRect();return Math.min(b.right,canvas.right)-Math.max(b.left,canvas.left)>1&&Math.min(b.bottom,canvas.bottom)-Math.max(b.top,canvas.top)>1;}).map(el=>el.className)};

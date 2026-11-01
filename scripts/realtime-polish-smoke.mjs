@@ -83,8 +83,8 @@ async function layout(page,label){
     const rect=el=>{const b=el.getBoundingClientRect();return {x:b.x,y:b.y,w:b.width,h:b.height};};
     const visible=el=>!el.hidden&&getComputedStyle(el).display!=='none'&&el.getClientRects().length;
     // Release 12: the strip, the bar and the chamber's bands never cover the action region; lessons, a conversation,
-    // All actions and the log open over the world by design, inside its own area.
-    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-deploy,.rt-rivals,.rt-field>.rt-status-strip,.rt-chronicle-bar,.rt-vote-summary,.rt-coalition')].filter(visible);
+    // All actions, the log and an opened Votes & delegates drop over the world by design, inside its own area.
+    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-deploy,.rt-rivals,.rt-field>.rt-status-strip,.rt-chronicle-bar,.rt-chamber-strip')].filter(visible);
     const overlap=panels.filter(el=>{const b=el.getBoundingClientRect();return Math.min(b.right,r.right)-Math.max(b.left,r.left)>1&&Math.min(b.bottom,r.bottom)-Math.max(b.top,r.top)>1;}).map(el=>el.className);
     return {viewport:{w:innerWidth,h:innerHeight},canvas:rect(board),overlap,documentWidth:document.documentElement.scrollWidth,documentHeight:document.documentElement.scrollHeight,
       feedback:rect(document.querySelector('.rt-message-area')),units:rect(document.querySelector('.rt-unit-dock')),actions:rect(document.querySelector('.rt-ability-area')),

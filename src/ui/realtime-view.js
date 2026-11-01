@@ -102,7 +102,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
     </header>
     ${camp?'':missionStrip}
     <aside class="rt-notice" data-role="notice" role="status" hidden><div><strong data-role="noticeTitle"></strong><p data-role="noticeBody"></p></div><button type="button" data-role="dismissNotice" aria-label="Dismiss battlefield update">×</button></aside>
-    ${chamber?'<div class="rt-chamber-strip"><div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></details>'+
+    ${chamber?'<div class="rt-chamber-strip"><div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-detail-body"><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></div></details>'+
       '<button type="button" class="rt-records" data-cmd="page-overlay" data-id="records" aria-expanded="false" title="The motion, the members and the record">Members</button></div>':''}
     <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
       <p><strong>Place your units.</strong> Select a unit, then click the marked ground. Time is paused.</p>
