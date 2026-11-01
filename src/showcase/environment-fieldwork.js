@@ -205,5 +205,7 @@ export function createFieldworkKit({chapter=1,quality='balanced',geometries=new 
     for(const side of [-1,1])beam(g,[-dx*3.6-dz*side*1.16,.99,-dz*3.6+dx*side*1.16],[-dx*1.4-dz*side*1.16,record.height+.61,-dz*1.4+dx*side*1.16],.025,m.rope);
     return {x:point.x,z:point.z,base:point.y,height:record.height,dx,dz};
   }
-  return {build,platform,region};
+  // The kit's own pieces and materials, for other code-built field props (container-props.js).
+  const parts={m,mesh,plank,beam,group,box,cylinder,sphere,sack};
+  return {build,platform,region,parts};
 }

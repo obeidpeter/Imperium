@@ -5,6 +5,7 @@ import {positionProjectileTip} from './stage.js';
 import {ITEMS} from '../data/realtime-rules.js';
 import {EXCHANGE,MORALE} from '../data/realtime-squads.js';
 import {actorById} from '../core/realtime/abilities.js';
+import {containerById} from '../data/containers.js';
 import {span} from '../core/realtime/navigation.js';
 import {voterPosture} from './stage-figures.js';
 import {campActivityFor,sampleCampActivity} from './camp-activity.js';
@@ -108,7 +109,18 @@ export function stageEncounter(encounter,world,{appearance}={}){
   const fine=world.map.width!==encounter.width||world.map.height!==encounter.height?{width:world.map.width,height:world.map.height,terrain:stageTerrain(world)}:{};
   const squads=(world.squads??[]).filter(q=>q.members.some(id=>{const m=actorById(world,id);return m&&(!m.hidden||m.side!=='enemy');})).map(q=>squadUnit(world,q));
   return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(a=>stageUnit(a,{appearance,campActivity:campActivityFor(world,a.id)})),...squads],...stageMission(world),
-    field:stageField(world),fortifications:world.fortifications??null,elevations:world.map.elevations??[],operation:null,reinforcements:[],status:'active',turn:1,log:[]};
+    field:stageField(world),containers:stageContainers(world),fortifications:world.fortifications??null,elevations:world.map.elevations??[],operation:null,reinforcements:[],status:'active',turn:1,log:[]};
+}
+// The containers in sight (container-props.js), in the stage's centred metres, each
+// facing the middle of the board: closed, open with something left, or open and
+// emptied. A hidden cache stays off the stage until it is found.
+export function stageContainers(world){
+  const hx=world.map.width*TILE/2,hz=world.map.height*TILE/2,camp=world.kind==='camp';
+  return (world.objects??[]).filter(o=>o.kind==='container'&&!o.hidden).map(o=>{
+    const x=o.x-hx,z=o.z-hz,d=Math.hypot(x,z)||1,data=containerById(o.container),open=camp?!!o.opened:!!o.opened;
+    return {id:o.id,box:data?.kind??'chest',x,z,face:[+(-x/d).toFixed(3),+(-z/d).toFixed(3)],open,
+      empty:camp?!!o.empty:open&&!o.contents?.length,lockable:!!data?.lock,locked:camp?!!o.locked&&!!data?.lock:!!o.lock&&!o.unlocked};
+  });
 }
 // The objective's markers as the board shows them (stage-readout.js missionReadouts): the goal, the
 // positions to secure and the next wave, on the stage's 2.5 m tiles. A camp or chamber has none.

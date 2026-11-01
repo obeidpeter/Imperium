@@ -21,6 +21,7 @@ import {deploying} from './deployment.js';
 import {bandRound,bandTick} from './bands.js';
 import {squadSight} from './squad-sight.js';
 import {STRUCTURES} from '../../data/structures.js';
+import {containerProblem,isContainer,revealContainers,takeFrom,takeProblem} from './containers.js';
 
 // The real-time simulation (§3): a plain, JSON-serialisable world stepped at
 // a fixed 20 Hz. Every input is a Command { tick, actorId, kind, payload }
@@ -33,7 +34,7 @@ import {STRUCTURES} from '../../data/structures.js';
 
 // 4: interactive fortifications and their saved elevation/work state. An older
 // encounter restarts from its complete checkpoint; career progress is retained.
-export const WORLD_VERSION=6;
+export const WORLD_VERSION=7;
 const ticksOf=seconds=>Math.round(seconds*TIME.ticksPerSecond),LOG_LIMIT=80;
 // Orders share one queue place per actor; each other command kind has its own.
 const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','loot']);
@@ -51,7 +52,8 @@ export function createWorld({map,seed,actors,controlled='hero',options={},weathe
     map:{id:map.id??'map',width:map.width,height:map.height,terrain:map.terrain.map(row=>row.map(t=>typeof t==='string'?t:t?.type??'grass')),
       ...(map.rain?{rain:true}:{}),...(map.elevations?{elevations:map.elevations.map(e=>[...e])}:{})},scale,
     weather,timeOfDay,difficulty,practice,heroId:'hero',controlled,options:{keepFighting:false,drawToAttack:true,...options},status:'active',
-    actors:actors.map(makeActor),party:[...party],projectiles:[],objects:objects.map(o=>({...o,done:!!o.done})),mission,
+    actors:actors.map(makeActor),party:[...party],projectiles:[],objects:objects.map(o=>({...o,done:!!o.done,...(Array.isArray(o.contents)?{contents:[...o.contents]}:{}),
+      ...(o.lock?{lock:{...o.lock,...(o.lock.force?{force:{...o.lock.force}}:{})}}:{})})),mission,
     queue:[],seq:0,nextId:1,blows:[],events:[],log:[],used:[],reveals:[],spotting:{},spoils:[],provoked:[]};
   if(squads?.length){
     if(chapter!==null)world.chapter=chapter;
@@ -96,7 +98,12 @@ export function commandProblem(world,command){
     case 'attack':return actor.carrying?'CARRYING':validate(world,actor.id,'strike',{actorId:p.targetId,forced:!!p.forced});
     case 'ability':return ABILITIES[p.abilityId]&&!ABILITIES[p.abilityId].enemyOnly
       ?validate(world,actor.id,p.abilityId,{actorId:p.targetId,x:p.x,z:p.z,forced:!!p.forced}):'NO_TARGET';
-    case 'interact':{const o=objectById(world,p.objectId);return !o?'NO_TARGET':o.done&&!o.toggle?'ALREADY_DONE':fieldProblem(world,o,{force:!!p.force})??(actor.carrying?'CARRYING':null);}
+    case 'interact':{const o=objectById(world,p.objectId);if(!o)return 'NO_TARGET';
+      // A chest or cache (containers.js): found, and on a battlefield its lock answering to a key or to force; weapon sheathed.
+      if(isContainer(o))return containerProblem(world,actor,o,{force:!!p.force})??(actor.carrying?'CARRYING':actor.drawn?'NEEDS_SHEATHED':null);
+      return o.done&&!o.toggle?'ALREADY_DONE':fieldProblem(world,o,{force:!!p.force})??(actor.carrying?'CARRYING':null);}
+    // Taking from an open battlefield container the soldier stands by; the spoils are staged with the fight.
+    case 'takeFrom':return takeProblem(world,actor,objectById(world,p.objectId),p.items);
     case 'talk':{const o=actorById(world,p.targetId);return o?.alive&&!hostile(actor,o)&&o.talk?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
     case 'loot':{const o=actorById(world,p.targetId);return o&&!o.alive&&o.loot?.length?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
     // Taking from a body the soldier stands by: the items chosen so far (one queued take carries them all).
@@ -107,7 +114,8 @@ export function commandProblem(world,command){
     }
     case 'control':return actor.id===world.controlled?'ALREADY_CONTROLLED':null;
     case 'setStanding':return Array.isArray(p.slots)&&p.slots.length<=4&&p.slots.every(s=>!slotProblem(s))?null:'NO_TARGET';
-    case 'setKit':return Array.isArray(p.kit)&&p.kit.length<=16&&p.kit.every(id=>ITEMS[id])?null:'NO_TARGET';
+    // Only the standalone arena changes kit in the world: a campaign's kit is the chronicle's (soldier.js).
+    case 'setKit':return !world.mission&&world.kind==='field'&&Array.isArray(p.kit)&&p.kit.length<=16&&p.kit.every(id=>ITEMS[id])?null:'NO_TARGET';
     // Camps only: the map's travel to a place already walked to (no fight, no clock).
     case 'travel':return world.kind==='camp'&&Number.isFinite(p.x)&&Number.isFinite(p.z)?null:'NO_TARGET';
     // Orders to squads (command.js): the soldier gives them while he stands.
@@ -214,6 +222,7 @@ function applyCommand(world,command){
       cancelAction(world,actor);actor.order=null;actor.lock=null;actor.path=[];actor.gait=null;actor.moving=false;
       actor.x=actor.px=at.x;actor.z=actor.pz=at.z;emit(world,{kind:'travel',actorId:actor.id});break;
     }
+    case 'takeFrom':takeFrom(world,actor,objectById(world,p.objectId),p.items);break;
     // Spoils are staged with the fight; the soldier's pack receives them only when the result is recorded.
     case 'take':{
       const body=actorById(world,p.targetId);
@@ -366,6 +375,7 @@ export function step(world){
     moveActors(world);const hero=actorById(world,world.heroId);if(hero?.moving)used(world,hero,'move');
     act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);if(world.squads)exchangeSquads(world,{wound:exchangeWound});
     settleLocks(world);regenerate(world);perceive(world);if(world.squads)squadSight(world);if(world.band)bandTick(world);
+    revealContainers(world);
     world.reveals=world.reveals.filter(r=>r.until>world.tick);
     // A camp has no objective and never ends.
     if(world.mission)missionTick(world);else if(world.kind!=='camp'&&world.kind!=='chamber')checkObjectives(world);

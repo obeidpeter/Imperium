@@ -3,7 +3,7 @@ import {MOVEMENT,TIME} from '../../data/realtime-rules.js';
 import {MOUNTED_PACE} from '../../data/realtime-tactics.js';
 import {actorById,distanceBetween,hostile} from './abilities.js';
 import {makeActor} from './actors.js';
-import {derivedValues} from './combat.js';
+import {derivedValues,protectionOf,shieldOf} from './combat.js';
 import {cellCentre,clampToMap,clearLine,findRoute,groundHeight,navGrid,nearestWalkable,span,speedFactor,terrainAtPoint,traversableStep,walkable} from './navigation.js';
 import {sightBlocked,terrainCover} from './sight.js';
 import {pickWeighted} from './rng-streams.js';
@@ -306,6 +306,15 @@ export function closest(world,a,b){
 export const missileRangeOf=squad=>EXCHANGE.missileRange[squad.role]??0;
 export function inContact(world,a,b){return closest(world,a,b).distance<=EXCHANGE.contact;}
 
+// Release 11: what a single man's own kit turns of a squad's blows. His armour's
+// mean resistance to cut, point and crush (capped), and from the front a share of
+// his shield's block; squads among themselves keep the 0.38 exchange.
+export function singleWard(actor,aspect='front'){
+  if(!Array.isArray(actor?.kit)||!actor.kit.length)return {armour:0,shield:0,factor:1};
+  const p=protectionOf(actor),W=EXCHANGE.singleWard,armour=Math.min(W.armourCap,(p.cut.resist+p.pierce.resist+p.crush.resist)/3);
+  const shield=aspect==='front'?(shieldOf(actor)?.block??0)*W.shieldShare:0;
+  return {armour,shield,factor:(1-armour)*(1-shield)};
+}
 // A single man as the exchange's target: his place and facing, his brace, a
 // protector's guard and the cover at his feet count as they would for a squad.
 function asTarget(world,actor){
@@ -397,7 +406,8 @@ export function exchangeSquads(world,{wound=null}={}){
   }
   // The single men's wounds mount up in tenths of a 0.38 hit; whole points of Health come off.
   for(const hit of struck){
-    const {from,to,man,setup,ranged}=hit,amount=setup.damage*EXCHANGE.scale*exchangeSpread(world);
+    // His armour and shield turn their share (singleWard): the soldier's kit counts against squads too.
+    const {from,to,man,setup,ranged}=hit,amount=setup.damage*EXCHANGE.scale*exchangeSpread(world)*singleWard(to,setup.aspect).factor;
     emit(world,{kind:'exchange',squadId:from.id,targetId:to.id,damage:amount,ranged,x:to.x,z:to.z,fromX:man.x,fromZ:man.z});
     to.wear=(to.wear??0)+amount;const whole=Math.floor(to.wear+1e-9);if(!whole)continue;
     to.wear=Math.max(0,to.wear-whole);wound?.(world,man,to,whole,{missile:ranged?(from.role==='raider'?'javelin':'arrow'):null,arc:setup.aspect,squadId:from.id});

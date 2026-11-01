@@ -728,19 +728,24 @@ async function realtimeFinale(){
   await page.waitForFunction(()=>window.__realtime.world().tick>5,null,{timeout:60000}).catch(()=>assert.fail('The advance is sounded'));
   assert.match(await text(page,'[data-role="progress"]'),/Pledges 0 of 3/,'The progress line counts pledges');
   assert.deepEqual(await page.evaluate(()=>window.__realtime.world().squads.filter(q=>q.side==='enemy').map(q=>q.name).slice(0,2)),['Rival claimant','Civil-war cohort 2'],'The bands keep their names');
-  // Walk to the nearest rival band, then swear the oath once it is within three places (23 m).
+  // Walk to the nearest rival band, then swear the oath once it is within three places (23 m). Only a band's
+  // men count: the claimant's guard captain (a release 11 champion) seeks the soldier out, but he is no band.
   const heard=await page.evaluate(async()=>{
     const w=()=>window.__realtime.world(),hero=()=>w().actors.find(a=>a.id==='hero'),wait=ms=>new Promise(r=>setTimeout(r,ms));
-    const near=()=>{const h=hero();return w().actors.filter(a=>a.side==='enemy'&&a.alive).map(a=>({a,d:Math.hypot(a.x-h.x,a.z-h.z)})).sort((x,y)=>x.d-y.d)[0];};
+    const near=()=>{const h=hero(),bands=new Set(w().squads.filter(q=>q.side==='enemy').map(q=>q.id));
+      return w().actors.filter(a=>a.side==='enemy'&&a.alive&&bands.has(a.squadId)).map(a=>({a,d:Math.hypot(a.x-h.x,a.z-h.z)})).sort((x,y)=>x.d-y.d)[0];};
+    let sworn=null;
     for(let i=0;i<600;i++){
       if(window.__realtime.paused())document.querySelector('[data-role="pauseButton"]')?.click();
       const n=near();if(!n)return 'no rival';
-      if(n.d<=20){const r=window.__realtime.issue({actorId:'hero',kind:'ability',payload:{abilityId:'rally'}});if(r.ok)break;}
+      if(n.d<=20){const r=window.__realtime.issue({actorId:'hero',kind:'ability',payload:{abilityId:'rally'}});if(r.ok){sworn={id:n.a.id,d:Math.round(n.d),tick:w().tick};break;}}
       else if(!hero().goal||Math.hypot(hero().goal.x-n.a.x,hero().goal.z-n.a.z)>4)window.__realtime.issue({actorId:'hero',kind:'move',payload:{x:n.a.x,z:n.a.z}});
       await wait(100);
     }
     for(let i=0;i<300;i++){if(w().log.some(l=>/hears the soldier’s oath/.test(l.text)))return 'heard';await wait(100);}
-    return 'not heard';
+    const n=near(),h=hero(),champion=w().actors.find(a=>a.ai?.role==='champion');
+    return `not heard: ${JSON.stringify({sworn,tick:w().tick,nearest:n&&{id:n.a.id,d:Math.round(n.d)},hero:{hp:Math.round(h.hp),alive:h.alive},
+      champion:champion&&{alive:champion.alive,d:Math.round(Math.hypot(champion.x-h.x,champion.z-h.z))}})}`;
   });
   assert.equal(heard,'heard','A rival band hears the oath');
   await page.waitForFunction(()=>/Pledges \d of 3/.test(document.querySelector('[data-role="progress"]')?.textContent??''));

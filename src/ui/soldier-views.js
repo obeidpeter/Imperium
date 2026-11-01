@@ -1,10 +1,12 @@
 import {esc,roman} from './view-helpers.js';
 import {ITEMS,SLOTS,WORN_PLACES,PACK} from '../data/items.js';
-import {TP,COURSES,TRAINERS,DECORATIONS,TITLES,COMPANIONS,APPEARANCE,PATHS,PAY,quartermasterStock} from '../data/soldier.js';
+import {TP,COURSES,TRAINERS,DECORATIONS,TITLES,COMPANIONS,APPEARANCE,PATHS,PAY,quartermasterStock,smithStock} from '../data/soldier.js';
 import {ATTRIBUTES,ATTRIBUTE_NAMES,TRAINING_PATHS,ABILITIES,DAMAGE_TYPES,STANDING} from '../data/realtime-rules.js';
 import {soldierAttributes,courseEffects,attributeCost,courseOptions,knownAbilities,wornIds,wearProblem,priceOf,companionWorn,companionRank,
-  companionAttributes,areaOf} from '../core/soldier.js';
+  companionAttributes,areaOf,campContainerView} from '../core/soldier.js';
+import {CONTAINER_KINDS} from '../data/containers.js';
 import {derivedValues,protectionOf} from '../core/realtime/combat.js';
+import {singleWard} from '../core/realtime/squads.js';
 import {summarizeOrders} from '../core/realtime/party.js';
 import {summarizeSquadOrders} from '../core/realtime/squad-orders.js';
 import {SQUAD_STANDING} from '../data/realtime-squads.js';
@@ -102,8 +104,10 @@ export function characterPanel(state){
     return `<tr><th scope="row">${esc(ATTRIBUTE_NAMES[k])}</th><td>${attrs[k]}${bonus?` <small>(${s.base[k]} ${signed(bonus)})</small>`:''}</td>`+
       `<td class="attribute-impact"><strong>Next point: ${esc(effect)}</strong>${disclosure(`attribute-help-${k}`,'What this affects',`<p>${esc(ATTRIBUTE_EFFECTS[k])}</p>`)}</td>`+
       `<td>${camp?button('raise',`Raise (${cost} TP)`,{attribute:k},{disabled:s.tp<cost||s.base[k]>=60,title:s.base[k]>=60?'Maximum reached.':s.tp<cost?`Needs ${cost} training points.`:''}):''}</td></tr>`;}).join('');
+  // The share of a squad's blows his worn kit turns (squads.js singleWard): armour all round, the shield from the front.
+  const ward=aspect=>Math.round((1-singleWard({kit:wornIds(s)},aspect).factor)*100);
   const derived=[['Health',v.health],['Stamina',v.stamina],['Attack',v.attack],['Defence',v.defence],['Missile attack',v.missile],['Restriction',v.restriction],
-    ['Running speed',`${v.run.toFixed(1)} m/s`]].map(([k,n])=>`<div><dt>${k}</dt><dd>${n}</dd></div>`).join('');
+    ['Running speed',`${v.run.toFixed(1)} m/s`],['Against squads',`${ward('front')}% front · ${ward('flank')}% flank`]].map(([k,n])=>`<div><dt>${k}</dt><dd>${n}</dd></div>`).join('');
   const abilities=knownAbilities(state).map(id=>`<li><strong>${esc(ABILITIES[id].name)}</strong>: ${esc(ABILITIES[id].summary??'')}</li>`).join('');
   return `<div class="character-panel">
     <p class="soldier-balance"><strong>${s.tp} training points</strong> available · ${esc(TRAINING_PATHS[s.path].name)}${camp?'':' · Spend points in camp'}</p>
@@ -311,6 +315,48 @@ export function soldierCampCard(state){
     ${link('company','Company','R')}${link('quartermaster','Trade & pay','')}</div>
     ${disclosure('camp-trainers',`Courses & trainers (${trainers.length})`,trainers.map(t=>link('trainer',`${trainerName(state,t.id)} · ${t.title.match(/\(([^)]+)\)/)?.[1]??t.title}`,'',t.id)).join(''))}
     ${disclosure('camp-honours','Service honours',link('decorations','Decorations and titles','A'))}</section>`;
+}
+
+// The armourer: finer weapons, armour, helmets and shields than the issue, and
+// he buys kit and spoils like the others. Named pieces are found, never sold.
+export function smithPanel(state){
+  const s=state.soldier;if(!s)return adoptPanel(state);
+  const elo=soldierAttributes(s).elo,attributes=soldierAttributes(s);
+  const goods=smithStock(state.chapter).map(id=>{const price=priceOf(id,elo),item=ITEMS[id],needs=Object.entries(item.requires??{}).filter(([k,v])=>k!=='chapter'&&(attributes[k]??0)<v)
+    .map(([k,v])=>`${ATTRIBUTE_NAMES[k]??k} ${v}`);
+    return `<li><div><strong>${esc(item.name)}</strong> <small class="item-grade">${item.grade==='fine'?'Fine':''}</small>${s.denarii<price?`<small>Needs ${price} denarii; you have ${s.denarii}.</small>`:''}`+
+      `${needs.length?`<small>To wear it: ${esc(needs.join(', '))}.</small>`:''}${disclosure(`smith-item-${id}`,'Item details',`<p>${esc(itemSummary(id))}</p>`)}</div>`+
+      `${button('buy',`Buy (${price} d)`,{item:id,from:'smith'},{disabled:s.denarii<price,title:s.denarii<price?`Needs ${price} denarii.`:''})}</li>`;}).join('');
+  const sell=s.pack.filter(e=>!ITEMS[e.id].keep&&ITEMS[e.id].kind!=='quest').map(e=>`<li><span>${esc(ITEMS[e.id].name)}</span>`+
+    `${button('sell',`Sell (${priceOf(e.id,elo,{selling:true})} d)`,{uid:e.uid})}</li>`).join('');
+  return `<div class="quartermaster-panel smith-panel"><p>Your purse: <strong>${s.denarii} denarii</strong>.</p><h3>The armourer’s rack</h3>`+
+    `<ul class="shop-list">${goods||'<li>Nothing on the rack yet.</li>'}</ul>
+    ${disclosure('smith-sell','Sell from your pack',sell?`<ul class="shop-list">${sell}</ul>`:'<p>Nothing to sell.</p>')}
+    ${disclosure('smith-prices','How prices work','<p>Prices fall with Eloquence above 10, by up to a fifth. Everyone buys at half value. Named pieces are never for sale: they are found.</p>')}</div>`;
+}
+
+// A camp chest or other container (release 11, containers.js): what is still
+// inside, and its lock with the two ways to open it. Every button names a
+// soldier command; a refusal changes nothing.
+export function campContainerPanel(state,id){
+  const s=state.soldier,view=campContainerView(state,id);if(!view)return '<p>There is nothing here.</p>';
+  const c=view.container,kind=CONTAINER_KINDS[c.kind]?.name??'Container';
+  let body=`<p class="panel-lead"><span class="eyebrow">${esc(kind)}</span> ${esc(c.text)}</p>`;
+  if(!s)return body+'<p>Choose your soldier’s training first.</p>';
+  if(!view.unlocked){
+    const key=c.lock.key,hasKey=s.pack.some(p=>p.id===key),attributes=soldierAttributes(s),need=Object.entries(c.lock.force??{}),
+      needs=need.map(([k,v])=>`${ATTRIBUTE_NAMES[k]??k} ${v}`).join(', '),strong=need.length>0&&need.every(([k,v])=>(attributes[k]??0)>=v);
+    return body+`<p><strong>Locked.</strong> ${hasKey?`You carry the ${esc(ITEMS[key].name.toLowerCase())}.`:`Its key is somewhere in this camp.`}</p>`+
+      `<div class="panel-actions">${button('unlock','Use the key',{container:id,method:'key'},{primary:hasKey,disabled:!hasKey,title:hasKey?'':'You do not carry its key.'})}`+
+      `${need.length?button('unlock',`Force the lock (${needs})`,{container:id,method:'force'},{disabled:!strong,title:strong?'':`Forcing it needs ${needs}.`}):''}</div>`;
+  }
+  if(view.empty)return body+'<p>It is empty.</p>';
+  const rows=view.remaining.map(e=>`<li><div>${itemArt(e.itemId)}<strong>${esc(ITEMS[e.itemId].name)}</strong>`+
+    `${ITEMS[e.itemId].grade?` <small class="item-grade">${ITEMS[e.itemId].grade==='named'?'Named':'Fine'}</small>`:''}`+
+    `${disclosure(`container-item-${id}-${e.index}`,'Item details',`<p>${esc(itemSummary(e.itemId))}</p>`)}</div>`+
+    `${button('takeFrom','Take',{container:id,indices:String(e.index)})}</li>`).join('');
+  return body+`<ul class="shop-list container-list">${rows}</ul><div class="panel-actions">${button('takeFrom','Take all',{container:id},{primary:true})}</div>`+
+    '<p class="panel-note">What does not fit your pack stays inside.</p>';
 }
 
 // The canabae's sutler: her goods for coin, and she buys what you took from the field.

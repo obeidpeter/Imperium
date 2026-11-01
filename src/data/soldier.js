@@ -133,6 +133,20 @@ export const QUARTERMASTER=freeze([
   freeze({chapter:5,items:freeze(['hamata','dart_belt','conical_helmet','round_shield','scale_eastern'])}),
   freeze({chapter:7,items:freeze(['squamata','segmented_helmet'])})]);
 export const quartermasterStock=chapter=>QUARTERMASTER.filter(q=>q.chapter<=chapter).flatMap(q=>q.items);
+// The armourer's finer work (release 11): weapons, armour, helmets and shields a
+// cut above the issue, added to his rack as the campaign moves on. Named pieces
+// are never sold; they are found.
+export const SMITH=freeze([
+  freeze({chapter:1,items:freeze(['arming_cap_padded','tunic_winter','bracae_thick'])}),
+  freeze({chapter:2,items:freeze(['lancea','parma_bossed','calcei_nailed'])}),
+  freeze({chapter:3,items:freeze(['gladius_fine','ring_belt','subarmalis_thick'])}),
+  freeze({chapter:4,items:freeze(['spatha_fine','galea_tinned','scutum_rim','ocreae_fine'])}),
+  freeze({chapter:5,items:freeze(['niederbieber','manica_scale','hasta_fine'])}),
+  freeze({chapter:6,items:freeze(['ring_sword'])}),
+  freeze({chapter:7,items:freeze(['hamata_fine','scutum_light','cavalry_oval','dart_belt_full'])}),
+  freeze({chapter:8,items:freeze(['squamata_tinned','birrus'])}),
+  freeze({chapter:10,items:freeze(['tunic_clavi'])})]);
+export const smithStock=chapter=>SMITH.filter(q=>q.chapter<=chapter).flatMap(q=>q.items);
 
 // Recruit appearance choices.
 export const APPEARANCE=freeze({

@@ -139,7 +139,18 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         c.beginPath();q.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fillStyle='#9fd3d022';c.fill();c.setLineDash([8,6]);c.lineWidth=2;c.strokeStyle='#9fd3d0';c.stroke();c.setLineDash([]);}
       // Objectives and objects.
       if(w.mission?.goal&&markers())ellipse(flat.screen(v,w.mission.goal.x,w.mission.goal.z),(w.mission.radius??2.5)*unit*.7,'#f1d38a',{dash:[6,4]});
-      for(const o of w.objects??[]){const p=flat.screen(v,o.x,o.z);c.fillStyle=o.done&&!o.toggle?'#6b6050':o.state==='burning'?'#e07a2c':'#c49a4f';c.fillRect(p.x-v.tw*.12,p.y-v.th*1.1,v.tw*.24,v.th*1.1);
+      // The armourer's forge (release 11): an anvil on its block, behind him.
+      const forge=w.campPresentation?.smithy;
+      if(forge){const p=flat.screen(v,forge.x+w.map.width*TILE/2,forge.z+w.map.height*TILE/2);c.fillStyle='#5a4632';c.fillRect(p.x-v.tw*.08,p.y-v.th*.35,v.tw*.16,v.th*.35);
+        c.fillStyle='#4a4d4a';c.fillRect(p.x-v.tw*.18,p.y-v.th*.52,v.tw*.36,v.th*.17);}
+      for(const o of w.objects??[]){if(o.hidden)continue;const p=flat.screen(v,o.x,o.z);
+        // A chest (release 11): low and wide, its lid raised once open, dim once emptied, a lock while locked.
+        if(o.kind==='container'){const camp=w.kind==='camp',empty=camp?!!o.empty:!!o.opened&&!o.contents?.length,locked=camp?!!o.locked:!!o.lock&&!o.unlocked;
+          c.fillStyle=empty?'#6b6050':o.opened?'#d9b25c':'#b0844a';c.fillRect(p.x-v.tw*.2,p.y-v.th*.5,v.tw*.4,v.th*.5);
+          c.fillStyle=empty?'#57503f':'#7a5a2e';if(o.opened)c.fillRect(p.x-v.tw*.2,p.y-v.th*.95,v.tw*.4,v.th*.12);else c.fillRect(p.x-v.tw*.21,p.y-v.th*.58,v.tw*.42,v.th*.12);
+          if(locked){c.fillStyle='#3b3f3a';c.beginPath();c.arc(p.x,p.y-v.th*.25,v.tw*.05,0,Math.PI*2);c.fill();}
+          c.font=`600 ${Math.max(10,v.th*.42)}px system-ui`;c.textAlign='center';c.fillStyle='#f6efdb';c.fillText(`${o.name}${empty?' (empty)':locked?' (locked)':''}`,p.x,p.y-v.th*1.1);continue;}
+        c.fillStyle=o.done&&!o.toggle?'#6b6050':o.state==='burning'?'#e07a2c':'#c49a4f';c.fillRect(p.x-v.tw*.12,p.y-v.th*1.1,v.tw*.24,v.th*1.1);
         // A lit brazier's smoke, and its reach.
         if(o.state==='burning'){ellipse(p,2.5*unit*.7,null,{fill:'#9b928355'});ellipse(p,3*unit*.7,'#e07a2c',{dash:[4,4],width:1.5});}
         c.font=`600 ${Math.max(10,v.th*.42)}px system-ui`;c.textAlign='center';c.fillStyle='#f6efdb';c.fillText(o.field?`${o.name} (${o.state})`:o.name,p.x,p.y-v.th*1.3);}

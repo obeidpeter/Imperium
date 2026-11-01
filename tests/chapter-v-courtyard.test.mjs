@@ -34,7 +34,9 @@ test('Chapter V remains available in the full rollout, and every courtyard perso
     for(const target of [...world.actors.filter(a=>a.id!=='hero'),...world.objects]){
       const route=routePreview(world,'hero',target),end=route.points.at(-1);
       assert.ok(end&&Math.hypot(end.x-target.x,end.z-target.z)<=1.8,`${index}: ${target.id} can be approached`);
-      assert.ok(Game.campConversation(state,target.talk?.tree??target.talk),`${target.id} has a conversation`);
+      // A chest opens its contents, not a conversation (release 11).
+      if(target.container)assert.ok(Game.campContainerView(state,target.container),`${target.id} opens`);
+      else assert.ok(Game.campConversation(state,target.talk?.tree??target.talk),`${target.id} has a conversation`);
     }
     for(const place of CAMP_PLACES){assert.equal(world.places[place].name,campPlaceName(5,place));}
     for(const marker of world.campPresentation.interactions){
@@ -170,7 +172,8 @@ test('courtyard consequences describe only recorded decisions and committed fiel
     const p=Game.campPresentationFor(variant);
     assert.equal(p.civilianOutcome,choice==='civilians'?'departing':'delayed');
     assert.equal(p.stores,choice==='civilians'?'transport':'secured');
-    assert.deepEqual(p.ambient.map(a=>a.routine).sort(),['carry','carry','rest','watch','work'],'the water steward and the date-seller carry');
+    // The armourer (release 11) works beside the quartermaster.
+    assert.deepEqual(p.ambient.map(a=>a.routine).sort(),['carry','carry','rest','watch','work','work'],'the water steward and the date-seller carry');
     assert.equal(p.waterDetail,false);assert.equal(p.engineeringRecovered,false);
     variant.commandCampaign.plan='engineers';assert.equal(Game.campPresentationFor(variant).engineeringRecovered,false,'a chosen preparation is not a recovered field opportunity');
     variant.commandCampaign.records.push({id:'ch5-mine',opportunity:'signal'});

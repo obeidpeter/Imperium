@@ -77,6 +77,15 @@ export const DIALOGUE=freeze({
     greet:node('Quartermaster Aper','The stores are counted. Equipment, pay and anything you brought from the field are on the same account.',[
       opt('Equipment and pay.',null,{effects:{open:'quartermaster'}}),bye])
   }),
+  // The armourer (release 11): a careful man's rack beside the quartermaster's stores.
+  'hub:smith':tree('greet',{
+    greet:node('Bassus the armourer','Iron, bronze and leather. The quartermaster gives you what the army owes you; I sell what a careful man wants.',[
+      opt('Show me your rack.',null,{effects:{open:'smith'}}),opt('What makes a piece fine?','fine'),opt('Have you ever seen a named blade?','named'),bye]),
+    fine:node('Bassus the armourer','Smaller rings, each one riveted. A blade forged true and hardened evenly. A rim that turns an edge instead of splitting. You feel it in the hand before the field proves it.',[
+      opt('Show me your rack.',null,{effects:{open:'smith'}}),opt('Return.','greet')]),
+    named:node('Bassus the armourer','Once or twice. Pieces with a history turn up in strange places: a raider’s cache, an officer’s baggage, a chest nobody has opened since the last war. I never sell those. I would only spoil the story.',[
+      opt('Return.','greet'),bye])
+  }),
   'hub:local':tree('greet',{
     greet:node('The local steward','The local report is ready.',[opt('What is this place?','inspect'),bye]),
     inspect:node('The local steward','The place and its people.',[opt('Return.','greet'),bye])

@@ -56,6 +56,20 @@ Research checked 11 October 2026. These are short design notes, not a claim that
 
 **The armour.** Painted shields, mail or scale, spears and the long *spatha* guide the silhouettes. The British Museum notes the spread of the spatha through the army by the third century. Oval shields are the game's visual default, not a claim that curved rectangular shields had vanished: Yale preserves a mid-third-century rectangular scutum from Dura-Europos as well as evidence of other painted shields. [British Museum, sword catalogue](https://www.britishmuseum.org/collection/object/H_1892-0901-452); [Yale, painted shield](https://news.yale.edu/2025/02/21/painted-shield-once-wielded-roman-soldiers); [Getty/Yale conservation study of painted shields](https://www.getty.edu/publications/mummyportraits/part-two/16/)
 
+**The armourer's kit, the chests and the champions (worlds and gameplay release 11).** The finer and named pieces are third-century types drawn from the standard surveys of Roman military equipment, such as Bishop and Coulston's *Roman Military Equipment*. Their names, finishes and histories are the game's own, and none is a copy of a particular find.
+- The *Niederbieber*-type helmet, with its deep neck guard and wide cheek pieces, is named after the fort where examples were found. It is a late-second- and third-century infantry type. The engraved one is a named piece, not a known helmet.
+- The ring-pommel sword is a second- and third-century type. The game's ring sword is a short *spatha* with that pommel.
+- The ring-buckle belt (*cingulum*) is a third-century fashion. The game uses it as a pilum belt.
+- Mail with finer rings, mail edged with bronze rings and tinned scale are finishes the period knew. How common each was is uncertain, and their protection values are game balance.
+- The hooded *birrus* is the soldier's and civilian's heavy cloak. Diocletian's price edict of 301 names it, a generation after the game's period.
+- The *lancea* is a light spear. Late writers connect it with the *lanciarii*, whose name is later than most of the campaign.
+- The scale arm guard is an extrapolation from the *manica*, the articulated arm guard, and from scale armour. It is not a type the game claims was issued.
+- The full dart belt (Chapter VII) anticipates the weighted darts that late writers such as Vegetius describe, so it is placed late in the campaign.
+- The Sasanian straight sword and the Gothic chieftain's axe stand for their peoples' arms, not for particular weapons.
+- The game still avoids the segmented cuirass (*lorica segmentata*), as its art direction does for AD 250–275.
+
+Chests, lockers, caches and abandoned baggage are generic. Every champion and officer who seeks the soldier out is invented.
+
 **Shield designs.** Each faction's shields come from a small pattern library (`src/showcase/shield-patterns.js`). The designs are original simplifications, and none claims a historical unit's insignia.
 - Roman shields take victory iconography: wreaths, rosettes, rings and rays. They follow the spirit of the painted shields of mid-third-century Dura-Europos, whose rectangular scutum shows an eagle with a laurel wreath, winged Victories and a lion. The earlier wings and thunderbolt remain one design among them. [Yale, painted shield](https://news.yale.edu/2025/02/21/painted-shield-once-wielded-roman-soldiers); [ISAW, Edge of Empires](https://isaw.nyu.edu/exhibitions/edge-of-empires/highlights/shield)
 - Germanic boards are marked out only in colours, as Tacitus has it (*scuta tantum lectissimis coloribus distinguunt*, Germania 6). They are drawn as the round plank shields with a central boss known from the third-century deposits at Illerup Ådal and Thorsberg. [Tacitus, Germania](https://www.poetryintranslation.com/PITBR/Latin/TacitusGermania.php); [Roman Iron Age weapon deposits](https://en.wikipedia.org/wiki/Roman_Iron_Age_weapon_deposits)

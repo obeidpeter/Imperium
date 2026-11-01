@@ -3,6 +3,7 @@ import {stagingEdge} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {smooth} from './environment-layout.js';
 import {CH5_FORTRESS_LAYOUT} from '../ui/world-layouts.js';
+import {addSmithy} from './environment-smithy.js';
 
 /** Original Blender modular architecture, and a complete offline/Performance
  * fallback. Every solid footprint stays outside the full rules rectangle;
@@ -195,7 +196,8 @@ function addCourtyardServices({root,e,p,m,height,tileSize,geometries},parent){
   shelter('supply',service('quartermaster'),'east',6.2,7.3);
   shelter('aid',service('valetudinarium'),'east',6.6,7.3);
   for(const target of data.interactions??[]){
-    if(target.id==='gate')continue;
+    // A chest or locker is drawn by the live stage, open or shut (container-props.js).
+    if(target.id==='gate'||target.kind==='container')continue;
     const g=p.group(parent,target.x,height(target.x,target.z),target.z);g.name=`courtyard interaction ${target.id}`;g.userData.campInteraction=target.id;
     if(target.kind==='post'){
       p.plank(g,0,.66,0,.18,1.32,.18,m.darkWood);p.plank(g,0,1.12,0,.75,.12,.14,m.wood);
@@ -268,5 +270,7 @@ function addCourtyardServices({root,e,p,m,height,tileSize,geometries},parent){
     if(!g.children.length){parent.remove(g);continue;}
     batchStaticEnvironment(g,{geometries});g.traverse(o=>{if(o.isMesh){o.userData.environmentDynamic=true;o.raycast=()=>{};}});
   }
-  root.userData.chapterFivePilot.services={shelters,interactions,pads,outcomes};
+  const smithy=addSmithy({p,m,height},parent,data.smithy);
+  if(smithy){batchStaticEnvironment(smithy,{geometries,instanceThreshold:Infinity});smithy.traverse(o=>{if(o.isMesh){o.userData.environmentDynamic=true;o.raycast=()=>{};}});}
+  root.userData.chapterFivePilot.services={shelters,interactions,pads,outcomes,smithy:!!smithy};
 }

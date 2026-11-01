@@ -1,4 +1,5 @@
 import {createBattlefieldFeatures} from './battlefield-features.js';
+import {createContainerProps} from './container-props.js';
 import {renderDeviceReport} from './device-report.js';
 import {applyPairedContacts} from './paired-contact.js';
 import {createFrameProfile} from './frame-profile.js';
@@ -213,6 +214,7 @@ export class BattleStage{
     this.rebuildSceneryModels();yield;
     this.rebuildFieldFeatures();this.fieldFeatures.sync(encounter);yield;
     this.surfaceHeight=(x,z)=>this.fieldFeatures.surfaceHeight(x,z)??this.environment.groundHeight(x,z);this.frameProfile=createFrameProfile();
+    this.rebuildContainerProps();this.containerProps.sync(encounter.containers??[]);
     this.profileFrames=0;
     this.ink=createInkOverlay(this.scene,encounter,this.surfaceHeight,{throttle:true});yield;
     this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);yield;
@@ -286,6 +288,7 @@ export class BattleStage{
       this.discessio={...division,start,end:start+span,byUnit:new Map(division.moves.map(m=>[m.unitId,m]))};
     }
     this.encounter=encounter;if(this.fieldFeatures?.sync(encounter)){this.redrapeGroundOverlays();this.sceneryOcclusion?.add(this.fieldFeatures.group);}
+    if(this.containerProps?.sync(encounter.containers??[]))this.shadowDirty=true;
     this.visibleUnits=encounter.units.filter(u=>!u.hidden);const visible=new Set(this.visibleUnits.map(u=>u.id));this.shadowDirty=true;this.labelSizeDirty=true;
     for(const [id,a] of this.actors)if(!visible.has(id)){
       this.scene.remove(a.group);a.dispose();this.actors.delete(id);this.labels.get(id)?.remove();this.labels.delete(id);this.labelRefs.delete(id);
@@ -355,6 +358,13 @@ export class BattleStage{
     return {boardKit:this.boardKit?.scene??null,treeKit:this.treeKit?.scene??null,rockKit:this.rockKit?.scene??null,wallsKit:this.wallsKit?.scene??null,kitFinish,
       landmarkModels:new Map((this.landmarkKits??[]).filter(([,lease])=>lease.scene).map(([model,lease])=>[model,lease.scene]))};
   }
+  // The world's chests and caches (container-props.js), in the scenery's own materials, so they add no shader program.
+  rebuildContainerProps(){
+    const finish=material=>{installCloudShadows(material);const baked=this.environment?.occlusion?.uniforms;if(baked)installBakedOcclusion(material,baked);};
+    this.containerProps?.dispose();
+    this.containerProps=createContainerProps(this.scene,{heightAt:(x,z)=>this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),quality:this.worldQuality,chapter:this.chapter,
+      palette:this.environment?.materials??null,finish});
+  }
   rebuildFieldFeatures(){
     // Field objects stand in the scenery's light: cloud shadows and its baked
     // occlusion, and (sync) its camera cutaway. They then share its shaders.
@@ -388,7 +398,7 @@ export class BattleStage{
       this.builtQuality=this.quality;
       this.sceneryOcclusion?.dispose();this.environment.dispose();
       this.takeWorldKits(this.encounter,this.worldQuality);
-      this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.worldQuality,chapter:this.chapter,...this.worldKits()});this.rebuildFieldFeatures();
+      this.environment=createEnvironment(this.scene,this.encounter,{tileSize:2.5,quality:this.worldQuality,chapter:this.chapter,...this.worldKits()});this.rebuildFieldFeatures();this.rebuildContainerProps();
       this.rebuildSceneryModels();this.sceneryOcclusion=createSceneryOcclusion(this.environment.group,this.sceneryModels?.group,this.fieldFeatures?.group);
       this.rebuildRemains();this.rebuildAtmosphere();this.sky.dispose();
       this.sky=createSky(this.scene,this.profile,{quality:this.worldQuality,reducedMotion:this.reducedMotion});this.lighting.dispose();
@@ -833,14 +843,14 @@ export class BattleStage{
       shadowUpdates:this.shadowUpdates,labels:{...this.labelStats},triangles:this.renderer.info.render.triangles,textures:this.renderer.info.memory.textures,
       geometries:this.renderer.info.memory.geometries,quality:this.quality,worldQuality:this.worldQuality,cameraView:this.cameraView,actorAssets:actorAssetStatus(),gpu:this.gpuTimer?.stats(),
       resolution:this.resolutionBudget?.stats(),occlusion:this.sceneryOcclusion?.stats(),compositor:this.compositor?.stats(),figureStyle:this.figureStyle,
-      ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,
+      ink:this.ink?.stats()??null,remains:this.remains?.stats()??null,combat:this.combat?.stats()??null,containers:this.containerProps?.stats()??null,
       atmosphere:{clouds:this.cloudLevel??0,shafts:this.shafts?.stats()??null,reflection:this.reflection?.stats()??null},lighting:this.lighting.stats(),
       contactShadows:this.contactShadows.stats(),sky:this.sky.stats(),horizon:this.environment.horizon.stats};
   }
   dispose(){
     if(this.disposed)return;this.disposed=true;this.touchHold?.dispose();this.firstFrameDone?.();this.firstFrameDone=null;this.sceneryModels?.dispose();
     this.sound.dispose();this.finishMotion();cancelAnimationFrame(this.frame);this.resizeObserver.disconnect();this.events.forEach(fn=>fn());
-    this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.releaseWorldKits();this.environment.dispose();
+    this.actors.forEach(a=>a.dispose());this.sceneryOcclusion?.dispose();this.gpuTimer?.dispose();this.fieldFeatures?.dispose();this.containerProps?.dispose();this.releaseWorldKits();this.environment.dispose();
     this.sky.dispose();this.lighting.dispose();this.compositor?.dispose();this.contactShadows.dispose();this.ink?.dispose();this.remains?.dispose();
     this.combat?.dispose();this.shafts?.dispose();this.mist?.dispose();this.reflection?.dispose();CLOUD_UNIFORMS.cloudStrength.value=0;this.particleMask.dispose();
     this.labelLayer.remove();clearTimeout(this.restoreTimer);const geometries=new Set(),materials=new Set();

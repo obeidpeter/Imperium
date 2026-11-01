@@ -28,6 +28,9 @@ export const EXCHANGE=freeze({everyTicks:20,scale:.1,contact:2.6,
   missileRange:freeze({archer:40,raider:22}),poorSight:20,
   // The rules' modifiers (0.38 combatBreakdown, version 2).
   frontalShield:1,brace:2,wall:2,high:1,cover:1,heightRanged:1,cohesiveWall:1,lineScreen:1,neighbour:8,
+  // Release 11: a single man's own kit turns part of a squad's blows (squads.js singleWard): his armour's mean
+  // resistance to cut, point and crush, up to `armourCap`, and from the front `shieldShare` of his shield's block.
+  singleWard:freeze({armourCap:.65,shieldShare:.5}),
   wedgeAttack:1,wedgeExposure:1,charge:1,chargeRun:20,lowCohesion:1,suppressed:1,poorVisibility:1,barricade:1,barricadeRange:2,shaken:1,
   // A braced front that survives a frontal mounted charge strikes back, at most once a round (0.38 edition 34).
   counter:1,

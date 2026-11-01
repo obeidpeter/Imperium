@@ -297,7 +297,7 @@ of this table.
 | **Place**                                     | **What you do there**                                                                                                                                                                                                                     |
 |-----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Principia** (headquarters)                  | The commander's table: the chapter's decision, **Consult the War Council**, and the battle preparations (see **Preparing for battle**). From Chapter IV the duty clerk (in Chapter V, the fortress engineer) also opens the preparations. |
-| **Quartermaster**                             | Draw and return kit, sell what you took from the field and collect your pay in denarii.                                                                                                                                                   |
+| **Quartermaster**                             | Draw and return kit, sell what you took from the field and collect your pay in denarii. **Bassus the armourer** works at his forge beside the stores: he sells finer weapons, armour, helmets and shields, a few more each chapter, and buys kit. |
 | **Drill field**                               | Trainers who teach techniques and courses for training points (see **Your soldier**), and the practice post for **Practice completed encounters**. Varro teaches in Chapters I–V, a veteran instructor from Chapter VI.                    |
 | **Valetudinarium** (hospital)                 | Heals you fully between encounters and shows when wounded companions return to duty. From Chapter II Capsarius Didius teaches his medical courses here.                                                                                   |
 | **Barracks**                                  | The **company roll**: choose up to three companions to march with you and set their standing orders.                                                                                                                                      |
@@ -318,6 +318,13 @@ of this table.
 - The camp's people go about their work (keeping watch, counting stores,
   carrying water) and stop when you come near. With reduced motion they
   stay still.
+
+- **Chests and lockers.** Every camp has three or four containers to
+  open: a spare-kit chest at the stores, your own locker, an old
+  armoury chest, a cache under the stones. Each opens once, and what you
+  take from it is yours. Some are locked; the key is in another
+  container of the same camp, or you can force the lock if you are
+  strong enough.
 
 - **Consult the War Council** to hear how the officers and counterparts
   who are present weigh the chapter's decision and the coming
@@ -415,6 +422,9 @@ up, or keep the labels on in **Settings → Controls → Mouse & touch**.
 - You cannot run while an enemy within two metres is facing you: you can
   only walk away. Leaving never gives him a free blow.
 
+- Your own squads' men step aside to let your soldier, his companions and
+  a protected column through their ranks. Men who are fighting do not.
+
 ## Talking and using things
 
 - With your weapon sheathed, click a person to walk over and talk.
@@ -432,6 +442,15 @@ up, or keep the labels on in **Settings → Controls → Mouse & touch**.
 
 - Click a fallen enemy to search him. The loot window shows what he
   carried beside your pack (see **Your soldier**).
+
+- Click a **chest**, locker, strongbox or cache to open it, with your
+  weapon sheathed. Its contents show beside your pack, with **Take all**.
+  A locked one opens with its key, which lies elsewhere in the same camp
+  or on the same field, or a strong enough soldier forces it: the lock
+  says what it needs. On the field, forcing a lock takes five seconds and
+  stops if you are struck. A hidden cache shows itself when you walk
+  close; more Perception finds it from farther, and on the field
+  **Scout** reveals it too. Each container opens once.
 
 - **E** talks to or uses the nearest thing; it is the keyboard's left
   click.
@@ -906,6 +925,17 @@ arming cap under the helmet; a cloak over everything.
 - Pieces you cannot use yet are dimmed, with what they need, for example
   **Strength 14**.
 
+- **Fine and named pieces.** Beside the army's issue, the armourer sells
+  **fine** pieces: a finer *spatha* or ring-pommel sword, mail of finer
+  rings, tinned scale, a Niederbieber helmet, an iron-rimmed scutum.
+  **Named** pieces, each with a line of its history, are only found:
+  in chests and caches, and on champions. Each beats the standard piece
+  of its kind.
+
+- **Against squads.** When a squad's men strike your soldier, his armour
+  turns a share of their blows, and his shield turns more from the front.
+  The character panel (**C**) shows both shares under **Against squads**.
+
 - The **pack** is a grid in which each item takes its own shape.
   **Sort** arranges it, and dropping a new piece on a worn one swaps
   them, sending the old piece to the pack, or to the **ground** strip
@@ -913,7 +943,11 @@ arming cap under the helmet; a cloak over everything.
   left them in that area.
 
 - The **loot window** shows a fallen enemy's or a chest's contents
-  beside your pack; **Take all** moves everything that fits.
+  beside your pack; **Take all** moves everything that fits. After a
+  victory, **Search the field** lists the fallen and the field's
+  containers that still hold something. What you take from a battlefield
+  is kept when you continue, and **Retry** puts it back. Practice can look
+  but not take.
 
 - **Coin:** you are paid in **denarii** each chapter, with donatives
   after some victories. Denarii buy kit from the quartermaster and
@@ -1171,6 +1205,19 @@ struck stops the work. Using an object spends no Command and no Stamina.
 
 - Rank-and-file soldiers show a small role sign and a strength bar
   instead of a name; point at or target a man to see his name.
+
+- **Champions and officers.** In eleven squad battles of Chapters
+  IV–XII, one man of the enemy's seeks your soldier out: a war band's
+  chieftain, a Persian captain, a mercenary captain in the usurper's
+  pay, an armoured Palmyrene officer, the claimant's guard captain. He
+  knows where your soldier is, seen or not. He fights blow by blow, as
+  the raiders of Chapters I–III do, so your weapon, armour and shield
+  count against him. Once he falls, take his fine or named kit, or the
+  key he carries. He is the same on every level.
+
+- **Battlefield containers.** Most battles hide one or two: an officer's
+  strongbox, a raider's cache, abandoned baggage. Open one during the
+  fight, or after a victory from **Search the field**.
 
 - After each encounter the **After-Action Chronicle** names
   distinguished service and turning points and, after a defeat, gives a
@@ -1836,7 +1883,7 @@ its checkpoint.
 | Command capacity (orders per turn)                             | Command points that refill every round, with the same number per chapter                                                          |
 | Contest turns; **Inspect**                                     | Hours of the clepsydra; walk and talk; speeches by right-click; ask about interests in conversation                               |
 | Camp menus                                                     | A camp to walk through in every chapter, with trainers, a quartermaster, errands and people to talk to                            |
-| Character & equipment reference                                | Eight attributes, training points, trainers, decorations and layered kit with loot and pay                                        |
+| Character & equipment reference                                | Eight attributes, training points, trainers, decorations and layered kit with loot and pay; chests to open, an armourer in every camp, and finer and named pieces |
 | A fixed recruit                                                | Three trainings (Legionary, Explorator, Librarius) and an optional Iron discipline                                                |
 | Speeches unaffected by your soldier                            | Eloquence, Authority and decorations add to Resolve, Denounce, Rebut and Invoke Record, never taking them below their 0.38 values |
 | A Formation lasts for the current round                        | Formations last until you order another                                                                                           |

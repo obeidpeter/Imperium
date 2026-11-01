@@ -63,7 +63,9 @@ export function selectRealtimeView(stage,actor,view,kind='field'){
 }
 // Who the stage draws: hidden enemies stay off it until they are seen.
 // What the stage shows: the men in sight and the field objects' states (a gate opening, a fire lit).
-const shownKey=world=>world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(a=>a.id).join(',')+'|'+(world.objects??[]).map(o=>o.state??(o.done?1:0)).join(',')+
+// A container counts as found, opened, unlocked and emptied (container-props.js).
+const objectShown=o=>o.kind==='container'?`${o.hidden?'h':''}${o.opened?'o':''}${o.unlocked||o.locked===false?'u':''}${o.empty?'e':o.contents?.length??''}`:o.state??(o.done?1:0);
+const shownKey=world=>world.actors.filter(a=>!a.hidden||a.side!=='enemy').map(a=>a.id).join(',')+'|'+(world.objects??[]).map(objectShown).join(',')+
   // The objective's markers: the positions secured, the phase and the next wave.
   '|'+(world.mission?`${world.mission.phase??0}:${(world.mission.points??[]).map(p=>p.secured?1:0).join('')}:${(world.mission.waves??[]).filter(w=>w.arrived).length}`:'')+
   `|${world.map.rev??0}:${world.fortifications?.revision??0}`;
@@ -430,7 +432,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(!pick.actorId&&Number.isFinite(pick.x)){
       const man=world.squads?world.actors.filter(a=>a.squadId&&a.alive&&Math.hypot(a.x-pick.x,a.z-pick.z)<=.9).sort((a,b)=>Math.hypot(a.x-pick.x,a.z-pick.z)-Math.hypot(b.x-pick.x,b.z-pick.z))[0]:null;
       if(man){pick.actorId=man.id;return pick;}
-      const object=(world.objects??[]).find(o=>Math.hypot(o.x-pick.x,o.z-pick.z)<=1.4);if(object)pick.objectId=object.id;
+      const object=(world.objects??[]).find(o=>!o.hidden&&Math.hypot(o.x-pick.x,o.z-pick.z)<=1.4);if(object)pick.objectId=object.id;
       const body=world.actors.filter(a=>!a.alive&&a.loot?.length&&Math.hypot(a.x-pick.x,a.z-pick.z)<=1.2)[0];if(body&&!object)pick.actorId=body.id;
     }
     return pick;
@@ -566,7 +568,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function announceStop(){
     const h=me();if(!h)return;
-    const near=[...world.actors.filter(a=>a.alive&&a!==h&&!a.hidden),...(world.objects??[])].map(a=>({a,d:Math.hypot(a.x-h.x,a.z-h.z)})).sort((p,q)=>p.d-q.d)[0];
+    const near=[...world.actors.filter(a=>a.alive&&a!==h&&!a.hidden),...(world.objects??[]).filter(o=>!o.hidden)].map(a=>({a,d:Math.hypot(a.x-h.x,a.z-h.z)})).sort((p,q)=>p.d-q.d)[0];
     if(dom.announcer)dom.announcer.textContent=`Stopped${near?`, ${Math.round(near.d)} metres from ${near.a.name}`:''}.`;
   }
   function actOnTarget(forced){

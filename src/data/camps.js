@@ -1,3 +1,4 @@
+import {containersInCamp} from './containers.js';
 import {storyWhen} from './campaign.js';
 import {CAMP_CONTEXT,CAMP_SCENERY_PADS} from './camp-regions.js';
 import {campStoryId,campStoryFor} from './camp-stories.js';
@@ -25,12 +26,17 @@ export const PLACE_HINTS=freeze({gate:'March out to the next encounter.',princip
   barracks:'The company roll: who marches with you, and their standing orders.',canabae:'Traders, rumours and errands from civilians.'});
 
 const routineFor=p=>p.id==='sentry'?'watch':p.id==='quartermaster'?'work':['orderly','capsarius'].includes(p.id)?'rest':p.id==='trader'?'carry':null;
+// The armourer stands at the quartermaster's place in every camp (release 11),
+// at `smithAt` where a camp's court needs him elsewhere.
+const withSmith=data=>data.people.some(p=>p.id==='smith')?data.people:[...data.people,{...STAFF.smith,at:data.smithAt??[2.4,1.2]}];
 const camp=data=>freeze({peaceful:true,sceneryPads:CAMP_SCENERY_PADS[data.chapter]??[],...data,purpose:CAMP_CONTEXT[data.chapter].purpose,
   placeNames:CAMP_CONTEXT[data.chapter].placeNames,...(data.placeNames?{placeNames:data.placeNames}:{}),
   reportTree:data.chapter===5?'ch5:report':'hub:report',
-  terrain:grid(data.map),places:freeze(data.places),people:freeze(data.people.map(p=>freeze({...p,...(p.routine?{}:routineFor(p)?{routine:routineFor(p)}:{})}))),
+  terrain:grid(data.map),places:freeze(data.places),people:freeze(withSmith(data).map(p=>freeze({...p,...(p.routine?{}:routineFor(p)?{routine:routineFor(p)}:{})}))),
   objects:freeze([...data.objects,...activityObjects(data.chapter),...(data.chapter<=3?[{id:'local-report',kind:'table',name:'The local report',place:'canabae',at:[-2.5,0],talk:'hub:report'}]:[]),
-    ...(campStoryFor(data.chapter)?[{id:'company-record',kind:'table',name:campStoryFor(data.chapter).title,place:'barracks',at:[-2,-1.5],talk:campStoryId(data.chapter)}]:[])].map(freeze))});
+    ...(campStoryFor(data.chapter)?[{id:'company-record',kind:'table',name:campStoryFor(data.chapter).title,place:'barracks',at:[-2,-1.5],talk:campStoryId(data.chapter)}]:[]),
+    // Chests and other containers (release 11, containers.js): opened from the chronicle, not by conversation.
+    ...containersInCamp(data.chapter).map(c=>({id:c.id,kind:'container',name:c.name,place:c.place,at:c.at,container:c.id}))].map(freeze))});
 
 // The camp's standing staff, whom every later camp places in its own court.
 const STAFF=freeze({
@@ -40,7 +46,8 @@ const STAFF=freeze({
   capsarius:{id:'capsarius',name:'Capsarius Didius',role:'capsarius',place:'valetudinarium',talk:'hub:capsarius',routine:'rest'},
   quartermaster:{id:'quartermaster',name:'Quartermaster Aper',role:'quartermaster',place:'quartermaster',talk:'hub:quartermaster',routine:'work'},
   steward:{id:'local-steward',name:'The local steward',role:'clerk',place:'canabae',talk:'hub:local'},
-  sentry:{id:'sentry',name:'The gate sentry',role:'sentry',place:'gate',talk:'gate',routine:'watch'}});
+  sentry:{id:'sentry',name:'The gate sentry',role:'sentry',place:'gate',talk:'gate',routine:'watch'},
+  smith:{id:'smith',name:'Bassus the armourer',role:'smith',place:'quartermaster',talk:'hub:smith',routine:'work'}});
 const staff=(id,at,more={})=>({...STAFF[id],at,...more});
 // The company's named men, each at his barracks place or, while he recovers, at his `ward` there.
 const COMPANY=freeze({
@@ -379,6 +386,7 @@ export const CAMPS=freeze({
       {id:'ch5-cistern',kind:'cistern',cells:[[16,6],[17,6],[16,7],[17,7]]},
       {id:'ch5-household-bundles',kind:'bundles',cells:[[16,13],[17,13],[16,14],[17,14]]}],
     places:{gate:[4,6.4],principia:[4,1.5],quartermaster:[7.5,1.8],drill:[2,4.5],valetudinarium:[7.5,4.5],barracks:[1.5,2],canabae:[6.5,5.5]},
+    smithAt:[2,-1.2],
     placeNames:{gate:'Field gate',principia:'Command shelter',quartermaster:'Supply court',drill:'Formation yard',valetudinarium:'Aid shelter',barracks:'Company muster',canabae:'Evacuation shelter'},
     placeHints:{gate:'Depart for the tower or river gate.',principia:'Your decision, officers’ advice and battle preparation.',quartermaster:'Equipment and pay.',drill:'Training and completed-encounter practice.',valetudinarium:'The wounded and medical training.',barracks:'Choose your companions and their orders.',canabae:'Households waiting for the river route.'},
     people:[

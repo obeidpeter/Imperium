@@ -1,4 +1,4 @@
-import {ENEMY_AI,PERCEPTION,TIME} from '../../data/realtime-rules.js';
+import {ENEMY_AI,ITEMS,PERCEPTION,TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile,staggered,validate} from './abilities.js';
 import {derivedValues} from './combat.js';
 import {crossesCover,navGrid,span,terrainAtPoint,walkable,clampToMap,nearestWalkable,cellCentre} from './navigation.js';
@@ -40,7 +40,8 @@ export function noticeRate(world,watcher,target,{full=false}={}){
   if(world.timeOfDay==='night')visibility*=PERCEPTION.darkness;
   if(world.weather==='mist')visibility*=PERCEPTION.mist;
   if(!full&&(terrainCover(world,watcher,target)||smokeBetween(world,watcher,target)))visibility*=PERCEPTION.cover;
-  if(target.kit?.some(id=>id==='sagum'))visibility*=PERCEPTION.darkCloak;
+  // A dark cloak (the sagum, the birrus) hides its wearer.
+  if(target.kit?.some(id=>ITEMS[id]?.dark))visibility*=PERCEPTION.darkCloak;
   // Difficulty sharpens or dulls the enemy's eyes only, never the soldier's or his squads'.
   return base*visibility*proximity*(per/10)*(1-Math.min(.95,target.attributes.field/100))*(watcher.side==='enemy'?difficulty(world).notice:1);
 }
@@ -99,6 +100,8 @@ function nearest(list,p){let best=null,bd=Infinity;for(const o of list){const d=
 // approachAssignment): against Engineering the archers shoot the soldier, and
 // against a defensive advance the horse and raiders go for him.
 function chooseTarget(world,actor){
+  // A champion (release 11, champions.js) seeks the soldier out: he knows where he is, seen or not.
+  if(actor.ai.role==='champion'){const hero=actorById(world,world.heroId);if(hero&&standing(hero)&&hostile(actor,hero)&&!hero.hidden)return hero;}
   const foes=foesOf(world,actor);if(!foes.length)return null;
   const anchor=actor.ai.anchor??actor,hero=actorById(world,world.heroId);
   if(hero&&foes.includes(hero)&&(world.approach==='breach'&&derivedValues(actor).weapon.ranged||world.approach==='advance'&&['cavalry','raider'].includes(actor.ai.role)))return hero;
