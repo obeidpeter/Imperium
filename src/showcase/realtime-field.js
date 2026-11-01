@@ -19,7 +19,8 @@ import {targetReadout} from '../ui/realtime-target-readout.js';
 import {fieldShortcutAllowed} from '../ui/realtime-shortcuts.js';
 import {missionReadout} from '../ui/realtime-mission-readout.js';
 import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,revealAbility} from '../ui/realtime-hud.js';
-import {fieldNotice,missionAbilities,missionAbilityHint,opportunityReadout} from '../ui/field-experience.js';
+import {fieldNotice,missionAbilities,missionAbilityHint,oathNote,opportunityReadout} from '../ui/field-experience.js';
+import {oathForecast} from '../core/realtime/mission.js';
 import {commandSoundCue} from '../ui/adaptive-score.js';
 import {createOrderReview} from '../ui/squad-order-review.js';
 
@@ -343,8 +344,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const bar=abilitiesOf(h),abilityState=bar.map(id=>{const target=ABILITIES[id].target==='self'?{}:keyTarget?{actorId:keyTarget}:null;
       return `${id}:${target?validate(world,world.controlled,id,target)??'ok':ABILITIES[id].cost?.ammo&&!(h?.ammo?.[ABILITIES[id].cost.ammo]>0)?'NO_AMMO':'ok'}`;}).join(',');
     const team=partyIds().map(id=>{const a=actorById(world,id);return a?`${a.hp}/${a.stamina}/${a.drawn}/${a.down}/${a.alive}/${a.carrying}`:'';}).join(';');
+    // The finale's oath (release 12): which band would hear a Rally sworn now, for the Rally button.
+    const oath=world.controlled===world.heroId?oathForecast(world):null;
     const key=[team,world.controlled,h?.walkMode,h?.ammo?.pilum,h?.bandages,paused,clock.slow,clock.speed,round,Math.floor(progress*50),world.status,ability,
-      armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4].join('|');
+      armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4,oath?`${oath.heard}:${oath.squadId}:${oath.distance}`:''].join('|');
     if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
     if(listOpen&&metrics.frames%10===0)renderList();
     squads?.update();showThreat();
@@ -373,8 +376,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const states=Object.fromEntries(abilityState.split(',').filter(Boolean).map(s=>s.split(':')));
     for(const b of dom.abilityBar?.querySelectorAll('[data-ability]')??[]){
       const id=b.dataset.ability,state=states[id];b.setAttribute('aria-pressed',String(id===ability));b.classList.toggle('armed',id===armed);
-      const off=state&&state!=='ok'&&state!=='NO_TARGET';b.classList.toggle('unavailable',off);b.title=off?REASONS[state]:missionAbilityHint(world,id);
-      b.querySelector('small').textContent=abilityNote(id,h);
+      const off=state&&state!=='ok'&&state!=='NO_TARGET',sworn=id==='rally'?oath:null;b.classList.toggle('unavailable',off);b.classList.toggle('in-reach',!!sworn?.heard);
+      b.title=off?REASONS[state]:missionAbilityHint(world,id,sworn);b.querySelector('small').textContent=sworn?oathNote(sworn):abilityNote(id,h);
     }
   }
 

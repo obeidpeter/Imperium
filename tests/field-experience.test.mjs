@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createWorld,step,queueCommand,snapshotWorld,restoreWorld,worldHash} from '../src/core/realtime/simulation.js';
 import {abilityKey} from '../src/core/realtime/intents.js';
 import {ARENA,ENEMY_AI,FIELD_ORDER,TIME} from '../src/data/realtime-rules.js';
-import {missionAbilities,missionAbilityHint,fieldNotice,enemyCue,victoryReason} from '../src/ui/field-experience.js';
+import {missionAbilities,missionAbilityHint,fieldNotice,enemyCue,oathNote,oathReach,victoryReason} from '../src/ui/field-experience.js';
 import {abilityGroups} from '../src/ui/realtime-hud.js';
 import {attributeImprovement,attributeMilestone} from '../src/ui/soldier-comparison.js';
 import {soldierPreviewUnit} from '../src/showcase/soldier-preview.js';
@@ -33,7 +33,8 @@ test('every mission keeps essential abilities visible without dropping or renumb
     for(const id of missionAbilities(w).filter(id=>ids.includes(id)))assert.ok(groups.primary.includes(id),`${mode}: ${id}`);
     assert.deepEqual(groups.primary,ids.filter(id=>groups.primary.includes(id)));
   }
-  assert.match(missionAbilityHint({mission:{mode:'defection',radius:7.5}},'rally'),/22.5 m.*morale/);
+  // Rounded as the progress line rounds it (mission.js): 22.5 m reads 23 m in both.
+  assert.match(missionAbilityHint({mission:{mode:'defection',radius:7.5}},'rally'),/23 m.*morale/);
 });
 
 test('critical field notices and target counters are factual, stable and read-only',()=>{
@@ -43,6 +44,18 @@ test('critical field notices and target counters are factual, stable and read-on
   assert.match(fieldNotice(w,{kind:'pledge',name:'Fourth cohort',joined:false}).body,/leaves the field/);
   assert.match(victoryReason({mission:{mode:'defection',defections:1,rivals:4}}),/remaining opposition/);
   assert.equal(worldHash(w),before);
+});
+
+test('the Rally button forecasts the finale’s oath: in reach, how far, or no band left (release 12)',()=>{
+  const world={mission:{mode:'defection',radius:7.67}},heard={heard:true,reach:23,squadId:'enemy2',name:'Civil-war cohort 3',distance:12,morale:60};
+  const far={heard:false,reach:23,squadId:'enemy2',name:'Civil-war cohort 3',distance:47};
+  assert.equal(oathNote(heard),'in reach');assert.equal(oathNote(far),'47 m away');assert.equal(oathNote({heard:false,reach:23}),'no band');assert.equal(oathNote(null),'');
+  assert.equal(oathReach(heard),'Now: Civil-war cohort 3 would hear it (12 m).');
+  assert.equal(oathReach(far),'Now: no band in reach; the nearest, Civil-war cohort 3, is 47 m away.');
+  const hint=missionAbilityHint(world,'rally',far);
+  assert.match(hint,/^Win allegiance: Rally within 23 m of a rival formation/);assert.match(hint,/Now: no band in reach; the nearest, Civil-war cohort 3, is 47 m away\./);assert.match(hint,/Costs \d+ Stamina\.$/);
+  // Without a forecast (a companion controlled, or no world yet) the hint is the route's rule alone, with the reach rounded.
+  assert.equal(missionAbilityHint(world,'rally'),'Win allegiance: Rally within 23 m of a rival formation to weaken its morale. Three pledges, or defeating the remaining rivals, wins.');
 });
 
 test('archer retreats are bounded, create a shooting window and replay exactly after a save',()=>{

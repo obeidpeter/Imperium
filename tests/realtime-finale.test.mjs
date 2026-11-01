@@ -5,7 +5,7 @@ import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {commandDecision,heroDecision,playRealtime} from '../scripts/realtime-autoplay.mjs';
 import {queueCommand,step,worldHash} from '../src/core/realtime/simulation.js';
 import {actorById,hostile} from '../src/core/realtime/abilities.js';
-import {objectiveMet} from '../src/core/realtime/mission.js';
+import {oathForecast,objectiveMet} from '../src/core/realtime/mission.js';
 import {membersOf,squadCentre} from '../src/core/realtime/squads.js';
 import {fieldNotice} from '../src/ui/field-experience.js';
 import {deploy,deploying,soundTheAdvance} from '../src/core/realtime/deployment.js';
@@ -77,8 +77,11 @@ test('the oath (defection; placements and morale injected): a Rally within three
   const {state}=finale('defection'),world=advance(G.realtimeWorld(state)),m=world.mission,hero=actorById(world,world.heroId);
   const [, target,...others]=world.squads.filter(q=>q.side==='enemy');target.morale=60;for(const q of others)q.morale=70;
   const c=squadCentre(world,target);place(hero,{x:c.x-4,z:c.z});
+  // The Rally button's forecast (release 12) names the band that hears it, and reading it changes nothing.
+  const before=JSON.stringify(world),forecast=oathForecast(world);assert.equal(JSON.stringify(world),before,'the forecast is read-only');
+  assert.equal(forecast.heard,true);assert.equal(forecast.squadId,target.id);assert.equal(forecast.morale,60);
   assert.equal(rally(world).ok,true);const seen=until(world,(w,s)=>s.some(e=>e.kind==='pledge'),40);
-  const heard=seen.find(e=>e.kind==='oath-heard');assert.equal(heard?.squadId,target.id,'the lowest-morale band in reach hears it');assert.equal(heard.morale,20);
+  const heard=seen.find(e=>e.kind==='oath-heard');assert.equal(heard?.squadId,forecast.squadId,'as forecast');assert.equal(heard?.squadId,target.id,'the lowest-morale band in reach hears it');assert.equal(heard.morale,20);
   // The soldier and his seven squads are eight units: the band leaves the field, as 0.38's does.
   const pledged=seen.find(e=>e.kind==='pledge');assert.equal(pledged.joined,false);assert.equal(m.defections,1);
   assert.ok(!world.squads.includes(target)&&target.members.every(id=>!actorById(world,id)),'gone from the field');assert.deepEqual(m.departed,[target.unitId]);
@@ -92,11 +95,14 @@ test('an oath out of every band’s reach (release 12) changes no band, and says
   const bands=world.squads.filter(q=>q.side==='enemy'),morale=bands.map(q=>q.morale);
   const away=q=>Math.min(...membersOf(world,q).map(a=>Math.hypot(a.x-hero.x,a.z-hero.z)));
   assert.ok(Math.min(...bands.map(away))>reach+2,'the soldier starts beyond every band’s reach');
+  const before=JSON.stringify(world),forecast=oathForecast(world);assert.equal(JSON.stringify(world),before,'the forecast is read-only');
   assert.equal(rally(world).ok,true);const seen=until(world,(w,s)=>s.some(e=>e.kind==='rally'),40);
   const unheard=seen.find(e=>e.kind==='oath-unheard');assert.ok(unheard,'the oath is reported unheard');assert.ok(!seen.some(e=>e.kind==='oath-heard'));
   assert.deepEqual(bands.map(q=>q.morale),morale,'no band’s morale changes');assert.equal(m.defections??0,0);
   const nearest=[...bands].sort((a,b)=>away(a)-away(b))[0];
   assert.equal(unheard.reach,reach);assert.equal(unheard.squadId,nearest.id);assert.equal(unheard.name,nearest.name);
+  // The Rally button had forecast it: no band in reach, the same nearest band, about as far.
+  assert.equal(forecast.heard,false);assert.equal(forecast.reach,reach);assert.equal(forecast.squadId,unheard.squadId);assert.ok(Math.abs(forecast.distance-unheard.distance)<=1);
   assert.ok(Math.abs(unheard.distance-away(nearest))<=1.5,`${unheard.distance} m, about ${away(nearest).toFixed(1)} m`);
   assert.ok(world.log.some(l=>l.text===`No rival band is within ${reach} m to hear the soldier’s oath: the nearest, ${nearest.name}, is ${unheard.distance} m away.`),'the log says so');
   assert.deepEqual(fieldNotice(world,unheard),{title:'The oath was not heard',body:`Swear it within ${reach} m of a rival band. The nearest, ${nearest.name}, is ${unheard.distance} m away.`});
@@ -106,6 +112,7 @@ test('an oath out of every band’s reach (release 12) changes no band, and says
   for(const q of bands)q.strength=0;world.squads=world.squads.filter(q=>q.side!=='enemy');
   hero.cooldowns.rally=0;hero.stamina=hero.maxStamina;assert.equal(rally(world).ok,true);const alone=until(world,(w,s)=>s.some(e=>e.kind==='rally'),40).find(e=>e.kind==='oath-unheard');
   assert.ok(alone&&!alone.name,'no band to name');assert.equal(fieldNotice(world,alone).body,'No rival band is left on the field.');
+  assert.deepEqual(oathForecast(world),{heard:false,reach});
 });
 
 test('a pledged band joins a side of fewer than eight units (one squad struck off, injected), and is no longer anyone’s enemy',()=>{

@@ -101,6 +101,8 @@
 .rt-field .ability small{font-weight:400;color:var(--rt-muted);font-size:.72rem}
 .rt-field .ability[aria-pressed="true"]{box-shadow:inset 0 0 0 1px var(--rt-bronze)}
 .rt-field .ability.unavailable{opacity:.6}.rt-field .ability.armed{outline:3px solid var(--rt-friend)}
+/* The finale's oath: a rival band would hear it here (release 12). */
+.rt-field .ability.in-reach{box-shadow:inset 0 -3px 0 var(--rt-friend)}.rt-field .ability.in-reach small{font-weight:700}
 .rt-swords[aria-pressed="true"]{color:#ffd28a}
 /* Deployment and rival narration reserve their own rows, never the action region. */
 .rt-field[data-deploying="true"] .rt-paused{display:none}

@@ -778,6 +778,9 @@ async function realtimeFinale(){
   await page.waitForFunction(()=>window.__realtime.world().tick>5,null,{timeout:60000}).catch(()=>assert.fail('The advance is sounded'));
   assert.match(await text(page,'[data-role="progress"]'),/Pledges 0 of 3/,'The progress line counts pledges');
   assert.deepEqual(await page.evaluate(()=>window.__realtime.world().squads.filter(q=>q.side==='enemy').map(q=>q.name).slice(0,2)),['Rival claimant','Civil-war cohort 2'],'The bands keep their names');
+  // The Rally button forecasts the oath (release 12): from the deployment line, how far the nearest band is.
+  const rallyNote=()=>text(page,'[data-role="abilityBar"] [data-ability="rally"] small');
+  assert.match(await rallyNote(),/^\d+ m away$/,'Before the walk, the Rally button says how far the nearest band is');
   // Walk to the nearest rival band, then swear the oath once it is within three places (23 m). Only a band's
   // men count: the claimant's guard captain (a release 11 champion) seeks the soldier out, but he is no band.
   const heard=await page.evaluate(async()=>{
@@ -788,7 +791,11 @@ async function realtimeFinale(){
     for(let i=0;i<600;i++){
       if(window.__realtime.paused())document.querySelector('[data-role="pauseButton"]')?.click();
       const n=near();if(!n)return 'no rival';
-      if(n.d<=20){const r=window.__realtime.issue({actorId:'hero',kind:'ability',payload:{abilityId:'rally'}});if(r.ok){sworn={id:n.a.id,d:Math.round(n.d),tick:w().tick};break;}}
+      if(n.d<=20){
+        // In reach, the button says so before the oath is sworn.
+        for(let k=0;k<20&&document.querySelector('[data-role="abilityBar"] [data-ability="rally"] small')?.textContent!=='in reach';k++)await wait(100);
+        window.__rallyNote=document.querySelector('[data-role="abilityBar"] [data-ability="rally"] small')?.textContent;
+        const r=window.__realtime.issue({actorId:'hero',kind:'ability',payload:{abilityId:'rally'}});if(r.ok){sworn={id:n.a.id,d:Math.round(n.d),tick:w().tick};break;}}
       else if(!hero().goal||Math.hypot(hero().goal.x-n.a.x,hero().goal.z-n.a.z)>4)window.__realtime.issue({actorId:'hero',kind:'move',payload:{x:n.a.x,z:n.a.z}});
       await wait(100);
     }
@@ -798,9 +805,10 @@ async function realtimeFinale(){
       champion:champion&&{alive:champion.alive,d:Math.round(Math.hypot(champion.x-h.x,champion.z-h.z))}})}`;
   });
   assert.equal(heard,'heard','A rival band hears the oath');
+  assert.equal(await page.evaluate(()=>window.__rallyNote),'in reach','Within reach, the Rally button says so before the oath');
   await page.waitForFunction(()=>/Pledges \d of 3/.test(document.querySelector('[data-role="progress"]')?.textContent??''));
   await page.context().close();
-  console.log('ok - finale: Chapter XII’s defection route opens in real time from its camp, deploys and advances; the rival bands keep their names, and the soldier’s oath (Rally within 23 m) is heard');
+  console.log('ok - finale: Chapter XII’s defection route opens in real time from its camp, deploys and advances; the rival bands keep their names; the Rally button forecasts the oath’s reach, and the soldier’s oath (Rally within 23 m) is heard');
 }
 
 // Phase 4's settings in the page (2D): a Story chronicle's Time and pace start at 75% with a pause on enemies in
