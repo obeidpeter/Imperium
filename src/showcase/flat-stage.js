@@ -5,6 +5,7 @@
 // every command, key, list and readout works the same in both views.
 // Presentation only: the world is read, never written.
 import {BLOC_STYLE} from '../ui/bloc-style.js';
+import {FIELD_YAW,boundedOffset} from './camera-bearing.js';
 
 const TILE=2.5,FALL_TICKS=16,FLOAT_MS=1300;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t;
@@ -19,8 +20,11 @@ export class FlatStage{
     this.canvas=canvas;this.flat=true;this.ctx=canvas.getContext('2d');this.onFrame=onFrame;this.live=null;this.cameraView='follow';this.selected='hero';
     this.focusMode=true;this.zoomLevel=1;this.point=null;this.paused=false;this.disposed=false;this.ready=Promise.resolve();this.revealed=true;this.quality='balanced';
     this.reducedMotion=false;this.sound=null;this.terrain=null;
-    // The 2D view does not turn: the arrow keys keep their screen directions (up is north-west on the board).
-    this.orbit={pitch:.87,distance:12,target:{x:0,y:0,z:0},get yaw(){return Math.PI/4;},set yaw(_){}};
+    // The 2D view does not turn: the arrow keys keep their screen directions (up is north-west on the board), the
+    // real-time field's one bearing in both views (camera-bearing.js).
+    this.orbit={pitch:.87,distance:12,target:{x:0,y:0,z:0},get yaw(){return FIELD_YAW;},set yaw(_){}};
+    // A look away (a drag, the scene's edge, a log entry), in metres on the map; it springs back when the soldier moves.
+    this.lookOffset={x:0,z:0};
     this.resize=new ResizeObserver(()=>{this.terrain=null;});this.resize.observe(canvas);
     this.frame=requestAnimationFrame(t=>this.tick(t));
   }
@@ -28,9 +32,28 @@ export class FlatStage{
   sync(encounter){this.encounter=encounter;}
   wake(){}rebuildRemains(){}applyQuality(q){this.quality=q;}setAudio(){}setReducedMotion(v){this.reducedMotion=!!v;}setPaused(v){this.paused=!!v;}
   zoom(delta){this.zoomLevel=clamp(this.zoomLevel*(delta<0?1.18:1/1.18),.45,3);this.terrain=null;}
-  home(){this.cameraView='overview';this.terrain=null;}
-  horizon(){}
-  focusPoint(tile){this.cameraView='point';this.point={x:(tile.x+.5)*TILE,z:(tile.y+.5)*TILE};}
+  home(){this.cameraView='overview';this.terrain=null;this.lookOffset={x:0,z:0};}
+  horizon(){}glance(){return false;}
+  // Where the view looks from before a look away (metres on the map): the soldier, or the map's centre.
+  lookAnchor(){
+    const world=this.live?.world?.();if(!world)return null;
+    const lower=world.kind==='chamber'?TILE:0;if(this.cameraView==='overview')return {x:world.map.width*TILE/2-lower,z:world.map.height*TILE/2-lower};
+    const hero=world.actors.find(a=>a.id===world.controlled);return hero?{x:hero.x,z:hero.z}:null;
+  }
+  boardBounds(){const world=this.live?.world?.();return world?{minX:0,maxX:world.map.width*TILE,minZ:0,maxZ:world.map.height*TILE}:null;}
+  // A drag (dx, dy in pixels): the ground follows the pointer, as on the 3D stage.
+  pan(dx,dy){
+    const v=this.lastView,anchor=this.lookAnchor();if(!v||!anchor||![dx,dy].every(Number.isFinite))return false;
+    const a=dx/(v.tw/2),b=dy/(v.th/2),next=boundedOffset(anchor,{x:this.lookOffset.x-(a+b)/2*TILE,z:this.lookOffset.z-(b-a)/2*TILE},this.boardBounds());
+    this.lookOffset=next;return true;
+  }
+  springBack({overview=false}={}){if(this.cameraView==='overview'&&!overview)return false;const moved=Math.hypot(this.lookOffset.x,this.lookOffset.z)>1e-3;this.lookOffset={x:0,z:0};return moved;}
+  // A log entry or a wayfinder: the view looks there as a drag would.
+  focusPoint(tile){
+    const anchor=this.lookAnchor(),x=(tile.x+.5)*TILE,z=(tile.y+.5)*TILE;
+    if(anchor){this.lookOffset=boundedOffset(anchor,{x:x-anchor.x,z:z-anchor.z},this.boardBounds());return;}
+    this.cameraView='point';this.point={x,z};
+  }
   dispose(){this.disposed=true;cancelAnimationFrame(this.frame);this.resize.disconnect();}
   tick(now){
     this.frame=requestAnimationFrame(t=>this.tick(t));
@@ -48,7 +71,8 @@ export class FlatStage{
     const lower=world.kind==='chamber'?TILE:0;
     const c=overview?{x:world.map.width*TILE/2-lower,z:world.map.height*TILE/2-lower}:this.cameraView==='point'&&this.point?this.point
       :hero?{x:lerp(hero.px,hero.x,alpha),z:lerp(hero.pz,hero.z,alpha)}:{x:0,z:0};
-    return {w,h,tw,th,cu:c.x/TILE,cv:c.z/TILE,cx:w/2,cy:h/2};
+    const off=this.cameraView==='point'?{x:0,z:0}:this.lookOffset;
+    return {w,h,tw,th,cu:(c.x+off.x)/TILE,cv:(c.z+off.z)/TILE,cx:w/2,cy:h/2};
   }
   // Metres on the map to the canvas, and back.
   screen(v,x,z){const u=x/TILE,t=z/TILE;return {x:v.cx+((u-t)-(v.cu-v.cv))*v.tw/2,y:v.cy+((u+t)-(v.cu+v.cv))*v.th/2};}

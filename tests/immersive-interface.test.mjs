@@ -5,7 +5,6 @@ import * as Game from '../src/core/game.js';
 import {createCampaignViews} from '../src/ui/campaign-views.js';
 import {fieldMarkup,realtimeEncounterView} from '../src/ui/realtime-view.js';
 import {chamberEncounterView} from '../src/ui/chamber-view.js';
-import {selectRealtimeView} from '../src/showcase/realtime-field.js';
 import {Document} from './mini-dom.mjs';
 
 const fixtures=JSON.parse(readFileSync(new URL('./fixtures/graphics-scenes.json',import.meta.url),'utf8'));
@@ -38,14 +37,13 @@ test('all twelve camps fill the window (release 12): the strip, the world, and t
   }
 });
 
-test('camp, battle and chamber expose the same named camera choices outside the canvas',()=>{
+test('camp, battle and chamber have one fixed camera: no View choice in the strip, and the world first (release 12)',()=>{
   const state=Game.deserialize(JSON.stringify(fixtures.scenes.find(s=>s.id==='board-ch5-mine').state));
   for(const kind of ['camp','field','chamber']){
-    const doc=documentFor(fieldMarkup({state,kind})),select=doc.querySelector('[data-role="cameraSelect"]');
-    assert.equal(select.getAttribute('aria-label'),'World view');
-    assert.deepEqual(select.querySelectorAll('option').map(o=>o.getAttribute('value')),['follow','overview','horizon']);
-    assert.ok(select.closest('.rt-top'));assert.equal(select.closest('.rt-scene'),null,'camera controls do not cover action');
-    assert.equal(select.querySelector('option[selected]').getAttribute('value'),kind==='chamber'?'overview':'follow');
+    const doc=documentFor(fieldMarkup({state,kind}));
+    assert.equal(doc.querySelector('[data-role="cameraSelect"]'),null,`${kind}: the camera keeps one bearing; F, Z, H and the wheel move it`);
+    assert.equal(doc.querySelector('select'),null,`${kind}: nothing to choose in the strip`);
+    assert.ok(doc.querySelector('.rt-top [data-role="pauseButton"]'));assert.ok(doc.querySelector('.rt-top [data-role="menuButton"]'));
   }
   assert.ok(documentFor(realtimeEncounterView({state})).querySelector('main.world-first'));
   const chamber=Game.deserialize(JSON.stringify(fixtures.scenes.find(s=>s.id==='board-ch7-council').state));
@@ -62,7 +60,7 @@ test('camp keeps one objective in its strip and the briefing over the world, and
     assert.ok(field.indexOf('data-role="missionDetails"')>field.indexOf('id="rt-board"'));
     assert.ok(doc.querySelector('.rt-workspace [data-role="missionDetails"]'),'the briefing opens over the world');
     assert.equal(doc.querySelector('[data-role="missionDetails"]').open,false);
-    assert.ok(head.querySelector('[data-role="pauseButton"]'));assert.ok(head.querySelector('[data-role="cameraSelect"]'));assert.ok(head.querySelector('[data-role="menuButton"]'));
+    assert.ok(head.querySelector('[data-role="pauseButton"]'));assert.equal(head.querySelector('[data-role="cameraSelect"]'),null);assert.ok(head.querySelector('[data-role="menuButton"]'));
     assert.equal(page.querySelectorAll('[data-cmd="start"]').length,1);
     const problem=Game.departureCheck(state);
     if(problem){
@@ -70,21 +68,6 @@ test('camp keeps one objective in its strip and the briefing over the world, and
       assert.equal(page.querySelector('.world-camp-bar .world-camp-problem').textContent,problem,'the strip says it too, with the world in view');
     }
   }
-});
-
-test('explicit camera choices do not toggle unexpectedly or modify the soldier',()=>{
-  const actor={id:'hero',x:12,z:7},before=JSON.stringify(actor),calls=[];
-  const stage={orbit:{yaw:.3,pitch:.5,distance:14},cameraView:'overview',
-    home(){this.cameraView='overview';calls.push('home');},horizon(){this.cameraView='horizon';calls.push('horizon');},wake(){calls.push('wake');}};
-  assert.equal(selectRealtimeView(stage,actor,'overview'),true);
-  assert.equal(selectRealtimeView(stage,actor,'overview'),true);assert.equal(stage.cameraView,'overview','selecting Overview twice still means Overview');
-  assert.equal(selectRealtimeView(stage,actor,'horizon'),true);assert.equal(stage.cameraView,'horizon');
-  assert.equal(selectRealtimeView(stage,actor,'follow'),true);assert.equal(stage.cameraView,'follow');assert.equal(stage.selected,'hero');
-  assert.equal(JSON.stringify(actor),before);
-  const viewBefore=JSON.stringify(stage);assert.equal(selectRealtimeView(stage,actor,'unknown'),false);assert.equal(JSON.stringify(stage),viewBefore);
-  assert.equal(selectRealtimeView(null,actor,'follow'),false);assert.equal(selectRealtimeView(stage,null,'follow'),false);
-  assert.equal(selectRealtimeView({...stage,flat:true},actor,'horizon'),false,'2D never offers a horizon that it cannot display');
-  assert.deepEqual(calls.filter(c=>c!=='wake'),['home','home','horizon']);
 });
 
 test('the compact camp shell retains save recovery and conflict takeover outside optional content',()=>{

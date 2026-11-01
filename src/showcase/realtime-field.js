@@ -23,6 +23,7 @@ import {fieldNotice,missionAbilities,missionAbilityHint,oathNote,opportunityRead
 import {oathForecast} from '../core/realtime/mission.js';
 import {commandSoundCue} from '../ui/adaptive-score.js';
 import {createOrderReview} from '../ui/squad-order-review.js';
+import {FIELD_PITCH,FIELD_YAW} from './camera-bearing.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
 // campaign's battles, camps and chambers and by the standalone arena. It owns the
@@ -39,28 +40,22 @@ import {createOrderReview} from '../ui/squad-order-review.js';
 // objectiveMarkers, floatingNumbers).
 
 const SPEEDS=[.5,.75,1];
+// The orders that take the controlled man somewhere: the view springs back to him from a look away.
+const SPRING_BACK=new Set(['move','travel','attack','talk','loot','interact']);
 const ARROWS={move_up:[0,-1],move_down:[0,1],move_left:[-1,0],move_right:[1,0]};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
 
 export const fieldDom=root=>({canvas:root.querySelector('canvas'),...Object.fromEntries([...root.querySelectorAll('[data-role]')].map(el=>[el.dataset.role,el]))});
+// The view follows the controlled man (F, a change of control, a field's first view) from the field's one
+// bearing (camera-bearing.js), at a field's or a chamber's distance, and any look away springs back to him.
 export function followRealtimeCamera(stage,actor,kind='field'){
   if(!stage||!actor)return;
   stage.selected=actor.id;stage.focusMode=true;stage.cameraView='follow';
-  // Keep the established real-time framing while testing the actual current
-  // position, rather than the encounter's initial snapshot, against scenery.
-  const pitch=kind==='chamber'?.98:.87,distance=kind==='chamber'?Math.min(Math.max(stage.orbit.distance,13),19):Math.min(Math.max(stage.orbit.distance,9),16);
-  if(stage.focusSelected)stage.focusSelected({position:stage.world(stageTile(actor.x,actor.z)),distance,preferredYaw:stage.orbit.yaw,preferredPitch:pitch});
-  else Object.assign(stage.orbit,{pitch,distance}); // The flat view has no 3D obstructions.
+  const distance=kind==='chamber'?Math.min(Math.max(stage.orbit.distance,13),19):Math.min(Math.max(stage.orbit.distance,9),16);
+  // Measured from his place now, not the encounter's first snapshot.
+  if(stage.focusSelected)stage.focusSelected({position:stage.world(stageTile(actor.x,actor.z)),distance,preferredYaw:FIELD_YAW,preferredPitch:FIELD_PITCH});
+  else{Object.assign(stage.orbit,{pitch:FIELD_PITCH,distance});stage.springBack?.({overview:true});} // The 2D view has a bearing of its own.
   stage.wake();
-}
-// A named camera choice is explicit (unlike the Overview keyboard toggle),
-// and changes only presentation. The same control serves camps and chambers.
-export function selectRealtimeView(stage,actor,view,kind='field'){
-  if(!stage||!['follow','overview','horizon'].includes(view)||view==='follow'&&!actor||view==='horizon'&&stage.flat)return false;
-  if(view==='follow')followRealtimeCamera(stage,actor,kind);
-  else if(view==='overview')stage.home();
-  else stage.horizon();
-  stage.wake?.();return true;
 }
 // Who the stage draws: hidden enemies stay off it until they are seen.
 // What the stage shows: the men in sight and the field objects' states (a gate opening, a fire lit).
@@ -76,7 +71,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const clock=createClock({speed:SPEEDS.includes(Number(options.gameSpeed))?Number(options.gameSpeed):1});
   let ability='strike',keyTarget=null,hoverPoint=null,hoverDirty=false,pressMove=false,force=false,armed=null,ranges=false,arrows=new Set();
   let logShown=0,eventMessage=null,lastNow=0,hudKey='',partyKey='',barKey='',pausedFor=null,interrupted=false,ended=world.status!=='active',shown=shownKey(world);
-  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},edge=null,lessonKey=null;
+  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},edge=null,lessonKey=null,glancing=false,seeThroughOn=false;
   let readoutAt=-Infinity,targetState='',missionWarningKey='';
   let noticeUntil=0;
   const warnedAt=new Map();
@@ -157,7 +152,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     changed:()=>{squads?.update(true);readoutAt=-Infinity;saveResume('orders');}});
   function issue(command){
     const outcome=queueCommand(world,command);
-    if(!outcome.ok)say(REASONS[outcome.reason]??'That cannot be done now.',{warning:true});else{hurryClock(clock);showPlanned();}
+    if(!outcome.ok)say(REASONS[outcome.reason]??'That cannot be done now.',{warning:true});
+    else{hurryClock(clock);showPlanned();if(command.actorId===world.controlled&&SPRING_BACK.has(command.kind))stage?.springBack?.();}
     return outcome;
   }
   // While paused, a faint line shows what the controlled man will do on resume.
@@ -186,17 +182,13 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(ticks)showPlanned();
     if(hoverPoint&&(hoverDirty||metrics.frames%6===0))readPointer();
     if(edge&&options.edgeScroll)edgeScroll(dt);
-    if(dom.cameraSelect&&['follow','overview','horizon'].includes(stage?.cameraView)&&dom.cameraSelect.value!==stage.cameraView)dom.cameraSelect.value=stage.cameraView;
     updateHud(now);
   }
-  // Edge scrolling (3D, a setting): the pointer at the scene's edge slides the view over the ground, faster when further out.
+  // Edge scrolling (a setting): the pointer at the scene's edge slides the view over the ground, about the
+  // scene's height a second, as a drag would (stage pan); it springs back when the soldier moves or F is pressed.
   function edgeScroll(dt){
-    if(!stage||stage.flat||!stage.orbit||!stage.baseTarget)return;const yaw=stage.orbit.yaw,step=Math.min(80,dt)/1000*stage.orbit.distance*.9;
-    const dx=Math.cos(yaw)*edge.x-Math.sin(yaw)*-edge.y,dz=-Math.sin(yaw)*edge.x-Math.cos(yaw)*-edge.y;
-    const lo=stage.world?.({x:0,y:0}),hi=stage.world?.({x:(stage.encounter?.width??8)-1,y:(stage.encounter?.height??8)-1});
-    stage.focusMode=false;stage.cameraView='overview';stage.baseTarget.x+=dx*step;stage.baseTarget.z+=dz*step;
-    if(lo&&hi){stage.baseTarget.x=Math.min(Math.max(stage.baseTarget.x,Math.min(lo.x,hi.x)),Math.max(lo.x,hi.x));stage.baseTarget.z=Math.min(Math.max(stage.baseTarget.z,Math.min(lo.z,hi.z)),Math.max(lo.z,hi.z));}
-    stage.wake?.();
+    if(!stage?.pan)return;const px=Math.min(80,dt)/1000*canvas.getBoundingClientRect().height*.9;
+    stage.pan(-edge.x*px,-edge.y*px);
   }
   function onEdge(e){
     if(e.pointerType&&e.pointerType!=='mouse'){edge=null;return;}const r=canvas.getBoundingClientRect(),m=16;
@@ -565,7 +557,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
 
   // ——— Keys (bound by physical key; only while the scene has focus). ———
   function arrowMove(){
-    const h=me();if(!h?.alive||!arrows.size)return;
+    const h=me();if(!h?.alive||!arrows.size)return;stage?.springBack?.();
     const yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);let dx=0,dz=0;
     for(const a of arrows){const [sx,sy]=ARROWS[a];dx+=rx*sx-fx*sy;dz+=rz*sx-fz*sy;}
     const d=Math.hypot(dx,dz);if(d<1e-6)return;
@@ -623,9 +615,11 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       case 'cancel_or_menu':
         if(orderReview.open){orderReview.close();}else if(armed||force){armed=null;force=false;say('Cancelled.');}else if(keyTarget){keyTarget=null;targetState='';say('Target cleared.');}else if(listOpen){toggleList(false);canvas.focus({preventScroll:true});}else if(squads?.clear()){}else callbacks.onMenu?.();return true;
       case 'camera_follow':follow();say('Following your soldier.');return true;
-      case 'camera_overview':if(stage?.cameraView==='overview')follow();else stage?.home();return true;
-      case 'camera_horizon':stage?.horizon();return true;
-      case 'camera_rotate_left':case 'camera_rotate_right':if(stage){stage.orbit.yaw+=(action==='camera_rotate_left'?-1:1)*Math.PI/4;stage.wake();}return true;
+      // Z: the whole field, and back to the soldier.
+      case 'camera_overview':if(stage?.cameraView==='overview'){follow();say('Following your soldier.');}else if(stage){stage.home();stage.wake?.();say(`The whole field. ${firstKeyLabel('camera_overview',keymap)} or ${firstKeyLabel('camera_follow',keymap)} follows your soldier again.`);}return true;
+      // H is held: the view looks toward the horizon until it is let go (onKeyUp).
+      case 'camera_horizon':glance(true);return true;
+      case 'see_through':seeThrough();return true;
       case 'zoom_in':stage?.zoom(-2);return true;case 'zoom_out':stage?.zoom(2);return true;
       case 'show_ranges':ranges=!ranges;presenter?.setRanges(ranges);return true;
       // U: labels everything usable; while paused, each visible enemy's intention too (intel.js).
@@ -660,7 +654,21 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function saveResume(reason){if(world.status==='active')callbacks.onSave?.(world,reason);}
   function follow(){
-    followRealtimeCamera(stage,me(),kind);
+    glancing=false;followRealtimeCamera(stage,me(),kind);
+  }
+  // The held glance at the horizon (3D): on while H is down; off when it is let go, the scene loses the keys,
+  // the page is hidden or a panel opens. The view it left comes back as it was.
+  function glance(on){
+    if(!stage||on===glancing)return;
+    if(!on){glancing=false;stage.glance?.(false);return;}
+    if(stage.flat){say('The horizon is a 3D view.');return;}
+    if(stage.glance?.(true)){glancing=true;say(`Looking toward the horizon while ${firstKeyLabel('camera_horizon',keymap)} is held.`);}
+  }
+  // See-through (X, 3D): walls and roofs between the soldier and the camera fade, until X again.
+  function seeThrough(){
+    if(!stage)return;if(stage.flat){say('The 2D view shows the ground from above: there is nothing to see through.');return;}
+    seeThroughOn=!seeThroughOn;stage.seeThrough=seeThroughOn;stage.wake?.();
+    say(seeThroughOn?'See-through: walls and roofs between you and the camera fade.':'Walls and roofs stand again.',{announce:true});
   }
   // A chamber opens on the whole floor (F follows the speaker); a field follows the soldier.
   function firstView(){if(kind!=='chamber'){follow();return;}if(!stage)return;stage.selected=world.controlled;stage.home();stage.wake?.();}
@@ -677,10 +685,12 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const move=Object.keys(ARROWS).find(a=>keymap[a]?.includes(e.code));
     if(move&&!chamber&&arrows.delete(move)){if(!arrows.size){queueCommand(world,{actorId:world.controlled,kind:'stop'});announceStop();}}
     if(action==='show_usable'||keymap.show_usable?.some(binding=>binding.split('+').at(-1)===e.code)){if(!options.labelsAlways)document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}}
+    // Letting H go ends the glance, whatever else was held with it.
+    if(glancing&&(action==='camera_horizon'||keymap.camera_horizon?.some(binding=>binding.split('+').at(-1)===e.code)))glance(false);
   }
-  function onBlur(){if(arrows.size){arrows.clear();queueCommand(world,{actorId:world.controlled,kind:'stop'});}}
+  function onBlur(){glance(false);if(arrows.size){arrows.clear();queueCommand(world,{actorId:world.controlled,kind:'stop'});}}
   function onLeave(){edge=null;}
-  function onHidden(){if(document.hidden){if(!clock.paused){setPaused(clock,true);say('Paused while the page was hidden.');}saveResume('hide');}}
+  function onHidden(){if(document.hidden){glance(false);if(!clock.paused){setPaused(clock,true);say('Paused while the page was hidden.');}saveResume('hide');}}
 
   function bind(){
     const click=(el,fn)=>{if(el)el.onclick=()=>{fn();canvas.focus({preventScroll:true});};};
@@ -688,13 +698,6 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     click(dom.swordsButton,()=>act('combat_toggle'));click(dom.walkButton,()=>act('walk_toggle'));
     click(dom.forceButton,()=>{force=!force;say(force?'Force: the next tap or click attacks whatever is there.':'Force cancelled.');});
     click(dom.rangesButton,()=>act('show_ranges'));
-    if(dom.cameraSelect)dom.cameraSelect.onchange=()=>{
-      if(selectRealtimeView(stage,me(),dom.cameraSelect.value,kind)){
-        say(`${dom.cameraSelect.value==='follow'?'Following your soldier':dom.cameraSelect.value==='overview'?'Overview of the whole field':'Looking toward the horizon'}.`,{announce:true});
-        // Native select arrows must keep working through every camera choice.
-        // Tab follows document order; changing a view never steals input focus.
-      }
-    };
     if(dom.listButton)dom.listButton.onclick=()=>toggleList();
     if(dom.closeListButton)dom.closeListButton.onclick=()=>toggleList(false);
     for(const [button,complete]of [[dom.lessonContinue,true],[dom.lessonSkip,false]])if(button)button.onclick=()=>{
@@ -725,9 +728,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // Labels always (a setting): every figure keeps its name, as while U is held.
     document.body.classList.toggle('labels-full',!!options.labelsAlways);
     document.addEventListener('visibilitychange',onHidden);addEventListener('pagehide',onHidden);
+    // The middle button and two fingers drag the view over the ground; the wheel and a pinch zoom (realtime-input.js).
     input=bindRealtimeInput(canvas,{press,hold,release:()=>{pressMove=false;},hover,inspect:p=>{hover(p);readPointer();},
-      rotate:(dy,dp)=>{if(!stage)return;stage.orbit.yaw+=dy;stage.orbit.pitch=Math.min(1.25,Math.max(.25,stage.orbit.pitch+dp));stage.wake();},
-      zoom:d=>stage?.zoom(d)},{holdDelay,swapButtons:()=>!!options.swapButtons});
+      pan:(dx,dy)=>{stage?.pan?.(dx,dy);},zoom:d=>stage?.zoom(d)},{holdDelay,swapButtons:()=>!!options.swapButtons});
   }
 
   // The player's draw-to-attack and keep-fighting choices reach the world as a command.
@@ -758,8 +761,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   return {
     get world(){return world;},get clock(){return clock;},get stage(){return stage;},metrics,frameDone,
     // The stage is built (or rebuilt) for this world: draw it live and follow the soldier.
-    attach(next){const again=stage===next;stage=next;stage.sync(sceneEncounter());if(again)stage.rebuildRemains?.();resetPresenter();firstView();
-      const horizon=dom.cameraSelect?.querySelector('option[value="horizon"]');if(horizon){horizon.disabled=!!stage.flat;horizon.textContent=stage.flat?'Horizon (3D)':'Horizon';}},
+    // Its camera is the field's one (camera-bearing.js): fixed in bearing, and see-through as the player left it.
+    attach(next){const again=stage===next;stage=next;glancing=false;if(!stage.flat){stage.fixedCamera=true;stage.seeThrough=seeThroughOn;}
+      stage.sync(sceneEncounter());if(again)stage.rebuildRemains?.();resetPresenter();firstView();},
     // The stage's encounter for this world (the page builds the stage from it).
     stageView:sceneEncounter,
     // A different fight in the same place (a retry or a load): the HUD, log and figures start again from it.
@@ -773,7 +777,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       if(stage){stage.sync(sceneEncounter());stage.rebuildRemains?.();resetPresenter();firstView();}updateHud(performance.now());resumeResult();
     },
     // A panel, conversation or dialog pauses the world (Pause in panels), and gives it back.
-    pauseFor(reason){if(!clock.paused){setPaused(clock,true);pausedFor=reason;saveResume('pause');}},
+    pauseFor(reason){glance(false);if(!clock.paused){setPaused(clock,true);pausedFor=reason;saveResume('pause');}},
     release(reason,{focus=true}={}){if(pausedFor&&(!reason||pausedFor===reason)){pausedFor=null;if(!ended&&!deploying(world)){setPaused(clock,false);resumePending=true;}}if(!ended&&focus)canvas.focus({preventScroll:true});},
     get paused(){return clock.paused&&!stepping(clock);},
     // A pause the player chose (P), not one a panel holds: the page carries it into a field built again (app.js).

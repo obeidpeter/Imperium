@@ -78,16 +78,29 @@ test('the right button, Ctrl+click on a Mac and swapped buttons; hold-to-move re
   seen.length=0;swap=true;canvas.dispatchEvent(pointer('pointerdown',{button:0}));canvas.dispatchEvent(pointer('pointerup',{button:0}));assert.deepEqual(seen,['right']);
 });
 
-test('touch: a tap is a left click; a still hold inspects and its release does nothing; two fingers pinch and twist',()=>{
+test('touch: a tap is a left click; a still hold inspects and its release does nothing; two fingers pinch to zoom and drag the view (release 12)',()=>{
   const canvas=fakeCanvas(),timers=fakeTimers(),seen=[];
   bindRealtimeInput(canvas,{press:p=>seen.push(['press',p.button]),inspect:()=>seen.push(['inspect']),zoom:d=>seen.push(['zoom',Math.sign(d)]),
-    rotate:()=>seen.push(['rotate'])},{timers,holdDelay:()=>450});
+    pan:(dx,dy)=>seen.push(['pan',dx,dy]),rotate:()=>seen.push(['rotate'])},{timers,holdDelay:()=>450});
   const touch=(type,id,x,y)=>canvas.dispatchEvent(pointer(type,{pointerType:'touch',pointerId:id,clientX:x,clientY:y}));
   touch('pointerdown',1,50,50);timers.advance(100);touch('pointerup',1,50,50);assert.deepEqual(seen,[['press','left']]);seen.length=0;
   touch('pointerdown',1,50,50);timers.advance(500);touch('pointerup',1,50,50);assert.deepEqual(seen,[['inspect']],'lifting after a hold does nothing');seen.length=0;
   touch('pointerdown',1,40,50);touch('pointerdown',2,60,50);touch('pointermove',2,90,50);
-  assert.ok(seen.some(([k,s])=>k==='zoom'&&s<0),'spreading the fingers zooms in');assert.ok(seen.some(([k])=>k==='rotate'));
-  touch('pointerup',2,90,50);touch('pointerup',1,40,50);assert.ok(!seen.some(([k])=>k==='press'),'a pinch is not a tap');
+  assert.ok(seen.some(([k,s])=>k==='zoom'&&s<0),'spreading the fingers zooms in');
+  assert.deepEqual(seen.find(([k])=>k==='pan'),['pan',15,0],'the fingers\' midpoint drags the view with it');
+  seen.length=0;touch('pointermove',1,40,80);touch('pointermove',2,90,80);
+  assert.deepEqual(seen.filter(([k])=>k==='pan').map(([,dx,dy])=>[dx,dy]),[[0,15],[0,15]],'two fingers moved together drag the ground, and nothing turns the view');
+  assert.ok(!seen.some(([k])=>k==='rotate'));
+  touch('pointerup',2,90,80);touch('pointerup',1,40,80);assert.ok(!seen.some(([k])=>k==='press'),'a pinch is not a tap');
+});
+
+test('the middle button drags the view over the ground (release 12): the ground follows the pointer, nothing turns and nothing is pressed',()=>{
+  const canvas=fakeCanvas(),timers=fakeTimers(),seen=[];
+  bindRealtimeInput(canvas,{press:p=>seen.push(['press',p.button]),hover:()=>{},pan:(dx,dy)=>seen.push(['pan',dx,dy]),rotate:()=>seen.push(['rotate'])},{timers,nav:{platform:'Win32'}});
+  canvas.dispatchEvent(pointer('pointerdown',{button:1,clientX:100,clientY:100}));
+  canvas.dispatchEvent(pointer('pointermove',{button:1,clientX:130,clientY:90}));canvas.dispatchEvent(pointer('pointermove',{button:1,clientX:130,clientY:120}));
+  canvas.dispatchEvent(pointer('pointerup',{button:1,clientX:130,clientY:120}));canvas.dispatchEvent(pointer('pointermove',{clientX:160,clientY:120}));
+  assert.deepEqual(seen,[['pan',30,-10],['pan',0,30]],'each move drags by its own distance, and the drag ends with the button');
 });
 
 test('the presenter lands the figure\'s authored contact on the simulation\'s half-swing, and maps places both ways',()=>{
