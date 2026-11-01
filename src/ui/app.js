@@ -123,7 +123,8 @@ const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,e
   saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
   showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,
-    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap}));
+    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap,
+    worldCamp:screen!=='title'&&!!state&&campMode()}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text){
   announce(text);
@@ -186,8 +187,11 @@ const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>
   }
   if(pendingReplay){replay.start(pendingReplay,settings.reducedMotion||document.hidden);pendingReplay=null;}
   const result=document.querySelector('.rt-result h2'),resultKey=result?`${state?.encounter?.id}:${state?.encounter?.status}`:'';
-  if(result&&resultKey!==resultFocusKey){resultFocusKey=resultKey;result.focus({preventScroll:true});result.closest('.rt-result').scrollIntoView({block:'start',behavior:'instant'});}
-  else if(activeId&&document.getElementById(activeId))document.getElementById(activeId).focus({preventScroll:true});
+  if(result&&resultKey!==resultFocusKey){resultFocusKey=resultKey;result.focus({preventScroll:true});
+    // A full-window world (release 12) shows the result over the world: nothing scrolls to it.
+    if(document.documentElement.dataset.world!=='full')result.closest('.rt-result').scrollIntoView({block:'start',behavior:'instant'});}
+  // Focus the page update lost goes back where it was; focus the player has moved since (a frame can pass) stays.
+  else if(activeId&&document.getElementById(activeId)&&(!document.activeElement||document.activeElement===document.body))document.getElementById(activeId).focus({preventScroll:true});
   if(!result)resultFocusKey='';
 });
 function render(){
@@ -200,7 +204,10 @@ function render(){
   replay.stop();
   const viewKey=`${screen}:${state?.chapter}:${state?.phase}:${state?.encounter?.id||state?.encounterIndex}`;
   const newView=viewKey!==renderedLocation,openPanels=newView?[]:[...app.querySelectorAll('details[id][open]')].map(node=>node.id);
-  if(newView){pendingScroll=true;renderedLocation=viewKey;}
+  // A new screen (marching out, a loaded chronicle) closes the camp list or the chamber's records (release 12).
+  if(newView){pendingScroll=true;renderedLocation=viewKey;pageOverlay='';}
+  // The vote's result takes the middle of the chamber: the members' list closes for it.
+  if(pageOverlay==='records'&&state?.encounter?.status!=='active')pageOverlay='';
   document.documentElement.dataset.phase=screen==='title'?'title':state?.phase||'camp';
   document.documentElement.dataset.kind=state?.encounter?.kind||'';
   document.documentElement.dataset.stage=state?.phase==='epilogue'||(state?.chapter===12&&state?.phase==='promotion')?'imperial':'service';
@@ -208,6 +215,8 @@ function render(){
   document.documentElement.dataset.quality=graphics.mode;
   document.documentElement.dataset.contrast=settings.highContrast?'high':'standard';
   document.documentElement.dataset.hud=settings.compactHud===false?'full':'compact';
+  // Release 12: a real-time battle or chamber fills the window (realtime.css), with what used to follow the world over it.
+  const world=fullWorld();document.documentElement.dataset.world=world?'full':'';if(!world)pageOverlay='';
   document.documentElement.style.setProperty('--text-scale',settings.textScale||1);
   const activeId=document.activeElement?.id;
   // A new screen starts afresh; within one, the page is updated in place, so the
@@ -217,6 +226,7 @@ function render(){
   sessionControls.release();
   updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
     :campMode()?realtimeCamp():camp());
+  const frame=app.querySelector('main.realtime-frame,main.realtime-camp');if(frame){if(pageOverlay)frame.dataset.overlay=pageOverlay;else delete frame.dataset.overlay;}
   refreshTrackedErrand();
   syncSessionControls();
   const target=fieldTarget();
@@ -268,6 +278,24 @@ function mountPainting(){
 // world steps on the page; the chronicle receives it only when it is saved
 // (pause, a hidden page, F2) or resolved. ———
 let field=null;
+// A field's world handed to the field built after it for another view (rebuildField).
+let keptField=null;
+// Release 12: a real-time battle or chamber fills the window; pageOverlay names a page-drawn section shown over
+// the world on request (the chamber's records), which Esc or its button closes.
+let pageOverlay='';
+function fullWorld(){return !!fieldTarget();}
+const OVERLAY_SECTIONS={records:'.chamber-records',services:'#camp-services'};
+function togglePageOverlay(name){
+  // Chosen from the Menu: the Menu closes, and the list (or the world) takes the focus here and now.
+  if(modal.open){modalFocusPlaced=true;modal.close();}
+  pageOverlay=pageOverlay===name?'':name;render();
+  const shown=pageOverlay?app.querySelector(`main[data-overlay="${pageOverlay}"] ${OVERLAY_SECTIONS[pageOverlay]??''}`):null;
+  for(const b of app.querySelectorAll('[data-cmd="page-overlay"]'))b.setAttribute('aria-expanded',String(b.dataset.id===pageOverlay));
+  const target=shown??field?.element?.querySelector('canvas');if(shown)shown.tabIndex=-1;
+  target?.focus({preventScroll:true});
+}
+// Esc from the scene closes a page overlay before it opens the Menu.
+const menuOrClose=()=>{if(pageOverlay){togglePageOverlay(pageOverlay);return;}showNavigation();};
 // What the field plays: a fight's saved world, or (a chamber) the Contest itself, which a retry or a load replaces.
 const fieldSource=()=>chamberMode()?state.encounter:state?.encounter?.realtime?.resume??state?.encounter?.realtime?.world??null;
 // A camp walks in real time when its chapter does (and the 3D view is on: 2D parity comes with its own view).
@@ -308,16 +336,19 @@ function mountField(target){
     mountFieldStage();return;
   }
   host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap,kind:target.kind}));
-  const element=host.querySelector('.rt-field'),ticket={};
+  const element=host.querySelector('.rt-field'),ticket={};watchWorldArea(element);
+  // A field built again for another view (rebuildField) takes over the world its predecessor held.
+  const kept=keptField?.kind===target.kind&&keptField.key===target.key?keptField:null;keptField=null;
   field={ticket,kind:target.kind,key:target.key,chapter:state.chapter,encounterId:state.encounter?.id??null,source:fieldSource(),element,runtime:null};
   Promise.all([import('../showcase/realtime-field.js'),import('../core/realtime/chamber-world.js')]).then(([{createRealtimeField,fieldDom},{createChamberWorld}])=>{
     if(field?.ticket!==ticket||!element.isConnected)return;
     // A hearing's chamber has its presiding magistrate at the tribunal.
     const camp=target.kind==='camp',chamber=target.kind==='chamber';field.makeWorld=s=>createChamberWorld(s,{magistrate:Chamber.isHearing(s)});
-    const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
+    const world=kept?.world??(camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state));
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
     syncSessionControls();
+    if(kept?.paused)field.runtime.keepPaused();
     // A panel may open while the runtime module is still loading. Inherit its
     // pause before attaching a renderer, and leave keyboard focus in the panel.
     if(modal.open&&modal.dataset.stagePause!=='false')field.runtime.pauseFor('panel');
@@ -332,7 +363,7 @@ const lessonFor=kind=>(world,seen)=>settings.guide===false?null:realtimeLesson({
 function rememberExercise(id,complete){settings.lessonProgress=rememberLesson(settings.lessonProgress,id,complete);saveSettings();}
 function chamberCallbacks(){
   return {
-    lesson:lessonFor('chamber'),onLessonProgress:rememberExercise,onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
+    lesson:lessonFor('chamber'),onLessonProgress:rememberExercise,onMenu:menuOrClose,onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
     chamber:{state:()=>state,apply:op=>chamberApply(op),known:id=>chamberKnown().has(id),ask:id=>{if(!chamberKnown().has(id)){chamberKnown().add(id);render();}},
       inspect:id=>showModal('Inspect a document',documentPreview(state,id))}
   };
@@ -402,7 +433,7 @@ function campCallbacks(){
     lesson:lessonFor('camp'),onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
     // A chest opens its contents (release 11); other objects their conversation.
     onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.container){showSoldierPanel('container',o.container);return;}if(o?.talk)showConversation(o.talk);},
-    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>{noteVisit(world);refreshMissionPanel();},onQuickSave:()=>quickSave()
+    onMenu:menuOrClose,onPanel:name=>openPanel(name),onHud:world=>{noteVisit(world);refreshMissionPanel();},onQuickSave:()=>quickSave()
   };
 }
 function noteVisit(world){
@@ -421,7 +452,7 @@ function showConversation(treeId,nodeId=null){
   showModal(view.speaker,`<p class="dialogue-text">${esc(view.text)}</p><ol class="dialogue-options" aria-label="Replies: press a number">`+
     view.options.map((o,i)=>`<li><button class="dialogue-option ${o.needs.length?'is-dimmed':''}" data-cmd="reply" data-id="${o.index}" ${o.needs.length?'aria-disabled="true"':''}>`+
       `<kbd>${i+1}</kbd> ${o.needs.length?`<span class="dialogue-needs">[${esc(o.needs.join(', '))}]</span> `:''}<span>${esc(o.text)}</span>`+
-      `${o.preview.length?` <small>${esc(o.preview.join(' · '))}</small>`:''}</button></li>`).join('')+'</ol>');
+      `${o.preview.length?` <small>${esc(o.preview.join(' · '))}</small>`:''}</button></li>`).join('')+'</ol>',{pause:true});
   conversation={treeId,nodeId:view.nodeId};modal.dataset.conversation=treeId;
 }
 async function replyConversation(index){
@@ -447,6 +478,8 @@ function followUp(open){
   if(open==='march'){startCampaignEncounter();return;}
   if(open==='council'){showCouncil();return;}
   if(open==='preparation'){
+    // Release 12: the preparation lives in the camp list, which opens over the world for it.
+    if(campMode()&&pageOverlay!=='services'){pageOverlay='services';render();}
     const section=document.getElementById('camp-preparation');
     if(section){
       section.open=true;
@@ -480,9 +513,13 @@ function campTravel(place){
 }
 function mountFieldStage(){
   const runtime=field?.runtime;if(!runtime)return;
-  const canvas=field.element.querySelector('canvas');
+  const canvas=field.element.querySelector('canvas'),view=settings.battleView==='2d'||failed3D?'2d':'3d';
+  // A canvas keeps the kind of drawing it was first given, 2D or WebGL. A view of the other kind
+  // (Settings, or the 3D view failing) gets a new field around the same world, which plays on as it stood.
+  if(canvas.dataset.drawn&&canvas.dataset.drawn!==view){rebuildField();return;}
+  canvas.dataset.drawn=view;
   // The 2D view (or no WebGL): the same field drawn flat, with the same commands and lists.
-  if(settings.battleView==='2d'||failed3D){
+  if(view==='2d'){
     battleStage.release();
     if(!field.flat&&!field.flatLoading){
       const mine=field;mine.flatLoading=true;
@@ -503,7 +540,30 @@ function mountFieldStage(){
     onReady:stage=>{if(field?.runtime)field.runtime.attach(stage);}});
   if(own&&runtime.stage!==own)runtime.attach(own);
 }
-function disposeField(){const old=field;field=null;old?.runtime?.dispose();old?.flat?.dispose();old?.element?.remove();}
+function disposeField(){const old=field;field=null;worldArea?.disconnect();worldArea=null;old?.runtime?.dispose();old?.flat?.dispose();old?.element?.remove();}
+// Release 12: the page's own overlays (a fight's result, the chamber's members, the camp's list) open over the world's
+// area, between the strip and the bar, which stay in reach. The page notes where that area lies, as the window,
+// the text size or the bar change it (--rt-world-top and --rt-world-bottom, from the top and bottom of the page's main).
+let worldArea=null;
+function watchWorldArea(element){
+  worldArea?.disconnect();worldArea=null;
+  const workspace=element.querySelector('.rt-workspace'),root=document.documentElement;
+  if(!workspace||typeof ResizeObserver!=='function')return;
+  const place=()=>{
+    const main=element.closest('main');if(!main||!workspace.isConnected)return;
+    const m=main.getBoundingClientRect(),w=workspace.getBoundingClientRect();
+    root.style.setProperty('--rt-world-top',`${Math.max(0,Math.round(w.top-m.top))}px`);
+    root.style.setProperty('--rt-world-bottom',`${Math.max(0,Math.round(m.bottom-w.bottom))}px`);
+  };
+  worldArea=new ResizeObserver(place);worldArea.observe(workspace);worldArea.observe(element);place();
+}
+// The field built again around the world it holds: the soldier, the fight, its clock and a pause the
+// player chose stand where they were. Only the page's own state (lists, camera, selection) starts afresh.
+function rebuildField(){
+  const old=field;if(!old?.runtime)return;
+  keptField={kind:old.kind,key:old.key,world:old.runtime.world,paused:old.runtime.pausedByPlayer};
+  disposeField();const target=fieldTarget();if(target)mountField(target);else keptField=null;
+}
 // For the automated checks (browser smoke): a read-only view of the fight and the same commands a player gives.
 window.__realtime={world:()=>field?.runtime?.world??null,issue:command=>field?.runtime?.issue(command)??{ok:false},paused:()=>field?.runtime?.paused??null};
 // The same for a chamber: what the rules hold (read-only) and whether the field is playing the rivals' hour or the division.
@@ -582,7 +642,7 @@ function fieldCallbacks(){
     onResume:()=>{if(Game.clearResume(state).ok){if(field)field.source=fieldSource();if(!sessionGate.busy&&!saveConflict)sessionGate.run(()=>persist()).catch(()=>{});}},
     onQuickSave:()=>quickSave(),
     onEnd:world=>change(()=>{const r=Game.resolveRealtime(state,world);if(field)field.source=fieldSource();return r;}),
-    onMenu:()=>showNavigation(),
+    onMenu:menuOrClose,
     onPanel:name=>fieldPanel(name),
     onTalk:id=>fieldTalk(id),
     onLoot:id=>fieldLoot(id),
@@ -595,7 +655,8 @@ function openPanel(name){
   if(['kit','character','decorations','company','orders'].includes(name))showSoldierPanel(name==='orders'?'mission':name);
   else if(name==='journal')showJournal();
   else if(name==='chronicle')showSoldierPanel('chronicle');
-  else if(name==='map'||name==='overlay')campMode()?showCampMap():showMap();
+  // Shift+M in the field arrives as its action's name (map_overlay): it opens the map as M does (release 12).
+  else if(['map','overlay','map_overlay'].includes(name))campMode()?showCampMap():showMap();
   else if(name==='options')showSettings();
   // Help opens the guide where the player is: the chamber at its Contests, a fight at its battles, a camp at the campaign.
   else if(name==='help')showHelp(chamberMode()?'political-contests':Game.isRealtime(state)?'battles':campMode()?'the-campaign':undefined);
@@ -672,7 +733,7 @@ function showSoldierPanel(name,arg=null){
   const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
     .map(k=>active.dataset?.[k]!==undefined?`[data-${k}="${CSS.escape(active.dataset[k])}"]`:'').join(''):'';
   const tabs=['kit','character','company','decorations'],nav=tabs.includes(name)?`<nav class="soldier-sections" aria-label="Soldier sections">${[['kit','Equipment'],['character','Training'],['company','Company'],['decorations','Honours']].map(([id,label])=>`<button data-cmd="soldier-panel" data-id="${id}"${name===id?' aria-current="page"':''}>${label}</button>`).join('')}</nav>`:'';
-  showModal(title,nav+body,{back:['orders','squad-orders'].includes(name)?'company':'menu'});soldierPanel={name,arg};modal.dataset.soldier=name;
+  showModal(title,nav+body,{back:['orders','squad-orders'].includes(name)?'company':'menu',pause:name==='chronicle'});soldierPanel={name,arg};modal.dataset.soldier=name;
   if(!modal.querySelector('[data-appearance]'))void showSoldierPreview();
   for(const id of openDetails){const el=document.getElementById(id);if(el)el.open=true;}
   if(samePanel)modal.scrollTop=scroll;
@@ -897,8 +958,8 @@ async function replaceCampaign({load,save,message}){
     }finally{saving=false;}
   });
 }
-let modalReturn=null;
-function showModal(title,body,{menu=false,back='menu'}={}){
+let modalReturn=null,modalFocusPlaced=false;
+function showModal(title,body,{menu=false,back='menu',pause=false}={}){
   const panelId=title.toLowerCase().replace(/[^a-z]+/g,'-');
   const samePanel=modal.open&&modal.dataset.panel===panelId;
   const openDetails=samePanel?[...modal.querySelectorAll('details[id][open]')].map(el=>el.id):[];
@@ -906,9 +967,9 @@ function showModal(title,body,{menu=false,back='menu'}={}){
   // hidden conversation's save restriction or a mission panel's refresh hook.
   if(!samePanel){conversation=null;soldierPanel=null;delete modal.dataset.conversation;delete modal.dataset.soldier;}
   disposeSoldierPreview();
-  // The Menu always pauses the world; other panels follow Pause in panels.
-  // A live 3D world advances with its renderer, so both must follow this choice.
-  const pauseWorld=menu||settings.panelPause!==false,stagePause=!field?.runtime||pauseWorld;
+  // The Menu, a conversation and the chronicle always pause the world (release 12); other panels follow
+  // Pause in panels. A live 3D world advances with its renderer, so both must follow this choice.
+  const pauseWorld=menu||pause||settings.panelPause!==false,stagePause=!field?.runtime||pauseWorld;
   modal.dataset.stagePause=String(stagePause);
   stopMotion();pendingMotion=null;replay.stop();battleStage.pause(stagePause);if(pauseWorld)field?.runtime?.pauseFor('panel');
   if(!modal.open){const el=document.activeElement;modalReturn={element:el,cmd:el?.dataset?.cmd,id:el?.id};}
@@ -957,6 +1018,12 @@ document.addEventListener('keydown',event=>{
   finishRebind(`${actionName(action)} is now ${keyLabel(binding)}.${holder?` ${actionName(holder)} takes ${keymap[holder].map(keyLabel).join(' or ')}.`:''}`);
 },true);
 modal.addEventListener('cancel',event=>{if(rebinding)event.preventDefault();});
+// Release 12: Esc closes the page's overlay (the camp list, the chamber's records) when focus is in it.
+document.addEventListener('keydown',event=>{
+  if(event.key!=='Escape'||!pageOverlay||modal.open||event.defaultPrevented)return;
+  if(!event.target?.closest?.(OVERLAY_SECTIONS[pageOverlay]??'#none'))return;
+  event.preventDefault();togglePageOverlay(pageOverlay);
+});
 modal.addEventListener('keydown',event=>{
   if(!modal.dataset.conversation||event.altKey||event.ctrlKey||event.metaKey)return;const n=Number(event.key);
   if(n>=1&&n<=9){const b=modal.querySelectorAll('[data-cmd="reply"]')[n-1];if(b){event.preventDefault();b.click();}}
@@ -965,13 +1032,20 @@ modal.addEventListener('close',()=>{
   // A reply can close this dialog and another camp desk can reopen it before
   // the queued native close event arrives. That old event must not erase the
   // new conversation, release its pause or move focus into the background.
+  // The page may already have placed the focus itself when it closed the dialog (release 12: the Menu closing for
+  // the camp's list); the event comes later, by when the player may have moved on, so it leaves the focus alone.
+  const placed=modalFocusPlaced;modalFocusPlaced=false;
   if(modal.open)return;
   disposeSoldierPreview();
   rebinding=null;const prior=modalReturn;modalReturn=null;
-  const el=prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
+  const el=placed?null:prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
-  else {const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
-  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel');soldierPanel=null;conversation=null;delete modal.dataset.soldier;delete modal.dataset.conversation;
+  else if(!placed){const main=document.getElementById('main');if(main){main.tabIndex=-1;main.focus({preventScroll:true});}}
+  battleStage.pause(false);startAtmosphere();field?.runtime?.release('panel',{focus:!placed});
+  // The world takes the focus back (release), unless it returns into a list open over the world (release 12):
+  // the camp's list, or the chamber's members, keeps it for the keyboard.
+  if(el?.isConnected&&pageOverlay&&el.closest(OVERLAY_SECTIONS[pageOverlay]??'#none'))el.focus({preventScroll:true});
+  soldierPanel=null;conversation=null;delete modal.dataset.soldier;delete modal.dataset.conversation;
 });
 async function showExport(){showExportCode(await saveCode(Game.codeState(archivePrimaryState??state)));}
 // Settings → Run performance check. The battle is measured where it stands:
@@ -1060,11 +1134,15 @@ document.addEventListener('click',
         }else toast('Offline content is available from the production build.');break;
       }
 case 'close-modal':modal.close();break;
+case 'page-overlay':togglePageOverlay(id);break;
 case 'rt-take':takeLoot(id,b.dataset.item);break;
 case 'rt-take-from':takeFromField(id,b.dataset.item);break;
-case 'conversation':showConversation(id);break;
+case 'conversation':
+  // From the camp list (Menu → Camp, release 12): the soldier goes to the person first, then they talk.
+  if(b.dataset.place&&campMode()&&field?.runtime){if(pageOverlay)pageOverlay='';campTravel(b.dataset.place);}
+  showConversation(id);break;
 case 'reply':await replyConversation(Number(id));break;
-case 'camp-travel':campTravel(id);break;
+case 'camp-travel':if(pageOverlay){pageOverlay='';render();}campTravel(id);break;
 case 'track-errand':trackErrand(id);break;
 case 'untrack-errand':untrackErrand();break;
 case 'errand-destination':goToErrand(id);break;

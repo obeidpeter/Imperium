@@ -98,6 +98,7 @@ Across the 24 counted battles (Chapter XII's confrontation counted once) and the
 | Standard: engaged ≥90% at the first try and all within 2; issued ≥80% and all within 3 | Met: 100% each. |
 | Veteran: engaged ≥70% at the first try and all within 3 | Met: 99.8%. |
 | Upgrades count: in Chapters I–III and against champions, engaged beats issued by ≥10 points of first-try wins on Veteran | **Not met.** Both win nearly everything: in I–III 100% against 98.0%, against champions 100% each. |
+| Upgrades count, as the owner replaced it on 1 November: in Chapters I–III and the eleven champion battles, on Veteran engaged ends its wins with ≥3 points more health than issued and wins ≥0.3 rounds sooner; on Story, issued ends the champion battles with ≥10 points more health than bare | Met (`scripts/upgrades-check.mjs`): 4.0 points more health, 0.44 rounds sooner, and 17.2 points on Story. |
 | At least 3 enemy plans in each squad battle across seeds | Met in five sweeps. In Story's bare sweep the ferry (VIII) saw two plans in pass 1, in 40 seeds as in 20 (below). |
 | Tick p95 within 0.3 ms of the Gate 4 sweep | Met in all six (largest rise +0.14 ms, with three sweeps running at once). |
 
@@ -137,8 +138,8 @@ All in headless Chromium with software rendering (SwiftShader), on the productio
 ## Limitations
 
 - **Bots, not players.** The sweeps measure a heuristic bot; the 90–150 minute target and the feel of the kit need the owner's play-through.
-- **Kit decides health and pace more than wins.** The plan's "upgrades count" target is not met (above).
+- **Kit decides health and pace more than wins.** The plan's first "upgrades count" target, on first-try wins, was not met (above). On 1 November the owner replaced it with a target on health and pace, which this release meets.
 - **The forecast** of a squad's blows on the soldier is not shown in battle; the character panel shows the share his kit turns.
 - **The armourer's apron** is drawn over the camp staff's generated civilian body. It may sit partly inside the body's clothes from some angles.
 - **Not swept:** Story's engaged player and Veteran's bare one, and the older campaigns begun before release 7's missions.
-- **An oath with no band in reach says nothing.** In the finale's oath route the guard captain now comes for the soldier. An oath sworn with only him near reaches no band, and the game gives no message, as before for any oath out of reach; the progress line names the 23 m. Release 12, which gives messages their place on the new screen, can say so.
+- **An oath with no band in reach is not explained.** In the finale's oath route the guard captain now comes for the soldier. An oath sworn with only him near reaches no band. The usual Rally line appears, but nothing says the oath went unheard, as before for any oath out of reach; the progress line names the 23 m. At the owner's request, release 12 adds the message.

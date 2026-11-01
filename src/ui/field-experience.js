@@ -10,11 +10,23 @@ export function missionAbilities(world){
   return [...ids];
 }
 
-export function missionAbilityHint(world,id){
-  if(id==='rally'&&world.mission?.mode==='defection')return `Win allegiance: Rally within ${(world.mission.radius??7.5)*3} m of a rival formation to weaken its morale. Three pledges, or defeating the remaining rivals, wins.`;
+export function missionAbilityHint(world,id,oath=null){
+  if(id==='rally'&&world.mission?.mode==='defection'){
+    const reach=oath?.reach??Math.round((world.mission.radius??7.5)*3),cost=ABILITIES.rally.cost?.stamina;
+    return `Win allegiance: Rally within ${reach} m of a rival formation to weaken its morale. Three pledges, or defeating the remaining rivals, wins.`
+      +(oath?` ${oathReach(oath)}`:'')+(oath&&cost?` Costs ${cost} Stamina.`:'');
+  }
   if(id==='rally'&&world.mission?.mode==='settlement')return 'Rally beside the claimant with your envoy present, then protect the meeting for two rounds.';
   return ABILITIES[id]?.summary??'';
 }
+
+// The oath's forecast (mission.js oathForecast) in words, and as the short note on the Rally button (release 12).
+export function oathReach(oath){
+  if(!oath)return '';
+  if(oath.heard)return `Now: ${oath.name} would hear it (${oath.distance} m).`;
+  return oath.name?`Now: no band in reach; the nearest, ${oath.name}, is ${oath.distance} m away.`:'Now: no rival band is left on the field.';
+}
+export const oathNote=oath=>!oath?'':oath.heard?'in reach':oath.name?`${oath.distance} m away`:'no band';
 
 export function victoryReason(world){
   const m=world.mission??{},points=m.points??[];
@@ -33,6 +45,7 @@ export function victoryReason(world){
 
 export function fieldNotice(world,event){
   if(event.kind==='oath-heard')return {title:'The oath was heard',body:`${event.name}: morale ${event.morale}. Keep pressure on the formation; another Rally can turn its allegiance.`};
+  if(event.kind==='oath-unheard')return {title:'The oath was not heard',body:event.name?`Swear it within ${event.reach} m of a rival band. The nearest, ${event.name}, is ${event.distance} m away.`:'No rival band is left on the field.'};
   if(event.kind==='field'&&event.what==='opportunity')return {title:'Opportunity secured',body:`${event.label}. This choice is recorded; the other opportunity is now closed.`};
   if(event.kind==='phase')return {title:'New objective',body:event.label};
   if(event.kind==='pledge')return {title:'Allegiance won',body:`${event.name} ${event.joined?'joins your side':'leaves the field'}.`};

@@ -8,7 +8,7 @@ import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
 import {isAbsolute} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {serveRequest} from './serve.mjs';
-import {closePanel,menuCommand,revealControl} from './ui-smoke-navigation.mjs';
+import {closePanel,fieldPanel,menuCommand,revealControl} from './ui-smoke-navigation.mjs';
 import {runRealtimeCampaign} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 
@@ -26,7 +26,8 @@ const base=`http://127.0.0.1:${server.address().port}/`,errors=[],report={build,
 let browser;
 async function waitForSave(page){await page.waitForFunction(()=>!document.querySelector('.save-status')?.textContent.includes('Saving'));}
 async function reply(page,pattern){await page.locator('#modal .dialogue-option').filter({hasText:pattern}).click();await waitForSave(page);}
-async function mission(page){await page.locator('.topnav [data-cmd="soldier-panel"][data-id="mission"]').click();await page.locator('#modal .mission-orders').waitFor();}
+// Release 12: Mission orders open from the bar's Orders button (Q), as in a battle.
+async function mission(page){await fieldPanel(page,'orders');await page.locator('#modal .mission-orders').waitFor();}
 try{
   browser=await playwright.chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});report.browser=browser.version();
   for(const width of [1280,390]){

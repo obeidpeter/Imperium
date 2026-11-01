@@ -21,7 +21,8 @@ export function holdDelay(value){const n=Number(value);return Number.isFinite(n)
 // The real-time keys (guide "Changing the controls"): Change listens for the next key; one already in
 // use swaps the two commands. Esc, Enter, Tab and the arrows keep their meaning, and the browser its own keys.
 export function keyPreferences(keymap){
-  const now=action=>keymap[action].map(keyLabel).join(' or ');
+  // An action can wait without a key: a default its player's own key now uses (action-map.js keymapFrom).
+  const now=action=>keymap[action].map(keyLabel).join(' or ')||'no key';
   return `<details class="key-map" id="settings-key-map"><summary><span id="key-map-title">Keyboard shortcuts</span></summary><p class="settings-description">Choose <strong>Change</strong>, then press a key. Esc cancels. An occupied key swaps the two commands. `+
     `Arrow keys, Enter, Esc, Tab and browser shortcuts stay unchanged.</p><p id="rebind-status" class="settings-description" role="status" aria-live="polite"></p>`+
     KEY_GROUPS.map(([title,rows],i)=>`<details class="key-group" id="settings-key-group-${i}"><summary>${esc(title)}</summary>${rows.map(([action,label])=>`<div class="key-row" data-action="${action}">`+

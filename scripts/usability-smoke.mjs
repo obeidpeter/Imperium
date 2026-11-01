@@ -80,11 +80,15 @@ function fits(measure,label){
 async function fieldGeometry(page,label){
   const measured=await page.evaluate(()=>{
     const r=document.querySelector('#rt-board').getBoundingClientRect();
-    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-status-strip,.rt-support,.rt-command-list,.rt-log-panel,.rt-talk,.rt-deploy')]
+    // Release 12: the strip, the status line and the bar never cover the world. Help, tips, the log and
+    // All actions open over it by design, inside the world's own area.
+    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-chronicle-bar,.rt-field>.rt-status-strip,.rt-deploy')]
       .filter(el=>el.checkVisibility({checkVisibilityCSS:true}));
-    return {canvas:{width:r.width,height:r.height},overlap:panels.filter(el=>{const p=el.getBoundingClientRect();return Math.min(p.right,r.right)-Math.max(p.left,r.left)>1&&Math.min(p.bottom,r.bottom)-Math.max(p.top,r.top)>1;}).map(el=>el.className)};
+    return {canvas:{width:r.width,height:r.height},viewport:{width:innerWidth,height:innerHeight},documentHeight:document.documentElement.scrollHeight,
+      overlap:panels.filter(el=>{const p=el.getBoundingClientRect();return Math.min(p.right,r.right)-Math.max(p.left,r.left)>1&&Math.min(p.bottom,r.bottom)-Math.max(p.top,r.top)>1;}).map(el=>el.className)};
   });
-  assert.deepEqual(measured.overlap,[],`${label}: every control panel stays outside the action region`);
+  assert.deepEqual(measured.overlap,[],`${label}: the strip and the bar stay outside the action region`);
+  assert.ok(measured.documentHeight<=measured.viewport.height+1,`${label}: nothing on the page scrolls ${JSON.stringify(measured)}`);
   assert.ok(measured.canvas.width>=300&&measured.canvas.height>=318,`${label}: the game retains a usable canvas ${JSON.stringify(measured)}`);
   return measured;
 }
@@ -274,7 +278,8 @@ async function saveConfirmation(page,label){
   record(`${label}: save slot requires confirmation; cancel preserves progress and confirm restores it`,{cancelUnchanged:true,restoredExactly:true});
 }
 async function fieldControls(page,label){
-  await page.locator('[data-cmd="start"]:visible').first().click();await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');await pause(page);
+  // Release 12: March out sits in the camp list (Menu → Camp).
+  await (await revealControl(page,'[data-cmd="start"]')).click();await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');await pause(page);
   const initial=await metrics(page,'.rt-field');fits(initial,`${label} compact field`);
   const geometry=await fieldGeometry(page,`${label} compact field`);
   const contrast=await Promise.all(['.rt-chronicle-bar .eyebrow','.rt-chronicle-bar .save-status'].map(selector=>textContrast(page,selector)));

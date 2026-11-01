@@ -53,24 +53,32 @@ export function remapAction(keymap,action,binding){
   const problem=bindingProblem(binding);if(problem)return {problem};
   const next=Object.fromEntries(Object.entries(keymap).map(([a,keys])=>[a,[...keys]]));
   const holder=Object.keys(next).find(a=>a!==action&&next[a].includes(binding));
-  if(holder){if(FIXED_ACTIONS.includes(holder))return {problem:'That key cannot be taken.'};next[holder]=next[holder].map(k=>k===binding?keymap[action][0]:k);}
+  // The holder takes this action's old key; an action without one (release 12: a default lost to a
+  // player's key) leaves the holder without this key instead.
+  const old=keymap[action][0];
+  if(holder){if(FIXED_ACTIONS.includes(holder))return {problem:'That key cannot be taken.'};next[holder]=old?next[holder].map(k=>k===binding?old:k):next[holder].filter(k=>k!==binding);}
   next[action]=[binding,...next[action].slice(1).filter(k=>k!==binding)];
   return {keymap:next};
 }
-// The player's map: the defaults with the changes they made (settings.realtimeKeys), or the
-// defaults whole when the stored changes are damaged (a key the browser keeps, a fixed action
-// moved, one key for two actions).
+// The player's map: the defaults with the changes they made (settings.realtimeKeys). Since release 12 a
+// change the game cannot use is dropped on its own, and the player's other keys stand: an action this
+// version no longer has, a fixed action moved, a key the browser keeps, too many keys. A player's key
+// also wins over a default added since it was chosen; that default's action keeps its other key, or
+// waits unbound for the player to give it one (Settings → Controls). Only two of the player's own
+// changes on one key, which no remap makes, fall back to the defaults whole.
 export function keymapFrom(changes){
   const map=Object.fromEntries(Object.entries(DEFAULT_KEYMAP).map(([action,keys])=>[action,[...keys]]));
   if(!changes||typeof changes!=='object'||Array.isArray(changes))return map;
-  for(const [action,keys]of Object.entries(changes)){
-    if(!map[action]||FIXED_ACTIONS.includes(action)||!Array.isArray(keys)||!keys.length||keys.length>2||keys.some(k=>typeof k!=='string'||bindingProblem(k)))return keymapFrom();
-    map[action]=[...keys];
-  }
+  const mine=Object.entries(changes).filter(([action,keys])=>map[action]&&!FIXED_ACTIONS.includes(action)&&Array.isArray(keys)&&keys.length>0&&keys.length<=2
+    &&keys.every(k=>typeof k==='string'&&!bindingProblem(k))&&new Set(keys).size===keys.length);
+  for(const [action,keys]of mine)map[action]=[...keys];
+  const chosen=new Set(mine.map(([action])=>action)),taken=new Set(mine.flatMap(([,keys])=>keys));
+  for(const action of Object.keys(map))if(!chosen.has(action)&&!FIXED_ACTIONS.includes(action))map[action]=map[action].filter(k=>!taken.has(k));
   const all=Object.values(map).flat();return new Set(all).size===all.length?map:keymapFrom();
 }
 // What a map changes from the defaults: what the settings keep.
-export const keymapChanges=map=>Object.fromEntries(Object.entries(map).filter(([action,keys])=>keys.join(' ')!==DEFAULT_KEYMAP[action]?.join(' '))
+// An action left unbound by a player's key is not a change of theirs: keymapFrom derives it again.
+export const keymapChanges=map=>Object.fromEntries(Object.entries(map).filter(([action,keys])=>keys.length&&keys.join(' ')!==DEFAULT_KEYMAP[action]?.join(' '))
   .map(([action,keys])=>[action,[...keys]]));
 // The remappable actions as Settings → Controls lists them (guide "Keyboard" and "Panels").
 export const KEY_GROUPS=Object.freeze([

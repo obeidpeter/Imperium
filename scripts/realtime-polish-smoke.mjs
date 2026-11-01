@@ -65,7 +65,7 @@ async function restore(viewport,id){
   await (await revealControl(page,'#modal [data-cmd="restore"]')).click();
   await page.fill('#restore-code',codes.get(id));await page.click('[data-cmd="import-code"]');await page.click('[data-cmd="confirm-import"]');
   if(id==='failed-drill'){await page.waitForSelector('.rt-result');return page;}
-  await page.waitForSelector('.camp-page');await page.locator('[data-cmd="start"]:visible').first().click();
+  await page.waitForSelector('.camp-page');await (await revealControl(page,'[data-cmd="start"]')).click();
   await page.waitForSelector(`.rt-field[data-kind="${id==='ch7-council'?'chamber':'field'}"] .rt-scene[data-ready="true"]`);
   if(id==='ch2-marsh'){
     assert.equal(await paused(page),true,'The first rescue opens paused for a safe look at the casualty, threat and marker');
@@ -82,16 +82,22 @@ async function layout(page,label){
     const board=document.querySelector('#rt-board'),r=board.getBoundingClientRect();
     const rect=el=>{const b=el.getBoundingClientRect();return {x:b.x,y:b.y,w:b.width,h:b.height};};
     const visible=el=>!el.hidden&&getComputedStyle(el).display!=='none'&&el.getClientRects().length;
-    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-lesson,.rt-talk,.rt-deploy,.rt-rivals,.rt-status-strip,.rt-coalition')].filter(visible);
+    // Release 12: the strip, the bar and the chamber's bands never cover the action region; lessons, a conversation,
+    // All actions, the log and an opened Votes & delegates drop over the world by design, inside its own area.
+    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-deploy,.rt-rivals,.rt-field>.rt-status-strip,.rt-chronicle-bar,.rt-chamber-strip')].filter(visible);
     const overlap=panels.filter(el=>{const b=el.getBoundingClientRect();return Math.min(b.right,r.right)-Math.max(b.left,r.left)>1&&Math.min(b.bottom,r.bottom)-Math.max(b.top,r.top)>1;}).map(el=>el.className);
-    return {viewport:{w:innerWidth,h:innerHeight},canvas:rect(board),overlap,documentWidth:document.documentElement.scrollWidth,
+    return {viewport:{w:innerWidth,h:innerHeight},canvas:rect(board),overlap,documentWidth:document.documentElement.scrollWidth,documentHeight:document.documentElement.scrollHeight,
       feedback:rect(document.querySelector('.rt-message-area')),units:rect(document.querySelector('.rt-unit-dock')),actions:rect(document.querySelector('.rt-ability-area')),
       panels:panels.map(el=>({name:el.className,...rect(el)})),targetLive:document.querySelector('[data-role="targetLine"]')?.getAttribute('aria-live')};
   });
   assert.deepEqual(result.overlap,[],`${label}: controls, lessons and conversations never cover the action region`);
   assert.ok(result.canvas.h>=254&&result.canvas.w>=300,`${label}: usable canvas dimensions ${JSON.stringify(result.canvas)}`);
   assert.ok(result.documentWidth<=result.viewport.w+1,`${label}: no document-wide horizontal overflow`);
-  assert.ok(result.feedback.y+result.feedback.h<=Math.min(result.units.y,result.actions.y)+1,`${label}: live target/feedback is above the unit and ability rows`);
+  assert.ok(result.documentHeight<=result.viewport.h+1,`${label}: nothing on the page scrolls`);
+  // In the bar the message lines sit above the actions, and never over the units (beside them on a desktop, above on a phone).
+  const apart=(a,b)=>a.x+a.w<=b.x+1||b.x+b.w<=a.x+1||a.y+a.h<=b.y+1||b.y+b.h<=a.y+1;
+  assert.ok(result.feedback.y+result.feedback.h<=result.actions.y+1,`${label}: live target/feedback is above the ability row`);
+  assert.ok(apart(result.feedback,result.units),`${label}: live target/feedback never covers the unit row`);
   assert.notEqual(result.targetLive,'assertive','Continuous target updates must not repeatedly interrupt speech');
   evidence.checks.push({name:label,...result});
   await page.locator('.rt-field').screenshot({path:`${output}${label}.png`});

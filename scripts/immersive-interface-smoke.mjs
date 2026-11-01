@@ -8,7 +8,7 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {isAbsolute} from 'node:path';
 import {serveRequest} from './serve.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
-import {menuCommand,revealControl,closePanel} from './ui-smoke-navigation.mjs';
+import {closePanel,menuCommand,openCampList,revealControl} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {COMPANY_ACTIVITIES} from '../src/data/company-activities.js';
 
@@ -36,6 +36,10 @@ const browser=await playwright.chromium.launch({executablePath:process.env.PLAYW
   args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
 const report={method:'Automated Chromium, legal checkpoint imports, visible UI controls; 2D geometry and camera control paths',source,build,
   browser:browser.version(),physicalDeviceTest:false,checks:[],errors:[]};
+// The least share of the window's height the world takes (release 12: the page no longer scrolls, so the strip
+// and the bar take the rest), a little below what Chapters V, VII, VIII and XII measure: the chamber, with its
+// vote row, is the tightest. See docs/fullscreen-release12-report.md.
+const WORLD_SHARE=Object.freeze({desktop:.6,phone:.5,smallPhone:.38,largeText:.3});
 async function prepare(viewport,id,{scale=1,encounter=false}={}){
   const context=await browser.newContext({viewport}),page=await context.newPage();page.setDefaultTimeout(30000);
   page.on('pageerror',error=>report.errors.push(error.message));
@@ -49,26 +53,31 @@ async function prepare(viewport,id,{scale=1,encounter=false}={}){
   await (await revealControl(page,'#modal [data-cmd="restore"]')).click();
   await page.locator('#restore-code').fill(codes.get(id));await page.locator('[data-cmd="import-code"]').click();await page.locator('[data-cmd="confirm-import"]').click();
   await page.waitForSelector('.world-courtyard .rt-scene[data-ready="true"]');
-  if(encounter){await page.locator('[data-cmd="start"]').click();await page.waitForSelector('.realtime-frame .rt-scene[data-ready="true"]');}
+  if(encounter){await (await revealControl(page,'[data-cmd="start"]')).click();await page.waitForSelector('.realtime-frame .rt-scene[data-ready="true"]');}
   if(!await page.evaluate(()=>window.__realtime.paused()))await page.locator('[data-role="pauseButton"]').click();
   return page;
 }
 async function measure(page,label,{camp=false,desktop=false,scale=1}={}){
   const result=await page.evaluate(()=>{
-    const canvas=document.querySelector('#rt-board').getBoundingClientRect(),rect=el=>{const b=el.getBoundingClientRect();return {x:b.x+scrollX,y:b.y+scrollY,w:b.width,h:b.height};};
-    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-status-strip,.rt-support,.rt-deploy,.rt-talk,.world-departure')].filter(el=>el.checkVisibility({checkVisibilityCSS:true}));
-    return {viewport:{width:innerWidth,height:innerHeight},documentWidth:document.documentElement.scrollWidth,canvas:rect(document.querySelector('#rt-board')),
-      overlap:panels.filter(el=>{const b=el.getBoundingClientRect();return Math.min(b.right,canvas.right)-Math.max(b.left,canvas.left)>1&&Math.min(b.bottom,canvas.bottom)-Math.max(b.top,canvas.top)>1;}).map(el=>el.className),
-      services:document.querySelector('#camp-services')?rect(document.querySelector('#camp-services')):null};
+    const canvas=document.querySelector('#rt-board').getBoundingClientRect(),rect=el=>{const b=el.getBoundingClientRect();return {x:b.x,y:b.y,w:b.width,h:b.height};};
+    // Release 12: the strip, the bar and the deployment controls never cover the world. Help, tips, the log,
+    // All actions, a conversation and the camp list open over it by design, inside the world's own area.
+    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-deploy,.rt-chronicle-bar,.rt-field>.rt-status-strip,.rt-chamber-strip')].filter(el=>el.checkVisibility({checkVisibilityCSS:true}));
+    return {viewport:{width:innerWidth,height:innerHeight},world:document.documentElement.dataset.world,
+      documentWidth:document.documentElement.scrollWidth,documentHeight:document.documentElement.scrollHeight,canvas:rect(document.querySelector('#rt-board')),
+      overlap:panels.filter(el=>{const b=el.getBoundingClientRect();return Math.min(b.right,canvas.right)-Math.max(b.left,canvas.left)>1&&Math.min(b.bottom,canvas.bottom)-Math.max(b.top,canvas.top)>1;}).map(el=>el.className)};
   });
+  assert.equal(result.world,'full',`${label}: the world fills the window`);
   assert.ok(result.documentWidth<=result.viewport.width+1,`${label}: no horizontal document overflow`);
-  assert.ok(result.canvas.w>=300&&result.canvas.h>=318,`${label}: usable scene`);assert.deepEqual(result.overlap,[],`${label}: controls do not cover the world`);
-  if(desktop&&scale===1){assert.ok(result.canvas.h>=result.viewport.height*.6,`${label}: world uses most of the viewport height`);assert.ok(result.canvas.y<240,`${label}: briefings no longer push the scene below the fold`);}
+  assert.ok(result.documentHeight<=result.viewport.height+1,`${label}: nothing on the page scrolls (${result.documentHeight}px in ${result.viewport.height}px)`);
+  assert.deepEqual(result.overlap,[],`${label}: the strip and the bar do not cover the world`);
+  // The world's share of the window: most of it on a desktop, and a usable scene everywhere, even at 200% text.
+  const least=desktop?WORLD_SHARE.desktop:scale===2?WORLD_SHARE.largeText:result.viewport.height<700?WORLD_SHARE.smallPhone:WORLD_SHARE.phone;
+  assert.ok(result.canvas.w>=300&&result.canvas.h>=result.viewport.height*least,`${label}: the world takes at least ${Math.round(least*100)}% of the height (${Math.round(result.canvas.h)}px)`);
   if(camp){
-    if(!desktop&&scale===1)assert.ok(result.canvas.y<=270,`${label}: one compact camp objective leaves the world in the first screen (${result.canvas.y}px)`);
-    assert.ok(result.services.y>=result.canvas.y+result.canvas.h,`${label}: services below the full-width world`);
-    await page.locator('a[href="#camp-services"]').click();await page.waitForFunction(()=>document.activeElement?.id==='camp-services');
-    await page.locator('a[href="#rt-board"]').click();await page.waitForFunction(()=>document.activeElement?.id==='rt-board');
+    // The camp list (Menu → Camp) opens over the world with focus, and Esc gives the world its focus back.
+    await openCampList(page);await page.waitForFunction(()=>document.activeElement?.id==='camp-services');
+    await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('main[data-overlay="services"]')&&document.activeElement?.id==='rt-board');
   }
   const tick=await page.evaluate(()=>window.__realtime.world().tick);
   assert.equal(await page.locator('[data-role="cameraSelect"] option[value="horizon"]').evaluate(el=>el.disabled),true,'The 2D fallback names the unavailable 3D view');
@@ -96,7 +105,6 @@ async function measure(page,label,{camp=false,desktop=false,scale=1}={}){
     const chapter=Number(/^ch(\d+)/.exec(label)?.[1]);
     if([5,8].includes(chapter))activity=await verifyActivity(page,chapter);
   }
-  await page.locator('.rt-top').scrollIntoViewIfNeeded();
   await page.screenshot({path:`${output}${label}.png`,animations:'disabled'});
   report.checks.push({name:label,pass:true,companyStory:camp,activity,...result});console.log(`ok - ${label}`);
 }
@@ -140,7 +148,8 @@ async function verifyActivity(page,chapter){
   return {chapter,clues,incorrectRefused:true,completed:true,reloaded:true,positionPreserved:true};
 }
 try{
-  for(const [label,viewport,scale]of [['desktop',{width:1280,height:720},1],['phone',{width:390,height:844},1],['large-text',{width:390,height:844},2]]){
+  // Release 12's sizes: a 1,280 × 720 desktop, a 390-pixel phone (also at 200% text) and a small 360 × 640 phone.
+  for(const [label,viewport,scale]of [['desktop',{width:1280,height:720},1],['phone',{width:390,height:844},1],['large-text',{width:390,height:844},2],['small-phone',{width:360,height:640},1]]){
     for(const id of ['ch5-mine','ch8-parley','ch12-legitimacy']){
       const page=await prepare(viewport,id,{scale});await measure(page,`${id}-camp-${label}`,{camp:true,desktop:label==='desktop',scale});await page.context().close();
     }

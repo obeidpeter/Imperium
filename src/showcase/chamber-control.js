@@ -79,6 +79,8 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
   }
   function setBand(title,text){
     if(!dom.rivalsBand)return;dom.rivalsBand.hidden=false;
+    // The rivals' hour and the division are watched: Votes & delegates, open over the chamber (release 12), closes for them.
+    if(dom.coalitionDetails?.open)dom.coalitionDetails.open=false;
     dom.rivalsBand.innerHTML=`<p><strong>${esc(title)}</strong> <span data-line>${esc(text)}</span></p><button type="button" data-skip>Skip <kbd>Space</kbd></button>`;
     dom.rivalsBand.querySelector('[data-skip]').onclick=()=>{skip();canvas.focus({preventScroll:true});};
   }

@@ -25,7 +25,7 @@ import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
+import {closePanel,menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign,protectCoalition} from './command-autoplay.mjs';
@@ -336,9 +336,9 @@ async function campToDrill(page,view='3d'){
   await (await revealControl(page,'[data-cmd="conversation"][data-id="ch1:varro"]')).click();await page.waitForSelector('#modal[open] [data-cmd="reply"]');
   assert.match(await text(page,'#modal'),/Varro/);
   await verifyCampPanelTransitions(page);
-  await page.click('[data-cmd="conversation"][data-id="table"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
+  await (await revealControl(page,'[data-cmd="conversation"][data-id="table"]')).click();await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
   await page.waitForFunction(()=>!document.querySelector('#modal')?.open,null,{timeout:30000});
-  await page.click('[data-cmd="start"]');await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  await (await revealControl(page,'[data-cmd="start"]')).click();await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
 }
 async function realtimeCampaign(){
   const page=await open();await campToDrill(page);
@@ -404,13 +404,68 @@ async function realtimeFlat(){
   console.log('ok - real-time 2D view: the walkable camp and the drill are drawn flat; the list path, the table decision, T and Enter all work');
 }
 
+// The battle view changed in Settings during a session, 3D to 2D and back, in the camp and on the drill
+// field (release 12; the owner's report of a blank field). A canvas keeps the kind of drawing it was first
+// given, so the field is built again around the same world: the soldier stands where he stood, a pause the
+// player chose holds, a click still walks him, and nothing errs.
+async function viewSwitch(){
+  const page=await open(),first=problems.length;
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'3d'}));}catch{}});
+  await page.goto(base);await page.click('[data-cmd="new"]');await page.click('[data-cmd="begin"]');
+  await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
+  if(await page.evaluate(()=>document.querySelector('#modal')?.open))await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  const hero=()=>page.evaluate(()=>{const w=window.__realtime.world(),h=w.actors.find(a=>a.id==='hero');return {x:h.x,z:h.z,tick:w.tick,paused:window.__realtime.paused()};});
+  async function switchTo(kind,view){
+    // The Menu holds the world while the view changes: the soldier is where he stood, and the world is the same one.
+    await menuCommand(page,'settings');const before=await page.evaluate(()=>{window.__heldWorld=window.__realtime.world();return null;}).then(hero);
+    await (await revealControl(page,'#battle-view')).selectOption(view);
+    await page.waitForFunction(v=>document.querySelector('.rt-field canvas')?.dataset.drawn===v&&window.__realtime.world()===window.__heldWorld,view,{timeout:60000})
+      .catch(async()=>assert.fail(`${kind}: the ${view} view takes over the same world: ${JSON.stringify(await page.evaluate(()=>({drawn:document.querySelector('.rt-field canvas')?.dataset.drawn,same:window.__realtime.world()===window.__heldWorld})))}`));
+    const held=await hero();assert.deepEqual([held.x,held.z,held.tick],[before.x,before.z,before.tick],`${kind}: the switch moves nothing in the world`);
+    await closePanel(page);
+    await page.waitForSelector(`.rt-field[data-kind="${kind}"] .rt-scene[data-ready="true"]`,{timeout:180000}).catch(()=>assert.fail(`${kind}: the ${view} view is drawn`));
+    return before;
+  }
+  // A click on open ground (the cursor says walk or run) moves the soldier.
+  async function clickToWalk(kind,view){
+    const box=await page.locator('#rt-board').boundingBox();let spot=null;
+    for(const [fx,fy]of [[.62,.45],[.38,.45],[.62,.62],[.38,.62],[.5,.3],[.5,.72],[.7,.5],[.3,.5]]){
+      const x=box.x+box.width*fx,y=box.y+box.height*fy;await page.mouse.move(x,y);
+      if(await page.waitForFunction(()=>['walk','run'].includes(document.querySelector('#rt-board')?.dataset.cursor),null,{timeout:2000}).then(()=>true,()=>false)){spot={x,y};break;}
+    }
+    assert.ok(spot,`${kind} in ${view}: open ground under the pointer`);
+    const start=await hero();await page.mouse.click(spot.x,spot.y);
+    if((await hero()).paused){await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');}
+    await page.waitForFunction(([x,z])=>{const h=window.__realtime.world().actors.find(a=>a.id==='hero');return h.x!==x||h.z!==z;},[start.x,start.z],{timeout:60000})
+      .catch(()=>assert.fail(`${kind} in ${view}: a click walks the soldier`));
+  }
+  await switchTo('camp','2d');await clickToWalk('camp','2d');
+  await switchTo('camp','3d');await clickToWalk('camp','3d');
+  // Shift+M from the scene opens the camp's map, as M does (release 12: the field's key was ignored).
+  await page.locator('#rt-board').focus();await page.keyboard.press('Shift+KeyM');
+  await page.waitForFunction(()=>document.querySelector('#modal')?.open&&/The camp/.test(document.querySelector('#panel-title')?.textContent??''),null,{timeout:30000})
+    .catch(async()=>assert.fail(`Shift+M opens the camp map: ${await page.evaluate(()=>document.querySelector('#panel-title')?.textContent??'no panel')}`));
+  await closePanel(page);
+  // On the drill field, which waits for the player: the pause holds through both switches.
+  await (await revealControl(page,'[data-cmd="conversation"][data-id="table"]')).click();await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
+  await page.waitForFunction(()=>!document.querySelector('#modal')?.open,null,{timeout:30000});
+  await (await revealControl(page,'[data-cmd="start"]')).click();await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  assert.equal((await hero()).paused,true,'The drill waits for the player');
+  await switchTo('field','2d');assert.equal((await hero()).paused,true,'2D: the pause the player had holds');
+  await switchTo('field','3d');assert.equal((await hero()).paused,true,'3D: the pause the player had holds');
+  await clickToWalk('field','3d');
+  assert.deepEqual(problems.slice(first),[],'No page or console errors while switching');
+  await page.context().close();
+  console.log('ok - view switch: 3D to 2D and back in the camp and on the drill field keeps the same world, its pause and click-to-walk, with no errors; Shift+M opens the camp map');
+}
+
 // Phase 2 in the page: a restored camp's battle in real time (the development setting), from Chapter IV with squads.
 async function restoreRealtime(page,code,{view='3d',beforeStart=null}={}){
   await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
   await page.goto(base);await settingsCommand(page,'restore');
   await restoreCamp(page,code);
   if(beforeStart)await beforeStart();
-  await page.click('[data-cmd="start"]:visible');
+  await (await revealControl(page,'[data-cmd="start"]')).click();
   try{await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');}
   catch(error){
     const observed=await page.evaluate(()=>({phase:document.documentElement.dataset.phase,kind:document.querySelector('.rt-field')?.dataset.kind,
@@ -457,7 +512,7 @@ async function restoreChamber(page,code,view='3d',{beforeStart=null}={}){
   await page.goto(base);await settingsCommand(page,'restore');
   await restoreCamp(page,code);
   if(beforeStart)await beforeStart();
-  await page.click('[data-cmd="start"]:visible');
+  await (await revealControl(page,'[data-cmd="start"]')).click();
   await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
 }
 async function restoreCamp(page,code){
@@ -485,7 +540,7 @@ async function campSaveDeparture(){
     });
     const beforeStart=async()=>{
       await page.waitForFunction(()=>window.__campSaveDelay.held,null,{timeout:30000});
-      assert.equal(await page.locator('[data-cmd="start"]:visible').isDisabled(),true,`${id}: departure waits for the camp autosave`);
+      assert.equal(await (await revealControl(page,'[data-cmd="start"]')).isDisabled(),true,`${id}: departure waits for the camp autosave`);
       assert.match(await text(page,'.save-status'),/Saving/);
       assert.equal(await page.locator('.rt-field[data-kind="camp"]').count(),1,'The camp stays open during the save');
       await page.evaluate(()=>window.__campSaveDelay.release());
@@ -506,7 +561,7 @@ async function campStartupDeparture(){
     void loading.catch(()=>{}); // A preceding restore failure still closes the page safely.
     const beforeStart=async()=>{
       await loading;
-      assert.equal(await page.locator('[data-cmd="start"]:visible').isDisabled(),true,`${id}: departure waits for initial camp setup`);
+      assert.equal(await (await revealControl(page,'[data-cmd="start"]')).isDisabled(),true,`${id}: departure waits for initial camp setup`);
       releaseModule();
     };
     try{
@@ -711,7 +766,7 @@ async function realtimeFinale(){
   await restoreCamp(page,battleCampCode('ch12-confrontation'));
   await (await revealControl(page,'[data-cmd="route"][data-id="defection"]')).click();
   await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen').catch(()=>assert.fail('The defection route is chosen'));
-  await page.click('[data-cmd="start"]:visible');
+  await (await revealControl(page,'[data-cmd="start"]')).click();
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]').catch(()=>assert.fail('The finale’s field is ready'));
   const rally=page.locator('[data-role="abilityBar"] [data-ability="rally"]');
   assert.equal(await rally.isVisible(),true,'Rally is visible without opening More actions');
@@ -728,6 +783,9 @@ async function realtimeFinale(){
   await page.waitForFunction(()=>window.__realtime.world().tick>5,null,{timeout:60000}).catch(()=>assert.fail('The advance is sounded'));
   assert.match(await text(page,'[data-role="progress"]'),/Pledges 0 of 3/,'The progress line counts pledges');
   assert.deepEqual(await page.evaluate(()=>window.__realtime.world().squads.filter(q=>q.side==='enemy').map(q=>q.name).slice(0,2)),['Rival claimant','Civil-war cohort 2'],'The bands keep their names');
+  // The Rally button forecasts the oath (release 12): from the deployment line, how far the nearest band is.
+  const rallyNote=()=>text(page,'[data-role="abilityBar"] [data-ability="rally"] small');
+  assert.match(await rallyNote(),/^\d+ m away$/,'Before the walk, the Rally button says how far the nearest band is');
   // Walk to the nearest rival band, then swear the oath once it is within three places (23 m). Only a band's
   // men count: the claimant's guard captain (a release 11 champion) seeks the soldier out, but he is no band.
   const heard=await page.evaluate(async()=>{
@@ -738,7 +796,11 @@ async function realtimeFinale(){
     for(let i=0;i<600;i++){
       if(window.__realtime.paused())document.querySelector('[data-role="pauseButton"]')?.click();
       const n=near();if(!n)return 'no rival';
-      if(n.d<=20){const r=window.__realtime.issue({actorId:'hero',kind:'ability',payload:{abilityId:'rally'}});if(r.ok){sworn={id:n.a.id,d:Math.round(n.d),tick:w().tick};break;}}
+      if(n.d<=20){
+        // In reach, the button says so before the oath is sworn.
+        for(let k=0;k<20&&document.querySelector('[data-role="abilityBar"] [data-ability="rally"] small')?.textContent!=='in reach';k++)await wait(100);
+        window.__rallyNote=document.querySelector('[data-role="abilityBar"] [data-ability="rally"] small')?.textContent;
+        const r=window.__realtime.issue({actorId:'hero',kind:'ability',payload:{abilityId:'rally'}});if(r.ok){sworn={id:n.a.id,d:Math.round(n.d),tick:w().tick};break;}}
       else if(!hero().goal||Math.hypot(hero().goal.x-n.a.x,hero().goal.z-n.a.z)>4)window.__realtime.issue({actorId:'hero',kind:'move',payload:{x:n.a.x,z:n.a.z}});
       await wait(100);
     }
@@ -748,9 +810,10 @@ async function realtimeFinale(){
       champion:champion&&{alive:champion.alive,d:Math.round(Math.hypot(champion.x-h.x,champion.z-h.z))}})}`;
   });
   assert.equal(heard,'heard','A rival band hears the oath');
+  assert.equal(await page.evaluate(()=>window.__rallyNote),'in reach','Within reach, the Rally button says so before the oath');
   await page.waitForFunction(()=>/Pledges \d of 3/.test(document.querySelector('[data-role="progress"]')?.textContent??''));
   await page.context().close();
-  console.log('ok - finale: Chapter XII’s defection route opens in real time from its camp, deploys and advances; the rival bands keep their names, and the soldier’s oath (Rally within 23 m) is heard');
+  console.log('ok - finale: Chapter XII’s defection route opens in real time from its camp, deploys and advances; the rival bands keep their names; the Rally button forecasts the oath’s reach, and the soldier’s oath (Rally within 23 m) is heard');
 }
 
 // Phase 4's settings in the page (2D): a Story chronicle's Time and pace start at 75% with a pause on enemies in
@@ -895,7 +958,7 @@ let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 // Check departure races first, before the longer whole-campaign scenarios.
-for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeDeployment,
+for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,viewSwitch,realtimeDeployment,
   chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();

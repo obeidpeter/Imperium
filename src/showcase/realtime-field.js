@@ -19,7 +19,8 @@ import {targetReadout} from '../ui/realtime-target-readout.js';
 import {fieldShortcutAllowed} from '../ui/realtime-shortcuts.js';
 import {missionReadout} from '../ui/realtime-mission-readout.js';
 import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,revealAbility} from '../ui/realtime-hud.js';
-import {fieldNotice,missionAbilities,missionAbilityHint,opportunityReadout} from '../ui/field-experience.js';
+import {fieldNotice,missionAbilities,missionAbilityHint,oathNote,opportunityReadout} from '../ui/field-experience.js';
+import {oathForecast} from '../core/realtime/mission.js';
 import {commandSoundCue} from '../ui/adaptive-score.js';
 import {createOrderReview} from '../ui/squad-order-review.js';
 
@@ -233,8 +234,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       if(e.kind==='squad-rallied'){const q=world.squads?.find(x=>x.id===e.squadId);if(q&&q.side!=='enemy')say(`${q.name} stands again.`,{announce:true});}
       if(e.kind==='squad-destroyed'){const q=world.squads?.find(x=>x.id===e.squadId);if(q)say(`${q.name} is cut down.`,{warning:q.side!=='enemy',announce:true});}
       if(e.kind==='rally')say(`Rally: ${e.squads.length} squad${e.squads.length===1?'':'s'} steadied.`,{announce:true});
-      // The finale's standoffs (mission.js): an oath heard, a band pledged, the meeting's rounds.
+      // The finale's standoffs (mission.js): an oath heard or not, a band pledged, the meeting's rounds.
       if(e.kind==='oath-heard')say(`${e.name} hears your oath: its morale falls to ${e.morale}.`,{announce:true});
+      if(e.kind==='oath-unheard')say(e.name?`No rival band heard your oath: the nearest, ${e.name}, is ${e.distance} m away. Swear it within ${e.reach} m.`
+        :'No rival band is left on the field to hear your oath.',{warning:true,announce:true});
       if(e.kind==='pledge')say(`${e.name} pledges itself to you${e.joined?' and joins your side':' and leaves the field'}.`,{announce:true});
       if(e.kind==='meeting')say(`The meeting holds: ${e.rounds} of 2 rounds.`,{announce:true});
       // The field objects (field-objects.js): what changed, as the log says it.
@@ -341,8 +344,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const bar=abilitiesOf(h),abilityState=bar.map(id=>{const target=ABILITIES[id].target==='self'?{}:keyTarget?{actorId:keyTarget}:null;
       return `${id}:${target?validate(world,world.controlled,id,target)??'ok':ABILITIES[id].cost?.ammo&&!(h?.ammo?.[ABILITIES[id].cost.ammo]>0)?'NO_AMMO':'ok'}`;}).join(',');
     const team=partyIds().map(id=>{const a=actorById(world,id);return a?`${a.hp}/${a.stamina}/${a.drawn}/${a.down}/${a.alive}/${a.carrying}`:'';}).join(';');
+    // The finale's oath (release 12): which band would hear a Rally sworn now, for the Rally button.
+    const oath=world.controlled===world.heroId?oathForecast(world):null;
     const key=[team,world.controlled,h?.walkMode,h?.ammo?.pilum,h?.bandages,paused,clock.slow,clock.speed,round,Math.floor(progress*50),world.status,ability,
-      armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4].join('|');
+      armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4,oath?`${oath.heard}:${oath.squadId}:${oath.distance}`:''].join('|');
     if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
     if(listOpen&&metrics.frames%10===0)renderList();
     squads?.update();showThreat();
@@ -371,8 +376,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const states=Object.fromEntries(abilityState.split(',').filter(Boolean).map(s=>s.split(':')));
     for(const b of dom.abilityBar?.querySelectorAll('[data-ability]')??[]){
       const id=b.dataset.ability,state=states[id];b.setAttribute('aria-pressed',String(id===ability));b.classList.toggle('armed',id===armed);
-      const off=state&&state!=='ok'&&state!=='NO_TARGET';b.classList.toggle('unavailable',off);b.title=off?REASONS[state]:missionAbilityHint(world,id);
-      b.querySelector('small').textContent=abilityNote(id,h);
+      const off=state&&state!=='ok'&&state!=='NO_TARGET',sworn=id==='rally'?oath:null;b.classList.toggle('unavailable',off);b.classList.toggle('in-reach',!!sworn?.heard);
+      b.title=off?REASONS[state]:missionAbilityHint(world,id,sworn);b.querySelector('small').textContent=sworn?oathNote(sworn):abilityNote(id,h);
     }
   }
 
@@ -701,7 +706,14 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     };
     for(const [button,point]of [[dom.locateTarget,()=>actorById(world,keyTarget)??objectById(world,keyTarget)],[dom.locateObjective,objectivePoint]])if(button)button.onclick=()=>{const p=point();if(p){stage?.focusPoint(stageTile(p.x,p.z));stage?.wake?.();canvas.focus({preventScroll:true});}};
     if(dom.dismissNotice)dom.dismissNotice.onclick=()=>{dom.notice.hidden=true;noticeUntil=0;canvas.focus({preventScroll:true});};
-    if(dom.menuButton)dom.menuButton.onclick=()=>callbacks.onMenu?.();
+    // The page opens the Menu from this button itself (data-cmd="menu", release 12), even before this module loads.
+    if(dom.menuButton&&!dom.menuButton.dataset.cmd)dom.menuButton.onclick=()=>callbacks.onMenu?.();
+    // The bar's panel buttons (release 12): each opens its panel as its key does. On a phone they fold into Panels.
+    const foldPanels=()=>{dom.panels?.removeAttribute('data-open');dom.panelsToggle?.setAttribute('aria-expanded','false');};
+    for(const b of hudRoot?.querySelectorAll('[data-panel]')??[])b.onclick=()=>{foldPanels();callbacks.onPanel?.(b.dataset.panel);};
+    if(dom.panelsToggle)dom.panelsToggle.onclick=()=>{const open=!dom.panels.hasAttribute('data-open');dom.panels.toggleAttribute('data-open',open);
+      dom.panelsToggle.setAttribute('aria-expanded',String(open));if(open)dom.panelList?.querySelector('button')?.focus({preventScroll:true});};
+    dom.panelList?.addEventListener('keydown',e=>{if(e.key==='Escape'&&dom.panels?.hasAttribute('data-open')){e.stopPropagation();foldPanels();dom.panelsToggle?.focus({preventScroll:true});}});
     dom.abilityBar?.addEventListener('keydown',e=>{
       if(!['ArrowLeft','ArrowRight'].includes(e.key))return;
       const group=e.target.closest('[data-ability-group]')??dom.abilityBar;
@@ -762,8 +774,11 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     },
     // A panel, conversation or dialog pauses the world (Pause in panels), and gives it back.
     pauseFor(reason){if(!clock.paused){setPaused(clock,true);pausedFor=reason;saveResume('pause');}},
-    release(reason){if(pausedFor&&(!reason||pausedFor===reason)){pausedFor=null;if(!ended&&!deploying(world)){setPaused(clock,false);resumePending=true;}}if(!ended)canvas.focus({preventScroll:true});},
+    release(reason,{focus=true}={}){if(pausedFor&&(!reason||pausedFor===reason)){pausedFor=null;if(!ended&&!deploying(world)){setPaused(clock,false);resumePending=true;}}if(!ended&&focus)canvas.focus({preventScroll:true});},
     get paused(){return clock.paused&&!stepping(clock);},
+    // A pause the player chose (P), not one a panel holds: the page carries it into a field built again (app.js).
+    get pausedByPlayer(){return clock.paused&&!stepping(clock)&&!pausedFor&&!ended;},
+    keepPaused(){if(ended)return;pausedFor=null;if(!clock.paused)setPaused(clock,true);},
     setSpeed(speed){setSpeed(clock,Number(speed));},
     setOption(key,value){options[key]=value;if(key==='gameSpeed')setSpeed(clock,Number(value));if(['drawToAttack','keepFighting'].includes(key))applyOptions();
       if(key==='labelsAlways')document.body.classList.toggle('labels-full',!!value);

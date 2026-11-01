@@ -129,12 +129,32 @@ function advancePhase(world){
 // meeting's perimeter (squad-ai.js). Surrender: both gate approaches secured,
 // then the soldier at the claimant's standard.
 const PLEDGE=Object.freeze({hear:3,loss:40,at:25,joinUnder:8,morale:65});
+// Who would hear an oath sworn here and now: the lowest-morale band in reach, else none and the nearest band.
+// Read-only; the oath itself (hearOath) and its forecast on the Rally button (oathForecast) both use it.
+function oathHearing(world,rallier){
+  const m=world.mission,reach=PLEDGE.hear*m.radius,bands=(world.squads??[]).filter(q=>q.side==='enemy'&&fielded(world,q));
+  const away=q=>Math.min(...membersOf(world,q).map(a=>distanceBetween(a,rallier)));
+  const band=bands.filter(q=>away(q)<=reach).sort((a,b)=>a.morale-b.morale||(a.id<b.id?-1:1))[0]??null;
+  const nearest=band?null:bands.map(q=>({q,d:away(q)})).filter(x=>Number.isFinite(x.d)).sort((a,b)=>a.d-b.d||(a.q.id<b.q.id?-1:1))[0]??null;
+  return {reach,band,distance:band?away(band):null,nearest};
+}
 function hearOath(world,rallier){
-  const m=world.mission,reach=PLEDGE.hear*m.radius;
-  const band=(world.squads??[]).filter(q=>q.side==='enemy'&&fielded(world,q)&&membersOf(world,q).some(a=>distanceBetween(a,rallier)<=reach))
-    .sort((a,b)=>a.morale-b.morale||(a.id<b.id?-1:1))[0];
-  if(!band)return;band.morale=Math.max(0,band.morale-PLEDGE.loss);emit(world,{kind:'oath-heard',squadId:band.id,name:band.name,morale:band.morale});
+  const {reach,band,nearest}=oathHearing(world,rallier);
+  if(!band){
+    // No band in reach (release 12): the oath is sworn all the same, and the soldier learns which band is nearest and how far.
+    emit(world,{kind:'oath-unheard',reach:Math.round(reach),...(nearest?{squadId:nearest.q.id,name:nearest.q.name,distance:Math.round(nearest.d)}:{})});
+    return;
+  }
+  band.morale=Math.max(0,band.morale-PLEDGE.loss);emit(world,{kind:'oath-heard',squadId:band.id,name:band.name,morale:band.morale});
   if(band.morale<=PLEDGE.at)pledge(world,band);
+}
+// The oath's forecast (release 12), for the soldier where he stands: the band that would hear it, or the nearest
+// and how far. Only the soldier swears the oath, and only in the finale's defection route; otherwise null.
+export function oathForecast(world){
+  const m=world.mission,hero=actorById(world,world.heroId);if(m?.mode!=='defection'||world.status!=='active'||!hero)return null;
+  const {reach,band,distance,nearest}=oathHearing(world,hero);
+  if(band)return {heard:true,reach:Math.round(reach),squadId:band.id,name:band.name,distance:Math.round(distance),morale:band.morale};
+  return {heard:false,reach:Math.round(reach),...(nearest?{squadId:nearest.q.id,name:nearest.q.name,distance:Math.round(nearest.d)}:{})};
 }
 function pledge(world,band){
   const m=world.mission,name=band.name,ours=1+(world.squads??[]).filter(q=>q.side!=='enemy'&&fielded(world,q)).length;

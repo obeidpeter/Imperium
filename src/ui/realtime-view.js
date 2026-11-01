@@ -49,6 +49,10 @@ export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveCo
 // The live field's own DOM: built once per fight by the page, then owned by
 // the field runtime (src/showcase/realtime-field.js) through its data-role names.
 // The scene's spoken name and its keys, in the player's keys (relabelField repeats them after a remap).
+// The bar's panel buttons (release 12, the plan's I C J Q L M R A, and Help): each opens its panel as its key does.
+export const FIELD_PANELS=Object.freeze([['kit','Kit','panel_kit'],['character','Character','panel_character'],['journal','Journal','panel_journal'],
+  ['orders','Orders','panel_orders'],['chronicle','Chronicle','panel_chronicle'],['map','Map','panel_map'],['company','Company','panel_company'],
+  ['decorations','Decorations','panel_decorations'],['help','Help','help']]);
 export function fieldHints({state,keymap,kind='field'}){
   const chamber=kind==='chamber',camp=kind==='camp',key=action=>esc(actionLabel(action,keymap));
   const title=camp?campFor(state.chapter)?.title??'The camp':state.encounter.title;
@@ -65,7 +69,8 @@ export function fieldHints({state,keymap,kind='field'}){
 export function relabelField(root,{state,keymap,kind='field'}){
   if(!root)return;const {label,keys}=fieldHints({state,keymap,kind}),text=html=>{const t=document.createElement('template');t.innerHTML=html;return t.content.textContent;};
   root.querySelector('#rt-board')?.setAttribute('aria-label',text(label));const p=root.querySelector('#rt-keys');if(p)p.textContent=text(keys);
-  for(const el of root.querySelectorAll('[data-shortcut]')){const k=actionLabel(el.dataset.shortcut,keymap);el.setAttribute('aria-keyshortcuts',k);if(el.dataset.title)el.title=`${el.dataset.title} (${k})`;}
+  for(const el of root.querySelectorAll('[data-shortcut]')){const k=actionLabel(el.dataset.shortcut,keymap);el.setAttribute('aria-keyshortcuts',k);if(el.dataset.title)el.title=`${el.dataset.title} (${k})`;
+    const kbd=el.matches('[data-panel]')?el.querySelector('kbd'):null;if(kbd)kbd.textContent=k;}
 }
 
 export function fieldMarkup({state,keymap,kind='field'}){
@@ -93,11 +98,12 @@ export function fieldMarkup({state,keymap,kind='field'}){
         ${chamber?`<button data-role="yieldButton" class="rt-yield" type="button" data-shortcut="yield_floor" aria-keyshortcuts="${key('yield_floor')}" data-title="End the hour now; a speech not yet given is lost" title="End the hour now; a speech not yet given is lost (${key('yield_floor')})">End hour</button>`:''}
         <span class="rt-speed-state" data-role="speedState" hidden>Half speed</span>
       </div>
-      <button data-role="menuButton" class="rt-menu" type="button" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
+      <button data-role="menuButton" class="rt-menu" type="button" data-cmd="menu" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
     </header>
     ${camp?'':missionStrip}
     <aside class="rt-notice" data-role="notice" role="status" hidden><div><strong data-role="noticeTitle"></strong><p data-role="noticeBody"></p></div><button type="button" data-role="dismissNotice" aria-label="Dismiss battlefield update">×</button></aside>
-    ${chamber?'<div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></details>':''}
+    ${chamber?'<div class="rt-chamber-strip"><div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-detail-body"><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></div></details>'+
+      '<button type="button" class="rt-records" data-cmd="page-overlay" data-id="records" aria-expanded="false" title="The motion, the members and the record">Members</button></div>':''}
     <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
       <p><strong>Place your units.</strong> Select a unit, then click the marked ground. Time is paused.</p>
       <button data-role="advanceButton" class="primary rt-advance" type="button">Sound the advance</button>
@@ -111,11 +117,30 @@ export function fieldMarkup({state,keymap,kind='field'}){
         <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':chamber?'Preparing the chamber…':'Preparing the battlefield…'}</p></div>
       </div>
       ${chamber?'<aside class="rt-talk" data-role="conversation" aria-labelledby="rt-talk-title" hidden></aside>':''}
-    </div>
-    ${!camp&&!chamber?`<section id="rt-order-review" class="rt-order-review" data-role="orderReview" aria-labelledby="rt-order-review-title" hidden>
+      <!-- Release 12: what used to follow the world opens over it, in the world's own area. -->
+      <div class="rt-support">${camp?missionStrip:''}<details class="rt-help" data-role="fieldHelp"><summary>How to play</summary><div class="rt-detail-body">
+      <p>${camp?'Click a person to talk or an object to use it.':chamber?'Click a person to talk. Click the floor to move.':'Click the ground to move. Click an enemy to attack.'}</p>
+      <p>${camp?'Use <strong>All actions</strong> for a list of people and places.':`Select an action, then ${chamber?'right-click a person':'right-click a target'}. Use <strong>All actions</strong> for a text list.`}</p>
+      <p class="rt-input-context" data-role="inputContext">${key('pause')} pauses from the scene or command controls.</p>
+      <p>Arrow keys move. ${key('target_next_enemy')} selects a target; Enter acts.${!camp&&!chamber?' During deployment, arrows and Enter place the selected unit.':''}</p>
+      <button type="button" data-close-disclosure>Close help</button></div></details>
+    <details class="rt-lesson" data-role="lesson" hidden><summary><span class="rt-tip-label">Tip</span> <span data-role="lessonTitle"></span><span data-role="lessonStep" class="visually-hidden"></span></summary>
+      <div class="rt-detail-body"><p data-role="lessonBody"></p><div class="rt-toggles"><button type="button" data-close-disclosure>Close tip</button><button type="button" data-role="lessonContinue" hidden>Continue learning</button><button type="button" data-role="lessonSkip" hidden>Skip this exercise</button><button class="text-link" type="button" data-cmd="dismiss-guide">Hide tips</button></div></div></details>
+      <details class="rt-log-panel" data-role="logDetails"><summary id="rt-log-title">${chamber?'Debate log':'Battle log'}</summary>
+        <div class="rt-detail-body"><p class="rt-log-note">${chamber?'Latest speech first.':'Select an event to view its location.'}</p>
+        <ol data-role="log" class="rt-log"></ol><button type="button" data-close-disclosure>Close log</button></div>
+      </details></div>
+      ${!camp&&!chamber?`<section id="rt-order-review" class="rt-order-review" data-role="orderReview" aria-labelledby="rt-order-review-title" hidden>
       <div class="rt-list-head"><h2 id="rt-order-review-title" data-role="orderReviewTitle" tabindex="-1">Orders while paused</h2><button type="button" data-role="closeOrderReview" aria-label="Close order review">Close</button></div>
       <p>Change or cancel orders before resuming.</p><details class="rt-order-help"><summary>Command costs and cancellation</summary><p>Replace opens the squad’s actions. Cancel keeps its current action and returns only this round’s reservation. A shared formation keeps its cost until its last waiting squad is cancelled.</p></details>
       <div class="rt-order-rows" data-role="orderReviewRows"></div></section>`:''}
+      <section id="rt-command-list" class="rt-command-list" data-role="commandList" aria-labelledby="rt-list-title" hidden>
+    <div class="rt-list-head"><h2 id="rt-list-title">All actions</h2><button type="button" data-role="closeListButton">Close</button></div>
+    <p class="rt-log-note">${chamber?'Choose a speaker and an action.':'Choose a unit and an action. Queued actions run when you resume.'}</p>
+    <div class="rt-list-actors" data-role="listActors" role="radiogroup" aria-label="Who acts"></div>
+    <div data-role="listOptions"></div>
+  </section>
+    </div>
     <footer class="rt-hud" tabindex="-1">
       <div class="rt-unit-dock" aria-label="Choose your unit">
         <p class="rt-selection-label" data-role="selectionLabel"></p>
@@ -153,25 +178,12 @@ export function fieldMarkup({state,keymap,kind='field'}){
         </div></details><button type="button" data-close-disclosure>Close options</button></div></details>`}
         </div>
       </div>
+      <nav class="rt-panels" data-role="panels" aria-label="Panels">
+        <button type="button" class="rt-panels-toggle" data-role="panelsToggle" aria-expanded="false" aria-controls="rt-panel-list">Panels</button>
+        <div class="rt-panel-list" id="rt-panel-list" data-role="panelList">${FIELD_PANELS.map(([name,label,action])=>
+          `<button type="button" data-panel="${name}" data-shortcut="${action}" data-title="${label}" aria-keyshortcuts="${key(action)}" title="${label} (${key(action)})"><span>${label}</span><kbd>${key(action)}</kbd></button>`).join('')}</div>
+      </nav>
     </footer>
-    <div class="rt-support">${camp?missionStrip:''}<details class="rt-help" data-role="fieldHelp"><summary>How to play</summary><div class="rt-detail-body">
-      <p>${camp?'Click a person to talk or an object to use it.':chamber?'Click a person to talk. Click the floor to move.':'Click the ground to move. Click an enemy to attack.'}</p>
-      <p>${camp?'Use <strong>All actions</strong> for a list of people and places.':`Select an action, then ${chamber?'right-click a person':'right-click a target'}. Use <strong>All actions</strong> for a text list.`}</p>
-      <p class="rt-input-context" data-role="inputContext">${key('pause')} pauses from the scene or command controls.</p>
-      <p>Arrow keys move. ${key('target_next_enemy')} selects a target; Enter acts.${!camp&&!chamber?' During deployment, arrows and Enter place the selected unit.':''}</p>
-      <button type="button" data-close-disclosure>Close help</button></div></details>
-    <details class="rt-lesson" data-role="lesson" hidden><summary><span class="rt-tip-label">Tip</span> <span data-role="lessonTitle"></span><span data-role="lessonStep" class="visually-hidden"></span></summary>
-      <div class="rt-detail-body"><p data-role="lessonBody"></p><div class="rt-toggles"><button type="button" data-close-disclosure>Close tip</button><button type="button" data-role="lessonContinue" hidden>Continue learning</button><button type="button" data-role="lessonSkip" hidden>Skip this exercise</button><button class="text-link" type="button" data-cmd="dismiss-guide">Hide tips</button></div></div></details>
-      <details class="rt-log-panel" data-role="logDetails"><summary id="rt-log-title">${chamber?'Debate log':'Battle log'}</summary>
-        <div class="rt-detail-body"><p class="rt-log-note">${chamber?'Latest speech first.':'Select an event to view its location.'}</p>
-        <ol data-role="log" class="rt-log"></ol><button type="button" data-close-disclosure>Close log</button></div>
-      </details></div>
-  <section id="rt-command-list" class="rt-command-list" data-role="commandList" aria-labelledby="rt-list-title" hidden>
-    <div class="rt-list-head"><h2 id="rt-list-title">All actions</h2><button type="button" data-role="closeListButton">Close</button></div>
-    <p class="rt-log-note">${chamber?'Choose a speaker and an action.':'Choose a unit and an action. Queued actions run when you resume.'}</p>
-    <div class="rt-list-actors" data-role="listActors" role="radiogroup" aria-label="Who acts"></div>
-    <div data-role="listOptions"></div>
-  </section>
   <div class="visually-hidden" role="status" aria-live="polite" data-role="announcer"></div>
 </section>`;
 }

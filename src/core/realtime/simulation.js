@@ -289,6 +289,8 @@ function logLine(world,e){
     case 'secured':return 'A position is secured.';
     case 'pressure':return e.works?`${theWorks(e.works)} still ${e.works.length>1?'stand':'stands'}: the line weakens to ${e.defence}.`:`Enemies hold the objective: the line weakens to ${e.defence}.`;
     case 'oath-heard':return `${e.name} hears the soldier’s oath: its morale falls to ${e.morale}.`;
+    case 'oath-unheard':return e.name?`No rival band is within ${e.reach} m to hear the soldier’s oath: the nearest, ${e.name}, is ${e.distance} m away.`
+      :'No rival band is left on the field to hear the soldier’s oath.';
     case 'pledge':return `${e.name} pledges itself to the soldier${e.joined?' and joins his side':' and leaves the field'}.`;
     case 'meeting':return `The meeting holds: ${e.rounds} of 2 rounds.`;
     case 'used-object':return `${by} finishes: ${nameOf(world,e.objectId)}.`;

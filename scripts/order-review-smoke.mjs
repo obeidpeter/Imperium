@@ -88,9 +88,17 @@ try{
         }
         return {text:el.textContent.trim(),words,overflow:el.scrollWidth>el.clientWidth+1};
       });
-      return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,panelTop:panel.top,canvasBottom:canvas.bottom,labels,buttons:[...document.querySelectorAll('[data-review-action]')].map(b=>{const r=b.getBoundingClientRect();return {left:r.left,right:r.right,height:r.height};})};
+      return {width:innerWidth,height:innerHeight,documentWidth:document.documentElement.scrollWidth,documentHeight:document.documentElement.scrollHeight,
+        panel:{left:panel.left,right:panel.right,top:panel.top,bottom:panel.bottom,width:panel.width},
+        canvas:{left:canvas.left,right:canvas.right,top:canvas.top,bottom:canvas.bottom,width:canvas.width},labels,buttons:[...document.querySelectorAll('[data-review-action]')].map(b=>{const r=b.getBoundingClientRect();return {left:r.left,right:r.right,height:r.height};})};
     });
-    assert.ok(geometry.documentWidth<=width+1,'No horizontal overflow, including 200% text on phone');assert.ok(geometry.panelTop>=geometry.canvasBottom-1,'Order review does not cover the battlefield');
+    assert.ok(geometry.documentWidth<=width+1,'No horizontal overflow, including 200% text on phone');
+    assert.ok(geometry.documentHeight<=geometry.height+1,'Nothing on the page scrolls (release 12)');
+    // Release 12: order review opens over the world, at its right edge, and never past it; on a desktop the
+    // battlefield stays mostly in view beside it.
+    const {panel,canvas}=geometry;
+    assert.ok(panel.left>=canvas.left-1&&panel.right<=canvas.right+1&&panel.top>=canvas.top-1&&panel.bottom<=canvas.bottom+1,`Order review stays within the world ${JSON.stringify({panel,canvas})}`);
+    if(width>=1000)assert.ok(panel.width<=canvas.width/2,'On a desktop most of the battlefield stays in view beside the review');
     assert.ok(geometry.buttons.every(b=>b.left>=0&&b.right<=width&&b.height>=44),'Actionable touch-sized review controls');
     assert.deepEqual(geometry.labels.map(l=>l.text).sort(),[...friendly.flatMap(()=>['Formation','Starts','Command']),'Close'].sort(),'Every order field and the short Close label are present');
     assert.ok(geometry.labels.every(l=>!l.overflow&&l.words.length&&l.words.every(w=>w.lines===1)),`Labels remain whole words at ${width}px: ${JSON.stringify(geometry.labels)}`);

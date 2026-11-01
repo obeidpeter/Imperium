@@ -72,26 +72,36 @@ its controls and exact Retry checkpoint.
 The **Menu** pauses play. Choose **Resume game** to return, **Soldier &
 company** for equipment and training, **Campaign** for your mission and
 records, **Save & load**, **Settings**, or **How to play**. Historical
-notes, credits and the title screen are under **More**. Every panel has
-a **Menu** return button and a **Close** button; **Esc** closes it too.
+notes, credits and the title screen are under **More**. In a walkable
+camp, **Camp** takes the place of **How to play**, which moves under
+**More**. Every panel has a **Menu** return button and a **Close**
+button; **Esc** closes it too.
 
 Settings has five categories: **Readability**, **Controls**, **Graphics**,
 **Sound**, and **Saves & offline**. Changes save automatically. Keyboard
 shortcuts, mouse preferences and automatic pause have their own expandable
 sections. Developer controls are separate under **Controls → Developer tools**.
 
-During play, your objective, progress, deadline and urgent warnings stay
-visible. Expand **Mission details** for the full orders. The main action
-bar shows common actions; **More actions** reveals the others. Their
-number keys still work and reveal the selected action. **Options → Time
-controls** contains half speed and one-round stepping. **All actions**
-offers every action as a text list. Tips, camera controls and the battle
-log expand only when you want them.
+In real time the world fills the window, and nothing on the page
+scrolls. A strip along the top keeps your objective, progress, deadline
+and urgent warnings in view, with **Pause** and **Menu**; expand
+**Mission details** for the full orders. The bar along the bottom holds
+your portrait and your companions', the message line, the action bar
+and a button for each panel. The main action bar shows common actions;
+**More actions** reveals the others. Their number keys still work and
+reveal the selected action. **Options → Time controls** contains half
+speed and one-round stepping. **All actions** offers every action as a
+text list. Everything else opens over the world and closes with **Esc**:
+tips, camera controls and the battle log at its top-left corner, **All
+actions** and order review at its right edge, and a fight's result in
+the middle.
 
-In a walkable camp, the next mission and any departure requirement appear
-once above the world. **Camp services** jumps to preparations and people;
-**Camp briefing** below the world holds the local description. The camera
-selector and **Pause/Resume** remain beside the scene.
+In a walkable camp, the strip names the chapter, your rank, the next
+mission and any departure requirement. Walk to people and places to use
+them. **Menu → Camp** opens the camp's list over the world: the chapter
+decision, battle preparation, people, places, the local report and
+**March out**. Choosing a person there walks you to them; **Esc** closes
+the list. The camera selector and **Pause/Resume** stay in the strip.
 
 Optional exercises appear when deployment, squad orders, engineering or
 political commitments become available. Open the **Tip** to follow a short
@@ -274,7 +284,7 @@ Backing.
 
 ## In camp
 
-The world fills the main view. Camp services are below it, with a direct link back to the scene. **Company stories** offers an optional letter in Chapters IV–XII: read the two consequences before choosing, then return after a field action or hearing for the report. Choices are recorded once; their later acknowledgements remain in your career records.
+The world fills the window. **Menu → Camp** lists what the camp offers over the world, and choosing a person there walks you to them. **Company stories** offers an optional letter in Chapters IV–XII: read the two consequences before choosing, then return after a field action or hearing for the report. Choices are recorded once; their later acknowledgements remain in your career records.
 
 Every chapter has a camp you walk through, each laid out after its own
 setting: the legionary base at Novae, a march camp on the causeway, a
@@ -284,8 +294,8 @@ assembly on the Danube, a governor's relief courtyard and a portico in
 Rome among them. The people of the story stand in the camps of their
 chapters, each with something to say about it. Click a person to talk, click a door or a table to use it, and use the map
 (**M**) to go at once to any part of the camp you have already visited.
-Everything a camp offers is also listed beside the scene, so you never
-have to walk to it: the chapter decision, **Battle preparation**,
+Everything a camp offers is also listed under **Menu → Camp**, so you
+never have to find it in the scene: the chapter decision, **Battle preparation**,
 **People & conversations**, **Travel to a place**, **Courses &
 trainers** and **Local report & campaign records**.
 
@@ -302,7 +312,7 @@ of this table.
 | **Valetudinarium** (hospital)                 | Heals you fully between encounters and shows when wounded companions return to duty. From Chapter II Capsarius Didius teaches his medical courses here.                                                                                   |
 | **Barracks**                                  | The **company roll**: choose up to three companions to march with you and set their standing orders.                                                                                                                                      |
 | **Canabae** (the settlement outside the gate) | A trader with the region's goods and news in every chapter, the local people, their errands and the consequences of your orders. Every camp's local report stands here.                                                                   |
-| **Camp gate**                                 | March out to the next encounter once its requirements are met.                                                                                                                                                                            |
+| **Camp gate**                                 | March out to the next encounter once its requirements are met (**March out** in **Menu → Camp** does the same).                                                                                                                         |
 
 - **Camps are peaceful.** Weapons stay sheathed: drawing your weapon,
   attacking anyone, forcing an attack and the war cry are refused there,
@@ -611,17 +621,28 @@ the squad's men on the field.
 
 ## The screen
 
+The world fills the window; the strip and the bar sit outside it, never
+over it.
+
+- **Top:** the strip, with the objective, progress, the time, **Pause**
+  and **Menu**, and **Mission details** for the full orders.
+
 - **Bottom left:** your portrait and your companions', with health and
-  stamina, and crossed swords while weapons are drawn.
+  stamina, and crossed swords while weapons are drawn; from Chapter IV,
+  the squads' standards.
 
 - **Bottom centre:** the message line, the battle clock and, from
-  Chapter IV, your Command points.
+  Chapter IV, your Command points; below them the current ability and
+  the ability bar (or a squad's command card).
 
-- **Bottom right:** the current ability, the ability bar (or a squad's
-  command card) and a button for each panel.
+- **Bottom right:** a button for each panel: **Kit**, **Character**,
+  **Journal**, **Orders**, **Chronicle**, **Map**, **Company**,
+  **Decorations** and **Help**, each with its key. On a phone they fold
+  into one **Panels** button.
 
-- **Top:** the mission header with the objective and, from Chapter IV,
-  the squad bar.
+- **Over the world**, when you open them: tips, camera controls and the
+  battle log at the top-left corner; **All actions** and order review at
+  the right edge; a fight's result in the middle. **Esc** closes them.
 
 ## Panels
 
@@ -1015,7 +1036,7 @@ arming cap under the helmet; a cloak over everything.
 
 Every new campaign plays six of its battles as missions of their own. A
 campaign begun before these missions keeps the battles it started with.
-Each battle's phases appear in the mission header, one after another.
+Each battle's phases appear in the mission strip at the top, one after another.
 
 | **Battle**         | **Mission**             | **What it asks**                                                                                                                                                                                                                                                                                                                     |
 |--------------------|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1316,10 +1337,11 @@ start of every round**. Your own soldier's actions never spend them.
 - A squad starts a new order after a short delay, about a second, which
   high Authority shortens.
 
-While paused after deployment, choose **Review orders** beside Resume to
-see each friendly squad's order, destination or target, formation, reserved
-Command and delay. **Replace…** opens that squad's action list; the world
-stays paused until you resume.
+While paused after deployment, choose **Review orders** beside Resume:
+a panel at the world's right edge shows each friendly squad's order,
+destination or target, formation, reserved Command and delay.
+**Replace…** opens that squad's action list; the world stays paused
+until you resume.
 
 **Cancel unapplied** removes both queued orders and any order still on its
 way to that squad. Its current order and formation continue. Command
@@ -1480,6 +1502,12 @@ Confidence for each supply missing.
 
 ## Reading the chamber
 
+- One row above the floor counts your support and projects the vote
+  after the rivals' hour. **Votes & delegates** drops the coalition
+  panel down over the chamber; **Members** opens the motion, the
+  members and the promises made in the middle of it (**Esc** closes
+  each).
+
 - The **coalition panel** separates committed members from wavering
   support and shows the promises you have left.
 
@@ -1607,6 +1635,16 @@ In the real-time final battle, two clean reconnaissance operations intercept one
   victory in the field; the defection, surrender and negotiated routes
   require holding your army together on the map. Choosing a route never
   awards the crown by itself.
+
+- In the defection route, **Rally** is your soldier's oath. The rival
+  band with the lowest morale among those within 23 m hears it and loses
+  40 morale; at 25 or below it pledges itself to you. Three pledges win.
+  The progress line counts them. Before you swear, the Rally button
+  says **in reach**, or how far away the nearest band is; its tooltip
+  names the band. An oath with no band within 23 m is not heard: the
+  message line says so and names the nearest band and how far away it
+  is. The claimant's guard captain belongs to no band, so swear beside
+  a band's men, not beside him.
 
 - In the battle (the backer and battle routes) the claimant holds two
   cohorts of his reserve back; they march on from his side at the end of
@@ -1745,10 +1783,10 @@ categories: **Readability**, **Controls**, **Graphics**, **Sound** and
 
 | **Setting**       | **What it does**                                                           |
 |-------------------|----------------------------------------------------------------------------|
-| Text size         | 100%, 125%, 150% or 200% across the game; enlarged text scrolls normally.  |
+| Text size         | 100%, 125%, 150% or 200% across the game; enlarged text scrolls within its panel, never the world. |
 | High contrast     | Stronger boundaries, brighter labels and bolder symbols.                   |
 | Reduce motion     | Removes nonessential motion; action feedback stays readable.               |
-| Compact interface | A compact mission header and camera bar, with full orders still available. |
+| Compact interface | On by default: a slim strip and bar leave the world the room. Off, they are roomier, with larger buttons. |
 | Learning tips     | Expandable help for the drill and patrols, plus optional deployment, orders, engineering and political exercises. Replay optional exercises resets their local progress. |
 | Tactical advice   | Advice for the current field or chamber position.                          |
 
@@ -1780,7 +1818,7 @@ separately.
 | Game speed       | 50%, 75% or 100%. Story starts at 75%.                                                                                                                                                 |
 | Automatic pause  | Pause when an enemy is spotted, your soldier or a companion is badly hurt, a squad breaks or is ambushed, an objective changes or an order cannot be carried out. Each event can be turned on or off. |
 | Pause each round | Pause at the start of every round of battle time.                                                                                                                                      |
-| Pause in panels  | On by default: viewing equipment or records pauses the world. The Menu always pauses it.                                                                                               |
+| Pause in panels  | On by default: viewing equipment or records pauses the world. The Menu, conversations and the chronicle always pause it.                                                               |
 
 ## Graphics
 

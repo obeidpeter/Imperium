@@ -101,6 +101,8 @@
 .rt-field .ability small{font-weight:400;color:var(--rt-muted);font-size:.72rem}
 .rt-field .ability[aria-pressed="true"]{box-shadow:inset 0 0 0 1px var(--rt-bronze)}
 .rt-field .ability.unavailable{opacity:.6}.rt-field .ability.armed{outline:3px solid var(--rt-friend)}
+/* The finale's oath: a rival band would hear it here (release 12). */
+.rt-field .ability.in-reach{box-shadow:inset 0 -3px 0 var(--rt-friend)}.rt-field .ability.in-reach small{font-weight:700}
 .rt-swords[aria-pressed="true"]{color:#ffd28a}
 /* Deployment and rival narration reserve their own rows, never the action region. */
 .rt-field[data-deploying="true"] .rt-paused{display:none}
@@ -437,3 +439,182 @@
 /* Results keep their decision first; the larger live world does not push the
    commit/retry controls below a second full-height battlefield. */
 .world-first.realtime-frame:not([data-outcome="active"]) .rt-field .rt-scene{block-size:15rem;min-block-size:15rem}
+
+/* ——— Release 12: the full-screen world ———
+   A real-time battle or chamber (html[data-world="full"], set by the page) fills the window: a strip on
+   top, the world, a bar along the bottom. Nothing on the page scrolls. What used to follow the world
+   opens over it in the world's own area: help, tips and the log as chips at its top-left corner, All
+   actions and order review as panels at its right edge, the result and the chamber's records over the
+   middle. The bar sits below the world, never over it. */
+html[data-world="full"],html[data-world="full"] body{block-size:100%;overflow:hidden}
+/* clip, not hidden: nothing (a focus, a scroll into view) can scroll the page's frame away from the window. */
+html[data-world="full"] #app{block-size:100dvh;min-block-size:0;display:flex;flex-direction:column;overflow:clip}
+html[data-world="full"] #app>main.realtime-frame{flex:1 1 auto;min-block-size:0;display:flex;flex-direction:column;gap:0;padding:0;margin:0;position:relative;overflow:clip}
+html[data-world="full"] .realtime-frame>*{flex:none}
+html[data-world="full"] .realtime-frame>.rt-chronicle-bar{padding:.1rem .6rem;min-block-size:0;font-size:calc(.68rem * var(--text-scale,1))}
+html[data-world="full"] .realtime-frame>.rt-host{flex:1 1 auto;min-block-size:0;display:flex}
+html[data-world="full"] .rt-host>.rt-field{flex:1 1 auto;min-block-size:0;min-inline-size:0;display:flex;flex-direction:column;border-radius:0;padding-block-end:0}
+html[data-world="full"] .rt-field>*{flex:none}
+html[data-world="full"] .rt-field>.rt-workspace{flex:1 1 auto;min-block-size:8rem;position:relative;display:block;overflow:hidden}
+html[data-world="full"] .rt-workspace>.rt-scene{position:absolute;inset:0;block-size:auto;min-block-size:0;border-block:0}
+html[data-world="full"] .rt-top{padding:.25rem .6rem;gap:.4rem;flex-wrap:nowrap;align-items:center}
+html[data-world="full"] .rt-top .rt-mission{min-inline-size:0;flex:1 1 auto}
+html[data-world="full"] .rt-top .rt-mission h2{font-size:calc(1rem * var(--text-scale,1));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+html[data-world="full"] .rt-top button,html[data-world="full"] .rt-top select{min-block-size:2.5rem}
+/* The mission strip: one line; its details drop down over the world. */
+html[data-world="full"] .rt-status-strip{position:relative;z-index:7;padding:.15rem .6rem}
+html[data-world="full"] .rt-mission-details[open]>.rt-detail-body{position:absolute;inset-inline:.5rem;inset-block-start:100%;max-block-size:55dvh;overflow:auto;
+  background:var(--rt-panel);border:1px solid var(--rt-line);border-radius:.4rem;padding:.6rem .8rem;box-shadow:0 .6rem 1.6rem #000a}
+/* Help, tips and the log: chips over the world's top-left corner; an opened one is a panel over the world. */
+html[data-world="full"] .rt-workspace>.rt-support{position:absolute;z-index:4;inset-block-start:.5rem;inset-inline-start:.5rem;inline-size:min(32rem,calc(100% - 1rem));
+  margin:0;display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:.3rem;pointer-events:none}
+html[data-world="full"] .rt-support>*{pointer-events:auto;background:#171c1ae6;border-radius:.35rem;padding:0 .45rem;max-inline-size:100%}
+html[data-world="full"] .rt-support>details[open]{flex-basis:100%;background:var(--rt-panel);border:1px solid var(--rt-line);box-shadow:0 .5rem 1.4rem #0009}
+html[data-world="full"] .rt-support>details[open]>.rt-detail-body{max-block-size:min(24rem,45dvh);overflow:auto;overscroll-behavior:contain}
+/* All actions, order review and the chamber's conversation: panels at the world's right edge. */
+html[data-world="full"] .rt-workspace>.rt-command-list,html[data-world="full"] .rt-workspace>.rt-order-review,html[data-world="full"] .rt-workspace>.rt-talk{
+  position:absolute;z-index:6;inset-block:.5rem;inset-inline-end:.5rem;inline-size:min(27rem,calc(100% - 1rem));max-block-size:none;block-size:auto;margin:0;
+  overflow:auto;overscroll-behavior:contain;background:var(--rt-panel);border:1px solid var(--rt-line);border-radius:.45rem;box-shadow:0 .6rem 1.8rem #000b}
+html[data-world="full"] .rt-workspace>.rt-command-list{padding-block-end:.8rem}
+html[data-world="full"] .rt-workspace>[hidden]{display:none}
+/* The result, and the chamber's records when asked for: over the middle of the world. */
+html[data-world="full"] .realtime-frame>.rt-result,html[data-world="full"] .realtime-frame[data-overlay="records"]>.chamber-records{
+  position:absolute;z-index:9;inset-block:calc(var(--rt-world-top,3rem) + .4rem) calc(var(--rt-world-bottom,1rem) + .4rem);inset-inline:50% auto;translate:-50% 0;
+  inline-size:min(58rem,calc(100% - 1.2rem));margin:0;align-self:stretch;block-size:auto;
+  overflow:auto;overscroll-behavior:contain;box-shadow:0 1rem 3rem #000c}
+html[data-world="full"] .realtime-frame:not([data-overlay="records"])>.chamber-records{display:none}
+/* Behind a result the world keeps the whole area (the page's own rule shrinks the scene to 15rem). */
+html[data-world="full"] .realtime-frame:not([data-outcome="active"]) .rt-workspace>.rt-scene{block-size:auto;min-block-size:0}
+html[data-world="full"] .realtime-frame[data-overlay="records"]>.chamber-records{background:#f4eedf;color:#292b26;border-radius:.6rem;padding:.6rem 1rem}
+/* The bar: who you control, the message lines and the actions, and the panels. */
+html[data-world="full"] .rt-field>.rt-hud{position:relative;display:grid;grid-template-columns:minmax(12rem,26%) minmax(0,1fr) auto;
+  grid-template-areas:"dock message panels" "dock abilities panels";align-items:center;gap:.2rem .6rem;padding:.3rem .6rem;max-block-size:46dvh;overflow:auto}
+html[data-world="full"] .rt-hud>.rt-unit-dock{grid-area:dock;min-inline-size:0;align-self:center}
+html[data-world="full"] .rt-hud>.rt-message-area{grid-area:message;min-inline-size:0}
+html[data-world="full"] .rt-hud>.rt-ability-area{grid-area:abilities;min-inline-size:0}
+html[data-world="full"] .rt-hud>.rt-panels{grid-area:panels;align-self:center}
+html[data-world="full"] .rt-toolbox[open]>.rt-detail-body{position:absolute;z-index:8;inset-block-end:calc(100% + .3rem);inset-inline-end:.5rem;inline-size:min(30rem,calc(100% - 1rem));
+  background:var(--rt-panel);border:1px solid var(--rt-line);border-radius:.4rem;padding:.5rem;box-shadow:0 -.4rem 1.4rem #0009}
+html[data-world="full"] .rt-field>.rt-hud{overflow:visible}
+.rt-panels{display:flex;align-items:center;position:relative}
+.rt-field .rt-panels .rt-panels-toggle{display:none}
+/* Many squads: their standards scroll along the bar rather than spill past it. */
+html[data-world="full"] .rt-squad-area{min-inline-size:0;overflow-x:auto;overscroll-behavior-x:contain}
+html[data-world="full"] .rt-squads{flex-wrap:nowrap}
+.rt-panel-list{display:grid;grid-template-columns:repeat(3,minmax(0,auto));gap:.2rem}
+.rt-panel-list button{display:inline-flex;align-items:center;justify-content:space-between;gap:.35rem;min-block-size:2.4rem;padding:.15rem .45rem;
+  font-size:calc(.72rem * var(--text-scale,1));background:var(--rt-panel);color:#f4ead5;border:1px solid var(--rt-line);border-radius:.3rem}
+.rt-panel-list kbd{font-size:.68rem;color:var(--rt-bronze);background:none;border:0;padding:0}
+.rt-panel-list button:focus-visible,.rt-panels-toggle:focus-visible{outline:3px solid var(--rt-focus);outline-offset:1px}
+/* On a phone the panel buttons fold into one Panels button whose list opens over the world. */
+@container (max-width:760px){
+  html[data-world="full"] .rt-field>.rt-hud{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"message message" "abilities panels" "dock dock";padding:.25rem .4rem;gap:.2rem .4rem}
+  .rt-field .rt-panels .rt-panels-toggle{display:inline-flex;align-items:center;min-block-size:2.75rem;padding:.3rem .7rem;background:var(--rt-panel);color:#f4ead5;border:1px solid var(--rt-line);border-radius:.35rem}
+  .rt-panel-list{display:none;position:absolute;z-index:8;inset-block-end:calc(100% + .3rem);inset-inline-end:0;grid-template-columns:repeat(2,minmax(8.5rem,1fr));
+    background:var(--rt-panel);border:1px solid var(--rt-line);border-radius:.4rem;padding:.4rem;box-shadow:0 -.4rem 1.4rem #000a}
+  .rt-panels[data-open] .rt-panel-list{display:grid}
+  .rt-panel-list button{min-block-size:2.75rem;font-size:calc(.8rem * var(--text-scale,1))}
+  html[data-world="full"] .rt-top .rt-mission h2{font-size:calc(.9rem * var(--text-scale,1))}
+  /* A phone keeps the world large: one row each for the actions and for the people, both scrolling sideways. */
+  html[data-world="full"] .rt-top{gap:.3rem;padding-inline:.4rem}
+  html[data-world="full"] .rt-top button{white-space:nowrap;padding-inline:.55rem}
+  html[data-world="full"] .rt-view-control{font-size:0;gap:0}
+  html[data-world="full"] .rt-view-control select{font-size:calc(.75rem * var(--text-scale,1));max-inline-size:7rem}
+  html[data-world="full"] .rt-hud>.rt-ability-area{display:flex;flex-wrap:nowrap;align-items:center;gap:.3rem;overflow-x:auto;overscroll-behavior-x:contain}
+  html[data-world="full"] .rt-ability-area>.rt-current{display:none}
+  html[data-world="full"] .rt-ability-area .rt-ability-bar{flex:none;flex-wrap:nowrap}
+  html[data-world="full"] .rt-ability-area .rt-tools{flex:none;display:flex;gap:.3rem;margin:0}
+  html[data-world="full"] .rt-hud>.rt-unit-dock{display:flex;flex-wrap:nowrap;align-items:center;gap:.3rem;overflow-x:auto;overscroll-behavior-x:contain}
+  html[data-world="full"] .rt-unit-dock>.rt-selection-label{display:none}
+  html[data-world="full"] .rt-unit-dock .rt-party{flex:none;flex-wrap:nowrap}
+  html[data-world="full"] .rt-unit-dock .rt-squad-area{flex:none;overflow:visible}
+  html[data-world="full"] .rt-workspace>.rt-support>*{font-size:calc(.78rem * var(--text-scale,1))}
+}
+/* The camp (release 12): its strip, the world, and its list over the world from Menu → Camp. */
+html[data-world="full"] #app>main.realtime-camp{flex:1 1 auto;min-block-size:0;display:flex;flex-direction:column;gap:0;padding:0;margin:0;position:relative;overflow:clip;max-inline-size:none}
+html[data-world="full"] main.realtime-camp>*{flex:none}
+html[data-world="full"] main.realtime-camp>.rt-chronicle-bar{padding:.1rem .6rem;gap:.6rem;font-size:calc(.68rem * var(--text-scale,1))}
+html[data-world="full"] .world-camp-bar .world-camp-problem{flex:1 1 auto;min-inline-size:0;color:var(--red,#742b30);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-world="full"] main.realtime-camp>.rt-camp-grid{flex:1 1 auto;min-block-size:0;display:flex;align-items:stretch;gap:0}
+html[data-world="full"] .rt-camp-scene,html[data-world="full"] .rt-camp-scene>.rt-host{align-items:stretch}
+/* The camp's page heading is for screen readers; the strip and the world show where you are. */
+html[data-world="full"] main.realtime-camp>h1.visually-hidden{position:absolute;inline-size:1px;block-size:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+html[data-world="full"] .rt-camp-grid>.rt-camp-scene{flex:1 1 auto;min-block-size:0;min-inline-size:0;display:flex}
+html[data-world="full"] .rt-camp-scene>.rt-host{flex:1 1 auto;min-block-size:0;display:flex}
+html[data-world="full"] .world-courtyard.world-first .rt-menu{display:inline-flex}
+html[data-world="full"] main.realtime-camp:not([data-overlay="services"]) .world-camp-services{display:none}
+html[data-world="full"] main.realtime-camp[data-overlay="services"] .world-camp-services{position:absolute;z-index:9;
+  inset-block:calc(var(--rt-world-top,2.2rem) + .4rem) calc(var(--rt-world-bottom,1rem) + .4rem);inset-inline:50% auto;translate:-50% 0;
+  inline-size:min(62rem,calc(100% - 1.2rem));overflow:auto;overscroll-behavior:contain;border-radius:.6rem;box-shadow:0 1rem 3rem #000c;
+  /* The sidebar's own align-self:start would size it to its content, past the world's area. */
+  align-self:stretch;block-size:auto}
+html[data-world="full"] .world-camp-services>.world-departure{grid-column:1/-1;margin:0}
+html[data-world="full"] .world-camp-services>.world-preparation{grid-row:3/span 5}
+@media(max-width:700px){html[data-world="full"] .world-camp-services>.world-preparation{grid-row:auto}}
+/* Compact interface (Settings → Display, on by default) gives the world the room. Off, the strip and the bar are
+   roomier, with larger targets and the "Controlling" line kept on a phone (release 12, as on the turn-based board). */
+html[data-world="full"][data-hud="full"] .rt-top{padding:.45rem .8rem}
+html[data-world="full"][data-hud="full"] .rt-field>.rt-hud{padding:.55rem .8rem;gap:.45rem .8rem}
+html[data-world="full"][data-hud="full"] .rt-panel-list button{min-block-size:2.75rem;padding:.3rem .6rem;font-size:calc(.8rem * var(--text-scale,1))}
+html[data-world="full"][data-hud="full"] .rt-unit-dock>.rt-selection-label{display:block}
+html[data-world="full"][data-hud="full"] .realtime-frame>.rt-chronicle-bar,html[data-world="full"][data-hud="full"] main.realtime-camp>.rt-chronicle-bar{padding:.3rem .8rem;font-size:calc(.75rem * var(--text-scale,1))}
+/* Release 12, the bands kept slim, so the world keeps the room: the chronicle line on one line; the mission strip
+   on one row where it fits (its details drop down over the world); the chamber's vote, delegates and members on
+   one row; and a bar no taller than its people (the "Controlling" line returns with Compact interface off). */
+html[data-world="full"] .realtime-frame>.rt-chronicle-bar,html[data-world="full"] main.realtime-camp>.rt-chronicle-bar{display:flex;flex-wrap:nowrap;align-items:center;gap:.6rem;line-height:1.3}
+html[data-world="full"] .rt-chronicle-bar>.eyebrow{flex:1 1 auto;min-inline-size:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+html[data-world="full"] .rt-chronicle-bar>.save-status{flex:none;white-space:nowrap}
+html[data-world="full"] .rt-field>.rt-status-strip{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem .8rem}
+html[data-world="full"] .rt-field>.rt-status-strip>.rt-mission-summary{order:0;flex:0 1 auto;min-inline-size:0}
+html[data-world="full"] .rt-field>.rt-status-strip>.rt-mission-summary .rt-objective{flex:0 1 auto}
+html[data-world="full"] .rt-field>.rt-status-strip>.rt-opportunity{order:1;flex:1 1 12rem;min-inline-size:0}
+html[data-world="full"] .rt-field>.rt-status-strip>.rt-mission-details{order:2;flex:none;margin-inline-start:auto}
+html[data-world="full"] .rt-field>.rt-status-strip>.rt-mission-warning{order:3;flex-basis:100%}
+html[data-world="full"] .rt-field .rt-status-strip .rt-mission-details>summary{min-block-size:1.9rem;padding-block:0}
+html[data-world="full"] .rt-chamber-strip{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:.1rem .6rem;padding:.15rem .6rem;background:#25262a}
+/* The vote's two lines join the strip's own row: the count first, the projection after it (below it on a phone). */
+html[data-world="full"] .rt-chamber-strip>.rt-vote-summary{display:contents}
+html[data-world="full"] .rt-chamber-strip>.rt-vote-summary>p{margin:0}
+html[data-world="full"] .rt-chamber-strip>.rt-vote-summary>p:first-child{order:0;flex:none;font-weight:700;color:var(--rt-focus);font-size:calc(.85rem * var(--text-scale,1))}
+html[data-world="full"] .rt-chamber-strip>.rt-vote-summary>p:last-child{order:1;flex:1 1 12rem;min-inline-size:0;color:var(--rt-muted);font-size:calc(.78rem * var(--text-scale,1))}
+html[data-world="full"] .rt-chamber-strip>.rt-coalition-details{order:2;flex:none;padding:0;background:none}
+/* Votes & delegates drops down over the chamber, as Mission details does; a conversation opens above it. */
+html[data-world="full"] .rt-chamber-strip>.rt-coalition-details[open]>.rt-detail-body{position:absolute;z-index:7;inset-inline:.5rem;inset-block-start:100%;
+  max-inline-size:none;max-block-size:min(60dvh,30rem);overflow:auto;overscroll-behavior:contain;background:#25262a;border:1px solid var(--rt-line);border-radius:.4rem;
+  padding:.4rem .6rem;box-shadow:0 .6rem 1.6rem #000a}
+html[data-world="full"] .rt-workspace>.rt-talk{z-index:8}
+html[data-world="full"] .rt-chamber-strip>.rt-coalition-details>summary{min-block-size:2rem;padding-block:0}
+html[data-world="full"] .rt-chamber-strip>.rt-records{order:2;flex:none;min-block-size:2rem;padding:.15rem .6rem}
+html[data-world="full"] .realtime-frame:not([data-outcome="active"]) .rt-chamber-strip{display:none}
+html[data-world="full"]:not([data-hud="full"]) .rt-unit-dock>.rt-selection-label{display:none}
+/* An event line with nothing to say takes no room in the bar. */
+html[data-world="full"] .rt-hud .rt-message-lines>.rt-event:empty{display:none}
+@container (min-width:761px){
+  html[data-world="full"] .rt-hud>.rt-ability-area{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .4rem}
+  html[data-world="full"] .rt-hud>.rt-ability-area>.rt-ability-bar{flex:0 1 auto;flex-basis:auto}
+  html[data-world="full"] .rt-hud>.rt-ability-area>.rt-tools{margin-inline-start:auto}
+  html[data-world="full"] .rt-unit-dock{gap:.2rem}
+}
+@media (pointer:fine){
+  html[data-world="full"] .rt-top button,html[data-world="full"] .rt-top select{min-block-size:2.25rem}
+  html[data-world="full"] .rt-top button{padding-block:.2rem;line-height:1.2}
+  html[data-world="full"] .rt-panel-list button{min-block-size:1.95rem;padding-block:.05rem}
+  html[data-world="full"] .rt-panel-list{gap:.15rem}
+}
+/* On a phone: the clock keeps its round and drops the elapsed time, which the strip shows as the time left. */
+@container (max-width:760px){
+  html[data-world="full"] .rt-field>.rt-status-strip{padding:.15rem .45rem;gap:0 .5rem}
+  html[data-world="full"]:not([data-hud="full"]) .rt-clock span{display:none}
+  html[data-world="full"] .rt-hud .rt-message-lines>p:is(.rt-message,.rt-target-line):not([hidden]){display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+  html[data-world="full"] .rt-hud>.rt-message-area{flex-wrap:nowrap}
+  html[data-world="full"] .rt-hud .rt-message-lines{flex:1 1 auto;min-inline-size:0}
+  html[data-world="full"] .rt-chamber-strip{gap:.1rem .4rem}
+  html[data-world="full"] .rt-chamber-strip>.rt-vote-summary>p:first-child{font-size:calc(.8rem * var(--text-scale,1))}
+  html[data-world="full"] .rt-chamber-strip>.rt-coalition-details>summary{padding-inline:.3rem;font-size:calc(.75rem * var(--text-scale,1))}
+  html[data-world="full"] .rt-chamber-strip>.rt-records{min-block-size:2rem;padding:.1rem .45rem;font-size:calc(.75rem * var(--text-scale,1))}
+  html[data-world="full"] .rt-chamber-strip{padding:.1rem .45rem}
+  /* On a phone: the count and the delegates on top, the projection and the members below. */
+  html[data-world="full"] .rt-chamber-strip>.rt-coalition-details{order:1}
+  html[data-world="full"] .rt-chamber-strip>.rt-vote-summary>p:last-child{order:2;flex:1 1 10rem;font-size:calc(.72rem * var(--text-scale,1))}
+  html[data-world="full"] .rt-chamber-strip>.rt-records{order:3}
+}

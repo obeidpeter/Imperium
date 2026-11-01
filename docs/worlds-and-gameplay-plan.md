@@ -25,8 +25,8 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 8 | Living camps | merged ([#40](https://github.com/obeidpeter/Imperium/pull/40); [report](camps-release8-report.md)); its five figures followed on 30 October ([report](camps-release8-report.md#the-five-figures-30-october)) |
 | 9 | Landmarks and set pieces | merged ([#41](https://github.com/obeidpeter/Imperium/pull/41); [report](landmarks-release9-report.md)) |
 | 10 | Gate 4 and 0.40.0 | in progress: Practice in real time and the [Gate 4 checklist](gate4-playthrough.md) merged ([#42](https://github.com/obeidpeter/Imperium/pull/42)); the owner's play-through, decision on the turn-based mode and Performance-check files follow releases 11–14 |
-| 11 | Chests, the smith and the armoury | ready for review ([report](chests-release11-report.md)) |
-| 12 | The full-screen world and the camera | planned |
+| 11 | Chests, the smith and the armoury | merged ([#46](https://github.com/obeidpeter/Imperium/pull/46); [report](chests-release11-report.md)) |
+| 12 | The full-screen world and the camera | in progress, in two pull requests: the layout first, then the camera |
 | 13 | The inventory | planned |
 | 14 | Walking between areas | planned |
 
@@ -138,6 +138,15 @@ These are the genre's conventions, built in Imperium's own Roman style. Nothing 
   - **H** held glances at the horizon, and **X** fades what stands between the camera and the soldier.
 - **Keys:** removed actions no longer reset a player's custom keys.
 - **Frame rate:** the full-window canvas caps its pixel ratio so Balanced keeps its frame rate.
+- **Added by the owner (1 November):**
+  - **The 2D view switch.** Switching the battle view from 3D to 2D during a session left the field blank, on main too: the 2D view was given the 3D view's canvas. Each view gets a canvas of its own kind, with the controls rebound, and a browser check switches both ways.
+  - **The unheard oath.** In the finale's oath route, an oath sworn with no rival band in reach says so, naming the nearest band and how far it is.
+  - **The oath's reach, forecast.** Before the oath is sworn, the Rally button says whether a band is in reach, or how far the nearest one is.
+- **Two pull requests:** first the layout, walking to places, the 2D view switch and the oath's messages; then the camera.
+- **As built in the first pull request** ([report](fullscreen-release12-report.md)):
+  - What used to follow the world opens **in place over it**, rather than in the one dialog: help, tips and the battle log at its top-left corner, All actions and order review at its right edge, a fight's result and the chamber's members in the middle, and the camp's list under **Menu → Camp**. The player sees the same thing; their focus, pause and live updates stay as they were. The Menu, Settings, the panels (I C J Q L M R A) and conversations stay in the dialog.
+  - Talking to a person from the camp list takes the soldier to that person at once, as map travel does, rather than walking there.
+  - The pixel cap is a budget per quality: at most the pixels of a 1,920 × 800 view at that quality's own resolution.
 
 #### 13. The inventory
 
@@ -170,8 +179,13 @@ These are the genre's conventions, built in Imperium's own Roman style. Nothing 
 | Story | Issued wins every battle at the first try; bare within two |
 | Standard | Engaged ≥90% at the first try and all within 2; issued ≥80% and all within 3 |
 | Veteran | Engaged ≥70% at the first try and all within 3 |
-| Upgrades count | In Chapters I–III and against champions, engaged beats issued by at least 10 points of first-try wins on Veteran |
+| Upgrades count (adopted 1 November) | In Chapters I–III and the eleven champion battles: on Veteran, engaged ends its wins with at least 3 points more health on average than issued, and wins at least 0.3 rounds sooner on average; on Story, issued ends the champion battles with at least 10 points more health than bare |
 
+- **Upgrades count, as adopted on 1 November.** It replaces a target of first-try wins: engaged beating issued by 10 points on Veteran. Both reference players already win 98.5–99.8% there at the first try, and making kit decide wins would need Veteran's enemies harder than Story's, which the plan rules out. Kit is measured instead by what it changes: the health a win costs and how soon it comes.
+  - Release 11 measured, on Veteran, 4.0 points more health (92.7% → 96.7%) and 0.44 rounds sooner (5.99 → 5.55), and on Story, 17.2 points more health against the champions (76.2% → 93.4%).
+  - Each threshold sits below the low end of its 90% range over seeds.
+  - Each sweep also reports, without a pass mark, the wins that end with the soldier below half health. Release 11: Story 18 → 3 (bare → issued), Standard 6 → 0 and Veteran 8 → 2 (issued → engaged).
+  - `node scripts/upgrades-check.mjs --label=<label>` checks a release's six sweeps; `npm test` checks release 11's.
 - **The levers are identical on every level:**
   - the enemy tiers;
   - the archetypes' kit;

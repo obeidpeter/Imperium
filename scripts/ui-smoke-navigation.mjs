@@ -12,7 +12,8 @@ export async function menuCommand(page,command){
   if(!await target.count())await page.locator('[data-cmd="menu"]:visible, [data-role="menuButton"]:visible').first().click();
   if(await page.locator('#modal[open]').count())target=page.locator(`#modal[open] [data-cmd="${command}"]:visible`).first();
   if(!await target.count()){
-    const group={character:'campaign',map:'campaign',journal:'campaign',ledger:'campaign',history:'about',credits:'about',privacy:'about',home:'about'}[command];
+    // In a real-time camp How to play sits under More (release 12: Camp takes its place).
+    const group={character:'campaign',map:'campaign',journal:'campaign',ledger:'campaign',history:'about',credits:'about',privacy:'about',home:'about',help:'about'}[command];
     if(group)await page.locator(`#modal [data-cmd="menu-section"][data-id="${group}"]`).click();
   }
   await target.click();
@@ -53,9 +54,34 @@ export async function verifyEnlargedSettingsGeometry(page){
   return result;
 }
 
+// Release 12: a real-time camp keeps its list (services, people, places and March out) under Menu → Camp, over
+// the world. Open it as a player does: the field's Menu button, then Camp.
+export async function openCampList(page){
+  if(await page.locator('main[data-overlay="services"] #camp-services').isVisible())return;
+  if(await page.locator('#modal[open]').count())await closePanel(page);
+  await page.locator('.rt-top [data-role="menuButton"]:visible').first().click();
+  await page.locator('#modal[open] [data-cmd="page-overlay"][data-id="services"]').click();
+  await page.locator('main[data-overlay="services"] #camp-services').waitFor({state:'visible'});
+}
+
+// Release 12: the bar's panel buttons (Kit, Character, Journal, Orders, …); on a phone they fold into Panels.
+export async function fieldPanel(page,name){
+  const button=page.locator(`.rt-panels [data-panel="${name}"]`).first();
+  if(!await button.isVisible())await page.locator('.rt-panels [data-role="panelsToggle"]').click();
+  await button.click();
+}
+
+// Esc from inside the camp list closes it and gives the world its focus back.
+export async function closeCampList(page){
+  if(!await page.locator('main[data-overlay="services"]').count())return;
+  await page.locator('main[data-overlay="services"] #camp-services').focus();await page.keyboard.press('Escape');
+  await page.waitForFunction(()=>!document.querySelector('main[data-overlay="services"]'));
+}
+
 export async function revealControl(page,selector){
   const target=page.locator(selector).first();
   await target.waitFor({state:'attached'});
+  if(await target.evaluate(el=>!!el.closest('main.realtime-camp #camp-services')&&!el.closest('#modal')))await openCampList(page);
   const category=await target.evaluate(el=>el.closest('[data-settings-page]')?.dataset.settingsPage);
   if(category&&!await page.locator(`#modal [data-settings-page="${category}"]`).isVisible())await settingsPage(page,category);
   // Outer disclosures precede inner ones in document order. Re-query after

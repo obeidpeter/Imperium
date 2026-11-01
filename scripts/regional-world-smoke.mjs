@@ -13,7 +13,7 @@ import {resolve,isAbsolute,join} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,settingsCommand,closePanel} from './ui-smoke-navigation.mjs';
+import {menuCommand,revealControl,settingsCommand,closePanel,openCampList,closeCampList} from './ui-smoke-navigation.mjs';
 import {runRealtimeCampaign} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 import {saveCode,restoreCode} from '../src/ui/storage.js';
@@ -176,13 +176,18 @@ async function services(checkpoint){
   }
   await (await revealControl(page,'[data-cmd="conversation"][data-id="table"]')).click();
   await page.locator('#modal .modal-back').click();assert.equal(await page.locator('#panel-title').textContent(),'Menu');await closePanel(page);
-  const preparation=page.locator('#camp-preparation');
+  // Release 12: the preparation sits in the camp list (Menu → Camp), over the world; Esc closes it.
+  await openCampList(page);const preparation=page.locator('#camp-preparation');
   if(!await preparation.evaluate(element=>element.open))await preparation.locator(':scope > summary').click();
-  assert.equal(await preparation.evaluate(element=>element.open),true);
+  assert.equal(await preparation.evaluate(element=>element.open),true);await closeCampList(page);
   assert.equal(await exported(),before,'Browsing direct services and preparation preserves the complete campaign save');
   await pause();const peacefulBefore=await page.evaluate(()=>JSON.stringify(window.__realtime.world()));
+  // The refusal shows for 2.6 s; in software rendering one frame of a camp's overview can outlast that, so the
+  // check records each text the event line shows rather than sampling it once a frame (read-only).
+  await page.evaluate(()=>{const line=document.querySelector('[data-role="eventLine"]');window.__eventTexts=[];
+    new MutationObserver(()=>window.__eventTexts.push(line.textContent)).observe(line,{childList:true,characterData:true,subtree:true});});
   await page.locator('#rt-board').focus();await page.keyboard.press('Space');
-  await page.waitForFunction(()=>/Weapons stay sheathed/.test(document.querySelector('[data-role="eventLine"]')?.textContent??''));
+  await page.waitForFunction(()=>window.__eventTexts.some(text=>/Weapons stay sheathed/.test(text)));
   await page.keyboard.press('Shift+KeyT');await page.keyboard.press('Shift+Enter');
   assert.equal(await page.evaluate(()=>JSON.stringify(window.__realtime.world())),peacefulBefore);
   record(`Chapter ${checkpoint.chapter}: direct services, panel Back and peaceful controls protect the save`);
@@ -191,11 +196,13 @@ async function narrow(chapter){
   await page.setViewportSize({width:390,height:844});
   const geometry=await page.evaluate(()=>{
     const canvas=document.querySelector('#rt-board').getBoundingClientRect();
-    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-status-strip,.rt-support,.rt-deploy')].filter(el=>el.checkVisibility({checkVisibilityCSS:true}));
-    return {width:innerWidth,documentWidth:document.documentElement.scrollWidth,canvasHeight:canvas.height,
+    // Release 12: the strip and the bar never cover the world; help, tips and the log open over it by design.
+    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-chronicle-bar,.rt-field>.rt-status-strip,.rt-deploy')].filter(el=>el.checkVisibility({checkVisibilityCSS:true}));
+    return {width:innerWidth,height:innerHeight,documentWidth:document.documentElement.scrollWidth,documentHeight:document.documentElement.scrollHeight,canvasHeight:canvas.height,
       overlap:panels.filter(el=>{const r=el.getBoundingClientRect();return Math.min(r.right,canvas.right)-Math.max(r.left,canvas.left)>1&&Math.min(r.bottom,canvas.bottom)-Math.max(r.top,canvas.top)>1;}).map(el=>el.className)};
   });
-  assert.ok(geometry.documentWidth<=geometry.width+1);assert.ok(geometry.canvasHeight>=318);assert.deepEqual(geometry.overlap,[]);
+  assert.ok(geometry.documentWidth<=geometry.width+1);assert.ok(geometry.documentHeight<=geometry.height+1,'Nothing on the page scrolls');
+  assert.ok(geometry.canvasHeight>=318);assert.deepEqual(geometry.overlap,[]);
   await screenshot(`chapter-${String(chapter).padStart(2,'0')}-narrow.png`);await page.setViewportSize({width:1270,height:720});
   record(`Chapter ${chapter}: narrow viewport retains a useful unobstructed scene`,geometry);
 }

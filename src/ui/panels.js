@@ -162,7 +162,7 @@ export function createPanels(context){
       check('pause-objective','pauseObjective','Auto-pause: the objective changes','A new objective or phase.')+
       check('pause-order','pauseOrder','Auto-pause: an order cannot be carried out','A command refused, with its reason.')+
       check('round-pause','roundPause','Pause each round','Stop at the start of every round, for a game played almost turn by turn.')+
-      check('panel-pause','panelPause','Pause in panels','Pause while viewing equipment or records. The main Menu always pauses.')+`</details></fieldset>`;
+      check('panel-pause','panelPause','Pause in panels','Pause while viewing equipment or records. The Menu, conversations and the chronicle always pause.')+`</details></fieldset>`;
   }
   // The development menu (npm run dev, or ?dev in the address): the 0.40
   // conversion's per-chapter fallback. The play mode is an ordinary setting.
@@ -348,21 +348,23 @@ export function createPanels(context){
   }
 
   function showNavigation(page='main'){
-    const {state,screen,showModal}=context();
+    const {state,screen,showModal,worldCamp}=context();
     const item=(cmd,label,hint='',id='')=>`<button class="menu-link" data-cmd="${cmd}"${id?` data-id="${id}"`:''}><strong>${label}</strong>${hint?`<span>${hint}</span>`:''}</button>`;
     const soldier=state?.soldier;
     const groups={
       main:[state?item('continue',screen==='game'?'Resume game':'Continue game'):item('new','New game'),
         state?item('menu-section',soldier?'Soldier & company':'Your character','Equipment, training and companions','soldier'):'',
         state?item('menu-section','Campaign','Mission, progress and commitments','campaign'):'',
-        state?item('saves','Save & load'):'',item('settings','Settings'),item('help','How to play'),item('menu-section','More','Title screen, history and credits','about')],
+        // In a real-time camp (release 12) the camp list takes How to play's place: the bar's Help and More keep it.
+        state?item('saves','Save & load'):'',item('settings','Settings'),worldCamp?item('page-overlay','Camp','People, places, preparations and departure','services'):item('help','How to play'),
+        item('menu-section','More','Title screen, history and credits','about')],
       soldier:soldier?[item('soldier-panel','Equipment','Wear, compare and manage items','kit'),item('soldier-panel','Training','Attributes and techniques','character'),
         item('soldier-panel','Company','Companions and standing orders','company'),item('soldier-panel','Honours','Decorations and titles','decorations')]:[item('character','Character & equipment')],
       campaign:[item('soldier-panel','Current mission','Objective and next step','mission'),item('map','Campaign map'),item('journal','Mission journal'),
         item('ledger','Obligations & alliances','Promises, costs and due dates'),item('character','Career record','Rank and standing'),
         ...(state?.encounter?.status==='active'?[item('retry','Restart this encounter','Restore its starting checkpoint')]:[]),
         ...(soldier?[item('soldier-panel','Story so far','','chronicle')]:[])],
-      about:[item('home','Title screen'),item('history','Historical notes'),item('credits','Credits'),item('privacy','Privacy & local data')]
+      about:[...(worldCamp?[item('help','How to play')]:[]),item('home','Title screen'),item('history','Historical notes'),item('credits','Credits'),item('privacy','Privacy & local data')]
     };
     const current=Object.hasOwn(groups,page)?page:'main';
     const titles={main:'Menu',soldier:soldier?'Soldier & company':'Your character',campaign:'Campaign',about:'More'};

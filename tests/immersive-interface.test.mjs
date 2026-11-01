@@ -12,22 +12,28 @@ const fixtures=JSON.parse(readFileSync(new URL('./fixtures/graphics-scenes.json'
 const camp=chapter=>Game.deserialize(JSON.stringify(fixtures.scenes.find(s=>s.id===`camp-${chapter}`).state));
 const documentFor=html=>{const doc=new Document();doc.body.innerHTML=html;return doc;};
 
-test('all twelve immersive camps place the world before services, with a short departure bar and optional dossier',()=>{
+test('all twelve camps fill the window (release 12): the strip, the world, and the camp list with the departure, services and a closed dossier',()=>{
   for(let chapter=1;chapter<=12;chapter++){
     const state=camp(chapter),before=Game.serialize(state),view=createCampaignViews(()=>({state,screen:'game',settings:{},lastSaved:'saved'}));
     const html=view.realtimeCamp(),doc=documentFor(html),host=doc.getElementById('rt-host'),services=doc.getElementById('camp-services');
     assert.ok(doc.querySelector('main.world-first'));
-    assert.ok(html.indexOf('id="rt-host"')<html.indexOf('id="camp-services"'),'world precedes the service reference');
-    assert.equal(host.closest('.camp-sidebar'),null,'world never shares a sidebar');
-    assert.equal(services.getAttribute('tabindex'),'-1','the jump destination can receive keyboard focus');
-    assert.ok(doc.querySelector('a[href="#camp-services"]'));assert.ok(doc.querySelector('a[href="#rt-board"]'));
-    assert.equal(doc.querySelectorAll('[data-cmd="start"]').length,1);
+    assert.equal(doc.querySelector('header.site-header'),null,'no site header: the strip and the field\'s own Menu take its place');
+    assert.equal(doc.querySelector('footer'),null,'no footer: the bar\'s Help takes its place');
+    const bar=doc.querySelector('main > .world-camp-bar');assert.ok(bar,'the camp strip');assert.match(bar.textContent,/Chronicle saved/);
+    assert.match(bar.querySelector('.eyebrow').textContent,new RegExp(`Next: `),'the next mission');
+    assert.ok(html.indexOf('id="rt-host"')<html.indexOf('id="camp-services"'),'the world comes first');
+    assert.equal(host.closest('.camp-sidebar'),null,'the world never shares a sidebar');
+    assert.equal(services.getAttribute('tabindex'),'-1','the camp list receives focus when it opens');
+    assert.ok(services.querySelector('[data-cmd="page-overlay"][data-id="services"]'),'it closes from its own button');
+    assert.equal(doc.querySelector('a[href="#camp-services"]'),null,'no link to a list that is no longer on the page');
+    assert.equal(doc.querySelectorAll('[data-cmd="start"]').length,1);assert.ok(services.contains(doc.querySelector('[data-cmd="start"]')),'March out heads the camp list');
     assert.equal(doc.querySelectorAll('h1').length,1);
-    assert.equal(doc.querySelector('.world-departure .chapter-meta'),null,'rank explanations no longer occupy the first screen');
+    assert.equal(doc.querySelector('.world-departure .chapter-meta'),null,'rank explanations stay off the first screen');
     const records=doc.getElementById('camp-records');assert.equal(records.open,false);
     assert.ok(records.contains(doc.getElementById('campaign-chapters')));
     assert.ok(records.contains(doc.getElementById('camp-promotion')));
     assert.ok(services.querySelector('[data-cmd="conversation"][data-id="table"]'));
+    for(const talk of services.querySelectorAll('#camp-people [data-cmd="conversation"]'))assert.ok(talk.getAttribute('data-place'),'a person in the list names where the soldier goes');
     assert.equal(Game.serialize(state),before,'layout does not change a save or consume randomness');
   }
 });
@@ -46,7 +52,7 @@ test('camp, battle and chamber expose the same named camera choices outside the 
   assert.ok(documentFor(chamberEncounterView({state:chamber})).querySelector('main.world-first'));
 });
 
-test('camp keeps one objective above the world and moves the duplicate local briefing below it without hiding departure requirements',()=>{
+test('camp keeps one objective in its strip and the briefing over the world, and never hides what stops the departure (release 12)',()=>{
   for(let chapter=1;chapter<=12;chapter++){
     const state=camp(chapter),shell=createCampaignViews(()=>({state,screen:'game',settings:{}})).realtimeCamp();
     // Compare the live field independently of the host's stable identity.
@@ -54,11 +60,15 @@ test('camp keeps one objective above the world and moves the duplicate local bri
     assert.equal(head.querySelector('h2'),null,'there is no second title above the world');
     assert.equal(doc.querySelector('[data-role="missionHeadline"]'),null,'the departure objective is not repeated');
     assert.ok(field.indexOf('data-role="missionDetails"')>field.indexOf('id="rt-board"'));
+    assert.ok(doc.querySelector('.rt-workspace [data-role="missionDetails"]'),'the briefing opens over the world');
     assert.equal(doc.querySelector('[data-role="missionDetails"]').open,false);
-    assert.ok(head.querySelector('[data-role="pauseButton"]'));assert.ok(head.querySelector('[data-role="cameraSelect"]'));
-    assert.equal(page.querySelectorAll('[data-cmd="start"]').length,1);assert.ok(page.querySelector('a[href="#camp-services"]'));
+    assert.ok(head.querySelector('[data-role="pauseButton"]'));assert.ok(head.querySelector('[data-role="cameraSelect"]'));assert.ok(head.querySelector('[data-role="menuButton"]'));
+    assert.equal(page.querySelectorAll('[data-cmd="start"]').length,1);
     const problem=Game.departureCheck(state);
-    if(problem){const warning=page.getElementById('camp-departure-problem');assert.equal(warning.textContent,problem);assert.equal(warning.closest('details'),null);assert.equal(warning.hidden,false);}
+    if(problem){
+      const warning=page.getElementById('camp-departure-problem');assert.equal(warning.textContent,problem);assert.equal(warning.closest('details'),null);assert.equal(warning.hidden,false);
+      assert.equal(page.querySelector('.world-camp-bar .world-camp-problem').textContent,problem,'the strip says it too, with the world in view');
+    }
   }
 });
 
