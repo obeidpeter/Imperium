@@ -162,7 +162,7 @@ export function createPanels(context){
       check('pause-objective','pauseObjective','Auto-pause: the objective changes','A new objective or phase.')+
       check('pause-order','pauseOrder','Auto-pause: an order cannot be carried out','A command refused, with its reason.')+
       check('round-pause','roundPause','Pause each round','Stop at the start of every round, for a game played almost turn by turn.')+
-      check('panel-pause','panelPause','Pause in panels','Pause while viewing equipment or records. The main Menu always pauses.')+`</details></fieldset>`;
+      check('panel-pause','panelPause','Pause in panels','Pause while viewing equipment or records. The Menu, conversations and the chronicle always pause.')+`</details></fieldset>`;
   }
   // The development menu (npm run dev, or ?dev in the address): the 0.40
   // conversion's per-chapter fallback. The play mode is an ordinary setting.

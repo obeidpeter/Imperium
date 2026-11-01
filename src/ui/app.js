@@ -203,7 +203,8 @@ function render(){
   replay.stop();
   const viewKey=`${screen}:${state?.chapter}:${state?.phase}:${state?.encounter?.id||state?.encounterIndex}`;
   const newView=viewKey!==renderedLocation,openPanels=newView?[]:[...app.querySelectorAll('details[id][open]')].map(node=>node.id);
-  if(newView){pendingScroll=true;renderedLocation=viewKey;}
+  // A new screen (marching out, a loaded chronicle) closes the camp list or the chamber's records (release 12).
+  if(newView){pendingScroll=true;renderedLocation=viewKey;pageOverlay='';}
   document.documentElement.dataset.phase=screen==='title'?'title':state?.phase||'camp';
   document.documentElement.dataset.kind=state?.encounter?.kind||'';
   document.documentElement.dataset.stage=state?.phase==='epilogue'||(state?.chapter===12&&state?.phase==='promotion')?'imperial':'service';
