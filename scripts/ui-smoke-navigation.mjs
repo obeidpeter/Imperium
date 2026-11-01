@@ -64,6 +64,20 @@ export async function openCampList(page){
   await page.locator('main[data-overlay="services"] #camp-services').waitFor({state:'visible'});
 }
 
+// Release 12: the bar's panel buttons (Kit, Character, Journal, Orders, …); on a phone they fold into Panels.
+export async function fieldPanel(page,name){
+  const button=page.locator(`.rt-panels [data-panel="${name}"]`).first();
+  if(!await button.isVisible())await page.locator('.rt-panels [data-role="panelsToggle"]').click();
+  await button.click();
+}
+
+// Esc from inside the camp list closes it and gives the world its focus back.
+export async function closeCampList(page){
+  if(!await page.locator('main[data-overlay="services"]').count())return;
+  await page.locator('main[data-overlay="services"] #camp-services').focus();await page.keyboard.press('Escape');
+  await page.waitForFunction(()=>!document.querySelector('main[data-overlay="services"]'));
+}
+
 export async function revealControl(page,selector){
   const target=page.locator(selector).first();
   await target.waitFor({state:'attached'});
