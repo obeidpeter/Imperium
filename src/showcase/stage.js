@@ -358,11 +358,12 @@ export class BattleStage{
     return {boardKit:this.boardKit?.scene??null,treeKit:this.treeKit?.scene??null,rockKit:this.rockKit?.scene??null,wallsKit:this.wallsKit?.scene??null,kitFinish,
       landmarkModels:new Map((this.landmarkKits??[]).filter(([,lease])=>lease.scene).map(([model,lease])=>[model,lease.scene]))};
   }
-  // The world's chests and caches (container-props.js), lit and finished as the field objects are.
+  // The world's chests and caches (container-props.js), in the scenery's own materials, so they add no shader program.
   rebuildContainerProps(){
     const finish=material=>{installCloudShadows(material);const baked=this.environment?.occlusion?.uniforms;if(baked)installBakedOcclusion(material,baked);};
     this.containerProps?.dispose();
-    this.containerProps=createContainerProps(this.scene,{heightAt:(x,z)=>this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),quality:this.worldQuality,chapter:this.chapter,finish});
+    this.containerProps=createContainerProps(this.scene,{heightAt:(x,z)=>this.surfaceHeight?.(x,z)??this.environment.groundHeight(x,z),quality:this.worldQuality,chapter:this.chapter,
+      palette:this.environment?.materials??null,finish});
   }
   rebuildFieldFeatures(){
     // Field objects stand in the scenery's light: cloud shadows and its baked

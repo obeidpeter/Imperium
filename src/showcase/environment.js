@@ -308,7 +308,8 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   // The far skyline: the region's panorama, or the painted backdrop until it loads.
   const backdrop=createPanorama(profile,{quality});root.add(backdrop.group);
   let lastTime=-1;
-  return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,occlusion,terrain:{splat,uniforms:library.terrain},
+  // materials: the scenery's palette, lent read-only to other code-built props (container-props.js) so they share its shaders.
+  return {group:root,ground,groundHeight:height,cameraGroundHeight:horizon.cameraGroundHeight,profile,horizon,occlusion,terrain:{splat,uniforms:library.terrain},materials:m,
     waterReflection:library.waterReflection,reflectionFallback:library.reflectionFallback,reflectionLevel,waterMeshes:[riverWater,marshWater].filter(Boolean),
     // camera: its position, so the kit's trees and rocks take the level their distance asks
     // for; focus: the point it looks at, round which the ground cover grows.

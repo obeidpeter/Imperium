@@ -1,14 +1,15 @@
+import * as T from '../../vendor/three/three.module.js';
 import {createFieldworkKit} from './environment-fieldwork.js';
 import {batchStaticEnvironment} from './environment-batching.js';
-import * as T from '../../vendor/three/three.module.js';
+import {createMasonryBlockGeometry} from './environment-primitives.js';
 
 // Chests, strongboxes, lockers, caches and the rest (release 11,
-// data/containers.js) on the 3D stage, in camp and on the field. Code-built
-// from the fieldwork kit's pieces and materials, so they share the scenery's
-// shaders and add no program; batched by material, so all of them together
-// cost a draw or two for each material. Presentation only: drawn from the
-// world's containers in sight (live-figures.js stageContainers), closed, open
-// with something inside, or open and emptied. A hidden cache is not drawn
+// data/containers.js) on the 3D stage, in camp and on the field. Code-built in
+// the scenery's own materials (the environment's palette, environment.js), so
+// they share its shaders and add no program; batched by material, so all of
+// them together cost a draw for each material. Presentation only: drawn from
+// the world's containers in sight (live-figures.js stageContainers), closed,
+// open with something inside, or open and emptied. A hidden cache is not drawn
 // until the soldier has found it. A change rebuilds only these few meshes.
 
 // Each kind as boxes, cylinders and spheres: [width, height, depth] of its
@@ -81,21 +82,40 @@ export function buildContainer(parts,parent,c){
   return g;
 }
 
-export function createContainerProps(scene,{heightAt=()=>0,quality='balanced',chapter=1,finish=null}={}){
+// The pieces the containers are built from: unit shapes, and the materials of
+// the scene's palette (wood, dark wood, iron, cloth, rope, stone; iron stands
+// for bronze fittings, which the palette lacks). Without a palette (a test, or
+// no scenery), the fieldwork kit's materials stand in.
+function containerParts({palette=null,chapter=1,quality='balanced',finish=null,geometries,materials}){
+  const segments=quality==='performance'?8:12,own=g=>(geometries.add(g),g);
+  let m;
+  if(palette)m={wood:palette.wood,dark:palette.darkWood,iron:palette.iron,bronze:palette.iron,cloth:palette.cloth,rope:palette.rope,stone:palette.stone};
+  else{const kit=createFieldworkKit({chapter,quality,geometries:new Set(),materials,finish});m=kit.parts.m;}
+  const box=own(createMasonryBlockGeometry()),cylinder=own(new T.CylinderGeometry(1,1,1,segments)),sphere=own(new T.SphereGeometry(1,segments,8));
+  const sack=own(new T.LatheGeometry([[.08,0],[.20,.04],[.25,.17],[.24,.34],[.18,.45],[.06,.5],[.07,.55]].map(v=>new T.Vector2(...v)),segments));
+  const mesh=(parent,g,mat,x=0,y=0,z=0,sx=1,sy=1,sz=1)=>{const o=new T.Mesh(g,mat);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;};
+  const plank=(g,x,y,z,sx,sy,sz,mat=m.wood)=>mesh(g,box,mat,x,y,z,sx,sy,sz);
+  const beam=(g,a,b,r,mat=m.wood)=>{const start=new T.Vector3(...a),end=new T.Vector3(...b),length=start.distanceTo(end);
+    const o=mesh(g,cylinder,mat,...start.clone().add(end).multiplyScalar(.5).toArray(),r,length,r);o.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),end.sub(start).normalize());return o;};
+  const group=(parent,x=0,y=0,z=0)=>{const g=new T.Group();g.position.set(x,y,z);parent.add(g);return g;};
+  return {m,mesh,plank,beam,group,box,cylinder,sphere,sack};
+}
+
+export function createContainerProps(scene,{heightAt=()=>0,quality='balanced',chapter=1,finish=null,palette=null}={}){
   const group=new T.Group();group.name='containers';scene.add(group);
-  const shared=new Set(),built=new Set(),materials=new Set();
-  const kit=createFieldworkKit({chapter,quality,geometries:shared,materials,finish});
+  // The shapes and any stand-in materials are this set's; the palette's materials are the scenery's, never disposed here.
+  const shared=new Set(),built=new Set(),materials=new Set(),parts=containerParts({palette,chapter,quality,finish,geometries:shared,materials});
   let signature='',stats={containers:0,drawBatches:0,triangles:0},disposed=false;
   const clear=()=>{for(const g of built)g.dispose();built.clear();group.clear();};
   function sync(list=[]){
     if(disposed)return false;
     const next=JSON.stringify(list);if(next===signature)return false;signature=next;clear();
-    for(const c of list){const y=heightAt(c.x,c.z);buildContainer(kit.parts,group,{...c,y:Number.isFinite(y)?y:0});}
-    // Batched by material: the merged geometries are this build's to dispose; the kit's pieces are kept.
+    for(const c of list){const y=heightAt(c.x,c.z);buildContainer(parts,group,{...c,y:Number.isFinite(y)?y:0});}
+    // Batched by material: the merged geometries are this build's to dispose; the shapes are kept.
     batchStaticEnvironment(group,{geometries:built,instanceThreshold:Infinity});
     let drawBatches=0,triangles=0;group.traverse(o=>{if(o.isMesh){drawBatches++;triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;}});
     stats={containers:list.length,drawBatches,triangles};return true;
   }
-  return {group,sync,stats:()=>({...stats}),
+  return {group,sync,stats:()=>({...stats}),materials:Object.values(parts.m),
     dispose(){if(disposed)return;disposed=true;clear();for(const g of shared)g.dispose();for(const m of materials)m.dispose();group.removeFromParent();}};
 }

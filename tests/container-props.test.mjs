@@ -35,6 +35,13 @@ test('every kind of container builds closed, open, emptied and locked from the f
   assert.ok(height('chest-open')>height('chest-shut')+.2);
   for(const box of Object.keys(CONTAINER_KINDS))assert.ok(containerShape(box),box);
   props.dispose();assert.equal(scene.children.length,0);
+  // In the scenery's own palette (environment.js lends it), only its materials are drawn, and they are never disposed here.
+  const palette=Object.fromEntries(['wood','darkWood','iron','cloth','rope','stone'].map(k=>[k,new T.MeshStandardMaterial({name:`palette ${k}`})]));
+  let disposedPalette=0;for(const m of Object.values(palette))m.addEventListener('dispose',()=>disposedPalette++);
+  const lent=createContainerProps(new T.Scene(),{palette});lent.sync(list);
+  const used=new Set();lent.group.traverse(o=>{if(o.isMesh)used.add(o.material);});
+  assert.ok([...used].every(m=>Object.values(palette).includes(m)),'only the palette’s materials');
+  lent.dispose();assert.equal(disposedPalette,0,'the scenery’s materials are left to the scenery');
 });
 
 test('the stage shows a battlefield cache only once it is found, and the field’s containers face the board',()=>{
