@@ -139,6 +139,10 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         c.beginPath();q.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fillStyle='#9fd3d022';c.fill();c.setLineDash([8,6]);c.lineWidth=2;c.strokeStyle='#9fd3d0';c.stroke();c.setLineDash([]);}
       // Objectives and objects.
       if(w.mission?.goal&&markers())ellipse(flat.screen(v,w.mission.goal.x,w.mission.goal.z),(w.mission.radius??2.5)*unit*.7,'#f1d38a',{dash:[6,4]});
+      // The armourer's forge (release 11): an anvil on its block, behind him.
+      const forge=w.campPresentation?.smithy;
+      if(forge){const p=flat.screen(v,forge.x+w.map.width*TILE/2,forge.z+w.map.height*TILE/2);c.fillStyle='#5a4632';c.fillRect(p.x-v.tw*.08,p.y-v.th*.35,v.tw*.16,v.th*.35);
+        c.fillStyle='#4a4d4a';c.fillRect(p.x-v.tw*.18,p.y-v.th*.52,v.tw*.36,v.th*.17);}
       for(const o of w.objects??[]){if(o.hidden)continue;const p=flat.screen(v,o.x,o.z);
         // A chest (release 11): low and wide, its lid raised once open, dim once emptied, a lock while locked.
         if(o.kind==='container'){const camp=w.kind==='camp',empty=camp?!!o.empty:!!o.opened&&!o.contents?.length,locked=camp?!!o.locked:!!o.lock&&!o.unlocked;

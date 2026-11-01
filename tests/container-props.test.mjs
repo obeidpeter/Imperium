@@ -8,6 +8,8 @@ import {campFor} from '../src/data/camps.js';
 import {createContainerProps,containerShape} from '../src/showcase/container-props.js';
 import {stageContainers} from '../src/showcase/live-figures.js';
 import {campRuntimeKey} from '../src/ui/camp-runtime.js';
+import {createFlatPresenter} from '../src/showcase/flat-stage.js';
+import {CAMP_CONTAINERS} from '../src/data/containers.js';
 
 // Release 11: the chests, caches and the armourer's forge as the stage draws them. Presentation
 // only: built from the scenery's own pieces, kept off the stage while hidden, and never a reason
@@ -59,4 +61,19 @@ test('opening a camp chest changes the camp world, never its scenery; every camp
     assert.ok(Math.hypot(at.x-place.x,at.z-place.z)>Math.hypot(smith.x-place.x,smith.z-place.z),`chapter ${chapter}: behind him, away from the place's centre`);
     for(const o of w.objects)assert.ok(Math.hypot(o.x-at.x,o.z-at.z)>1.2,`chapter ${chapter}: clear of ${o.id}`);
   }
+});
+
+test('the 2D view draws the forge and the containers in sight, a lock while locked, and never a hidden cache',()=>{
+  const [chapter,list]=Object.entries(CAMP_CONTAINERS).find(([,l])=>l.some(c=>c.hidden)),world=Game.createCampWorld(campState(Number(chapter)));
+  const draw=()=>{const calls=[],c=new Proxy({},{get:(t,k)=>k in t?t[k]:(...a)=>{calls.push([k,a]);},set:(t,k,v)=>{t[k]=v;return true;}});
+    createFlatPresenter({},{world:()=>world,alpha:()=>1}).draw(c,{tw:32,th:16},{screen:(v,x,z)=>({x,y:z})},0);return calls;};
+  const texts=calls=>calls.filter(([k])=>k==='fillText').map(([,a])=>a[0]);
+  const hidden=list.find(c=>c.hidden),locked=list.find(c=>c.lock);
+  let calls=draw();
+  assert.ok(!texts(calls).some(t=>t.startsWith(hidden.name)),'a hidden cache is not drawn');
+  assert.ok(texts(calls).includes(`${locked.name} (locked)`),'a locked chest says so');
+  const forge=world.campPresentation.smithy,fx=forge.x+world.map.width*1.25;
+  assert.ok(calls.some(([k,a])=>k==='fillRect'&&Math.abs(a[0]-(fx-32*.18))<1e-6),'the forge is drawn where it stands');
+  world.objects.find(o=>o.container===hidden.id).hidden=false;
+  assert.ok(texts(draw()).some(t=>t.startsWith(hidden.name)),'found, it is drawn');
 });
