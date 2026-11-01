@@ -1,6 +1,6 @@
 {
   "id": "item-squamata",
-  "status": "Release 13 pilot: an item picture, rendered offline; the model never ships",
+  "status": "generated: awaiting review",
   "item": "squamata",
   "group": "Body armour",
   "use": "The inventory picture of `squamata` (src/data/items.js), rendered from this model in Blender into the item atlas.",
@@ -20,6 +20,42 @@
     "program": "item-pictures",
     "creditCeiling": 1000,
     "expectedCredits": 20,
-    "creditAccounting": "batch"
+    "creditAccounting": "batch",
+    "taskId": "81941bfa-2c8e-4bca-a0d6-b9f533d5e453",
+    "requestedAt": "2026-11-01T23:27:09.364Z",
+    "balanceBefore": 11400,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single Roman scale shirt (lorica squamata) of the third century AD: a hip-length shirt with short sleeves made of small overlapping copper-alloy scales, each with a rounded lower edge, wired in horizontal rows onto a linen backing, with leather edging at the neck, sleeves and hem. Shown upright as if worn by an invisible body, front view, hollow and complete. No segmented plate armour. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-01T23:30:15.783Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-squamata.glb",
+    "rawBytes": 47210008,
+    "rawSha256": "ebbc62fea889f1cefd4a6a40ad0f5b89a07dc6f13dba27bae683791f385c7190",
+    "tripoInput": {
+      "prompt": "A single Roman scale shirt (lorica squamata) of the third century AD: a hip-length shirt with short sleeves made of small overlapping copper-alloy scales, each with a rounded lower edge, wired in horizontal rows onto a linen backing, with leather edging at the neck, sleeves and hem. Shown upright as if worn by an invisible body, front view, hollow and complete. No segmented plate armour. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-squamata-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 180,
+    "cells": "2x3",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
   }
 }

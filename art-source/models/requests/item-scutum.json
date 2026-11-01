@@ -1,6 +1,6 @@
 {
   "id": "item-scutum",
-  "status": "Release 13 pilot: an item picture, rendered offline; the model never ships",
+  "status": "generated: awaiting review",
   "item": "scutum",
   "group": "Shields",
   "use": "The inventory picture of `scutum` (src/data/items.js), rendered from this model in Blender into the item atlas.",
@@ -31,6 +31,31 @@
       "texture": true,
       "pbr": true,
       "geometry_quality": "standard"
-    }
+    },
+    "status": "success",
+    "generatedAt": "2026-11-01T23:21:55.966Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-scutum.glb",
+    "rawBytes": 44128040,
+    "rawSha256": "3df1b92ae6bcb71c39a843dff570fdf0f0f0111d96c3e2ffe18fc90e89df44a5",
+    "tripoInput": {
+      "prompt": "A single Roman oval shield (scutum) of the mid third century AD: a slightly dished oval board of glued planks about 110 cm tall, faced with painted leather, a round iron boss at the centre and a rawhide rim. Painted dark red with a simple laurel wreath and four rosettes in pale yellow and white. Shown alone, upright, its painted face forward, with a plain wooden back and a horizontal handgrip behind the boss. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-scutum-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 180,
+    "cells": "2x4",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
   }
 }

@@ -1,6 +1,6 @@
 {
   "id": "item-hamata",
-  "status": "Release 13 pilot: an item picture, rendered offline; the model never ships",
+  "status": "generated: awaiting review",
   "item": "hamata",
   "group": "Body armour",
   "use": "The inventory picture of `hamata` (src/data/items.js), rendered from this model in Blender into the item atlas.",
@@ -20,6 +20,42 @@
     "program": "item-pictures",
     "creditCeiling": 1000,
     "expectedCredits": 20,
-    "creditAccounting": "batch"
+    "creditAccounting": "batch",
+    "taskId": "7ff7ffea-c9dd-40aa-9fec-9a3238a6c4f1",
+    "requestedAt": "2026-11-01T23:24:20.902Z",
+    "balanceBefore": 11420,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single Roman mail shirt (lorica hamata) of the third century AD: a hip-length shirt with short sleeves made of thousands of small riveted iron rings, a plain round neck opening and a straight hem. Dark oiled iron with a soft sheen. Shown upright as if worn by an invisible body, front view, hollow and complete. Mail only: no segmented plate armour, no scales. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-01T23:27:06.854Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-hamata.glb",
+    "rawBytes": 46785472,
+    "rawSha256": "112da6e04518ab3e2efe88efb27f7643fb7e8749556ae481b716815329b7454e",
+    "tripoInput": {
+      "prompt": "A single Roman mail shirt (lorica hamata) of the third century AD: a hip-length shirt with short sleeves made of thousands of small riveted iron rings, a plain round neck opening and a straight hem. Dark oiled iron with a soft sheen. Shown upright as if worn by an invisible body, front view, hollow and complete. Mail only: no segmented plate armour, no scales. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-hamata-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 180,
+    "cells": "2x3",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
   }
 }

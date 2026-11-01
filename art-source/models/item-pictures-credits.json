@@ -15,7 +15,7 @@
       "batch": "pilot",
       "date": "2026-11-01",
       "plannedCredits": 160,
-      "spentCredits": 0,
+      "spentCredits": 160,
       "items": [
         "item-spatha",
         "item-scutum",
@@ -26,10 +26,85 @@
         "item-birrus",
         "item-ring-belt"
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "item-birrus",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "43bff0d1-06bc-4527-a5dc-7b9b88f66533",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-hamata",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7ff7ffea-c9dd-40aa-9fec-9a3238a6c4f1",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-niederbieber",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "b1e36df3-5270-49e3-8b69-9cf913dbdb7b",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-ring-belt",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d4f6fd84-16f2-4e68-903f-8fa73700aba3",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-scutum",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "6bade030-2d8a-4a70-ba8f-5c2152de1c03",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-spatha",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c6544ec3-90e2-4b09-9a7b-3f3ff970798a",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-squamata",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "81941bfa-2c8e-4bca-a0d6-b9f533d5e453",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-tunic",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5bfca66e-7e5d-435f-934f-0f989eddf6f3",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        }
+      ],
+      "startingBalance": 11480,
+      "endingBalance": 11320
     }
   ],
-  "spentCredits": 0,
-  "remainingAuthorization": 1000,
+  "spentCredits": 160,
+  "remainingAuthorization": 840,
   "note": "The models are rendered into the item atlas and never ship; the drawn icons remain the fallback."
 }

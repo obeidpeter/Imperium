@@ -51,5 +51,11 @@
     "creditsSpent": 20,
     "creditSource": "task.consumed_credit",
     "tripoRender": "art-source/models/raw/item-spatha-tripo-render.webp"
+  },
+  "picture": {
+    "view": "long",
+    "turn": 0,
+    "cells": "1x3",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
   }
 }

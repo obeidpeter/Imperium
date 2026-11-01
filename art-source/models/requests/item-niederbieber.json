@@ -1,6 +1,6 @@
 {
   "id": "item-niederbieber",
-  "status": "Release 13 pilot: an item picture, rendered offline; the model never ships",
+  "status": "generated: awaiting review",
   "item": "niederbieber",
   "group": "Helmets",
   "use": "The inventory picture of `niederbieber` (src/data/items.js), rendered from this model in Blender into the item atlas.",
@@ -20,6 +20,42 @@
     "program": "item-pictures",
     "creditCeiling": 1000,
     "expectedCredits": 20,
-    "creditAccounting": "batch"
+    "creditAccounting": "batch",
+    "taskId": "b1e36df3-5270-49e3-8b69-9cf913dbdb7b",
+    "requestedAt": "2026-11-01T23:21:58.289Z",
+    "balanceBefore": 11440,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single Roman infantry helmet of the Niederbieber type, late second and third century AD: a deep iron bowl with two crossed reinforcing ribs over the crown, a brow guard, a very deep flaring neck guard and two large hinged cheek pieces that cover the ears and the sides of the face, bronze edging and rivet heads. Shown alone as an object, empty, complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-01T23:24:18.082Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-niederbieber.glb",
+    "rawBytes": 46333716,
+    "rawSha256": "768dfcbaa611dd4be822f654eee95de8182a25b46031dbf85388bee69914eac6",
+    "tripoInput": {
+      "prompt": "A single Roman infantry helmet of the Niederbieber type, late second and third century AD: a deep iron bowl with two crossed reinforcing ribs over the crown, a brow guard, a very deep flaring neck guard and two large hinged cheek pieces that cover the ears and the sides of the face, bronze edging and rivet heads. Shown alone as an object, empty, complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-niederbieber-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 180,
+    "cells": "2x2",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
   }
 }
