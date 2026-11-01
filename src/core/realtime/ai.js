@@ -1,4 +1,4 @@
-import {ENEMY_AI,PERCEPTION,TIME} from '../../data/realtime-rules.js';
+import {ENEMY_AI,ITEMS,PERCEPTION,TIME} from '../../data/realtime-rules.js';
 import {actorById,distanceBetween,hostile,staggered,validate} from './abilities.js';
 import {derivedValues} from './combat.js';
 import {crossesCover,navGrid,span,terrainAtPoint,walkable,clampToMap,nearestWalkable,cellCentre} from './navigation.js';
@@ -40,7 +40,8 @@ export function noticeRate(world,watcher,target,{full=false}={}){
   if(world.timeOfDay==='night')visibility*=PERCEPTION.darkness;
   if(world.weather==='mist')visibility*=PERCEPTION.mist;
   if(!full&&(terrainCover(world,watcher,target)||smokeBetween(world,watcher,target)))visibility*=PERCEPTION.cover;
-  if(target.kit?.some(id=>id==='sagum'))visibility*=PERCEPTION.darkCloak;
+  // A dark cloak (the sagum, the birrus) hides its wearer.
+  if(target.kit?.some(id=>ITEMS[id]?.dark))visibility*=PERCEPTION.darkCloak;
   // Difficulty sharpens or dulls the enemy's eyes only, never the soldier's or his squads'.
   return base*visibility*proximity*(per/10)*(1-Math.min(.95,target.attributes.field/100))*(watcher.side==='enemy'?difficulty(world).notice:1);
 }

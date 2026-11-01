@@ -1,6 +1,6 @@
 import {ATTRIBUTES,ATTRIBUTE_NAMES,BASE_ATTRIBUTES,TRAINING_PATHS,ABILITIES,FIELD_ORDER} from '../data/realtime-rules.js';
 import {ITEMS,SLOTS,WORN_PLACES,PACK,STARTING_KIT} from '../data/items.js';
-import {TP,COURSES,TRAINERS,DECORATIONS,DECORATION_AWARDS,TITLES,COMPANION_RANKS,COMPANIONS,PAY,DONATIVES,PROMOTION_ISSUE,APPEARANCE,PATHS,quartermasterStock}
+import {TP,COURSES,TRAINERS,DECORATIONS,DECORATION_AWARDS,TITLES,COMPANION_RANKS,COMPANIONS,PAY,DONATIVES,PROMOTION_ISSUE,APPEARANCE,PATHS,quartermasterStock,smithStock}
   from '../data/soldier.js';
 import {STANDING} from '../data/realtime-rules.js';
 import {TRADER_STOCK} from '../data/camps.js';
@@ -303,7 +303,8 @@ export function soldierCommand(state,command={}){
       state.soldier.pack=trial.pack;return result(true,'Pack sorted: the largest pieces first.');
     }
     case 'give':return give(state,command.uid,command.companionId);
-    case 'buy':return buy(state,command.itemId,{stock:command.from==='trader'?TRADER_STOCK[state.chapter]??[]:quartermasterStock(state.chapter)});
+    case 'buy':return buy(state,command.itemId,{stock:command.from==='trader'?TRADER_STOCK[state.chapter]??[]:command.from==='smith'?smithStock(state.chapter):
+      quartermasterStock(state.chapter)});
     case 'sell':return sell(state,command.uid);
     case 'pay':return collectPay(state);
     case 'orders':return setStandingOrders(state,command.companionId,command.preset?STANDING.presets[command.preset]:command.slots);

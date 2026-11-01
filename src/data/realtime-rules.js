@@ -64,6 +64,15 @@ export const WEAPONS=Object.freeze({
   axe:Object.freeze({name:'Axe',swing:1.6,reach:1.6,damage:Object.freeze({cut:[4,8],crush:[0,2]})}),
   unarmed:Object.freeze({name:'Unarmed',swing:.9,reach:1,damage:Object.freeze({crush:[1,2]})}),
   knife:Object.freeze({name:'Knife',swing:.9,reach:1.1,damage:Object.freeze({pierce:[1,4]})}),
+  // Release 11's finer and named weapons: real upgrades on their family.
+  spatha_fine:Object.freeze({name:'Fine spatha',swing:1.25,reach:1.8,damage:Object.freeze({cut:[4,8],pierce:[1,3]})}),
+  ring_sword:Object.freeze({name:'Ring-pommel sword',swing:1.2,reach:1.7,damage:Object.freeze({cut:[3,7],pierce:[2,4]})}),
+  gladius_fine:Object.freeze({name:'Fine gladius',swing:1.05,reach:1.5,damage:Object.freeze({pierce:[5,9],cut:[1,4]})}),
+  spear_fine:Object.freeze({name:'Fine hasta',swing:1.35,reach:2.6,damage:Object.freeze({pierce:[3,7]})}),
+  lancea:Object.freeze({name:'Lancea',swing:1.2,reach:2.3,damage:Object.freeze({pierce:[2,6]})}),
+  spatha_named:Object.freeze({name:'Pattern-welded spatha',swing:1.2,reach:1.85,damage:Object.freeze({cut:[5,9],pierce:[1,3]})}),
+  sword_eastern:Object.freeze({name:'Sasanian long sword',swing:1.35,reach:1.95,damage:Object.freeze({cut:[4,9],pierce:[1,3]})}),
+  axe_heavy:Object.freeze({name:'Chieftain’s axe',swing:1.6,reach:1.7,damage:Object.freeze({cut:[5,9],crush:[1,3]})}),
   // Missile weapons: a "swing" draws and looses; `ranged` names the missile and its range.
   bow:Object.freeze({name:'Bow',swing:1.8,reach:1,damage:Object.freeze({crush:[1,2]}),ranged:Object.freeze({missile:'arrow',ammo:'arrow',range:40})}),
   sling:Object.freeze({name:'Sling',swing:1.6,reach:1,damage:Object.freeze({crush:[1,2]}),ranged:Object.freeze({missile:'bullet',ammo:null,range:32})})});
@@ -74,7 +83,11 @@ export const MISSILES=Object.freeze({
   arrow:Object.freeze({name:'Arrow',range:40,speed:45,damage:Object.freeze({pierce:[2,6]}),sticks:false,shot:true}),
   bullet:Object.freeze({name:'Sling bullet',range:32,speed:35,damage:Object.freeze({crush:[2,5],stun:[0,1]}),sticks:false,shot:true})});
 export const SHIELDS=Object.freeze({scutum:Object.freeze({name:'Scutum',block:.3}),parma:Object.freeze({name:'Parma',block:.2}),
-  round:Object.freeze({name:'Round shield',block:.2})});
+  round:Object.freeze({name:'Round shield',block:.2}),
+  // Release 11's finer and named shields.
+  scutum_rim:Object.freeze({name:'Iron-rimmed scutum',block:.34}),scutum_light:Object.freeze({name:'Painted oval shield',block:.31}),
+  parma_bossed:Object.freeze({name:'Bossed parma',block:.23}),cavalry_oval:Object.freeze({name:'Cavalry shield',block:.26}),
+  scutum_victory:Object.freeze({name:'Victory shield',block:.36})});
 
 // Kit lives in items.js (§3.13); the rules read it from there.
 export {ITEMS} from './items.js';

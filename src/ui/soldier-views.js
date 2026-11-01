@@ -1,6 +1,6 @@
 import {esc,roman} from './view-helpers.js';
 import {ITEMS,SLOTS,WORN_PLACES,PACK} from '../data/items.js';
-import {TP,COURSES,TRAINERS,DECORATIONS,TITLES,COMPANIONS,APPEARANCE,PATHS,PAY,quartermasterStock} from '../data/soldier.js';
+import {TP,COURSES,TRAINERS,DECORATIONS,TITLES,COMPANIONS,APPEARANCE,PATHS,PAY,quartermasterStock,smithStock} from '../data/soldier.js';
 import {ATTRIBUTES,ATTRIBUTE_NAMES,TRAINING_PATHS,ABILITIES,DAMAGE_TYPES,STANDING} from '../data/realtime-rules.js';
 import {soldierAttributes,courseEffects,attributeCost,courseOptions,knownAbilities,wornIds,wearProblem,priceOf,companionWorn,companionRank,
   companionAttributes,areaOf} from '../core/soldier.js';
@@ -311,6 +311,24 @@ export function soldierCampCard(state){
     ${link('company','Company','R')}${link('quartermaster','Trade & pay','')}</div>
     ${disclosure('camp-trainers',`Courses & trainers (${trainers.length})`,trainers.map(t=>link('trainer',`${trainerName(state,t.id)} · ${t.title.match(/\(([^)]+)\)/)?.[1]??t.title}`,'',t.id)).join(''))}
     ${disclosure('camp-honours','Service honours',link('decorations','Decorations and titles','A'))}</section>`;
+}
+
+// The armourer: finer weapons, armour, helmets and shields than the issue, and
+// he buys kit and spoils like the others. Named pieces are found, never sold.
+export function smithPanel(state){
+  const s=state.soldier;if(!s)return adoptPanel(state);
+  const elo=soldierAttributes(s).elo,attributes=soldierAttributes(s);
+  const goods=smithStock(state.chapter).map(id=>{const price=priceOf(id,elo),item=ITEMS[id],needs=Object.entries(item.requires??{}).filter(([k,v])=>k!=='chapter'&&(attributes[k]??0)<v)
+    .map(([k,v])=>`${ATTRIBUTE_NAMES[k]??k} ${v}`);
+    return `<li><div><strong>${esc(item.name)}</strong> <small class="item-grade">${item.grade==='fine'?'Fine':''}</small>${s.denarii<price?`<small>Needs ${price} denarii; you have ${s.denarii}.</small>`:''}`+
+      `${needs.length?`<small>To wear it: ${esc(needs.join(', '))}.</small>`:''}${disclosure(`smith-item-${id}`,'Item details',`<p>${esc(itemSummary(id))}</p>`)}</div>`+
+      `${button('buy',`Buy (${price} d)`,{item:id,from:'smith'},{disabled:s.denarii<price,title:s.denarii<price?`Needs ${price} denarii.`:''})}</li>`;}).join('');
+  const sell=s.pack.filter(e=>!ITEMS[e.id].keep&&ITEMS[e.id].kind!=='quest').map(e=>`<li><span>${esc(ITEMS[e.id].name)}</span>`+
+    `${button('sell',`Sell (${priceOf(e.id,elo,{selling:true})} d)`,{uid:e.uid})}</li>`).join('');
+  return `<div class="quartermaster-panel smith-panel"><p>Your purse: <strong>${s.denarii} denarii</strong>.</p><h3>The armourer’s rack</h3>`+
+    `<ul class="shop-list">${goods||'<li>Nothing on the rack yet.</li>'}</ul>
+    ${disclosure('smith-sell','Sell from your pack',sell?`<ul class="shop-list">${sell}</ul>`:'<p>Nothing to sell.</p>')}
+    ${disclosure('smith-prices','How prices work','<p>Prices fall with Eloquence above 10, by up to a fifth. Everyone buys at half value. Named pieces are never for sale: they are found.</p>')}</div>`;
 }
 
 // The canabae's sutler: her goods for coin, and she buys what you took from the field.

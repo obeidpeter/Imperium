@@ -104,7 +104,7 @@ test('regional choices and routines are pure views of existing decisions, with a
     assert.equal(presentation.decisionDetails[0].state,CAMP_CONTEXT[chapter.id].choices[option.id].state);
     assert.equal(presentation.outcomeDetails.length,0);
     // From Chapter IV the supply orderly and the trader both carry; Chapters I–III have only Syra.
-    assert.deepEqual(presentation.ambient.map(a=>a.routine).sort(),chapter.id<=3?['carry','rest','watch','work']:['carry','carry','rest','watch','work']);
+    assert.deepEqual(presentation.ambient.map(a=>a.routine).sort(),chapter.id<=3?['carry','rest','watch','work','work']:['carry','carry','rest','watch','work','work']);
     for(const record of presentation.ambient){
       const actor=world.actors.find(a=>a.id===record.id);assert.ok(actor);
       assert.equal(campActivityFor(world,actor.id),record.routine);
