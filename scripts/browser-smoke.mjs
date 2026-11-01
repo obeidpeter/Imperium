@@ -441,6 +441,11 @@ async function viewSwitch(){
   }
   await switchTo('camp','2d');await clickToWalk('camp','2d');
   await switchTo('camp','3d');await clickToWalk('camp','3d');
+  // Shift+M from the scene opens the camp's map, as M does (release 12: the field's key was ignored).
+  await page.locator('#rt-board').focus();await page.keyboard.press('Shift+KeyM');
+  await page.waitForFunction(()=>document.querySelector('#modal')?.open&&/The camp/.test(document.querySelector('#panel-title')?.textContent??''),null,{timeout:30000})
+    .catch(async()=>assert.fail(`Shift+M opens the camp map: ${await page.evaluate(()=>document.querySelector('#panel-title')?.textContent??'no panel')}`));
+  await closePanel(page);
   // On the drill field, which waits for the player: the pause holds through both switches.
   await page.click('[data-cmd="conversation"][data-id="table"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
   await page.waitForFunction(()=>!document.querySelector('#modal')?.open,null,{timeout:30000});
@@ -451,7 +456,7 @@ async function viewSwitch(){
   await clickToWalk('field','3d');
   assert.deepEqual(problems.slice(first),[],'No page or console errors while switching');
   await page.context().close();
-  console.log('ok - view switch: 3D to 2D and back in the camp and on the drill field keeps the same world, its pause and click-to-walk, with no errors');
+  console.log('ok - view switch: 3D to 2D and back in the camp and on the drill field keeps the same world, its pause and click-to-walk, with no errors; Shift+M opens the camp map');
 }
 
 // Phase 2 in the page: a restored camp's battle in real time (the development setting), from Chapter IV with squads.

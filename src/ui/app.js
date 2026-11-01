@@ -611,7 +611,8 @@ function openPanel(name){
   if(['kit','character','decorations','company','orders'].includes(name))showSoldierPanel(name==='orders'?'mission':name);
   else if(name==='journal')showJournal();
   else if(name==='chronicle')showSoldierPanel('chronicle');
-  else if(name==='map'||name==='overlay')campMode()?showCampMap():showMap();
+  // Shift+M in the field arrives as its action's name (map_overlay): it opens the map as M does (release 12).
+  else if(['map','overlay','map_overlay'].includes(name))campMode()?showCampMap():showMap();
   else if(name==='options')showSettings();
   // Help opens the guide where the player is: the chamber at its Contests, a fight at its battles, a camp at the campaign.
   else if(name==='help')showHelp(chamberMode()?'political-contests':Game.isRealtime(state)?'battles':campMode()?'the-campaign':undefined);
