@@ -478,7 +478,8 @@ html[data-world="full"] .rt-workspace>.rt-command-list{padding-block-end:.8rem}
 html[data-world="full"] .rt-workspace>[hidden]{display:none}
 /* The result, and the chamber's records when asked for: over the middle of the world. */
 html[data-world="full"] .realtime-frame>.rt-result,html[data-world="full"] .realtime-frame[data-overlay="records"]>.chamber-records{
-  position:absolute;z-index:9;inset-block:3rem 1rem;inset-inline:50% auto;translate:-50% 0;inline-size:min(58rem,calc(100% - 1.2rem));margin:0;
+  position:absolute;z-index:9;inset-block:calc(var(--rt-world-top,3rem) + .4rem) calc(var(--rt-world-bottom,1rem) + .4rem);inset-inline:50% auto;translate:-50% 0;
+  inline-size:min(58rem,calc(100% - 1.2rem));margin:0;
   overflow:auto;overscroll-behavior:contain;box-shadow:0 1rem 3rem #000c}
 html[data-world="full"] .realtime-frame:not([data-overlay="records"])>.chamber-records{display:none}
 /* Behind a result the world keeps the whole area (the page's own rule shrinks the scene to 15rem). */
@@ -541,7 +542,8 @@ html[data-world="full"] .rt-camp-grid>.rt-camp-scene{flex:1 1 auto;min-block-siz
 html[data-world="full"] .rt-camp-scene>.rt-host{flex:1 1 auto;min-block-size:0;display:flex}
 html[data-world="full"] .world-courtyard.world-first .rt-menu{display:inline-flex}
 html[data-world="full"] main.realtime-camp:not([data-overlay="services"]) .world-camp-services{display:none}
-html[data-world="full"] main.realtime-camp[data-overlay="services"] .world-camp-services{position:absolute;z-index:9;inset-block:2.2rem 1rem;inset-inline:50% auto;translate:-50% 0;
+html[data-world="full"] main.realtime-camp[data-overlay="services"] .world-camp-services{position:absolute;z-index:9;
+  inset-block:calc(var(--rt-world-top,2.2rem) + .4rem) calc(var(--rt-world-bottom,1rem) + .4rem);inset-inline:50% auto;translate:-50% 0;
   inline-size:min(62rem,calc(100% - 1.2rem));overflow:auto;overscroll-behavior:contain;border-radius:.6rem;box-shadow:0 1rem 3rem #000c}
 html[data-world="full"] .world-camp-services>.world-departure{grid-column:1/-1;margin:0}
 html[data-world="full"] .world-camp-services>.world-preparation{grid-row:3/span 5}

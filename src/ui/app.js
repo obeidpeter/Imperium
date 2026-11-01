@@ -333,7 +333,7 @@ function mountField(target){
     mountFieldStage();return;
   }
   host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap,kind:target.kind}));
-  const element=host.querySelector('.rt-field'),ticket={};
+  const element=host.querySelector('.rt-field'),ticket={};watchWorldArea(element);
   // A field built again for another view (rebuildField) takes over the world its predecessor held.
   const kept=keptField?.kind===target.kind&&keptField.key===target.key?keptField:null;keptField=null;
   field={ticket,kind:target.kind,key:target.key,chapter:state.chapter,encounterId:state.encounter?.id??null,source:fieldSource(),element,runtime:null};
@@ -537,7 +537,23 @@ function mountFieldStage(){
     onReady:stage=>{if(field?.runtime)field.runtime.attach(stage);}});
   if(own&&runtime.stage!==own)runtime.attach(own);
 }
-function disposeField(){const old=field;field=null;old?.runtime?.dispose();old?.flat?.dispose();old?.element?.remove();}
+function disposeField(){const old=field;field=null;worldArea?.disconnect();worldArea=null;old?.runtime?.dispose();old?.flat?.dispose();old?.element?.remove();}
+// Release 12: the page's own overlays (a fight's result, the chamber's members, the camp's list) open over the world's
+// area, between the strip and the bar, which stay in reach. The page notes where that area lies, as the window,
+// the text size or the bar change it (--rt-world-top and --rt-world-bottom, from the top and bottom of the page's main).
+let worldArea=null;
+function watchWorldArea(element){
+  worldArea?.disconnect();worldArea=null;
+  const workspace=element.querySelector('.rt-workspace'),root=document.documentElement;
+  if(!workspace||typeof ResizeObserver!=='function')return;
+  const place=()=>{
+    const main=element.closest('main');if(!main||!workspace.isConnected)return;
+    const m=main.getBoundingClientRect(),w=workspace.getBoundingClientRect();
+    root.style.setProperty('--rt-world-top',`${Math.max(0,Math.round(w.top-m.top))}px`);
+    root.style.setProperty('--rt-world-bottom',`${Math.max(0,Math.round(m.bottom-w.bottom))}px`);
+  };
+  worldArea=new ResizeObserver(place);worldArea.observe(workspace);worldArea.observe(element);place();
+}
 // The field built again around the world it holds: the soldier, the fight, its clock and a pause the
 // player chose stand where they were. Only the page's own state (lists, camera, selection) starts afresh.
 function rebuildField(){
