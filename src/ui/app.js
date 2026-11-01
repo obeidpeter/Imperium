@@ -205,6 +205,8 @@ function render(){
   const newView=viewKey!==renderedLocation,openPanels=newView?[]:[...app.querySelectorAll('details[id][open]')].map(node=>node.id);
   // A new screen (marching out, a loaded chronicle) closes the camp list or the chamber's records (release 12).
   if(newView){pendingScroll=true;renderedLocation=viewKey;pageOverlay='';}
+  // The vote's result takes the middle of the chamber: the members' list closes for it.
+  if(pageOverlay==='records'&&state?.encounter?.status!=='active')pageOverlay='';
   document.documentElement.dataset.phase=screen==='title'?'title':state?.phase||'camp';
   document.documentElement.dataset.kind=state?.encounter?.kind||'';
   document.documentElement.dataset.stage=state?.phase==='epilogue'||(state?.chapter===12&&state?.phase==='promotion')?'imperial':'service';
