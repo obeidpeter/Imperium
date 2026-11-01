@@ -123,7 +123,8 @@ const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,e
   saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
   showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,
-    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap}));
+    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap,
+    worldCamp:screen!=='title'&&!!state&&campMode()}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text){
   announce(text);
@@ -221,7 +222,7 @@ function render(){
   sessionControls.release();
   updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
     :campMode()?realtimeCamp():camp());
-  const frame=app.querySelector('main.realtime-frame');if(frame){if(pageOverlay)frame.dataset.overlay=pageOverlay;else delete frame.dataset.overlay;}
+  const frame=app.querySelector('main.realtime-frame,main.realtime-camp');if(frame){if(pageOverlay)frame.dataset.overlay=pageOverlay;else delete frame.dataset.overlay;}
   refreshTrackedErrand();
   syncSessionControls();
   const target=fieldTarget();
@@ -278,10 +279,12 @@ let keptField=null;
 // Release 12: a real-time battle or chamber fills the window; pageOverlay names a page-drawn section shown over
 // the world on request (the chamber's records), which Esc or its button closes.
 let pageOverlay='';
-function fullWorld(){const t=fieldTarget();return !!t&&t.kind!=='camp';}
+function fullWorld(){return !!fieldTarget();}
+const OVERLAY_SECTIONS={records:'.chamber-records',services:'#camp-services'};
 function togglePageOverlay(name){
+  if(modal.open)modal.close();
   pageOverlay=pageOverlay===name?'':name;render();
-  const shown=pageOverlay?app.querySelector(`.realtime-frame[data-overlay="${pageOverlay}"] > .chamber-records`):null;
+  const shown=pageOverlay?app.querySelector(`main[data-overlay="${pageOverlay}"] ${OVERLAY_SECTIONS[pageOverlay]??''}`):null;
   for(const b of app.querySelectorAll('[data-cmd="page-overlay"]'))b.setAttribute('aria-expanded',String(b.dataset.id===pageOverlay));
   if(shown){shown.tabIndex=-1;shown.focus({preventScroll:true});}else field?.element?.querySelector('canvas')?.focus({preventScroll:true});
 }
@@ -991,6 +994,12 @@ document.addEventListener('keydown',event=>{
   finishRebind(`${actionName(action)} is now ${keyLabel(binding)}.${holder?` ${actionName(holder)} takes ${keymap[holder].map(keyLabel).join(' or ')}.`:''}`);
 },true);
 modal.addEventListener('cancel',event=>{if(rebinding)event.preventDefault();});
+// Release 12: Esc closes the page's overlay (the camp list, the chamber's records) when focus is in it.
+document.addEventListener('keydown',event=>{
+  if(event.key!=='Escape'||!pageOverlay||modal.open||event.defaultPrevented)return;
+  if(!event.target?.closest?.(OVERLAY_SECTIONS[pageOverlay]??'#none'))return;
+  event.preventDefault();togglePageOverlay(pageOverlay);
+});
 modal.addEventListener('keydown',event=>{
   if(!modal.dataset.conversation||event.altKey||event.ctrlKey||event.metaKey)return;const n=Number(event.key);
   if(n>=1&&n<=9){const b=modal.querySelectorAll('[data-cmd="reply"]')[n-1];if(b){event.preventDefault();b.click();}}
@@ -1097,9 +1106,12 @@ case 'close-modal':modal.close();break;
 case 'page-overlay':togglePageOverlay(id);break;
 case 'rt-take':takeLoot(id,b.dataset.item);break;
 case 'rt-take-from':takeFromField(id,b.dataset.item);break;
-case 'conversation':showConversation(id);break;
+case 'conversation':
+  // From the camp list (Menu → Camp, release 12): the soldier goes to the person first, then they talk.
+  if(b.dataset.place&&campMode()&&field?.runtime){if(pageOverlay)pageOverlay='';campTravel(b.dataset.place);}
+  showConversation(id);break;
 case 'reply':await replyConversation(Number(id));break;
-case 'camp-travel':campTravel(id);break;
+case 'camp-travel':if(pageOverlay){pageOverlay='';render();}campTravel(id);break;
 case 'track-errand':trackErrand(id);break;
 case 'untrack-errand':untrackErrand();break;
 case 'errand-destination':goToErrand(id);break;

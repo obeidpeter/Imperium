@@ -526,3 +526,21 @@ html[data-world="full"] .rt-squads{flex-wrap:nowrap}
   html[data-world="full"] .rt-unit-dock .rt-squad-area{flex:none;overflow:visible}
   html[data-world="full"] .rt-workspace>.rt-support>*{font-size:calc(.78rem * var(--text-scale,1))}
 }
+/* The camp (release 12): its strip, the world, and its list over the world from Menu → Camp. */
+html[data-world="full"] #app>main.realtime-camp{flex:1 1 auto;min-block-size:0;display:flex;flex-direction:column;gap:0;padding:0;margin:0;position:relative;overflow:hidden;max-inline-size:none}
+html[data-world="full"] main.realtime-camp>*{flex:none}
+html[data-world="full"] main.realtime-camp>.rt-chronicle-bar{padding:.1rem .6rem;gap:.6rem;font-size:calc(.68rem * var(--text-scale,1))}
+html[data-world="full"] .world-camp-bar .world-camp-problem{flex:1 1 auto;min-inline-size:0;color:var(--red,#742b30);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-world="full"] main.realtime-camp>.rt-camp-grid{flex:1 1 auto;min-block-size:0;display:flex;align-items:stretch;gap:0}
+html[data-world="full"] .rt-camp-scene,html[data-world="full"] .rt-camp-scene>.rt-host{align-items:stretch}
+/* The camp's page heading is for screen readers; the strip and the world show where you are. */
+html[data-world="full"] main.realtime-camp>h1.visually-hidden{position:absolute;inline-size:1px;block-size:1px;margin:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+html[data-world="full"] .rt-camp-grid>.rt-camp-scene{flex:1 1 auto;min-block-size:0;min-inline-size:0;display:flex}
+html[data-world="full"] .rt-camp-scene>.rt-host{flex:1 1 auto;min-block-size:0;display:flex}
+html[data-world="full"] .world-courtyard.world-first .rt-menu{display:inline-flex}
+html[data-world="full"] main.realtime-camp:not([data-overlay="services"]) .world-camp-services{display:none}
+html[data-world="full"] main.realtime-camp[data-overlay="services"] .world-camp-services{position:absolute;z-index:9;inset-block:2.2rem 1rem;inset-inline:50% auto;translate:-50% 0;
+  inline-size:min(62rem,calc(100% - 1.2rem));overflow:auto;overscroll-behavior:contain;border-radius:.6rem;box-shadow:0 1rem 3rem #000c}
+html[data-world="full"] .world-camp-services>.world-departure{grid-column:1/-1;margin:0}
+html[data-world="full"] .world-camp-services>.world-preparation{grid-row:3/span 5}
+@media(max-width:700px){html[data-world="full"] .world-camp-services>.world-preparation{grid-row:auto}}

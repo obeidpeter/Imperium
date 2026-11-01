@@ -119,8 +119,9 @@ function campDueNotice(state){
 }
 function campOrders(state,ch,next,{realtime=false}={}){
   const problem=Game.departureCheck(state),remaining=Game.chapterRequirements(state).filter(r=>!r.done).length;
-  if(realtime)return `<section class="camp-departure world-departure" aria-labelledby="camp-next-title"><div class="world-departure-title"><span class="eyebrow">CHAPTER ${roman(ch.id)} · ${esc(state.rank)}</span><h1 id="camp-next-title">${esc(next?.title||ch.title)}</h1>${problem?`<p id="camp-departure-problem" class="world-departure-problem">${esc(problem)}</p>`:''}</div>`+
-    `<nav class="world-camp-actions" aria-label="Camp actions"><a class="world-service-link" href="#camp-services">Camp services</a><button class="primary" data-cmd="start"${problem?' aria-describedby="camp-departure-problem"':''}>${next?.kind==='contest'?'Enter the chamber':'March out'} <span aria-hidden="true">→</span></button></nav></section>`;
+  // Release 12: the departure heads the camp list (Menu → Camp), over the world.
+  if(realtime)return `<section class="camp-departure world-departure" aria-labelledby="camp-next-title"><div class="world-departure-title"><span class="eyebrow">CHAPTER ${roman(ch.id)} · ${esc(state.rank)}</span><h2 id="camp-next-title">${esc(next?.title||ch.title)}</h2>${problem?`<p id="camp-departure-problem" class="world-departure-problem">${esc(problem)}</p>`:''}</div>`+
+    `<nav class="world-camp-actions" aria-label="Camp actions"><button class="primary" data-cmd="start"${problem?' aria-describedby="camp-departure-problem"':''}>${next?.kind==='contest'?'Enter the chamber':'March out'} <span aria-hidden="true">→</span></button></nav></section>`;
   return `<section class="camp-departure orders-card" aria-labelledby="camp-next-title"><div><p class="eyebrow">NEXT MISSION</p><h2 id="camp-next-title">${esc(next?.title||'Advancement')}</h2><p>${esc(next?.objective||ch.objective)}</p>`+
     `${problem?`<p id="camp-departure-problem" class="notice">${esc(problem)}</p>`:'<p class="muted">Ready to depart. Your progress saves before entry.</p>'}</div><div class="start-block">`+
     `<button class="primary full" data-cmd="start"${problem?' aria-describedby="camp-departure-problem"':''}>${next?.kind==='contest'?'Enter the chamber':realtime?'March out':'Enter the field'} <span aria-hidden="true">→</span></button>`+
@@ -146,31 +147,44 @@ function camp(){
     `${campDisclosure('camp-records','Career & campaign records',records)}<button class="text-link full" data-cmd="ledger">Promises & alliances →</button></aside></div></main>${footer()}`;
 }
 // The walkable camp (0.40, build brief §3.12): the camp scene, where the soldier
+// Release 12: the camp's strip above the world, in place of the site header: the chapter, the next mission, what
+// stops the departure, and whether the chronicle is saved. Menu, Help and the panels are the field's own.
+function worldCampBar(state,ch,next){
+  const {saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}=context();
+  const ready=offline?'All chapters available offline':currentChapterOffline?'This chapter is ready offline':'',offlineText=[ready,offlineProgress].filter(Boolean).join(' · ');
+  const problem=Game.departureCheck(state);
+  return `<div class="rt-chronicle-bar world-camp-bar"><span class="eyebrow">Chapter ${roman(ch.id)} · ${esc(state.rank)} · Next: ${esc(next?.title||ch.title)}</span>`+
+    `${problem?`<span class="world-camp-problem">${esc(problem)}</span>`:''}<span class="save-status game-status" role="status">${saving?'Saving…':lastSaved?'Chronicle saved':''}</span></div>`+
+    `${saveProblem?`<div class="notice system-notice" role="alert">${esc(saveProblem)} <button data-cmd="export">Export a save code</button> ${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div>`:''}`+
+    `<div id="offline-status" class="offline-banner" role="status" ${offlineText?'':'hidden'}>${esc(offlineText)}</div><p id="art-loading-status" class="art-loading-status" role="status" ${artProgress?'':'hidden'}>${esc(artProgress||'')}</p>`;
+}
 // walks up to people and things, beside the list path to every one of them
 // (talk, the commander's table, the gate, the places), so nothing needs the scene.
 function realtimeCamp(){
   const {state}=context(),ch=Game.getChapter(state),next=ch.encounters[state.encounterIndex],c=campFor(state.chapter);
   const decided=state.decisions[ch.decision.id],visited=new Set(Game.campVisited(state));
-  const people=c.people.filter(p=>campPersonPresent(state,p)),talk=(tree,label)=>`<button class="text-link" data-cmd="conversation" data-id="${esc(tree)}">${esc(label)}</button>`;
+  const people=c.people.filter(p=>campPersonPresent(state,p)),talk=(tree,label,place='')=>`<button class="text-link" data-cmd="conversation" data-id="${esc(tree)}"${place?` data-place="${esc(place)}"`:''}>${esc(label)}</button>`;
   const placeName=id=>campPlaceName(state.chapter,id),placeHint=id=>campPlaceHint(state.chapter,id),presentation=Game.campPresentationFor(state);
   const dossier=`<p class="eyebrow">${esc(ch.year)} · ${esc(ch.location)}</p><h3>${esc(ch.title)}</h3><p>${esc(ch.description)}</p><p>${esc(state.rank)} · ${esc(ch.rankMeaning)}</p>`+
     campDisclosure('campaign-chapters','Campaign progress',campaignStrip()+meters())+
     campDisclosure('camp-promotion',`Promotion requirements · ${Game.chapterRequirements(state).filter(r=>!r.done).length} still to demonstrate`,requirements()+`<p>Complete ${ch.encounters.length} encounters (${state.encounterIndex}/${ch.encounters.length}). Retry restores the encounter’s starting checkpoint.</p>`)+fieldReports();
-  return `${header({immersive:true})}<main id="main" class="frame camp-page realtime-camp world-courtyard world-first${c.id==='ch5-camp'?' chapter-v-courtyard':''}" data-key="rt-camp:${state.chapter}">${campOrders(state,ch,next,{realtime:true})}${campDueNotice(state)}
+  return `<main id="main" class="frame camp-page realtime-camp world-courtyard world-first${c.id==='ch5-camp'?' chapter-v-courtyard':''}" data-key="rt-camp:${state.chapter}">
+    <h1 class="visually-hidden">${esc(c.title??'The camp')} · Chapter ${roman(ch.id)}</h1>${worldCampBar(state,ch,next)}${campDueNotice(state)}
     <div class="rt-camp-grid">
       <div class="rt-camp-scene"><div id="rt-host" class="rt-host" data-key="rt-host:${esc(c.id)}"></div></div>
       <aside id="camp-services" class="camp-side camp-sidebar world-camp-services" aria-labelledby="camp-services-title" tabindex="-1">
-        <div class="world-services-heading"><h2 id="camp-services-title">Camp services</h2><a class="world-service-link" href="#rt-board">Return to the world ↑</a></div>
+        <div class="world-services-heading"><h2 id="camp-services-title">Camp</h2><button class="ghost" type="button" data-cmd="page-overlay" data-id="services" aria-label="Close the camp list">Close <kbd>Esc</kbd></button></div>
+        ${campOrders(state,ch,next,{realtime:true})}
         <section class="sidebar-card world-preparation"><p class="eyebrow">BEFORE YOU DEPART</p>
           ${talk('table',decided?'Review the chapter decision':'Make the chapter decision')}${preparations()}
           ${campPreparation(state)+campDisclosure('camp-operation','Operation & veteran training',operationPlanning(state)+veteranAcademy(state))}
-          ${campDisclosure('camp-people',`People & conversations (${people.length})`,`<ul class="rt-camp-people">${people.map(p=>{const spot=campPersonSpot(state,p);return `<li><span><strong>${esc(p.name)}</strong> <small>${esc(placeName(spot.place))}${spot.recovering?' · recovering':''}</small></span>${talk(p.talk,'Talk')}</li>`;}).join('')}</ul>`)}
+          ${campDisclosure('camp-people',`People & conversations (${people.length})`,`<ul class="rt-camp-people">${people.map(p=>{const spot=campPersonSpot(state,p);return `<li><span><strong>${esc(p.name)}</strong> <small>${esc(placeName(spot.place))}${spot.recovering?' · recovering':''}</small></span>${talk(p.talk,'Talk',spot.place)}</li>`;}).join('')}</ul>`)}
           ${campDisclosure('camp-places','Travel to a place',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span>${esc(placeName(id))} <small>${esc(placeHint(id))}${visited.has(id)||id==='gate'?'':' · Walk there once to unlock travel'}</small></span>`+
             `<button class="text-link" data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>Go</button></li>`).join('')}</ul>`)}</section>
         ${soldierCampCard(state)}${practicePanel(state)}${companyStoryPanel()}
         ${campDisclosure('camp-story','Chapter story & advice',story()+warCouncilPanel(state))+campDisclosure('camp-records','Local report & campaign records',dossier+(presentation?`<p class="briefing" data-camp-consequence>${esc(presentation.summary)}</p>`:'')+talk(c.reportTree,c.chapter===5?'Read the courtyard report':'Read the local report')+commandRecord(state)+relationshipLedger(state,{compact:true}))+`<button class="text-link full" data-cmd="ledger">Promises & alliances →</button>`}
       </aside>
-    </div></main>${footer()}`;
+    </div></main>`;
 }
 function promotion(){
   const {state}=context(),ch=Game.getChapter(state),missing=Game.chapterRequirements(state).filter(r=>!r.done);
