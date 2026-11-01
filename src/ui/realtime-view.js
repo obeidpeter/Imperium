@@ -97,13 +97,13 @@ export function fieldMarkup({state,keymap,kind='field'}){
         ${!camp&&!chamber?'<button data-role="orderReviewButton" type="button" aria-expanded="false" aria-controls="rt-order-review" hidden>Review orders</button>':''}
         ${chamber?`<button data-role="yieldButton" class="rt-yield" type="button" data-shortcut="yield_floor" aria-keyshortcuts="${key('yield_floor')}" data-title="End the hour now; a speech not yet given is lost" title="End the hour now; a speech not yet given is lost (${key('yield_floor')})">End hour</button>`:''}
         <span class="rt-speed-state" data-role="speedState" hidden>Half speed</span>
-        ${chamber?'<button type="button" class="rt-records" data-cmd="page-overlay" data-id="records" aria-expanded="false" title="The motion, the members and the record">Members</button>':''}
       </div>
       <button data-role="menuButton" class="rt-menu" type="button" data-cmd="menu" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
     </header>
     ${camp?'':missionStrip}
     <aside class="rt-notice" data-role="notice" role="status" hidden><div><strong data-role="noticeTitle"></strong><p data-role="noticeBody"></p></div><button type="button" data-role="dismissNotice" aria-label="Dismiss battlefield update">×</button></aside>
-    ${chamber?'<div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></details>':''}
+    ${chamber?'<div class="rt-chamber-strip"><div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></details>'+
+      '<button type="button" class="rt-records" data-cmd="page-overlay" data-id="records" aria-expanded="false" title="The motion, the members and the record">Members</button></div>':''}
     <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
       <p><strong>Place your units.</strong> Select a unit, then click the marked ground. Time is paused.</p>
       <button data-role="advanceButton" class="primary rt-advance" type="button">Sound the advance</button>
