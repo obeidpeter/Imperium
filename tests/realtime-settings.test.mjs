@@ -14,12 +14,22 @@ import * as G from '../src/core/game.js';
 // controls"): every remappable key, the pointer's habits and readability, and the
 // in-game Controls & rules generated from the guide.
 
-test('the player’s key map keeps legal changes, and falls back to the defaults whole when the stored changes are damaged',()=>{
+test('the player’s key map keeps legal changes, drops each one it cannot use without losing the others, and lets a player’s key win over a default (release 12)',()=>{
   assert.deepEqual(keymapFrom(),Object.fromEntries(Object.entries(DEFAULT_KEYMAP).map(([a,k])=>[a,[...k]])));
   const mine=keymapFrom({pause:['KeyK'],war_cry:['Shift+KeyB']});assert.deepEqual(mine.pause,['KeyK']);assert.deepEqual(mine.war_cry,['Shift+KeyB']);
   assert.deepEqual(keymapChanges(mine),{pause:['KeyK'],war_cry:['Shift+KeyB']});assert.deepEqual(keymapFrom(keymapChanges(mine)),mine,'the changes round-trip');
-  for(const damaged of [{pause:['F5']},{pause:['Control+KeyK']},{act_on_target:['KeyK']},{pause:['KeyT']},{pause:'KeyK'},{pause:[]},{nonsense:['KeyK']},[1,2]])
-    assert.deepEqual(keymapFrom(damaged),keymapFrom(),JSON.stringify(damaged));
+  // A change the game cannot use is dropped on its own: alone, the defaults remain.
+  for(const unusable of [{pause:['F5']},{pause:['Control+KeyK']},{act_on_target:['KeyK']},{pause:'KeyK'},{pause:[]},{pause:['KeyK','KeyK']},{nonsense:['KeyK']},[1,2]])
+    assert.deepEqual(keymapFrom(unusable),keymapFrom(),JSON.stringify(unusable));
+  // An action this version no longer has, beside the player's other keys: those keys stand.
+  assert.deepEqual(keymapFrom({rotate_view_left:['KeyQ'],pause:['KeyK'],war_cry:['F5']}),keymapFrom({pause:['KeyK']}),'a removed action no longer resets the player’s keys');
+  // A player's key wins over a default that now uses it (a default added since): that action waits unbound.
+  const won=keymapFrom({pause:['KeyT']});assert.deepEqual(won.pause,['KeyT']);assert.deepEqual(won.target_next_enemy,[]);
+  assert.deepEqual(keymapChanges(won),{pause:['KeyT']},'the unbound default is not recorded as the player’s change');
+  // Rebinding the unbound action to a key someone holds takes it from them, as no old key can be swapped back.
+  const rebound=remapAction(won,'target_next_enemy','KeyY');assert.deepEqual(rebound.keymap.target_next_enemy,['KeyY']);assert.deepEqual(rebound.keymap.yield_floor,[]);
+  // Two of the player's own changes on one key, which no remap makes, are damage: the defaults whole.
+  assert.deepEqual(keymapFrom({pause:['KeyK'],war_cry:['KeyK']}),keymapFrom());
   assert.deepEqual(keymapProblems(keymapFrom()),[]);
   // Settings keep only the changes, and repair damaged ones.
   assert.deepEqual(defaultSettings().realtimeKeys,{});
