@@ -130,10 +130,16 @@ function advancePhase(world){
 // then the soldier at the claimant's standard.
 const PLEDGE=Object.freeze({hear:3,loss:40,at:25,joinUnder:8,morale:65});
 function hearOath(world,rallier){
-  const m=world.mission,reach=PLEDGE.hear*m.radius;
-  const band=(world.squads??[]).filter(q=>q.side==='enemy'&&fielded(world,q)&&membersOf(world,q).some(a=>distanceBetween(a,rallier)<=reach))
-    .sort((a,b)=>a.morale-b.morale||(a.id<b.id?-1:1))[0];
-  if(!band)return;band.morale=Math.max(0,band.morale-PLEDGE.loss);emit(world,{kind:'oath-heard',squadId:band.id,name:band.name,morale:band.morale});
+  const m=world.mission,reach=PLEDGE.hear*m.radius,bands=(world.squads??[]).filter(q=>q.side==='enemy'&&fielded(world,q));
+  const away=q=>Math.min(...membersOf(world,q).map(a=>distanceBetween(a,rallier)));
+  const band=bands.filter(q=>away(q)<=reach).sort((a,b)=>a.morale-b.morale||(a.id<b.id?-1:1))[0];
+  if(!band){
+    // No band in reach (release 12): the oath is sworn all the same, and the soldier learns which band is nearest and how far.
+    const nearest=bands.map(q=>({q,d:away(q)})).filter(x=>Number.isFinite(x.d)).sort((a,b)=>a.d-b.d||(a.q.id<b.q.id?-1:1))[0];
+    emit(world,{kind:'oath-unheard',reach:Math.round(reach),...(nearest?{squadId:nearest.q.id,name:nearest.q.name,distance:Math.round(nearest.d)}:{})});
+    return;
+  }
+  band.morale=Math.max(0,band.morale-PLEDGE.loss);emit(world,{kind:'oath-heard',squadId:band.id,name:band.name,morale:band.morale});
   if(band.morale<=PLEDGE.at)pledge(world,band);
 }
 function pledge(world,band){

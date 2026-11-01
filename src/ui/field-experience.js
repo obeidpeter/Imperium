@@ -33,6 +33,7 @@ export function victoryReason(world){
 
 export function fieldNotice(world,event){
   if(event.kind==='oath-heard')return {title:'The oath was heard',body:`${event.name}: morale ${event.morale}. Keep pressure on the formation; another Rally can turn its allegiance.`};
+  if(event.kind==='oath-unheard')return {title:'The oath was not heard',body:event.name?`Swear it within ${event.reach} m of a rival band. The nearest, ${event.name}, is ${event.distance} m away.`:'No rival band is left on the field.'};
   if(event.kind==='field'&&event.what==='opportunity')return {title:'Opportunity secured',body:`${event.label}. This choice is recorded; the other opportunity is now closed.`};
   if(event.kind==='phase')return {title:'New objective',body:event.label};
   if(event.kind==='pledge')return {title:'Allegiance won',body:`${event.name} ${event.joined?'joins your side':'leaves the field'}.`};

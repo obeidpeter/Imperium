@@ -6,7 +6,8 @@ import {commandDecision,heroDecision,playRealtime} from '../scripts/realtime-aut
 import {queueCommand,step,worldHash} from '../src/core/realtime/simulation.js';
 import {actorById,hostile} from '../src/core/realtime/abilities.js';
 import {objectiveMet} from '../src/core/realtime/mission.js';
-import {squadCentre} from '../src/core/realtime/squads.js';
+import {membersOf,squadCentre} from '../src/core/realtime/squads.js';
+import {fieldNotice} from '../src/ui/field-experience.js';
 import {deploy,deploying,soundTheAdvance} from '../src/core/realtime/deployment.js';
 import {ABILITIES,TIME} from '../src/data/realtime-rules.js';
 import {RALLY} from '../src/data/realtime-squads.js';
@@ -84,6 +85,27 @@ test('the oath (defection; placements and morale injected): a Rally within three
   // The oath is sworn once a round, not after Rally's usual recovery.
   assert.equal(hero.cooldowns.rally-heard.tick,RALLY.oathRecovery_s*TIME.ticksPerSecond);assert.ok(RALLY.oathRecovery_s<ABILITIES.rally.recovery_s);
   assert.equal(objectiveMet(world),false,'one pledge of three');m.defections=3;assert.equal(objectiveMet(world),true,'three pledges win');
+});
+
+test('an oath out of every band’s reach (release 12) changes no band, and says which band is nearest and how far, in the log and the field’s notice',()=>{
+  const {state}=finale('defection'),world=advance(G.realtimeWorld(state)),m=world.mission,hero=actorById(world,world.heroId),reach=Math.round(3*m.radius);
+  const bands=world.squads.filter(q=>q.side==='enemy'),morale=bands.map(q=>q.morale);
+  const away=q=>Math.min(...membersOf(world,q).map(a=>Math.hypot(a.x-hero.x,a.z-hero.z)));
+  assert.ok(Math.min(...bands.map(away))>reach+2,'the soldier starts beyond every band’s reach');
+  assert.equal(rally(world).ok,true);const seen=until(world,(w,s)=>s.some(e=>e.kind==='rally'),40);
+  const unheard=seen.find(e=>e.kind==='oath-unheard');assert.ok(unheard,'the oath is reported unheard');assert.ok(!seen.some(e=>e.kind==='oath-heard'));
+  assert.deepEqual(bands.map(q=>q.morale),morale,'no band’s morale changes');assert.equal(m.defections??0,0);
+  const nearest=[...bands].sort((a,b)=>away(a)-away(b))[0];
+  assert.equal(unheard.reach,reach);assert.equal(unheard.squadId,nearest.id);assert.equal(unheard.name,nearest.name);
+  assert.ok(Math.abs(unheard.distance-away(nearest))<=1.5,`${unheard.distance} m, about ${away(nearest).toFixed(1)} m`);
+  assert.ok(world.log.some(l=>l.text===`No rival band is within ${reach} m to hear the soldier’s oath: the nearest, ${nearest.name}, is ${unheard.distance} m away.`),'the log says so');
+  assert.deepEqual(fieldNotice(world,unheard),{title:'The oath was not heard',body:`Swear it within ${reach} m of a rival band. The nearest, ${nearest.name}, is ${unheard.distance} m away.`});
+  // The oath was sworn all the same: its recovery runs, as for one that is heard.
+  assert.ok(hero.cooldowns.rally>world.tick);
+  // With no band left on the field (struck off, injected), the oath says that instead. Its recovery and stamina are restored (injected).
+  for(const q of bands)q.strength=0;world.squads=world.squads.filter(q=>q.side!=='enemy');
+  hero.cooldowns.rally=0;hero.stamina=hero.maxStamina;assert.equal(rally(world).ok,true);const alone=until(world,(w,s)=>s.some(e=>e.kind==='rally'),40).find(e=>e.kind==='oath-unheard');
+  assert.ok(alone&&!alone.name,'no band to name');assert.equal(fieldNotice(world,alone).body,'No rival band is left on the field.');
 });
 
 test('a pledged band joins a side of fewer than eight units (one squad struck off, injected), and is no longer anyone’s enemy',()=>{
