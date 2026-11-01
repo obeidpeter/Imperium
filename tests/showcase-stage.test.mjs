@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as Game from '../src/core/game.js';
 import {createShowcaseSession,ARRIVAL,facingYaw} from '../src/showcase/session.js';
-import {BattleStage,stageActorPose,intersectGround,positionProjectileTip} from '../src/showcase/stage.js';
+import {BattleStage,STAGE_QUALITY,stageActorPose,intersectGround,positionProjectileTip} from '../src/showcase/stage.js';
 import * as T from '../vendor/three/three.module.js';
 import {createGroundHeight,gridToWorld} from '../src/showcase/environment-layout.js';
 import {buildEncounterTimeline,sampleEncounterTimeline} from '../src/ui/animation-timeline.js';
@@ -58,7 +58,7 @@ test('A paused or reduced-motion stage accepts committed state without queuing a
 
 function cameraStage(encounter,width,height){
   const stage=Object.create(BattleStage.prototype),heightAt=createGroundHeight(encounter,2.5);
-  Object.assign(stage,{encounter,camera:new T.PerspectiveCamera(40,width/height,.1,220),orbit:{},baseTarget:new T.Vector3(),world:tile=>{const p=gridToWorld(tile,encounter,2.5);return new T.Vector3(p.x,heightAt(p.x,p.z),p.z);}});
+  Object.assign(stage,{encounter,quality:'balanced',camera:new T.PerspectiveCamera(40,width/height,.1,220),orbit:{},baseTarget:new T.Vector3(),world:tile=>{const p=gridToWorld(tile,encounter,2.5);return new T.Vector3(p.x,heightAt(p.x,p.z),p.z);}});
   return stage;
 }
 test('The real overview distance keeps legal drill and road soldiers inside wide and portrait camera frustums',()=>{
@@ -77,10 +77,29 @@ test('The real overview distance keeps legal drill and road soldiers inside wide
 
 test('Resize widens overview framing for portrait, preserves intentional focus, and ignores collapsed layout',()=>{
   const stage=cameraStage(createShowcaseSession().encounter,1440,600);stage.home();const wideDistance=stage.orbit.distance,calls=[];
-  let rect={width:360,height:384};stage.canvas={getBoundingClientRect:()=>rect};stage.renderer={setSize:(...args)=>calls.push(args)};
+  let rect={width:360,height:384};stage.canvas={getBoundingClientRect:()=>rect};stage.renderer={setSize:(...args)=>calls.push(args),getPixelRatio:()=>1,setPixelRatio(){}};
   stage.resize();assert.ok(stage.orbit.distance>wideDistance);assert.equal(stage.camera.aspect,360/384);assert.deepEqual(calls.at(-1),[360,384,false]);
   stage.focusMode=true;stage.orbit.distance=7.5;rect={width:640,height:280};stage.resize();assert.equal(stage.orbit.distance,7.5);
   const matrix=stage.camera.projectionMatrix.toArray(),count=calls.length;rect={width:0,height:0};stage.resize();assert.equal(calls.length,count);assert.deepEqual(stage.camera.projectionMatrix.toArray(),matrix);
+});
+
+// Release 12: the world fills the window, so each quality draws at most the pixels of a 1,920 x 800 view at its own
+// resolution; a smaller canvas keeps the quality's resolution, and a resize applies the ratio.
+test('The canvas never draws more pixels than its quality allows, however large the window',()=>{
+  const stage=cameraStage(createShowcaseSession().encounter,1920,1080),applied=[],had=Object.hasOwn(globalThis,'devicePixelRatio'),saved=globalThis.devicePixelRatio;
+  let rect={width:1280,height:500};stage.canvas={getBoundingClientRect:()=>rect};
+  stage.renderer={setSize(){},getPixelRatio:()=>applied.at(-1)??1,setPixelRatio:ratio=>applied.push(ratio)};
+  globalThis.devicePixelRatio=2;
+  try{
+    for(const quality of ['performance','balanced','high']){
+      stage.quality=quality;const q=STAGE_QUALITY[quality];
+      rect={width:1280,height:500};assert.equal(stage.pixelRatio(),Math.min(2,q.ratio),`${quality}: a canvas within the budget keeps the quality's resolution`);
+      rect={width:2560,height:1300};const ratio=stage.pixelRatio();
+      assert.ok(ratio<Math.min(2,q.ratio)&&rect.width*rect.height*ratio*ratio<=q.pixels+1,`${quality}: a larger canvas is held to ${q.pixels} pixels`);
+    }
+    stage.quality='balanced';rect={width:2560,height:1300};stage.resize();
+    assert.ok(Math.abs(applied.at(-1)-stage.pixelRatio())<1e-12,'A resize gives the renderer the ratio for the new size');
+  }finally{if(had)globalThis.devicePixelRatio=saved;else delete globalThis.devicePixelRatio;}
 });
 
 test('Horizon view exposes sky while framing campaign figures, and resizes without losing its low viewing angle',async()=>{
@@ -96,7 +115,7 @@ test('Horizon view exposes sky while framing campaign figures, and resizes witho
       const p=stage.world(unit).add(new T.Vector3(0,height,0)).project(stage.camera);
       assert.ok(Math.abs(p.x)<.9&&Math.abs(p.y)<.9,`${scene.id}:${unit.id} remains in the ${width}px field of view.`);
     }
-    stage.canvas={getBoundingClientRect:()=>({width:320,height:540})};stage.renderer={setSize(){}};stage.resize();
+    stage.canvas={getBoundingClientRect:()=>({width:320,height:540})};stage.renderer={setSize(){},getPixelRatio:()=>1,setPixelRatio(){}};stage.resize();
     assert.equal(stage.orbit.pitch,pitch);assert.equal(stage.baseTarget.y,2.7);assert.ok(stage.orbit.distance>=28);
     stage.home();assert.equal(stage.cameraView,'overview');assert.ok(stage.orbit.pitch>.5);assert.equal(JSON.stringify(e),saved);
   }

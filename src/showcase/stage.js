@@ -414,7 +414,7 @@ export class BattleStage{
   pixelRatio(){
     const q=QUALITY[this.quality],r=this.canvas?.getBoundingClientRect?.(),area=r?.width&&r?.height?r.width*r.height:0;
     const cap=q.pixels&&area?Math.sqrt(q.pixels/area):Infinity;
-    return Math.min(devicePixelRatio||1,q.ratio,cap)*(this.resolutionBudget?.scale??1);
+    return Math.min(globalThis.devicePixelRatio||1,q.ratio,cap)*(this.resolutionBudget?.scale??1);
   }
   updatePixelRatio(){this.renderer.setPixelRatio(this.pixelRatio());this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
