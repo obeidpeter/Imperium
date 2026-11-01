@@ -116,9 +116,15 @@ export function moveActors(world){
 // passes work on copies of the centres in typed arrays, which are far cheaper to
 // read than the actors themselves: the pairs, their order and every operation
 // are those of the plain sweep over the actors, so each result is identical.
+// A man standing in his formation's ranks makes way for a friend walking through
+// (the soldier, a companion, a protected column): he takes the whole overlap and
+// walks back to his place, so a squad never pins its own soldier against its ranks.
 export function separateBodies(world,grid=navGrid(world.map)){
   const min=MOVEMENT.radius*2,list=world.actors.filter(a=>a.alive&&!a.down&&!a.carriedBy),n=list.length;
   const X=new Float64Array(n),Z=new Float64Array(n),pushed=new Uint8Array(n);for(let k=0;k<n;k++){X[k]=list[k].x;Z[k]=list[k].z;}
+  const ranks=new Uint8Array(n),walker=new Uint8Array(n);
+  for(let k=0;k<n;k++){const a=list[k];ranks[k]=a.squadId&&!a.order?1:0;walker[k]=!a.squadId&&a.path?.length?1:0;}
+  const makesWay=(k,other)=>ranks[k]&&walker[other]&&!hostile(list[k],list[other]);
   const push=(k,nx,nz,amount)=>{
     const p=clampToMap(grid,{x:X[k]+nx*amount,z:Z[k]+nz*amount});
     if(!walkable(grid,p.x,p.z)||!traversableStep(grid,{x:X[k],z:Z[k]},p))return 0;
@@ -133,6 +139,9 @@ export function separateBodies(world,grid=navGrid(world.map)){
       const dz=Z[b]-Z[a],d2=dx*dx+dz*dz;if(d2>=min*min)continue;
       const d=Math.sqrt(d2),overlap=min-d;if(overlap<1e-4)continue;crowded=true;
       const nx=d>1e-6?dx/d:1,nz=d>1e-6?dz/d:0,half=overlap/2;
+      // The ranks make way: the walker keeps his ground unless the man cannot step aside.
+      const give=makesWay(a,b)?a:makesWay(b,a)?b:-1;
+      if(give>=0){const sg=give===a?-1:1,rest=overlap-push(give,sg*nx,sg*nz,overlap);if(rest>1e-4)push(give===a?b:a,-sg*nx,-sg*nz,rest);continue;}
       const am=push(a,-nx,-nz,half),bm=push(b,nx,nz,half),left=overlap-am-bm;
       // At a wall or map edge the free body takes the blocked body's share.
       // Never move either centre onto blocked ground to satisfy separation.

@@ -4,6 +4,7 @@ import {createWorld,queueCommand,restoreWorld,snapshotWorld,step,worldHash} from
 import {moveActors,separateBodies} from '../src/core/realtime/motion.js';
 import {clampToMap,navGrid,walkable} from '../src/core/realtime/navigation.js';
 import {MOVEMENT} from '../src/data/realtime-rules.js';
+import {hostile} from '../src/core/realtime/abilities.js';
 
 const map={id:'separation-fixture',width:8,height:8,terrain:Array.from({length:8},()=>Array(8).fill('grass'))};
 const actor=(id,x,z)=>({id,name:id,side:'player',role:'soldier',path:'legionary',kit:['tunic','gladius'],at:[x,z],face:[1,0]});
@@ -66,6 +67,8 @@ test('dense movement replays identically and resumes exactly after a crowded mid
 // typed-array version must reproduce exactly.
 function referenceSeparation(world){
   const grid=navGrid(world.map),min=MOVEMENT.radius*2,list=world.actors.filter(a=>a.alive&&!a.down&&!a.carriedBy);
+  // A man in his formation's ranks makes way for a friend walking through.
+  const makesWay=(man,other)=>!!man.squadId&&!man.order&&!other.squadId&&other.path.length>0&&!hostile(man,other);
   const push=(actor,nx,nz,amount)=>{
     const p=clampToMap(grid,{x:actor.x+nx*amount,z:actor.z+nz*amount});
     if(!walkable(grid,p.x,p.z))return 0;
@@ -78,12 +81,31 @@ function referenceSeparation(world){
       const dx=b.x-a.x,dz=b.z-a.z,d2=dx*dx+dz*dz;if(d2>=min*min)continue;
       const d=Math.sqrt(d2),overlap=min-d;if(overlap<1e-4)continue;crowded=true;
       const nx=d>1e-6?dx/d:1,nz=d>1e-6?dz/d:0,half=overlap/2;
+      const give=makesWay(a,b)?a:makesWay(b,a)?b:null;
+      if(give){const sg=give===a?-1:1,rest=overlap-push(give,sg*nx,sg*nz,overlap);if(rest>1e-4)push(give===a?b:a,-sg*nx,-sg*nz,rest);continue;}
       const am=push(a,-nx,-nz,half),bm=push(b,nx,nz,half),left=overlap-am-bm;
       if(left>1e-4){if(am<half-1e-4)push(b,nx,nz,left);else if(bm<half-1e-4)push(a,-nx,-nz,left);}
     }
     if(!crowded)break;
   }
 }
+
+test('a man in his formation’s ranks makes way for his own soldier walking through; an enemy’s does not',()=>{
+  // Collision fixture, not an earned campaign checkpoint.
+  for(const enemy of [false,true]){
+    const w=world([actor('hero',6,6),actor('rank',6.4,6)]),[hero,rank]=w.actors;
+    rank.squadId='q1';if(enemy)rank.side='enemy';hero.path=[{x:9,z:6}];
+    separateBodies(w);
+    if(enemy){assert.ok(hero.x<6,'an enemy rank pushes back');assert.ok(Math.abs((6-hero.x)-(rank.x-6.4))<1e-9,'each takes half');}
+    else{assert.equal(hero.x,6,'the soldier keeps his ground');assert.ok(Math.abs(rank.x-hero.x-MOVEMENT.radius*2)<1e-9,'the rank steps aside the whole overlap');}
+  }
+  // Standing still, or among men who are fighting, the soldier is jostled as before.
+  for(const fighting of [false,true]){
+    const w=world([actor('hero',6,6),actor('rank',6.4,6)]),[hero,rank]=w.actors;
+    rank.squadId='q1';if(fighting){rank.order={kind:'attack',targetId:'x'};hero.path=[{x:9,z:6}];}
+    separateBodies(w);assert.ok(hero.x<6,`fighting=${fighting}: both give way`);
+  }
+});
 
 test('the typed-array separation reproduces the plain pair sweep exactly',()=>{
   // Generated crowds, not campaign states: walls, map edges, shared centres, the fallen, the dead and the carried.
@@ -97,6 +119,10 @@ test('the typed-array separation reproduces the plain pair sweep exactly',()=>{
       const shared=i&&random()<.1?w.actors[Math.floor(random()*i)]:null;
       a.x=shared?shared.x:Math.min(19.9,Math.max(0,cx+(random()-.5)*spread*2));a.z=shared?shared.z:Math.min(19.9,Math.max(0,cz+(random()-.5)*spread*2));
       if(random()<.05)a.down=true;else if(random()<.04)a.alive=false;else if(i&&random()<.04)a.carriedBy='hero';
+      // Formation ranks (some fighting), walkers and enemies, so the ranks' rule is exercised too.
+      if(i&&random()<.3){a.squadId=random()<.5?'q1':'q2';if(random()<.2)a.order={kind:'attack',targetId:'hero'};}
+      else if(random()<.4)a.path=[{x:a.x+1,z:a.z}];
+      if(i&&random()<.2)a.side='enemy';
     });
     const fast=restoreWorld(snapshotWorld(w)),plain=restoreWorld(snapshotWorld(w));
     separateBodies(fast);referenceSeparation(plain);

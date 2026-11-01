@@ -3,7 +3,10 @@
 // seeks the soldier out. He fights by the full blow rules (combat.js), so the
 // soldier's armour, shield and weapon count against him as they do in
 // Chapters I–III, and he carries fine or named kit, or a key, to be taken from
-// him. He is the same on every level (campaign-options.js: no enemy is
+// him. He starts beside the first enemy band, or the first of the kind
+// `beside` names. A recruit who wears and trains nothing can still outlast
+// him beside his companions (the Story sweeps of the bare player, release 11);
+// a soldier who wears what he is issued, or finds, beats him well (docs/kit-audit.md). He is the same on every level (campaign-options.js: no enemy is
 // hardier or hits harder on any level). His figure follows his faction.
 
 const freeze=value=>Object.freeze(value);
@@ -18,20 +21,21 @@ export const CHAMPIONS=freeze({
   'ch5-mine':champion('champion-mine',{name:'A Persian sapper captain',faction:'persian',attributes:a(13,12,13,12,11,9),
     kit:['linen_tunic','jerkin','conical_helmet','parma','spatha'],loot:['eye_amulet','coin_purse']}),
   // The red river gate has none: a champion there drew the squads off the wall they must hold (Veteran sweeps, release 11).
-  'ch6-wells':champion('champion-wells',{name:'A Persian captain of the pursuit',faction:'persian',attributes:a(14,13,13,12,12,9),
+  // He leads the pursuit that hunts the column: beside the archers he drew the soldier and his squads off it (Story sweeps, release 11).
+  'ch6-wells':champion('champion-wells',{name:'A Persian captain of the pursuit',faction:'persian',beside:'raider',attributes:a(14,13,13,12,12,9),
     kit:['linen_tunic','jerkin','conical_helmet','parma','spatha'],loot:['dates','coin_purse']}),
-  'ch6-eagle':champion('champion-eagle',{name:'The raiders’ standard-breaker',faction:'persian',attributes:a(15,12,14,11,12,8),
+  'ch6-eagle':champion('champion-eagle',{name:'The raiders’ standard-breaker',faction:'persian',attributes:a(14,12,13,11,11,8),
     kit:['linen_tunic','scale_eastern','conical_helmet','parma','spatha'],loot:['silver_brooch','coin_purse']}),
-  'ch7-legion':champion('champion-legion',{name:'A mercenary captain in the usurper’s pay',faction:'gothic',attributes:a(15,13,15,12,14,8),
+  'ch7-legion':champion('champion-legion',{name:'A mercenary captain in the usurper’s pay',faction:'gothic',attributes:a(14,12,14,12,12,8),
     kit:['tunic','jerkin','conical_helmet','round_shield','spatha'],loot:['silver_brooch','coin_purse']}),
-  'ch8-crossing':champion('champion-crossing',{name:'The war band’s champion',faction:'gothic',attributes:a(16,12,15,11,14,8),
+  'ch8-crossing':champion('champion-crossing',{name:'The war band’s champion',faction:'gothic',attributes:a(15,12,14,11,13,8),
     kit:['tunic','jerkin','segmented_helmet','round_shield','axe'],loot:['gothic_torc','coin_purse']}),
   'ch9-wing':champion('champion-wing',{name:'A Palmyrene armoured officer',faction:'palmyrene',mounted:true,attributes:a(15,13,15,12,14,8),
     kit:['linen_tunic','scale_eastern','conical_helmet','spear'],loot:['incense','coin_purse']}),
-  'ch9-city':champion('champion-city',{name:'The city’s defending captain',faction:'palmyrene',attributes:a(15,13,15,12,14,9),
+  'ch9-city':champion('champion-city',{name:'The city’s defending captain',faction:'palmyrene',attributes:a(14,12,14,12,12,9),
     kit:['linen_tunic','scale_eastern','conical_helmet','parma','spatha'],loot:['key_f9','coin_purse']}),
-  'ch10-road':champion('champion-road',{name:'The raiders’ chief',faction:'gothic',attributes:a(15,13,15,12,15,9),
+  'ch10-road':champion('champion-road',{name:'The raiders’ chief',faction:'gothic',attributes:a(14,12,14,12,13,9),
     kit:['tunic','jerkin','segmented_helmet','round_shield','axe'],loot:['silver_brooch','coin_purse']}),
-  'ch12-confrontation':champion('champion-guard',{name:'The claimant’s guard captain',faction:'rival',attributes:a(16,13,16,12,15,8),
+  'ch12-confrontation':champion('champion-guard',{name:'The claimant’s guard captain',faction:'rival',attributes:a(14,11,11,12,10,8),
     kit:['tunic','hamata','galea_crest','scutum','spatha'],loot:['coin_purse','coin_purse']})});
 export const championFor=encounterId=>CHAMPIONS[encounterId]??null;

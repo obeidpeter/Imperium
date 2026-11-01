@@ -304,7 +304,8 @@ function worksGates(e,layout,fine,phases){
 }
 
 function championSpec(e,layout,map,heroAt){
-  const c=championFor(e.id),first=e.units.find(u=>u.side==='enemy'&&u.hp>0);if(!c||!first)return null;
+  // He starts beside the first enemy band, or the first of the kind his data names (`beside`).
+  const c=championFor(e.id),bands=e.units.filter(u=>u.side==='enemy'&&u.hp>0),first=bands.find(u=>u.role===c?.beside)??bands[0];if(!c||!first)return null;
   const at=tileCentre(first,layout),dx=heroAt.x-at.x,dz=heroAt.z-at.z,d=Math.max(1,span(dx,dz)),grid=navGrid(map);
   const i=nearestWalkable(grid,at.x+dx/d*3,at.z+dz/d*3);if(i<0)return null;const spot=cellCentre(grid,i);
   return {id:c.id,name:c.name,side:'enemy',role:'champion',attributes:{...c.attributes},kit:[...c.kit],ammo:{},mounted:!!c.mounted,officer:true,
