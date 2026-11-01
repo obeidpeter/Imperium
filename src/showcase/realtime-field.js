@@ -497,7 +497,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function press(p){
     stage?.sound?.unlock();if(document.activeElement!==canvas)canvas.focus({preventScroll:true});if(!world||world.status!=='active')return;
-    if(chamber){chamber.press(pickAt(p),{button:p.button,touch:!!p.touch});hover(p);return;}
+    if(chamber){chamber.press(pickAt(p),{button:p.button,touch:!!p.touch});if(p.button==='left')stage?.springBack?.();hover(p);return;}
     if(deploying(world)){
       const pick=pickAt(p);if(!pick)return;
       if(squads?.pickStandard(pick,{touch:!!p.touch}))return;
@@ -581,7 +581,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function act(action){
     const h=me();
-    if(chamber&&chamber.act(action))return true;
+    // A speaker stepping on the chamber's floor springs the view back to him, as the field's soldier does.
+    if(chamber&&chamber.act(action)){if(ARROWS[action])stage?.springBack?.();return true;}
     if(action.startsWith('select_squad_')){if(squads)squads.select({index:Number(action.slice(13))-1});else say('No squads in this fight.');return true;}
     // While deploying the arrows move the marker and Enter places what is chosen there.
     if(squads&&deploying(world)&&ARROWS[action]){const [sx,sy]=ARROWS[action],yaw=stage?.orbit.yaw??0,fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);
