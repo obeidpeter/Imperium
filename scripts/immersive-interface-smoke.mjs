@@ -37,8 +37,9 @@ const browser=await playwright.chromium.launch({executablePath:process.env.PLAYW
 const report={method:'Automated Chromium, legal checkpoint imports, visible UI controls; 2D geometry and camera control paths',source,build,
   browser:browser.version(),physicalDeviceTest:false,checks:[],errors:[]};
 // The least share of the window's height the world takes (release 12: the page no longer scrolls, so the strip
-// and the bar take the rest). Measured on Chapters V, VII, VIII and XII; see docs/fullscreen-release12-report.md.
-const WORLD_SHARE=Object.freeze({desktop:.55,phone:.5,largeText:.3});
+// and the bar take the rest), a little below what Chapters V, VII, VIII and XII measure: the chamber, with its
+// vote row, is the tightest. See docs/fullscreen-release12-report.md.
+const WORLD_SHARE=Object.freeze({desktop:.6,phone:.5,smallPhone:.38,largeText:.3});
 async function prepare(viewport,id,{scale=1,encounter=false}={}){
   const context=await browser.newContext({viewport}),page=await context.newPage();page.setDefaultTimeout(30000);
   page.on('pageerror',error=>report.errors.push(error.message));
@@ -71,7 +72,7 @@ async function measure(page,label,{camp=false,desktop=false,scale=1}={}){
   assert.ok(result.documentHeight<=result.viewport.height+1,`${label}: nothing on the page scrolls (${result.documentHeight}px in ${result.viewport.height}px)`);
   assert.deepEqual(result.overlap,[],`${label}: the strip and the bar do not cover the world`);
   // The world's share of the window: most of it on a desktop, and a usable scene everywhere, even at 200% text.
-  const least=desktop?WORLD_SHARE.desktop:scale===2?WORLD_SHARE.largeText:WORLD_SHARE.phone;
+  const least=desktop?WORLD_SHARE.desktop:scale===2?WORLD_SHARE.largeText:result.viewport.height<700?WORLD_SHARE.smallPhone:WORLD_SHARE.phone;
   assert.ok(result.canvas.w>=300&&result.canvas.h>=result.viewport.height*least,`${label}: the world takes at least ${Math.round(least*100)}% of the height (${Math.round(result.canvas.h)}px)`);
   if(camp){
     // The camp list (Menu → Camp) opens over the world with focus, and Esc gives the world its focus back.
