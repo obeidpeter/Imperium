@@ -104,6 +104,11 @@ In the bot's sweeps the backer's and the battle's routes last 8 of the finale's 
 | Review orders | Pause in a squad battle and choose **Review orders** beside Resume. Each squad shows its order, destination, Command and delay. Try **Cancel unapplied**, **Replace…** and **Hold · 1 Command**, then resume. Could you tell what each squad would do? | |
 | Errand tracking | In Mission orders (**Q**), **Track** one errand. Its next step shows above the camp. Use its button to go there, reload the page, then **Stop tracking**. Did the step change by itself when the task moved on? | |
 | After a battle | The result's **Key recorded moments**, and after a defeat **Advice for retrying**. Did they help you choose what to do differently? | |
+| Chests in camp (release 11) | In two or three camps, open every chest and locker. Find a lock's key in another chest, or force one. Walk close to find a hidden cache. Did each chest say why you may open it? Could you see which were open and which empty? | |
+| The armourer (release 11) | Talk to Bassus beside the quartermaster in two camps. Buy a fine piece, wear it, and check **Against squads** in the character panel (**C**). Was it worth its price? | |
+| Battlefield containers (release 11) | In a battle with a locked strongbox, take its key from the field, open it during the fight, then **Search the field** after the victory. Try **Retry** after taking something: it should be back. | |
+| Champions (release 11) | In a squad battle from Chapter IV, the enemy's champion comes for your soldier. Did he feel like a fair test of your kit, too easy, or too hard? Take what he carries. | |
+| Kit and difficulty (release 11) | Over the play-through: did better kit make battles feel easier? Was a soldier in only the issued kit able to keep up? The bot wins nearly everything with any kit; your view sets the final feel. | |
 
 ## Accessibility (the 0.40 brief's manual checks)
 

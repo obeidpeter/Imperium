@@ -25,7 +25,7 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 8 | Living camps | merged ([#40](https://github.com/obeidpeter/Imperium/pull/40); [report](camps-release8-report.md)); its five figures followed on 30 October ([report](camps-release8-report.md#the-five-figures-30-october)) |
 | 9 | Landmarks and set pieces | merged ([#41](https://github.com/obeidpeter/Imperium/pull/41); [report](landmarks-release9-report.md)) |
 | 10 | Gate 4 and 0.40.0 | in progress: Practice in real time and the [Gate 4 checklist](gate4-playthrough.md) merged ([#42](https://github.com/obeidpeter/Imperium/pull/42)); the owner's play-through, decision on the turn-based mode and Performance-check files follow releases 11–14 |
-| 11 | Chests, the smith and the armoury | in progress |
+| 11 | Chests, the smith and the armoury | ready for review ([report](chests-release11-report.md)) |
 | 12 | The full-screen world and the camera | planned |
 | 13 | The inventory | planned |
 | 14 | Walking between areas | planned |

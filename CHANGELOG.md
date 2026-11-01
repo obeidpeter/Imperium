@@ -2,6 +2,28 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 11: chests, the armourer and the armoury ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/chests-release11-report.md))
+
+The first of four releases that bring treasure chests, a blacksmith and the navigation of the classic isometric role-playing games to Imperium, in its own Roman style.
+
+- **Chests in every camp.** Three or four in each, 37 in all: a spare-kit chest at the stores, your own locker, an old armoury chest, a strongbox, a coffer, a cache under the stones. Each opens once, and what you take is yours. Some are locked: the key is in another container of the same camp, or a strong enough soldier forces the lock. A hidden cache shows itself when you walk close, from farther with more Perception.
+- **Containers on the battlefields.** One or two on 17 battles: an officer's strongbox, a raider's cache, abandoned baggage, a ferryman's chest. Open one during the fight with your weapon sheathed, or after a victory from **Search the field**, beside the fallen's spoils. A lock answers to its key, which an enemy, a champion or another container on the field carries, or to five seconds of force. Scout reveals hidden caches. What you take is kept when you continue; **Retry** puts it back, and Practice can look but not take.
+- **Bassus the armourer** works at his forge beside the quartermaster in every camp. He sells finer weapons, armour, helmets and shields, a few more each chapter, and buys kit. The quartermaster keeps pay, issued kit and spoils, and the traders their goods and charms.
+- **Finer and named kit.** 25 fine pieces, among them a finer *spatha* and gladius, a ring-pommel sword, mail of finer rings, tinned scale, a Niederbieber helmet, an iron-rimmed scutum, a thick winter tunic and a hooded *birrus*. Six named pieces, each with a line of its history, are only found. The [historical notes](docs/historical-research.md) give the evidence for each type.
+- **Kit counts against squads.** When a squad's men strike your soldier, his armour turns a share of their blows, and his shield more from the front. The character panel shows both shares under **Against squads**: the recruit's kit turns about a third, the army's mail and scutum about half, finer kit up to 70%.
+- **Champions and officers.** In eleven squad battles of Chapters IV–XII, one man of the enemy seeks your soldier out, seen or not: a war band's chieftain, Persian captains, a mercenary captain, an armoured Palmyrene officer, the claimant's guard captain. He fights blow by blow, so your weapon, armour and shield count against him. He carries fine or named kit, or a key. He is the same on every level.
+- **Your own ranks make way.** Squads standing in formation step aside for your soldier, his companions and a protected column, so your own men no longer pin you short of an exit.
+- **On the stage.** Containers stand in camp and on the field, in 3D and 2D: closed, open with something left, or emptied, with a lock while locked. A hidden cache appears only once found, in both views, and opening a camp chest no longer rebuilds the camp's scenery. The armourer has his anvil, quench tub and weapon rack behind him, and a leather apron, hammer and tongs.
+- **Balance.** The enemies are the same on every level. The bot played six reference players over 20 seeds of Chapters I–XII:
+  - Story, a soldier who wears and trains nothing: every battle at the first try.
+  - Story, issued kit: every battle at the first try.
+  - Standard, issued and fully equipped: every battle at the first try.
+  - Veteran, issued: 98.5% at the first try.
+  - Veteran, fully equipped: 99.8% at the first try.
+
+  Better kit shows in the health a victory costs and how quickly it comes, more than in whether the bot wins (see the report).
+- **For contributors:** the kit audit (`node scripts/kit-audit.mjs`, `docs/kit-audit.md`) fixes the coin and kit each chapter can give, as the training-point audit fixes training. The sweep plays reference players (`--kit`) and Chapters I–III (`--first`). `WORLD_VERSION` is 7: a fight saved earlier restarts from its checkpoint, but one won and not yet recorded is kept.
+
 ### Camp, character and control follow-up — 31 October ([report](docs/camp-character-followup.md))
 
 - Bridge demolition shows its two-stage progress and announces when the crossing becomes deep water again.
