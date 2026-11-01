@@ -446,7 +446,7 @@ function showConversation(treeId,nodeId=null){
   showModal(view.speaker,`<p class="dialogue-text">${esc(view.text)}</p><ol class="dialogue-options" aria-label="Replies: press a number">`+
     view.options.map((o,i)=>`<li><button class="dialogue-option ${o.needs.length?'is-dimmed':''}" data-cmd="reply" data-id="${o.index}" ${o.needs.length?'aria-disabled="true"':''}>`+
       `<kbd>${i+1}</kbd> ${o.needs.length?`<span class="dialogue-needs">[${esc(o.needs.join(', '))}]</span> `:''}<span>${esc(o.text)}</span>`+
-      `${o.preview.length?` <small>${esc(o.preview.join(' · '))}</small>`:''}</button></li>`).join('')+'</ol>');
+      `${o.preview.length?` <small>${esc(o.preview.join(' · '))}</small>`:''}</button></li>`).join('')+'</ol>',{pause:true});
   conversation={treeId,nodeId:view.nodeId};modal.dataset.conversation=treeId;
 }
 async function replyConversation(index){
@@ -709,7 +709,7 @@ function showSoldierPanel(name,arg=null){
   const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
     .map(k=>active.dataset?.[k]!==undefined?`[data-${k}="${CSS.escape(active.dataset[k])}"]`:'').join(''):'';
   const tabs=['kit','character','company','decorations'],nav=tabs.includes(name)?`<nav class="soldier-sections" aria-label="Soldier sections">${[['kit','Equipment'],['character','Training'],['company','Company'],['decorations','Honours']].map(([id,label])=>`<button data-cmd="soldier-panel" data-id="${id}"${name===id?' aria-current="page"':''}>${label}</button>`).join('')}</nav>`:'';
-  showModal(title,nav+body,{back:['orders','squad-orders'].includes(name)?'company':'menu'});soldierPanel={name,arg};modal.dataset.soldier=name;
+  showModal(title,nav+body,{back:['orders','squad-orders'].includes(name)?'company':'menu',pause:name==='chronicle'});soldierPanel={name,arg};modal.dataset.soldier=name;
   if(!modal.querySelector('[data-appearance]'))void showSoldierPreview();
   for(const id of openDetails){const el=document.getElementById(id);if(el)el.open=true;}
   if(samePanel)modal.scrollTop=scroll;
@@ -935,7 +935,7 @@ async function replaceCampaign({load,save,message}){
   });
 }
 let modalReturn=null;
-function showModal(title,body,{menu=false,back='menu'}={}){
+function showModal(title,body,{menu=false,back='menu',pause=false}={}){
   const panelId=title.toLowerCase().replace(/[^a-z]+/g,'-');
   const samePanel=modal.open&&modal.dataset.panel===panelId;
   const openDetails=samePanel?[...modal.querySelectorAll('details[id][open]')].map(el=>el.id):[];
@@ -943,9 +943,9 @@ function showModal(title,body,{menu=false,back='menu'}={}){
   // hidden conversation's save restriction or a mission panel's refresh hook.
   if(!samePanel){conversation=null;soldierPanel=null;delete modal.dataset.conversation;delete modal.dataset.soldier;}
   disposeSoldierPreview();
-  // The Menu always pauses the world; other panels follow Pause in panels.
-  // A live 3D world advances with its renderer, so both must follow this choice.
-  const pauseWorld=menu||settings.panelPause!==false,stagePause=!field?.runtime||pauseWorld;
+  // The Menu, a conversation and the chronicle always pause the world (release 12); other panels follow
+  // Pause in panels. A live 3D world advances with its renderer, so both must follow this choice.
+  const pauseWorld=menu||pause||settings.panelPause!==false,stagePause=!field?.runtime||pauseWorld;
   modal.dataset.stagePause=String(stagePause);
   stopMotion();pendingMotion=null;replay.stop();battleStage.pause(stagePause);if(pauseWorld)field?.runtime?.pauseFor('panel');
   if(!modal.open){const el=document.activeElement;modalReturn={element:el,cmd:el?.dataset?.cmd,id:el?.id};}
