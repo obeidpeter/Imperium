@@ -147,7 +147,8 @@ async function verifyActivity(page,chapter){
   return {chapter,clues,incorrectRefused:true,completed:true,reloaded:true,positionPreserved:true};
 }
 try{
-  for(const [label,viewport,scale]of [['desktop',{width:1280,height:720},1],['phone',{width:390,height:844},1],['large-text',{width:390,height:844},2]]){
+  // Release 12's sizes: a 1,280 × 720 desktop, a 390-pixel phone (also at 200% text) and a small 360 × 640 phone.
+  for(const [label,viewport,scale]of [['desktop',{width:1280,height:720},1],['phone',{width:390,height:844},1],['large-text',{width:390,height:844},2],['small-phone',{width:360,height:640},1]]){
     for(const id of ['ch5-mine','ch8-parley','ch12-legitimacy']){
       const page=await prepare(viewport,id,{scale});await measure(page,`${id}-camp-${label}`,{camp:true,desktop:label==='desktop',scale});await page.context().close();
     }
