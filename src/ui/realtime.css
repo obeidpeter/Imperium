@@ -481,6 +481,8 @@ html[data-world="full"] .realtime-frame>.rt-result,html[data-world="full"] .real
   position:absolute;z-index:9;inset-block:3rem 1rem;inset-inline:50% auto;translate:-50% 0;inline-size:min(58rem,calc(100% - 1.2rem));margin:0;
   overflow:auto;overscroll-behavior:contain;box-shadow:0 1rem 3rem #000c}
 html[data-world="full"] .realtime-frame:not([data-overlay="records"])>.chamber-records{display:none}
+/* Behind a result the world keeps the whole area (the page's own rule shrinks the scene to 15rem). */
+html[data-world="full"] .realtime-frame:not([data-outcome="active"]) .rt-workspace>.rt-scene{block-size:auto;min-block-size:0}
 html[data-world="full"] .realtime-frame[data-overlay="records"]>.chamber-records{background:#f4eedf;color:#292b26;border-radius:.6rem;padding:.6rem 1rem}
 /* The bar: who you control, the message lines and the actions, and the panels. */
 html[data-world="full"] .rt-field>.rt-hud{position:relative;display:grid;grid-template-columns:minmax(12rem,26%) minmax(0,1fr) auto;
