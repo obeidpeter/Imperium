@@ -336,9 +336,9 @@ async function campToDrill(page,view='3d'){
   await (await revealControl(page,'[data-cmd="conversation"][data-id="ch1:varro"]')).click();await page.waitForSelector('#modal[open] [data-cmd="reply"]');
   assert.match(await text(page,'#modal'),/Varro/);
   await verifyCampPanelTransitions(page);
-  await page.click('[data-cmd="conversation"][data-id="table"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
+  await (await revealControl(page,'[data-cmd="conversation"][data-id="table"]')).click();await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
   await page.waitForFunction(()=>!document.querySelector('#modal')?.open,null,{timeout:30000});
-  await page.click('[data-cmd="start"]');await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  await (await revealControl(page,'[data-cmd="start"]')).click();await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
 }
 async function realtimeCampaign(){
   const page=await open();await campToDrill(page);
@@ -447,9 +447,9 @@ async function viewSwitch(){
     .catch(async()=>assert.fail(`Shift+M opens the camp map: ${await page.evaluate(()=>document.querySelector('#panel-title')?.textContent??'no panel')}`));
   await closePanel(page);
   // On the drill field, which waits for the player: the pause holds through both switches.
-  await page.click('[data-cmd="conversation"][data-id="table"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
+  await (await revealControl(page,'[data-cmd="conversation"][data-id="table"]')).click();await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
   await page.waitForFunction(()=>!document.querySelector('#modal')?.open,null,{timeout:30000});
-  await page.click('[data-cmd="start"]');await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  await (await revealControl(page,'[data-cmd="start"]')).click();await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
   assert.equal((await hero()).paused,true,'The drill waits for the player');
   await switchTo('field','2d');assert.equal((await hero()).paused,true,'2D: the pause the player had holds');
   await switchTo('field','3d');assert.equal((await hero()).paused,true,'3D: the pause the player had holds');
@@ -465,7 +465,7 @@ async function restoreRealtime(page,code,{view='3d',beforeStart=null}={}){
   await page.goto(base);await settingsCommand(page,'restore');
   await restoreCamp(page,code);
   if(beforeStart)await beforeStart();
-  await page.click('[data-cmd="start"]:visible');
+  await (await revealControl(page,'[data-cmd="start"]')).click();
   try{await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');}
   catch(error){
     const observed=await page.evaluate(()=>({phase:document.documentElement.dataset.phase,kind:document.querySelector('.rt-field')?.dataset.kind,
@@ -512,7 +512,7 @@ async function restoreChamber(page,code,view='3d',{beforeStart=null}={}){
   await page.goto(base);await settingsCommand(page,'restore');
   await restoreCamp(page,code);
   if(beforeStart)await beforeStart();
-  await page.click('[data-cmd="start"]:visible');
+  await (await revealControl(page,'[data-cmd="start"]')).click();
   await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
 }
 async function restoreCamp(page,code){
@@ -540,7 +540,7 @@ async function campSaveDeparture(){
     });
     const beforeStart=async()=>{
       await page.waitForFunction(()=>window.__campSaveDelay.held,null,{timeout:30000});
-      assert.equal(await page.locator('[data-cmd="start"]:visible').isDisabled(),true,`${id}: departure waits for the camp autosave`);
+      assert.equal(await (await revealControl(page,'[data-cmd="start"]')).isDisabled(),true,`${id}: departure waits for the camp autosave`);
       assert.match(await text(page,'.save-status'),/Saving/);
       assert.equal(await page.locator('.rt-field[data-kind="camp"]').count(),1,'The camp stays open during the save');
       await page.evaluate(()=>window.__campSaveDelay.release());
@@ -561,7 +561,7 @@ async function campStartupDeparture(){
     void loading.catch(()=>{}); // A preceding restore failure still closes the page safely.
     const beforeStart=async()=>{
       await loading;
-      assert.equal(await page.locator('[data-cmd="start"]:visible').isDisabled(),true,`${id}: departure waits for initial camp setup`);
+      assert.equal(await (await revealControl(page,'[data-cmd="start"]')).isDisabled(),true,`${id}: departure waits for initial camp setup`);
       releaseModule();
     };
     try{
@@ -766,7 +766,7 @@ async function realtimeFinale(){
   await restoreCamp(page,battleCampCode('ch12-confrontation'));
   await (await revealControl(page,'[data-cmd="route"][data-id="defection"]')).click();
   await page.waitForSelector('[data-cmd="route"][data-id="defection"].chosen').catch(()=>assert.fail('The defection route is chosen'));
-  await page.click('[data-cmd="start"]:visible');
+  await (await revealControl(page,'[data-cmd="start"]')).click();
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]').catch(()=>assert.fail('The finale’s field is ready'));
   const rally=page.locator('[data-role="abilityBar"] [data-ability="rally"]');
   assert.equal(await rally.isVisible(),true,'Rally is visible without opening More actions');

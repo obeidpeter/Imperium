@@ -472,6 +472,8 @@ function followUp(open){
   if(open==='march'){startCampaignEncounter();return;}
   if(open==='council'){showCouncil();return;}
   if(open==='preparation'){
+    // Release 12: the preparation lives in the camp list, which opens over the world for it.
+    if(campMode()&&pageOverlay!=='services'){pageOverlay='services';render();}
     const section=document.getElementById('camp-preparation');
     if(section){
       section.open=true;

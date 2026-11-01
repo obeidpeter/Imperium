@@ -99,7 +99,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
         <span class="rt-speed-state" data-role="speedState" hidden>Half speed</span>
         ${chamber?'<button type="button" class="rt-records" data-cmd="page-overlay" data-id="records" aria-expanded="false" title="The motion, the members and the record">Members</button>':''}
       </div>
-      <button data-role="menuButton" class="rt-menu" type="button" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
+      <button data-role="menuButton" class="rt-menu" type="button" data-cmd="menu" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
     </header>
     ${camp?'':missionStrip}
     <aside class="rt-notice" data-role="notice" role="status" hidden><div><strong data-role="noticeTitle"></strong><p data-role="noticeBody"></p></div><button type="button" data-role="dismissNotice" aria-label="Dismiss battlefield update">×</button></aside>

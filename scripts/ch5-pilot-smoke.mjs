@@ -9,7 +9,7 @@ import {resolve,isAbsolute,join} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,settingsCommand,closePanel} from './ui-smoke-navigation.mjs';
+import {closePanel,menuCommand,openCampList,revealControl,settingsCommand} from './ui-smoke-navigation.mjs';
 import {runRealtimeCampaign,playRealtime} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 import {saveCode,restoreCode} from '../src/ui/storage.js';
@@ -94,12 +94,14 @@ async function screenshot(name){
 async function geometry(label){
   const measured=await page.evaluate(()=>{
     const board=document.querySelector('#rt-board'),b=board.getBoundingClientRect();
-    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-status-strip,.rt-support,.rt-deploy')].filter(el=>el.checkVisibility({checkVisibilityCSS:true}));
-    return {viewport:{width:innerWidth,height:innerHeight},canvas:{width:b.width,height:b.height},documentWidth:document.documentElement.scrollWidth,
+    // Release 12: the strip and the bar never cover the scene; help, tips and the camp list open over it by design.
+    const panels=[...document.querySelectorAll('.rt-top,.rt-hud,.rt-field>.rt-status-strip,.rt-chronicle-bar,.rt-deploy')].filter(el=>el.checkVisibility({checkVisibilityCSS:true}));
+    return {viewport:{width:innerWidth,height:innerHeight},canvas:{width:b.width,height:b.height},documentWidth:document.documentElement.scrollWidth,documentHeight:document.documentElement.scrollHeight,
       overlap:panels.filter(el=>{const r=el.getBoundingClientRect();return Math.min(r.right,b.right)-Math.max(r.left,b.left)>1&&Math.min(r.bottom,b.bottom)-Math.max(r.top,b.top)>1;}).map(el=>el.className)};
   });
   assert.deepEqual(measured.overlap,[],`${label}: controls do not obscure the scene`);
   assert.ok(measured.documentWidth<=measured.viewport.width+1,`${label}: no horizontal overflow`);
+  assert.ok(measured.documentHeight<=measured.viewport.height+1,`${label}: nothing on the page scrolls`);
   assert.ok(measured.canvas.height>=(measured.viewport.width>600?358:318),`${label}: the court retains useful vertical space`);
   record(label,measured);
 }
@@ -138,9 +140,12 @@ try{
   await page.waitForFunction(()=>{try{return JSON.parse(document.querySelector('#rt-board').dataset.renderStats).cameraView==='overview';}catch{return false;}});
   await page.setViewportSize({width:390,height:844});await geometry('Narrow courtyard geometry');await screenshot('courtyard-narrow.png');
   await page.setViewportSize({width:1270,height:720});
+  // Release 12: the departure, the table and the soldier's panels are one step away, in the camp list (Menu → Camp).
+  await openCampList(page);
   for(const selector of ['[data-cmd="start"]','[data-cmd="conversation"][data-id="table"]','[data-cmd="soldier-panel"][data-id="kit"]','[data-cmd="soldier-panel"][data-id="company"]']){
-    assert.ok(await page.locator(selector).first().isVisible(),`${selector} is directly available`);
+    assert.ok(await page.locator(selector).first().isVisible(),`${selector} is in the camp list`);
   }
+  await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('main[data-overlay="services"]'));
   await pause();const peacefulBefore=JSON.stringify(await world());await page.locator('#rt-board').focus();
   await page.keyboard.press('Space');await page.waitForFunction(()=>/Weapons stay sheathed/.test(document.querySelector('[data-role="eventLine"]')?.textContent??''));
   assert.equal(JSON.stringify(await world()),peacefulBefore);
@@ -155,7 +160,7 @@ try{
   assert.equal(await page.evaluate(()=>document.activeElement===document.querySelector('#camp-preparation > summary')),true);
   assert.equal(Game.serialize((await exported()).state),Game.serialize(beforeConversation.state),'reviewing preparation grants no reward and selects no plan');
   record('Engineer conversation opens existing preparation with keyboard focus and no free progress');
-  await page.locator('[data-cmd="conversation"][data-id="table"]').click();
+  await (await revealControl(page,'[data-cmd="conversation"][data-id="table"]')).click();
   const decisionIndex=Game.campConversation(beforeConversation.state,'table').options.find(o=>o.decision==='civilians').index;
   await page.locator(`#modal [data-cmd="reply"][data-id="${decisionIndex}"]`).click();
   await page.waitForFunction(()=>window.__realtime.world()?.campPresentation?.civilianOutcome==='departing');
@@ -164,7 +169,7 @@ try{
   await restore(chosen.code);assert.equal(Game.serialize((await exported()).state),Game.serialize(chosen.state));
   record('Direct civilian decision updates the courtyard and survives visible export/restore exactly');
   await screenshot('courtyard-civilians.png');
-  await page.locator('[data-cmd="start"]:visible').click();
+  await (await revealControl(page,'[data-cmd="start"]')).click();
   await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:90000});
   assert.equal((await world()).encounterId,'ch5-mine');
   const original=await page.evaluate(key=>JSON.parse(JSON.parse(localStorage.getItem(key)).payload).encounter.realtime.world,CONFIG.saveKey);
@@ -181,7 +186,7 @@ try{
   await screenshot('cracked-tower.png','.rt-field');
   if(riverCode){
     await restore(riverCode);assert.equal((await world()).campPresentation.stage,'river-gate');
-    await page.locator('[data-cmd="start"]:visible').click();
+    await (await revealControl(page,'[data-cmd="start"]')).click();
     await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:90000});
     await pause();assert.equal((await world()).encounterId,'ch5-wall');
     record('Legally earned second checkpoint departs for the red river gate');await screenshot('river-gate.png','.rt-field');

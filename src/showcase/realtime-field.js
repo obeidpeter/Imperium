@@ -706,7 +706,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     };
     for(const [button,point]of [[dom.locateTarget,()=>actorById(world,keyTarget)??objectById(world,keyTarget)],[dom.locateObjective,objectivePoint]])if(button)button.onclick=()=>{const p=point();if(p){stage?.focusPoint(stageTile(p.x,p.z));stage?.wake?.();canvas.focus({preventScroll:true});}};
     if(dom.dismissNotice)dom.dismissNotice.onclick=()=>{dom.notice.hidden=true;noticeUntil=0;canvas.focus({preventScroll:true});};
-    if(dom.menuButton)dom.menuButton.onclick=()=>callbacks.onMenu?.();
+    // The page opens the Menu from this button itself (data-cmd="menu", release 12), even before this module loads.
+    if(dom.menuButton&&!dom.menuButton.dataset.cmd)dom.menuButton.onclick=()=>callbacks.onMenu?.();
     // The bar's panel buttons (release 12): each opens its panel as its key does. On a phone they fold into Panels.
     const foldPanels=()=>{dom.panels?.removeAttribute('data-open');dom.panelsToggle?.setAttribute('aria-expanded','false');};
     for(const b of hudRoot?.querySelectorAll('[data-panel]')??[])b.onclick=()=>{foldPanels();callbacks.onPanel?.(b.dataset.panel);};
