@@ -3,6 +3,9 @@ import {actorById,distanceBetween,forecast,hostile,liftable,validate,campCareAbi
 import {commandProblem,commandable,routePreview} from './simulation.js';
 import {objectById} from './motion.js';
 import {fieldHint,fieldProblem,fieldVerb} from './field-objects.js';
+import {containerProblem,isContainer} from './containers.js';
+import {ITEMS} from '../../data/items.js';
+import {ATTRIBUTE_NAMES} from '../../data/realtime-rules.js';
 
 // What the pointer would do where it is (§3.14): a cursor state, the message
 // line's words and the Command a click there gives. Pure: pointing and
@@ -23,12 +26,28 @@ export function blowSummary(f){
 }
 const metres=n=>`${Math.round(n)} m`;
 
+// What a click on a container does (containers.js): open it, or why not.
+function containerIntent(world,actor,o,shift){
+  const none={cursor:'blocked',message:'',command:null,reason:null},open={actorId:actor.id,kind:'interact',payload:{objectId:o.id}};
+  if(actor.drawn)return {...none,reason:'NEEDS_SHEATHED',message:`Open ${o.name}: ${REASONS.NEEDS_SHEATHED}`};
+  if(world.kind==='camp')return {cursor:'use',reason:null,message:`Open: ${o.name}${o.locked?' (locked)':o.empty?' (empty)':''}.`,command:open};
+  if(o.lock&&!o.unlocked){
+    const need=Object.entries(o.lock.force??{}).map(([k,v])=>`${ATTRIBUTE_NAMES[k]??k} ${v}`).join(', ');
+    if(shift){const problem=containerProblem(world,actor,o,{force:true});
+      return problem?{...none,reason:problem,message:`Force ${o.name}: ${REASONS[problem]}${need?` It needs ${need}.`:''}`}
+        :{cursor:'attack',reason:null,message:`Force the lock: ${o.name}. Five seconds of work; a blow stops it.`,command:{...open,payload:{objectId:o.id,force:true}}};}
+    const problem=containerProblem(world,actor,o);
+    return problem?{...none,reason:problem,message:`${o.name} is locked. ${ITEMS[o.lock.key]?.name??'Its key'} opens it${need?`, or Shift+click to force it (${need})`:''}.`}
+      :{cursor:'use',reason:null,message:`Open: ${o.name}, with its key.`,command:open};
+  }
+  return {cursor:'use',reason:null,message:`Open: ${o.name}.${o.opened&&!o.contents?.length?' It is empty.':''}`,command:open};
+}
 export function pointerIntent(world,{actorId=world.controlled,pick={},button='left',shift=false,abilityId='strike',drawKey='Space'}={}){
   const actor=actorById(world,actorId),none={cursor:'blocked',message:'',command:null,reason:null};
   if(world.status!=='active')return {...none,reason:'BATTLE_OVER',message:REASONS.BATTLE_OVER};
   if(!actor?.alive)return {...none,reason:'ACTOR_DOWN',message:REASONS.ACTOR_DOWN};
   const other=pick.actorId?actorById(world,pick.actorId):null,person=other?.alive&&other!==actor&&!other.hidden?other:null;
-  const object=pick.objectId?objectById(world,pick.objectId):null;
+  const picked=pick.objectId?objectById(world,pick.objectId):null,object=picked?.hidden?null:picked;
   const knows=id=>!actor.abilities||actor.abilities.includes(id);
   if(button==='right'&&abilityId!=='strike'){
     const ability=ABILITIES[abilityId];if(!ability)return none;
@@ -42,6 +61,8 @@ export function pointerIntent(world,{actorId=world.controlled,pick={},button='le
   }
   // Objects: walk over and use them (a chest, a gate, a bridge).
   if(object&&button==='left'){
+    // A chest or cache (release 11): open it; on a battlefield a lock wants its key, or Shift+click to force it.
+    if(isContainer(object))return containerIntent(world,actor,object,shift);
     if(object.done&&!object.toggle)return {...none,cursor:'blocked',message:`${object.name}: done.`};
     // A field object says what the work does, or why it cannot be done now (field-objects.js).
     const problem=fieldProblem(world,object,{force:false});if(problem)return {...none,cursor:'blocked',reason:problem,message:`${object.name}: ${REASONS[problem]}`};
@@ -103,14 +124,14 @@ export function nextTarget(world,{actorId=world.controlled,current=null,friends=
   const list=friends?world.actors.filter(o=>o.alive&&o!==actor&&!hostile(actor,o)).sort(near)
     :[...world.actors.filter(o=>o.alive&&!o.down&&!o.hidden&&hostile(actor,o)).sort(near),
       ...world.actors.filter(o=>o.alive&&o!==actor&&!hostile(actor,o)&&(o.talk||liftable(o))).sort(near),
-      ...(world.objects??[]).filter(o=>!o.done||o.toggle).sort(near),
+      ...(world.objects??[]).filter(o=>(!o.done||o.toggle)&&!o.hidden).sort(near),
       ...world.actors.filter(o=>!o.alive&&o.loot?.length).sort(near)];
   if(!list.length)return null;const at=list.findIndex(o=>o.id===current);return list[(at+1)%list.length].id;
 }
 // E: the nearest thing within 3 m to talk to, use, search or lift, as a pointer intent.
 export function nearestUse(world,{actorId=world.controlled}={}){
   const actor=actorById(world,actorId);if(!actor)return null;
-  const things=[...(world.objects??[]).filter(o=>!o.done||o.toggle).map(o=>({d:distanceBetween(actor,o),pick:{objectId:o.id}})),
+  const things=[...(world.objects??[]).filter(o=>(!o.done||o.toggle)&&!o.hidden).map(o=>({d:distanceBetween(actor,o),pick:{objectId:o.id}})),
     ...world.actors.filter(o=>o!==actor&&(o.alive&&!hostile(actor,o)&&(o.talk||liftable(o))||!o.alive&&o.loot?.length)).map(o=>({d:distanceBetween(actor,o),pick:{actorId:o.id}}))]
     .filter(t=>t.d<=3).sort((a,b)=>a.d-b.d);
   return things.length?pointerIntent(world,{actorId,pick:things[0].pick,button:'left'}):null;
@@ -159,7 +180,14 @@ export function commandOptions(world,{actorId=world.controlled}={}){
   }
   // Objects, the fallen and places.
   // A repaired fortified bridge offers only its forced work: demolition.
-  for(const o of (world.objects??[]).filter(o=>!o.done||o.toggle).sort(near)){
+  for(const o of (world.objects??[]).filter(o=>(!o.done||o.toggle)&&!o.hidden).sort(near)){
+    // A chest or cache: open it, and force a battlefield lock as a second entry (containers.js).
+    if(isContainer(o)){
+      add('Objects',`Open: ${o.name}`,order('interact',{objectId:o.id}),{subject:o.id,detail:`${m(distanceBetween(actor,o))}.${o.locked||o.lock&&!o.unlocked?' Locked.':''}`});
+      if(world.kind!=='camp'&&o.lock&&!o.unlocked&&o.lock.force)add('Objects',`Force the lock: ${o.name}`,order('interact',{objectId:o.id,force:true}),
+        {subject:o.id,detail:`${m(distanceBetween(actor,o))}. Needs ${Object.entries(o.lock.force).map(([k,v])=>`${ATTRIBUTE_NAMES[k]??k} ${v}`).join(', ')}.`});
+      continue;
+    }
     const force=!!o.field&&!fieldVerb(o)&&!!fieldVerb(o,{force:true});if(o.field&&!force&&!fieldVerb(o))continue;
     add('Objects',`${o.field?fieldVerb(o,{force}):'Use'}: ${o.name}`,order('interact',{objectId:o.id,...(force?{force:true}:{})}),
       {subject:o.id,detail:`${m(distanceBetween(actor,o))}.${o.field?` ${fieldHint(world,o)}`:''}`});

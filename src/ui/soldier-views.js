@@ -3,7 +3,8 @@ import {ITEMS,SLOTS,WORN_PLACES,PACK} from '../data/items.js';
 import {TP,COURSES,TRAINERS,DECORATIONS,TITLES,COMPANIONS,APPEARANCE,PATHS,PAY,quartermasterStock,smithStock} from '../data/soldier.js';
 import {ATTRIBUTES,ATTRIBUTE_NAMES,TRAINING_PATHS,ABILITIES,DAMAGE_TYPES,STANDING} from '../data/realtime-rules.js';
 import {soldierAttributes,courseEffects,attributeCost,courseOptions,knownAbilities,wornIds,wearProblem,priceOf,companionWorn,companionRank,
-  companionAttributes,areaOf} from '../core/soldier.js';
+  companionAttributes,areaOf,campContainerView} from '../core/soldier.js';
+import {CONTAINER_KINDS} from '../data/containers.js';
 import {derivedValues,protectionOf} from '../core/realtime/combat.js';
 import {summarizeOrders} from '../core/realtime/party.js';
 import {summarizeSquadOrders} from '../core/realtime/squad-orders.js';
@@ -329,6 +330,30 @@ export function smithPanel(state){
     `<ul class="shop-list">${goods||'<li>Nothing on the rack yet.</li>'}</ul>
     ${disclosure('smith-sell','Sell from your pack',sell?`<ul class="shop-list">${sell}</ul>`:'<p>Nothing to sell.</p>')}
     ${disclosure('smith-prices','How prices work','<p>Prices fall with Eloquence above 10, by up to a fifth. Everyone buys at half value. Named pieces are never for sale: they are found.</p>')}</div>`;
+}
+
+// A camp chest or other container (release 11, containers.js): what is still
+// inside, and its lock with the two ways to open it. Every button names a
+// soldier command; a refusal changes nothing.
+export function campContainerPanel(state,id){
+  const s=state.soldier,view=campContainerView(state,id);if(!view)return '<p>There is nothing here.</p>';
+  const c=view.container,kind=CONTAINER_KINDS[c.kind]?.name??'Container';
+  let body=`<p class="panel-lead"><span class="eyebrow">${esc(kind)}</span> ${esc(c.text)}</p>`;
+  if(!s)return body+'<p>Choose your soldier’s training first.</p>';
+  if(!view.unlocked){
+    const key=c.lock.key,hasKey=s.pack.some(p=>p.id===key),attributes=soldierAttributes(s),need=Object.entries(c.lock.force??{}),
+      needs=need.map(([k,v])=>`${ATTRIBUTE_NAMES[k]??k} ${v}`).join(', '),strong=need.length>0&&need.every(([k,v])=>(attributes[k]??0)>=v);
+    return body+`<p><strong>Locked.</strong> ${hasKey?`You carry the ${esc(ITEMS[key].name.toLowerCase())}.`:`Its key is somewhere in this camp.`}</p>`+
+      `<div class="panel-actions">${button('unlock','Use the key',{container:id,method:'key'},{primary:hasKey,disabled:!hasKey,title:hasKey?'':'You do not carry its key.'})}`+
+      `${need.length?button('unlock',`Force the lock (${needs})`,{container:id,method:'force'},{disabled:!strong,title:strong?'':`Forcing it needs ${needs}.`}):''}</div>`;
+  }
+  if(view.empty)return body+'<p>It is empty.</p>';
+  const rows=view.remaining.map(e=>`<li><div>${itemArt(e.itemId)}<strong>${esc(ITEMS[e.itemId].name)}</strong>`+
+    `${ITEMS[e.itemId].grade?` <small class="item-grade">${ITEMS[e.itemId].grade==='named'?'Named':'Fine'}</small>`:''}`+
+    `${disclosure(`container-item-${id}-${e.index}`,'Item details',`<p>${esc(itemSummary(e.itemId))}</p>`)}</div>`+
+    `${button('takeFrom','Take',{container:id,indices:String(e.index)})}</li>`).join('');
+  return body+`<ul class="shop-list container-list">${rows}</ul><div class="panel-actions">${button('takeFrom','Take all',{container:id},{primary:true})}</div>`+
+    '<p class="panel-note">What does not fit your pack stays inside.</p>';
 }
 
 // The canabae's sutler: her goods for coin, and she buys what you took from the field.

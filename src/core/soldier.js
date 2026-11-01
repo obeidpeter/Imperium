@@ -4,6 +4,7 @@ import {TP,COURSES,TRAINERS,DECORATIONS,DECORATION_AWARDS,TITLES,COMPANION_RANKS
   from '../data/soldier.js';
 import {STANDING} from '../data/realtime-rules.js';
 import {TRADER_STOCK} from '../data/camps.js';
+import {containerById,containerChapter} from '../data/containers.js';
 import {slotProblem} from './realtime/party.js';
 import {squadOrderProblem} from './realtime/squad-orders.js';
 import {SQUAD_STANDING} from '../data/realtime-squads.js';
@@ -47,7 +48,7 @@ export function adoptSoldier(state,{path='legionary',appearance={}}={}){
   const kept=state.soldier,s=createSoldier({path,appearance});
   if(kept){s.tp=kept.tp;s.tpEarned=kept.tpEarned;s.rewarded=kept.rewarded;s.worn=kept.worn;s.pack=kept.pack;s.ground=kept.ground;s.nextUid=kept.nextUid;
     s.denarii=kept.denarii;s.paid=kept.paid;s.issued=kept.issued;s.companions=kept.companions;s.flags=kept.flags;s.errands=kept.errands;s.courses=kept.courses;
-    s.decorations=kept.decorations;s.titles=kept.titles;}
+    s.decorations=kept.decorations;s.titles=kept.titles;if(kept.opened)s.opened=kept.opened;}
   else issuePromotions({soldier:s},Math.max(0,state.chapter-1));
   state.soldier=s;return result(true,`${TRAINING_PATHS[path].name} training recorded.`);
 }
@@ -252,6 +253,57 @@ export const donativeFor=encounterId=>DONATIVES[encounterId]??0;
 export const objectiveTP=encounterId=>TP.objective[encounterId]??2;
 
 // The soldier's record must be well formed (save validation).
+// Camp containers (release 11, containers.js). What has been taken from each is
+// recorded once in `soldier.opened`, as `id:index`, and a lock opened as
+// `id:unlocked`; a container's remaining contents are what is not recorded.
+const OPENED_LIMIT=300;
+const openedOf=s=>s?.opened??[];
+const OPENED_RECORD=/^([a-z0-9-]{1,40}):(\d{1,2}|unlocked)$/;
+function validOpened(record){
+  const m=typeof record==='string'?OPENED_RECORD.exec(record):null,c=m?containerById(m[1]):null;
+  if(!c||containerChapter(c.id)===null)return false;
+  return m[2]==='unlocked'?!!c.lock:Number(m[2])<c.contents.length;
+}
+// What a camp container holds now, read from the chronicle; null if it does not stand in this chapter's camp.
+export function campContainerView(state,id){
+  const c=containerById(id);if(!c||containerChapter(id)!==state.chapter)return null;
+  const opened=new Set(openedOf(state.soldier)),unlocked=!c.lock||opened.has(`${id}:unlocked`);
+  const remaining=c.contents.map((itemId,index)=>({index,itemId})).filter(e=>!opened.has(`${id}:${e.index}`));
+  return {container:c,unlocked,remaining,empty:!remaining.length,touched:remaining.length<c.contents.length||(!!c.lock&&unlocked)};
+}
+// Open a camp container's lock with its key (the key is used up) or by force.
+export function unlockContainer(state,id,method){
+  const s=state.soldier,view=state.phase==='camp'?campContainerView(state,id):null;if(!s||!view)return result(false,'There is no such container in this camp.');
+  if(view.unlocked)return result(false,`The ${view.container.name} is not locked.`);
+  if(openedOf(s).length>=OPENED_LIMIT)return result(false,'The record of opened containers is full.');
+  const lock=view.container.lock;
+  if(method==='key'){
+    const entry=s.pack.find(p=>p.id===lock.key);if(!entry)return result(false,`It needs the ${ITEMS[lock.key].name}.`);
+    s.pack=s.pack.filter(p=>p.uid!==entry.uid);(s.opened??=[]).push(`${id}:unlocked`);
+    return result(true,`The key turns and stays in the lock. The ${view.container.name} is open.`);
+  }
+  if(method==='force'){
+    const need=Object.entries(lock.force??{});if(!need.length)return result(false,'This lock cannot be forced.');
+    const attributes=soldierAttributes(s),short=need.filter(([k,v])=>(attributes[k]??0)<v);
+    if(short.length)return result(false,`Forcing it needs ${short.map(([k,v])=>`${ATTRIBUTE_NAMES[k]} ${v}`).join(' and ')}. Its key is somewhere in this camp.`);
+    (s.opened??=[]).push(`${id}:unlocked`);return result(true,`You force the lock of the ${view.container.name}.`);
+  }
+  return result(false,'Use its key, or force the lock.');
+}
+// Take from an open camp container: the chosen items (or all) that fit the pack; the rest stays.
+export function takeFromCampContainer(state,id,indices){
+  const s=state.soldier,view=state.phase==='camp'?campContainerView(state,id):null;if(!s||!view)return result(false,'There is no such container in this camp.');
+  if(!view.unlocked)return result(false,`The ${view.container.name} is locked.`);
+  const wanted=indices??view.remaining.map(e=>e.index);
+  if(!Array.isArray(wanted)||!wanted.length||wanted.length>12||new Set(wanted).size!==wanted.length||wanted.some(i=>!view.remaining.some(e=>e.index===i)))
+    return result(false,'That is not there to take.');
+  const trial=clone(s),taken=[];for(const i of wanted)if(packAdd(trial,view.container.contents[i]))taken.push(i);
+  if(!taken.length)return result(false,'Your pack is full. Sort it, or leave something on the ground.');
+  if(openedOf(s).length+taken.length>OPENED_LIMIT)return result(false,'The record of opened containers is full.');
+  s.pack=trial.pack;s.nextUid=trial.nextUid;(s.opened??=[]).push(...taken.map(i=>`${id}:${i}`));
+  const names=taken.map(i=>ITEMS[view.container.contents[i]].name.toLowerCase());
+  return result(true,`You take ${names.join(', ')}${taken.length<wanted.length?'; the rest stays, as your pack is full':''}.`);
+}
 export function validateSoldier(state,fail){
   const s=state.soldier;if(s===undefined)return;
   const int=(n,min,max)=>Number.isInteger(n)&&n>=min&&n<=max,ids=(list,table,max)=>Array.isArray(list)&&list.length<=max&&new Set(list).size===list.length
@@ -274,6 +326,8 @@ export function validateSoldier(state,fail){
   if(!s.companions||typeof s.companions!=='object'||Object.entries(s.companions).some(([id,c])=>!COMPANIONS[id]||!c?.worn
     ||Object.entries(c.worn).some(([place,item])=>!WORN_PLACES.includes(place)||!ITEMS[item]||!placeMatches(place,item))))fail('companion kit.');
   if(!s.flags||typeof s.flags!=='object'||Object.keys(s.flags).length>400||!s.errands||typeof s.errands!=='object'||Object.keys(s.errands).length>80)fail('soldier story record.');
+  if(s.opened!==undefined&&(!Array.isArray(s.opened)||s.opened.length>OPENED_LIMIT||new Set(s.opened).size!==s.opened.length||!s.opened.every(validOpened)))
+    fail('opened containers.');
   if(s.orders!==undefined&&(!s.orders||typeof s.orders!=='object'||Object.entries(s.orders).some(([id,slots])=>!COMPANIONS[id]||!Array.isArray(slots)||slots.length>4
     ||slots.some(slot=>!Array.isArray(slot)||slot.length!==2||slotProblem(slot)))))fail('standing orders.');
   if(s.party!==undefined&&(!Array.isArray(s.party)||s.party.length>3||new Set(s.party).size!==s.party.length||s.party.some(id=>!COMPANIONS[id])))fail('chosen party.');
@@ -306,6 +360,8 @@ export function soldierCommand(state,command={}){
     case 'buy':return buy(state,command.itemId,{stock:command.from==='trader'?TRADER_STOCK[state.chapter]??[]:command.from==='smith'?smithStock(state.chapter):
       quartermasterStock(state.chapter)});
     case 'sell':return sell(state,command.uid);
+    case 'unlock':return unlockContainer(state,command.containerId,command.method);
+    case 'takeFrom':return takeFromCampContainer(state,command.containerId,command.indices);
     case 'pay':return collectPay(state);
     case 'orders':return setStandingOrders(state,command.companionId,command.preset?STANDING.presets[command.preset]:command.slots);
     case 'squad-orders':return setSquadOrders(state,command.companionId,command.preset==='battle'?null:command.preset?SQUAD_STANDING.presets[command.preset]??[]:command.slots);

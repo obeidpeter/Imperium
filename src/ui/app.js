@@ -33,7 +33,7 @@ import {practicePanel} from './command-edition-views.js';
 import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
 import {warCouncilAdvisories} from './campaign-upgrade-views.js';
 import {actionFor} from './action-map.js';
-import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,smithPanel,trainerPanel,trainerName,
+import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,smithPanel,campContainerPanel,trainerPanel,trainerName,
   adoptPanel,missionOrdersPanel,trackedErrandPanel,chroniclePanel,traderPanel} from './soldier-views.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
@@ -400,7 +400,8 @@ function goToErrand(id){
 function campCallbacks(){
   return {
     lesson:lessonFor('camp'),onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
-    onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.talk)showConversation(o.talk);},
+    // A chest opens its contents (release 11); other objects their conversation.
+    onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.container){showSoldierPanel('container',o.container);return;}if(o?.talk)showConversation(o.talk);},
     onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>{noteVisit(world);refreshMissionPanel();},onQuickSave:()=>quickSave()
   };
 }
@@ -584,7 +585,9 @@ function fieldCallbacks(){
     onMenu:()=>showNavigation(),
     onPanel:name=>fieldPanel(name),
     onTalk:id=>fieldTalk(id),
-    onLoot:id=>fieldLoot(id)
+    onLoot:id=>fieldLoot(id),
+    // A chest or cache opened on the field (release 11): its window, like a fallen enemy's.
+    onObject:(id,actorId)=>{const world=field?.runtime?.world,o=world?.objects.find(x=>x.id===id);if(o?.kind==='container'&&actorId===world.controlled)showFieldContainer(o);}
   };
 }
 // The panel keys (guide "Panels"), in the field and in camp.
@@ -654,7 +657,7 @@ function showSoldierPanel(name,arg=null){
   const world=field&&field.kind!=='chamber'?field.runtime?.world??null:null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
   const panels={kit:()=>['Equipment',kitPanel(state,{selected:kitSelected,spoils,documents:chamberMode()?Chamber.hearingDocuments(state):[]})],character:()=>['Training',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
-    orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],smith:()=>['The armourer',smithPanel(state)],
+    orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],smith:()=>['The armourer',smithPanel(state)],container:()=>[Game.campContainerView(state,arg)?.container.name??'Container',campContainerPanel(state,arg)],
     trainer:()=>[trainerName(state,arg),trainerPanel(state,arg)],
     adopt:()=>['Your soldier’s training',adoptPanel(state,{grants:Object.fromEntries(['legionary','explorator','librarius'].map(p=>[p,tpAuditTotal(Math.max(0,...(state.completed??[])),p)]))})],
     mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements(),trackedErrand:errandTracker.read(state)?.id})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
@@ -706,6 +709,25 @@ function takeLoot(bodyId,itemId){
   showLoot(body);
   // Running, the take happens on the next tick: show what is left once it has.
   if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&modal.dataset.panel?.startsWith('search'))showLoot(body);}));
+}
+// A battlefield chest or cache (release 11): what is left inside beside the take waiting for the next tick.
+function pendingTakeFrom(world,objectId){return [...world.queue].reverse().find(c=>c.kind==='takeFrom'&&c.actorId===world.controlled&&c.payload.objectId===objectId)?.payload.items??[];}
+function showFieldContainer(o){
+  const world=field?.runtime?.world;if(!world)return;
+  const left=[...(o.contents??[])],pending=[...pendingTakeFrom(world,o.id)];
+  const rows=left.map((item,i)=>{const at=pending.indexOf(item),taken=at>=0;if(taken)pending.splice(at,1);
+    return `<li><span>${esc(itemName(item))}</span>${taken?'<span class="status-pill">Taken</span>':`<button data-cmd="rt-take-from" data-id="${esc(o.id)}" data-item="${esc(item)}" data-key="take-from:${i}">Take</button>`}</li>`;});
+  showModal(o.name,left.length?`<ul class="rt-loot">${rows.join('')}</ul>`+
+    `<div class="panel-actions"><button class="primary" data-cmd="rt-take-from" data-id="${esc(o.id)}" data-item="*">Take all</button></div>`+
+    `<p class="panel-note">What you take goes to your pack when the result is recorded.</p>`:'<p>It is empty.</p>');
+}
+function takeFromField(objectId,itemId){
+  const runtime=field?.runtime,world=runtime?.world,o=world?.objects.find(x=>x.id===objectId);if(!o)return;
+  const pending=pendingTakeFrom(world,objectId),left=[...o.contents];for(const id of pending)left.splice(left.indexOf(id),1);
+  const items=itemId==='*'?[...pending,...left]:[...pending,itemId];
+  if(!runtime.issue({actorId:world.controlled,kind:'takeFrom',payload:{objectId,items}}).ok)return;
+  showFieldContainer(o);
+  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open)showFieldContainer(o);}));
 }
 function stopMotion(){
   battleStage.stop();const stop=cancelMotion,stopAmbient=cancelAmbient;cancelMotion=null;cancelAmbient=null;if(stop)stop();currentAnimation=null;
@@ -1039,6 +1061,7 @@ document.addEventListener('click',
       }
 case 'close-modal':modal.close();break;
 case 'rt-take':takeLoot(id,b.dataset.item);break;
+case 'rt-take-from':takeFromField(id,b.dataset.item);break;
 case 'conversation':showConversation(id);break;
 case 'reply':await replyConversation(Number(id));break;
 case 'camp-travel':campTravel(id);break;
@@ -1055,7 +1078,8 @@ case 'soldier':{const d=b.dataset;
   // The editors open; they change nothing until saved.
   if(d.kind==='orders-edit'||d.kind==='squad-orders-edit'){showSoldierPanel(d.kind==='orders-edit'?'orders':'squad-orders',d.companion);break;}
   if(['wear','drop','give','sell'].includes(d.kind))kitSelected=null;
-  await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path,from:d.from});
+  await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path,from:d.from,
+    containerId:d.container,method:d.method,indices:d.indices===undefined?undefined:d.indices.split(',').map(Number)});
   break;}
 case 'soldier-panel':showSoldierPanel(id,b.dataset.arg??null);break;
 case 'adopt-soldier':{const choice=recruitChoice();soldierPanel={name:'character'};await soldierAct({kind:'adopt',...choice});break;}

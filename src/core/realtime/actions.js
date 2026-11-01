@@ -5,6 +5,8 @@ import {actorById,distanceBetween,hostile,staggered,validate} from './abilities.
 import {facingWithin,helpless,inReach,objectById,orderRange,reachOf,turnToward} from './motion.js';
 import {useSpecial} from './specialists.js';
 import {fieldProblem,useFieldObject} from './field-objects.js';
+import {containerProblem,isContainer,openContainer} from './containers.js';
+import {FORCE_WORK_S} from '../../data/containers.js';
 
 // System 4 (§3.1): swing timers (contact at half the swing), casts, shots and
 // timed work (Bind wounds, objects), with recovery after each. Starting an
@@ -90,10 +92,13 @@ function startAbility(world,actor,order){
 
 function startInteraction(world,actor,order){
   const object=objectById(world,order.targetId);if(!object||object.done&&!object.toggle){actor.order=null;return;}
-  const problem=fieldProblem(world,object,{force:!!order.force});if(problem){emit(world,{kind:'rejected',actorId:actor.id,reason:problem});actor.order=null;return;}
+  const problem=isContainer(object)?containerProblem(world,actor,object,{force:!!order.force}):fieldProblem(world,object,{force:!!order.force});
+  if(problem){emit(world,{kind:'rejected',actorId:actor.id,reason:problem});actor.order=null;return;}
   if(distanceBetween(actor,object)>orderRange(world,actor,order,object))return;
   turnToward(actor,object.x-actor.x,object.z-actor.z);
-  actor.action={kind:'work',what:object.kind,objectId:object.id,start:world.tick,end:world.tick+ticksOf((object.work_s??3)*(order.force?2:1)),...(order.force?{force:true}:{})};
+  // Forcing a container's lock takes its own time (containers.js); other forced work twice as long.
+  const seconds=isContainer(object)&&order.force?FORCE_WORK_S:(object.work_s??3)*(order.force?2:1);
+  actor.action={kind:'work',what:object.kind,objectId:object.id,start:world.tick,end:world.tick+ticksOf(seconds),...(order.force?{force:true}:{})};
   emit(world,{kind:'work',actorId:actor.id,objectId:object.id,what:object.kind});
 }
 
@@ -136,6 +141,8 @@ function finishWork(world,actor,action){
   const object=objectById(world,action.objectId);if(!object)return;
   // A field object changes state and the field with it (field-objects.js).
   if(object.field){actor.order=null;useFieldObject(world,actor,object,{force:!!action.force});return;}
+  // A chest or cache opens (containers.js); the page shows what is inside.
+  if(isContainer(object)){actor.order=null;openContainer(world,actor,object,{force:!!action.force});return;}
   actor.order=null;object.done=true;object.by=actor.id;object.at=world.tick;
   emit(world,{kind:'used-object',actorId:actor.id,objectId:object.id,what:object.kind});
 }

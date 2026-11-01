@@ -5,8 +5,16 @@ import {createWorld} from './simulation.js';
 import {FINE,layoutFor,upsampleTerrain,soldierSpec} from './campaign-encounter.js';
 import {actorById,distanceBetween} from './abilities.js';
 import {activityCampView,companyActivities} from '../company-activities.js';
+import {campContainerView} from '../soldier.js';
 
 const campView=state=>{const camp=campFor(state.chapter);return camp?{...camp,...activityCampView(state,camp)}:null;};
+// A camp container's state, read from the chronicle (release 11): locked, empty,
+// and hidden until something has been taken from it or its lock opened.
+function containerState(state,o){
+  const view=campContainerView(state,o.container);if(!view)return {container:o.container,locked:false,empty:true,hidden:false};
+  return {container:o.container,locked:!view.unlocked,empty:view.empty,hidden:!!view.container.hidden&&!view.touched,opened:view.touched};
+}
+const interactionOf=(state,o,point)=>({id:o.id,kind:o.kind,name:o.name,...point(o.place,o.at),...(o.container?containerState(state,o):{})});
 
 // A walkable camp (build brief §3.12): the chapter's camp map upsampled like a
 // battle's, the soldier at the gate, the camp's people as neutral men to talk
@@ -42,7 +50,7 @@ function campPresentationBase(state){
     decision==='countermine'?'Stores are secured for the countermine; households wait under shelter.':'Households and the engineer await your decision.';
   return {decision,civilianOutcome,stores,waterDetail,engineeringRecovered,stage:state.encounterIndex>0?'river-gate':'tower',summary,
     places:CAMP_PLACES.map(id=>({id,name:campPlaceName(5,id),...point(id)})),
-    interactions:camp.objects.map(o=>({id:o.id,kind:o.kind,name:o.name,...point(o.place,o.at)})),
+    interactions:camp.objects.map(o=>interactionOf(state,o,point)),
     sceneryPads:(camp.sceneryPads??[]).map(p=>{
       const xs=p.cells.map(c=>c[0]),ys=p.cells.map(c=>c[1]),minX=Math.min(...xs),maxX=Math.max(...xs)+1,minZ=Math.min(...ys),maxZ=Math.max(...ys)+1;
       return {id:p.id,kind:p.kind,cells:p.cells.map(([x,y])=>({x,y})),x:(minX+maxX)*FINE/2-hx,z:(minZ+maxZ)*FINE/2-hz,
@@ -86,7 +94,7 @@ function regionalCampPresentation(state){
   return {chapter:state.chapter,decision,summary,purpose:context.purpose,inspection:context.inspection,
     stage:chapter.encounters[state.encounterIndex]?.id??'complete',decisionDetails,outcomeDetails,committedRecords,
     places:CAMP_PLACES.map(id=>({id,name:campPlaceName(state.chapter,id),...point(id)})),
-    interactions:camp.objects.map(o=>({id:o.id,kind:o.kind,name:o.name,...point(o.place,o.at)})),
+    interactions:camp.objects.map(o=>interactionOf(state,o,point)),
     sceneryPads:(camp.sceneryPads??[]).map(p=>{
       const xs=p.cells.map(c=>c[0]),ys=p.cells.map(c=>c[1]),minX=Math.min(...xs),maxX=Math.max(...xs)+1,minZ=Math.min(...ys),maxZ=Math.max(...ys)+1;
       return {id:p.id,kind:p.kind,cells:p.cells.map(([x,y])=>({x,y})),x:(minX+maxX)*FINE/2-hx,z:(minZ+maxZ)*FINE/2-hz,
@@ -105,7 +113,9 @@ export function createCampWorld(state){
     actors.push({id:p.id,name:p.name,side:'neutral',role:p.role,attributes:{str:10,agi:10,con:10,per:10,combat:5,field:5},kit:['tunic','caligae'],
       at:[at.x,at.z],face:[0,1],talk:{tree:p.talk},drawn:false,camp:true});
   }
-  const objects=camp.objects.map(o=>{const at=place(o.place,o.at);return {id:o.id,kind:o.kind,name:o.name,x:at.x,z:at.z,work_s:.3,toggle:true,talk:o.talk};});
+  const objects=camp.objects.map(o=>{const at=place(o.place,o.at);
+    return o.container?{id:o.id,kind:'container',name:o.name,x:at.x,z:at.z,work_s:.3,toggle:true,...containerState(state,o)}
+      :{id:o.id,kind:o.kind,name:o.name,x:at.x,z:at.z,work_s:.3,toggle:true,talk:o.talk};});
   const world=createWorld({map:{id:camp.id,...fine},seed:1000+state.chapter,actors,controlled:'hero',objects,kind:'camp',mission:null});
   world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};world.title=camp.title;world.campId=camp.id;world.chapter=state.chapter;
   if(camp.peaceful===true)world.peaceful=true;

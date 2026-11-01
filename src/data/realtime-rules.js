@@ -155,7 +155,8 @@ export const REASONS=Object.freeze({
   NOT_LEARNT:'Not learnt yet.',CARRYING:'You are carrying a comrade: set him down first.',NOT_FRIENDLY:'Choose a comrade.',
   NOT_WOUNDED:'He is not wounded.',NOT_FALLEN:'Only a fallen comrade can be carried.',NOT_IN_CAMP:'Not here in camp.',
   GATE_OCCUPIED:'Someone is in the gateway. Clear the passage before closing it.',
-  ALREADY_DONE:'That is already done.',OPPORTUNITY_CLOSED:'That opportunity has closed: only one could be taken, before the end of round 7.',ALREADY_CONTROLLED:'You already control him.',NO_VOLLEYS:'No volleys left this battle.',
+  ALREADY_DONE:'That is already done.',LOCKED:'It is locked. Its key opens it, or Shift+click to force the lock.',
+  TOO_WEAK:'He is not strong enough to force this lock.',NOT_LOCKED:'It is not locked.',OPPORTUNITY_CLOSED:'That opportunity has closed: only one could be taken, before the end of round 7.',ALREADY_CONTROLLED:'You already control him.',NO_VOLLEYS:'No volleys left this battle.',
   NO_FRIEND_NEAR:'No friend within reach.',NOT_A_SQUAD:'Choose a squad.'});
 
 // How a single enemy fights (ai.js; perception is PERCEPTION's): he engages,

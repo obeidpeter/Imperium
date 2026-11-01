@@ -1,3 +1,4 @@
+import {containersInCamp} from './containers.js';
 import {storyWhen} from './campaign.js';
 import {CAMP_CONTEXT,CAMP_SCENERY_PADS} from './camp-regions.js';
 import {campStoryId,campStoryFor} from './camp-stories.js';
@@ -33,7 +34,9 @@ const camp=data=>freeze({peaceful:true,sceneryPads:CAMP_SCENERY_PADS[data.chapte
   reportTree:data.chapter===5?'ch5:report':'hub:report',
   terrain:grid(data.map),places:freeze(data.places),people:freeze(withSmith(data).map(p=>freeze({...p,...(p.routine?{}:routineFor(p)?{routine:routineFor(p)}:{})}))),
   objects:freeze([...data.objects,...activityObjects(data.chapter),...(data.chapter<=3?[{id:'local-report',kind:'table',name:'The local report',place:'canabae',at:[-2.5,0],talk:'hub:report'}]:[]),
-    ...(campStoryFor(data.chapter)?[{id:'company-record',kind:'table',name:campStoryFor(data.chapter).title,place:'barracks',at:[-2,-1.5],talk:campStoryId(data.chapter)}]:[])].map(freeze))});
+    ...(campStoryFor(data.chapter)?[{id:'company-record',kind:'table',name:campStoryFor(data.chapter).title,place:'barracks',at:[-2,-1.5],talk:campStoryId(data.chapter)}]:[]),
+    // Chests and other containers (release 11, containers.js): opened from the chronicle, not by conversation.
+    ...containersInCamp(data.chapter).map(c=>({id:c.id,kind:'container',name:c.name,place:c.place,at:c.at,container:c.id}))].map(freeze))});
 
 // The camp's standing staff, whom every later camp places in its own court.
 const STAFF=freeze({

@@ -22,6 +22,7 @@ export {difficultyOptions,companyPlan,selectCompany,prepareCompany,tacticalAdvic
 export {operationPhase} from './operations.js';
 import {initialProgression,validateProgression} from './progression.js';
 import {createSoldier,validateSoldier,commitSoldierRewards,issuePromotions,rewardCapabilities,soldierCommand as soldierAct} from './soldier.js';
+export {campContainerView} from './soldier.js';
 import {tpAuditTotal} from './tp-audit.js';
 import {createEncounterWorld,applyRealtimeOutcome,realtimeMissionSupported} from './realtime/campaign-encounter.js';
 import {WORLD_VERSION,snapshotWorld,restoreWorld} from './realtime/simulation.js';
