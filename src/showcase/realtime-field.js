@@ -764,6 +764,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     pauseFor(reason){if(!clock.paused){setPaused(clock,true);pausedFor=reason;saveResume('pause');}},
     release(reason){if(pausedFor&&(!reason||pausedFor===reason)){pausedFor=null;if(!ended&&!deploying(world)){setPaused(clock,false);resumePending=true;}}if(!ended)canvas.focus({preventScroll:true});},
     get paused(){return clock.paused&&!stepping(clock);},
+    // A pause the player chose (P), not one a panel holds: the page carries it into a field built again (app.js).
+    get pausedByPlayer(){return clock.paused&&!stepping(clock)&&!pausedFor&&!ended;},
+    keepPaused(){if(ended)return;pausedFor=null;if(!clock.paused)setPaused(clock,true);},
     setSpeed(speed){setSpeed(clock,Number(speed));},
     setOption(key,value){options[key]=value;if(key==='gameSpeed')setSpeed(clock,Number(value));if(['drawToAttack','keepFighting'].includes(key))applyOptions();
       if(key==='labelsAlways')document.body.classList.toggle('labels-full',!!value);

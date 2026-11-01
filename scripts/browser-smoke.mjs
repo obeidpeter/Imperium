@@ -25,7 +25,7 @@ import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
+import {closePanel,menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign,protectCoalition} from './command-autoplay.mjs';
@@ -402,6 +402,56 @@ async function realtimeFlat(){
   await page.waitForFunction(()=>window.__realtime.world().used.includes('strike'),null,{timeout:120000}).catch(()=>assert.fail('T and Enter attack in the 2D view'));
   await page.context().close();
   console.log('ok - real-time 2D view: the walkable camp and the drill are drawn flat; the list path, the table decision, T and Enter all work');
+}
+
+// The battle view changed in Settings during a session, 3D to 2D and back, in the camp and on the drill
+// field (release 12; the owner's report of a blank field). A canvas keeps the kind of drawing it was first
+// given, so the field is built again around the same world: the soldier stands where he stood, a pause the
+// player chose holds, a click still walks him, and nothing errs.
+async function viewSwitch(){
+  const page=await open(),first=problems.length;
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'3d'}));}catch{}});
+  await page.goto(base);await page.click('[data-cmd="new"]');await page.click('[data-cmd="begin"]');
+  await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');
+  if(await page.evaluate(()=>document.querySelector('#modal')?.open))await page.click('#modal [data-cmd="close-modal"] >> nth=0');
+  const hero=()=>page.evaluate(()=>{const w=window.__realtime.world(),h=w.actors.find(a=>a.id==='hero');return {x:h.x,z:h.z,tick:w.tick,paused:window.__realtime.paused()};});
+  async function switchTo(kind,view){
+    // The Menu holds the world while the view changes: the soldier is where he stood, and the world is the same one.
+    await menuCommand(page,'settings');const before=await page.evaluate(()=>{window.__heldWorld=window.__realtime.world();return null;}).then(hero);
+    await (await revealControl(page,'#battle-view')).selectOption(view);
+    await page.waitForFunction(v=>document.querySelector('.rt-field canvas')?.dataset.drawn===v&&window.__realtime.world()===window.__heldWorld,view,{timeout:60000})
+      .catch(async()=>assert.fail(`${kind}: the ${view} view takes over the same world: ${JSON.stringify(await page.evaluate(()=>({drawn:document.querySelector('.rt-field canvas')?.dataset.drawn,same:window.__realtime.world()===window.__heldWorld})))}`));
+    const held=await hero();assert.deepEqual([held.x,held.z,held.tick],[before.x,before.z,before.tick],`${kind}: the switch moves nothing in the world`);
+    await closePanel(page);
+    await page.waitForSelector(`.rt-field[data-kind="${kind}"] .rt-scene[data-ready="true"]`,{timeout:180000}).catch(()=>assert.fail(`${kind}: the ${view} view is drawn`));
+    return before;
+  }
+  // A click on open ground (the cursor says walk or run) moves the soldier.
+  async function clickToWalk(kind,view){
+    const box=await page.locator('#rt-board').boundingBox();let spot=null;
+    for(const [fx,fy]of [[.62,.45],[.38,.45],[.62,.62],[.38,.62],[.5,.3],[.5,.72],[.7,.5],[.3,.5]]){
+      const x=box.x+box.width*fx,y=box.y+box.height*fy;await page.mouse.move(x,y);
+      if(await page.waitForFunction(()=>['walk','run'].includes(document.querySelector('#rt-board')?.dataset.cursor),null,{timeout:2000}).then(()=>true,()=>false)){spot={x,y};break;}
+    }
+    assert.ok(spot,`${kind} in ${view}: open ground under the pointer`);
+    const start=await hero();await page.mouse.click(spot.x,spot.y);
+    if((await hero()).paused){await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');}
+    await page.waitForFunction(([x,z])=>{const h=window.__realtime.world().actors.find(a=>a.id==='hero');return h.x!==x||h.z!==z;},[start.x,start.z],{timeout:60000})
+      .catch(()=>assert.fail(`${kind} in ${view}: a click walks the soldier`));
+  }
+  await switchTo('camp','2d');await clickToWalk('camp','2d');
+  await switchTo('camp','3d');await clickToWalk('camp','3d');
+  // On the drill field, which waits for the player: the pause holds through both switches.
+  await page.click('[data-cmd="conversation"][data-id="table"]');await page.waitForSelector('#modal[open] [data-cmd="reply"]');await page.keyboard.press('1');
+  await page.waitForFunction(()=>!document.querySelector('#modal')?.open,null,{timeout:30000});
+  await page.click('[data-cmd="start"]');await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]');
+  assert.equal((await hero()).paused,true,'The drill waits for the player');
+  await switchTo('field','2d');assert.equal((await hero()).paused,true,'2D: the pause the player had holds');
+  await switchTo('field','3d');assert.equal((await hero()).paused,true,'3D: the pause the player had holds');
+  await clickToWalk('field','3d');
+  assert.deepEqual(problems.slice(first),[],'No page or console errors while switching');
+  await page.context().close();
+  console.log('ok - view switch: 3D to 2D and back in the camp and on the drill field keeps the same world, its pause and click-to-walk, with no errors');
 }
 
 // Phase 2 in the page: a restored camp's battle in real time (the development setting), from Chapter IV with squads.
@@ -895,7 +945,7 @@ let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 // Check departure races first, before the longer whole-campaign scenarios.
-for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,realtimeDeployment,
+for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,viewSwitch,realtimeDeployment,
   chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();

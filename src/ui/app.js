@@ -268,6 +268,8 @@ function mountPainting(){
 // world steps on the page; the chronicle receives it only when it is saved
 // (pause, a hidden page, F2) or resolved. ———
 let field=null;
+// A field's world handed to the field built after it for another view (rebuildField).
+let keptField=null;
 // What the field plays: a fight's saved world, or (a chamber) the Contest itself, which a retry or a load replaces.
 const fieldSource=()=>chamberMode()?state.encounter:state?.encounter?.realtime?.resume??state?.encounter?.realtime?.world??null;
 // A camp walks in real time when its chapter does (and the 3D view is on: 2D parity comes with its own view).
@@ -309,15 +311,18 @@ function mountField(target){
   }
   host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap,kind:target.kind}));
   const element=host.querySelector('.rt-field'),ticket={};
+  // A field built again for another view (rebuildField) takes over the world its predecessor held.
+  const kept=keptField?.kind===target.kind&&keptField.key===target.key?keptField:null;keptField=null;
   field={ticket,kind:target.kind,key:target.key,chapter:state.chapter,encounterId:state.encounter?.id??null,source:fieldSource(),element,runtime:null};
   Promise.all([import('../showcase/realtime-field.js'),import('../core/realtime/chamber-world.js')]).then(([{createRealtimeField,fieldDom},{createChamberWorld}])=>{
     if(field?.ticket!==ticket||!element.isConnected)return;
     // A hearing's chamber has its presiding magistrate at the tribunal.
     const camp=target.kind==='camp',chamber=target.kind==='chamber';field.makeWorld=s=>createChamberWorld(s,{magistrate:Chamber.isHearing(s)});
-    const world=camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state);
+    const world=kept?.world??(camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state));
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
     syncSessionControls();
+    if(kept?.paused)field.runtime.keepPaused();
     // A panel may open while the runtime module is still loading. Inherit its
     // pause before attaching a renderer, and leave keyboard focus in the panel.
     if(modal.open&&modal.dataset.stagePause!=='false')field.runtime.pauseFor('panel');
@@ -480,9 +485,13 @@ function campTravel(place){
 }
 function mountFieldStage(){
   const runtime=field?.runtime;if(!runtime)return;
-  const canvas=field.element.querySelector('canvas');
+  const canvas=field.element.querySelector('canvas'),view=settings.battleView==='2d'||failed3D?'2d':'3d';
+  // A canvas keeps the kind of drawing it was first given, 2D or WebGL. A view of the other kind
+  // (Settings, or the 3D view failing) gets a new field around the same world, which plays on as it stood.
+  if(canvas.dataset.drawn&&canvas.dataset.drawn!==view){rebuildField();return;}
+  canvas.dataset.drawn=view;
   // The 2D view (or no WebGL): the same field drawn flat, with the same commands and lists.
-  if(settings.battleView==='2d'||failed3D){
+  if(view==='2d'){
     battleStage.release();
     if(!field.flat&&!field.flatLoading){
       const mine=field;mine.flatLoading=true;
@@ -504,6 +513,13 @@ function mountFieldStage(){
   if(own&&runtime.stage!==own)runtime.attach(own);
 }
 function disposeField(){const old=field;field=null;old?.runtime?.dispose();old?.flat?.dispose();old?.element?.remove();}
+// The field built again around the world it holds: the soldier, the fight, its clock and a pause the
+// player chose stand where they were. Only the page's own state (lists, camera, selection) starts afresh.
+function rebuildField(){
+  const old=field;if(!old?.runtime)return;
+  keptField={kind:old.kind,key:old.key,world:old.runtime.world,paused:old.runtime.pausedByPlayer};
+  disposeField();const target=fieldTarget();if(target)mountField(target);else keptField=null;
+}
 // For the automated checks (browser smoke): a read-only view of the fight and the same commands a player gives.
 window.__realtime={world:()=>field?.runtime?.world??null,issue:command=>field?.runtime?.issue(command)??{ok:false},paused:()=>field?.runtime?.paused??null};
 // The same for a chamber: what the rules hold (read-only) and whether the field is playing the rivals' hour or the division.
