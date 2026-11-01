@@ -130,7 +130,9 @@ All in headless Chromium with software rendering (SwiftShader), on the productio
 - **`smoke:ch5-pilot`** passed: Chapter V's courtyard and fortress from checkpoints earned by legal commands, every pilot scenery placement in Balanced 3D, the decision through export and restore, March out and an exact Retry.
 - **`smoke`:** 16 of its 21 scenarios passed before the local run reached its 30-minute limit and was stopped. The 16 cover the camps' departures, real-time squads, the drill, Chapter V's field and approach, phone touch, the performance check, the arena, the 2D view, deployment and the chamber Contests. The five cut off are the hearing, the finale, settings and help, Practice and an old chronicle.
 - **`smoke:world`** (all twelve camps) did not run locally.
-- **In CI on the pull request:** `npm run verify` on Node 20 and 22, the main smoke with the polish checks, the usability, Chapter V pilot, immersive and siege checks, the twelve-camp check, the twelve-chapter benchmark and the stage benchmark against its ceilings, all in full.
+- **CI's first run on the pull request** passed six of its seven jobs: `npm run verify` on Node 20 and 22, both benchmarks, the usability and navigation checks, and the twelve camps. In the browser smoke job, the order review passed and 20 of `smoke`'s 21 scenarios passed. The finale failed, so the polish and cavalry checks after it did not run.
+- **The finale's failure was the check's.** It walked the soldier to the nearest enemy and swore the oath within 20 m of him. The nearest enemy is now the claimant's guard captain, this release's champion, who comes for the soldier. He belongs to no band, so the oath reached none: the nearest band stood 31 m away, beyond the 23 m reach. The check now walks to the nearest band's men, and passes locally; on failure it reports whom the oath was sworn beside. The rule is unchanged. The sweeps' bot has always walked to a band, and wins the oath route on every seed.
+- **Then, locally:** the polish and cavalry checks.
 
 ## Limitations
 
@@ -139,3 +141,4 @@ All in headless Chromium with software rendering (SwiftShader), on the productio
 - **The forecast** of a squad's blows on the soldier is not shown in battle; the character panel shows the share his kit turns.
 - **The armourer's apron** is drawn over the camp staff's generated civilian body. It may sit partly inside the body's clothes from some angles.
 - **Not swept:** Story's engaged player and Veteran's bare one, and the older campaigns begun before release 7's missions.
+- **An oath with no band in reach says nothing.** In the finale's oath route the guard captain now comes for the soldier. An oath sworn with only him near reaches no band, and the game gives no message, as before for any oath out of reach; the progress line names the 23 m. Release 12, which gives messages their place on the new screen, can say so.
