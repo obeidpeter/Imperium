@@ -1,10 +1,11 @@
 # Imperium: worlds, buildings and gameplay — the approved plan
 
-The owner approved this plan in October 2026, after the regional worlds of [#26](https://github.com/obeidpeter/Imperium/pull/26) and the documentation follow-up of [#27](https://github.com/obeidpeter/Imperium/pull/27). On 27 October 2026, after [#31](https://github.com/obeidpeter/Imperium/pull/31)–[#34](https://github.com/obeidpeter/Imperium/pull/34), the owner approved a revision of releases 4–10.
+The owner approved this plan in October 2026, after the regional worlds of [#26](https://github.com/obeidpeter/Imperium/pull/26) and the documentation follow-up of [#27](https://github.com/obeidpeter/Imperium/pull/27). On 27 October 2026, after [#31](https://github.com/obeidpeter/Imperium/pull/31)–[#34](https://github.com/obeidpeter/Imperium/pull/34), the owner approved a revision of releases 4–10. On 1 November 2026 the owner approved releases 11–14, which come before release 10's second part.
 
-Both are kept here as written, with second-person wording turned to name the owner, so that later releases can follow them:
-- the revision comes first;
-- the plan as first approved follows it, as releases 1–3 followed it.
+All three are kept here as written, with second-person wording turned to name the owner, so that later releases can follow them:
+- releases 11–14 come first;
+- the revision of releases 4–10 follows;
+- the plan as first approved comes last, as releases 1–3 followed it.
 
 The revision replaces the first plan's releases 4–10. The first plan's targets, rules and implementation notes still hold wherever neither the revision nor the code has changed them.
 
@@ -23,9 +24,176 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 7 | Missions and cavalry | merged ([#39](https://github.com/obeidpeter/Imperium/pull/39); [report](missions-release7-report.md)) |
 | 8 | Living camps | merged ([#40](https://github.com/obeidpeter/Imperium/pull/40); [report](camps-release8-report.md)); its five figures followed on 30 October ([report](camps-release8-report.md#the-five-figures-30-october)) |
 | 9 | Landmarks and set pieces | merged ([#41](https://github.com/obeidpeter/Imperium/pull/41); [report](landmarks-release9-report.md)) |
-| 10 | Gate 4 and 0.40.0 | in progress: Practice in real time and the [Gate 4 checklist](gate4-playthrough.md) merged ([#42](https://github.com/obeidpeter/Imperium/pull/42)); the owner's play-through, decision on the turn-based mode and Performance-check files are awaited |
+| 10 | Gate 4 and 0.40.0 | in progress: Practice in real time and the [Gate 4 checklist](gate4-playthrough.md) merged ([#42](https://github.com/obeidpeter/Imperium/pull/42)); the owner's play-through, decision on the turn-based mode and Performance-check files follow releases 11–14 |
+| 11 | Chests, the smith and the armoury | in progress |
+| 12 | The full-screen world and the camera | planned |
+| 13 | The inventory | planned |
+| 14 | Walking between areas | planned |
 
 **Merged beside the releases.** On 31 October the owner merged [#44](https://github.com/obeidpeter/Imperium/pull/44), written with Codex. It reviewed release 8's five figures and followed them up: Severianus's body in Chapter XII's offline pack, Aelia's blinks and expressions on her own face, and eleven of Chapter VII's props repacked for download room ([follow-up](camp-character-followup.md)). It added **Review orders** for paused squad battles, errand tracking in camp, recorded moments in battle results and service courts in the camps ([command and camp refinement](command-camp-refinement.md)). It refined sixteen of the generated bodies in Blender, the soldier's four and the twelve named people's, and gave the figures new starts, stops, shield blocks and hit recovery ([character refinement](character-art-refinement.md)), and rebuilt the Performance check to warm up, measure twice and stop when its tab is hidden. Release 10 builds on it.
+
+## Releases 11–14: chests, the smith, the inventory and the navigation (approved 1 November 2026)
+
+### Why
+
+The owner asked for two things from *Siege of Avalon* (Digital Tome, 2000):
+1. Treasure chests throughout the game holding swords, tunics, shields and armour, and places such as a blacksmith to get them.
+2. Its navigation.
+
+These are the genre's conventions, built in Imperium's own Roman style. Nothing is copied from *Siege of Avalon*'s screens, art, items or story.
+
+**Already in Imperium, much as in *Siege of Avalon*:**
+- a layered paperdoll and a 10 × 6 pack;
+- a loot window with **Take all**;
+- a quartermaster who sells kit and buys spoils, and pay in denarii;
+- click to walk, talk, attack and use;
+- panels on **I C J M A O**.
+
+**Missing:**
+- chests to find: the only one is Chapter III's objective, and enemies drop coin and trophies;
+- a smith;
+- finer or named versions of the forty or so pieces of kit;
+- a full-screen game: the screens worked like a web page, with a camera menu.
+
+**Five findings shaped the plan:**
+1. **Armour did nothing against squads from Chapter IV.** In the release 9 sweeps the soldier ended every won battle from Chapter IV on with at least 85% of his health. Kit therefore has to count three ways:
+   - in his attack;
+   - in armour against squad blows;
+   - against new champions who seek him out.
+2. **The game was tuned for a soldier who never improves.** The calibration bot never wore, bought, looted, drew pay or spent training points.
+3. **The retune is the same on every level**, because the difficulty levels promise identical enemies.
+4. **Downloads leave little room.** Chapter XII had 0.24 MB to spare and Chapter VII 0.52 MB, and a generated body is 0.37–0.69 MB. New figures, armour bodies and 3D item models don't fit.
+5. **The turn-based mode ignores kit**, and its camps aren't walkable. It stays as it is until the owner's Gate 4 decision.
+
+### The owner's decisions
+
+| Topic | Decision |
+| --- | --- |
+| Navigation | A full-screen world with a bar along the bottom; walking to places instead of menus; walking between areas; one fixed isometric camera |
+| Kit screen | An inventory like *Siege of Avalon*'s, in Imperium's style |
+| Items | Real upgrades, with enemies retuned the same on every level |
+| Timing | Releases 11–14 before Gate 4 and 0.40.0 |
+| Credits | Up to 1,000 for item pictures, with a pilot of eight shown to the owner first (Tripo balance 11,480 on 1 November) |
+| Horizon | Kept as a glance while **H** is held |
+
+### Rules added
+
+- **Containers are authored and open once.**
+  - Their contents are the same on every level, with no randomness.
+  - On a battlefield they are staged like loot: one commit, Retry restores the start, and a reload can't duplicate them.
+  - Practice can look but not take.
+  - Item ids are never removed.
+- **No grinding, for kit too.** A kit audit, like the training-point audit, fixes the best kit and coin each chapter can give.
+- **Accessible.** Every action keeps a keyboard and screen-reader route. At 200% text the overlays scroll, never the world.
+
+### Roadmap
+
+| # | Release | What the owner will see |
+| --- | --- | --- |
+| 11 | Chests, the smith and the armoury | Containers in every camp and on most battlefields, some locked or hidden; a smith in every camp; about twice as much kit, with fine and named pieces; armour that counts against squads; champions who seek the soldier; enemies retuned |
+| 12 | The full-screen world and the camera | The world fills the window, with a strip on top and a bar along the bottom; every other screen opens over the world; services are used by walking to them; one fixed isometric camera with zoom, a held glance at the horizon and see-through walls |
+| 13 | The inventory | A full-screen inventory: the soldier with his worn places around him, a real 10 × 6 pack, the ground and the character sheet, with drag and drop; the same screen for chests, the fallen and trade; a picture for every item |
+| 14 | Walking between areas | Leaving camp on foot by the way that leads to the next encounter; after a victory, searching the peaceful field and walking off by the road, which records the result |
+
+#### 11. Chests, the smith and the armoury
+
+- **Containers:**
+  - `src/data/containers.js` holds `CAMP_CONTAINERS[chapter]` and `FIELD_CONTAINERS[encounterId]`, each with an optional lock (a key, or an attribute with another way round).
+  - In camp, `soldierCommand` `open` stows the contents and records the opening in `soldier.opened`.
+  - On a battlefield, a world `takeFrom` stages `world.spoils {itemId, from}`, and `Game.takeFromContainer` works on a won field.
+  - From Chapter III, Scout reveals hidden caches.
+  - `WORLD_VERSION` 7. A fight that was won but not yet recorded is no longer restarted.
+- **The smith** stands at the quartermaster's place in every camp and sells `SMITH_STOCK`. The quartermaster keeps pay, issued kit and spoils; the traders keep goods and charms.
+- **The catalogue** gains new ids only:
+  - fine pieces, sold by the smith or found;
+  - named pieces, only found, each with a line of history;
+  - keys.
+  - Every piece is third-century kit checked against [the historical notes](historical-research.md).
+- **Rules:**
+  - Armour and a carried shield reduce squad blows on the soldier, named in the forecast.
+  - Authored champions in Chapters IV–XII seek him out, identical on every level.
+  - The unused `setKit` world command is restricted.
+- **Calibration:**
+  - The bot plays three reference soldiers:
+    - **bare:** as before;
+    - **issued:** wears what the army issues, draws pay and spends half his training points;
+    - **engaged:** also buys, opens chests and spends all his training points.
+  - The sweeps cover Chapters I–XII.
+  - A kit audit (`docs/kit-audit.md`, checked in `npm run verify`) records each chapter's income, its sources and the duel times against its standard enemy and champion.
+- **Turn-based:** its rules stay. A turn victory collects the field's containers when the result is recorded.
+- **Downloads:** one texture level down in Chapters VII and XII makes room. Containers, the smithy and the smith are code-built from existing pieces and bodies.
+
+#### 12. The full-screen world and the camera
+
+- **Layout:**
+  - The page becomes a grid: a strip on top, the world, a bar below it.
+  - The bar holds the portraits, the message line, the abilities and the panel buttons.
+  - Every other screen opens in the one dialog.
+- **Walking to places:**
+  - The Camp services list and the March out button leave the screen.
+  - The list stays under **Menu → Camp** and walks the soldier there.
+- **The camera:**
+  - It shares the 2D view's fixed bearing, follows the soldier you control, and zooms out to the whole field.
+  - Drag and edge panning spring back.
+  - **H** held glances at the horizon, and **X** fades what stands between the camera and the soldier.
+- **Keys:** removed actions no longer reset a player's custom keys.
+- **Frame rate:** the full-window canvas caps its pixel ratio so Balanced keeps its frame rate.
+
+#### 13. The inventory
+
+- **The screen:**
+  - `kitPanel` becomes a full-screen overlay: the soldier preview as the paperdoll, a real grid for the pack, the ground strip, the character sheet, and the hearing's documents.
+  - Drag and drop uses the existing `move`, `wear`, `takeOff`, `drop`, `pickUp` and `give` commands.
+  - Keyboard and list modes stay.
+- **Chests, the fallen and trade** open the same screen.
+- **Item pictures:**
+  - Tripo models are rendered offline into one WebP atlas of at most 120 KB.
+  - The drawn icons remain the fallback, and the models never ship.
+
+#### 14. Walking between areas
+
+- **Exits** in the camp and field worlds lead on to the next encounter:
+  - the road beyond the gate;
+  - the drill post;
+  - the principia or Curia door;
+  - Chapter V's river gate.
+- They call `Game.departureCheck` and the same checkpoint as before.
+- **After a victory:**
+  - A page-owned, peaceful aftermath world is built from the resolved field.
+  - Its road calls `Game.commitEncounter`.
+  - In Practice the road returns to the chronicle.
+
+### Balance targets
+
+| Level | Target |
+| --- | --- |
+| Story | Issued wins every battle at the first try; bare within two |
+| Standard | Engaged ≥90% at the first try and all within 2; issued ≥80% and all within 3 |
+| Veteran | Engaged ≥70% at the first try and all within 3 |
+| Upgrades count | In Chapters I–III and against champions, engaged beats issued by at least 10 points of first-try wins on Veteran |
+
+- **The levers are identical on every level:**
+  - the enemy tiers;
+  - the archetypes' kit;
+  - the champions.
+- The squads' own exchange stays as calibrated.
+- Tuning aims at the existing feel, not the floors of the bands; the owner sets the final feel at Gate 4.
+
+### Verification, every release
+
+- `npm run verify`, with the kit audit.
+- Every browser check, updated for the new layout.
+- The stage benchmark against its ceilings, and the twelve-chapter benchmark.
+- The sweeps, within the tick budget.
+- Before-and-after renders to the owner.
+- Reports that keep software-rendered checks apart from devices.
+
+### Risks
+
+- **Balance:** armour against squads and equipped bots change every outcome from Chapter IV on, and tests pinned to seeds shift.
+- **The camera:** it loses the per-scene bearings, the free Horizon view and the side-on action camera.
+- **Frame rate:** a full-window canvas draws more pixels.
+- **Turn-based mode:** it gets neither kit effects nor the new navigation until the owner decides its future.
 
 ## The revision of releases 4–10 (approved 27 October 2026)
 
