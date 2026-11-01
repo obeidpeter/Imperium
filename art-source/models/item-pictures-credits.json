@@ -1,0 +1,35 @@
+{
+  "scope": "Release 13 of the worlds and gameplay plan (docs/worlds-and-gameplay-plan.md): item pictures rendered offline from Tripo models",
+  "authorization": {
+    "credits": 1000,
+    "approvedBy": "Owner",
+    "source": "docs/worlds-and-gameplay-plan.md, art and credits: a cap of 1,000 credits for item pictures, the 160-credit pilot shown to the owner before the rest"
+  },
+  "pricing": {
+    "model": "v3.1-20260211",
+    "textWithStandardTextures": 20,
+    "source": "each task's reported consumed_credit"
+  },
+  "batches": [
+    {
+      "batch": "pilot",
+      "date": "2026-11-01",
+      "plannedCredits": 160,
+      "spentCredits": 0,
+      "items": [
+        "item-spatha",
+        "item-scutum",
+        "item-niederbieber",
+        "item-hamata",
+        "item-squamata",
+        "item-tunic",
+        "item-birrus",
+        "item-ring-belt"
+      ],
+      "tasks": []
+    }
+  ],
+  "spentCredits": 0,
+  "remainingAuthorization": 1000,
+  "note": "The models are rendered into the item atlas and never ship; the drawn icons remain the fallback."
+}

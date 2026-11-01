@@ -1,0 +1,36 @@
+{
+  "id": "item-scutum",
+  "status": "Release 13 pilot: an item picture, rendered offline; the model never ships",
+  "item": "scutum",
+  "group": "Shields",
+  "use": "The inventory picture of `scutum` (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single Roman oval shield (scutum) of the mid third century AD: a slightly dished oval board of glued planks about 110 cm tall, faced with painted leather, a round iron boss at the centre and a rawhide rim. Painted dark red with a simple laurel wreath and four rosettes in pale yellow and white. Shown alone, upright, its painted face forward, with a plain wooden back and a horizontal handgrip behind the boss. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "6bade030-2d8a-4a70-ba8f-5c2152de1c03",
+    "requestedAt": "2026-11-01T23:19:51.623Z",
+    "balanceBefore": 11460,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single Roman oval shield (scutum) of the mid third century AD: a slightly dished oval board of glued planks about 110 cm tall, faced with painted leather, a round iron boss at the centre and a rawhide rim. Painted dark red with a simple laurel wreath and four rosettes in pale yellow and white. Shown alone, upright, its painted face forward, with a plain wooden back and a horizontal handgrip behind the boss. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  }
+}

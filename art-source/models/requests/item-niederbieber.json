@@ -1,0 +1,25 @@
+{
+  "id": "item-niederbieber",
+  "status": "Release 13 pilot: an item picture, rendered offline; the model never ships",
+  "item": "niederbieber",
+  "group": "Helmets",
+  "use": "The inventory picture of `niederbieber` (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single Roman infantry helmet of the Niederbieber type, late second and third century AD: a deep iron bowl with two crossed reinforcing ribs over the crown, a brow guard, a very deep flaring neck guard and two large hinged cheek pieces that cover the ears and the sides of the face, bronze edging and rivet heads. Shown alone as an object, empty, complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch"
+  }
+}

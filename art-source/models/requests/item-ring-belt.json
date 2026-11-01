@@ -1,0 +1,25 @@
+{
+  "id": "item-ring-belt",
+  "status": "Release 13 pilot: an item picture, rendered offline; the model never ships",
+  "item": "ring_belt",
+  "group": "Belts",
+  "use": "The inventory picture of `ring_belt` (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single Roman military belt (cingulum) of the third century AD: a broad dark brown leather belt with a large round bronze ring buckle, a row of small bronze studs and one long narrow strap end with a bronze terminal hanging from the buckle. Shown loosely coiled in a single loop as it would lie on a table, buckle on top. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch"
+  }
+}
