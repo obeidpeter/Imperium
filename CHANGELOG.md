@@ -2,6 +2,11 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 12: the full-screen world and the camera ([plan](docs/worlds-and-gameplay-plan.md)) — in progress
+
+- **Switching the view during a session.** Changing Settings → battle view from 3D to 2D in a real-time camp, field or chamber left the field blank, and switching back to 3D fell back to 2D. The field is now built again around the same world: your soldier, the fight and its clock stand where they were, and a pause you chose holds.
+- **An oath no band hears.** In the finale's defection route, an oath (**Rally**) with no rival band within 23 m now says so, and names the nearest band and how far away it is. The guide now explains the route.
+
 ### Worlds and gameplay, release 11: chests, the armourer and the armoury ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/chests-release11-report.md))
 
 The first of four releases that bring treasure chests, a blacksmith and the navigation of the classic isometric role-playing games to Imperium, in its own Roman style.

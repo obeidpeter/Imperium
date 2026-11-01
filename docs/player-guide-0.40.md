@@ -1608,6 +1608,14 @@ In the real-time final battle, two clean reconnaissance operations intercept one
   require holding your army together on the map. Choosing a route never
   awards the crown by itself.
 
+- In the defection route, **Rally** is your soldier's oath. The rival
+  band with the lowest morale among those within 23 m hears it and loses
+  40 morale; at 25 or below it pledges itself to you. Three pledges win.
+  The progress line counts them. An oath with no band within 23 m is
+  not heard: the message line says so and names the nearest band and
+  how far away it is. The claimant's guard captain belongs to no band,
+  so swear beside a band's men, not beside him.
+
 - In the battle (the backer and battle routes) the claimant holds two
   cohorts of his reserve back; they march on from his side at the end of
   rounds 4 and 7 (two rounds later on Story), and the field is not won
