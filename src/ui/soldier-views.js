@@ -6,6 +6,7 @@ import {soldierAttributes,courseEffects,attributeCost,courseOptions,knownAbiliti
   companionAttributes,areaOf,campContainerView} from '../core/soldier.js';
 import {CONTAINER_KINDS} from '../data/containers.js';
 import {derivedValues,protectionOf} from '../core/realtime/combat.js';
+import {singleWard} from '../core/realtime/squads.js';
 import {summarizeOrders} from '../core/realtime/party.js';
 import {summarizeSquadOrders} from '../core/realtime/squad-orders.js';
 import {SQUAD_STANDING} from '../data/realtime-squads.js';
@@ -103,8 +104,10 @@ export function characterPanel(state){
     return `<tr><th scope="row">${esc(ATTRIBUTE_NAMES[k])}</th><td>${attrs[k]}${bonus?` <small>(${s.base[k]} ${signed(bonus)})</small>`:''}</td>`+
       `<td class="attribute-impact"><strong>Next point: ${esc(effect)}</strong>${disclosure(`attribute-help-${k}`,'What this affects',`<p>${esc(ATTRIBUTE_EFFECTS[k])}</p>`)}</td>`+
       `<td>${camp?button('raise',`Raise (${cost} TP)`,{attribute:k},{disabled:s.tp<cost||s.base[k]>=60,title:s.base[k]>=60?'Maximum reached.':s.tp<cost?`Needs ${cost} training points.`:''}):''}</td></tr>`;}).join('');
+  // The share of a squad's blows his worn kit turns (squads.js singleWard): armour all round, the shield from the front.
+  const ward=aspect=>Math.round((1-singleWard({kit:wornIds(s)},aspect).factor)*100);
   const derived=[['Health',v.health],['Stamina',v.stamina],['Attack',v.attack],['Defence',v.defence],['Missile attack',v.missile],['Restriction',v.restriction],
-    ['Running speed',`${v.run.toFixed(1)} m/s`]].map(([k,n])=>`<div><dt>${k}</dt><dd>${n}</dd></div>`).join('');
+    ['Running speed',`${v.run.toFixed(1)} m/s`],['Against squads',`${ward('front')}% front · ${ward('flank')}% flank`]].map(([k,n])=>`<div><dt>${k}</dt><dd>${n}</dd></div>`).join('');
   const abilities=knownAbilities(state).map(id=>`<li><strong>${esc(ABILITIES[id].name)}</strong>: ${esc(ABILITIES[id].summary??'')}</li>`).join('');
   return `<div class="character-panel">
     <p class="soldier-balance"><strong>${s.tp} training points</strong> available · ${esc(TRAINING_PATHS[s.path].name)}${camp?'':' · Spend points in camp'}</p>

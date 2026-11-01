@@ -6,6 +6,7 @@ import {FINE,layoutFor,upsampleTerrain,soldierSpec} from './campaign-encounter.j
 import {actorById,distanceBetween} from './abilities.js';
 import {activityCampView,companyActivities} from '../company-activities.js';
 import {campContainerView} from '../soldier.js';
+import {containerById} from '../../data/containers.js';
 
 const campView=state=>{const camp=campFor(state.chapter);return camp?{...camp,...activityCampView(state,camp)}:null;};
 // A camp container's state, read from the chronicle (release 11): locked, empty,
@@ -14,7 +15,22 @@ function containerState(state,o){
   const view=campContainerView(state,o.container);if(!view)return {container:o.container,locked:false,empty:true,hidden:false};
   return {container:o.container,locked:!view.unlocked,empty:view.empty,hidden:!!view.container.hidden&&!view.touched,opened:view.touched};
 }
-const interactionOf=(state,o,point)=>({id:o.id,kind:o.kind,name:o.name,...point(o.place,o.at),...(o.container?containerState(state,o):{})});
+// The scenery's view of an interaction is fixed for the camp: a chest's place and
+// kind, never whether it is open (the live stage draws that), so opening one
+// never rebuilds the camp's scenery.
+const interactionOf=(state,o,point)=>({id:o.id,kind:o.kind,name:o.name,...point(o.place,o.at),...(o.container?{container:o.container,box:containerById(o.container)?.kind??'chest'}:{})});
+// The armourer's forge stands behind him, away from the place's centre the soldier comes from,
+// turned a little to one side if the place's objects or people stand there.
+function smithyOf(camp,point){
+  const smith=camp.people.find(p=>p.id==='smith');if(!smith)return null;
+  const at=point(smith.place,smith.at),centre=point(smith.place),dx=at.x-centre.x,dz=at.z-centre.z,d=Math.hypot(dx,dz)||1;
+  const others=[...camp.objects.map(o=>point(o.place,o.at)),...camp.people.filter(p=>p!==smith&&p.place).map(p=>point(p.place,p.at))];
+  for(const [turn,reach]of [[0,1.1],[.5,1.1],[-.5,1.1],[1,1.2],[-1,1.2],[0,1.6],[.5,1.6],[-.5,1.6]]){
+    const c=Math.cos(turn),s=Math.sin(turn),ux=(dx*c-dz*s)/d,uz=(dx*s+dz*c)/d,spot={x:at.x+ux*reach,z:at.z+uz*reach};
+    if(others.every(o=>Math.hypot(o.x-spot.x,o.z-spot.z)>1.4))return {...spot,face:[-ux,-uz]};
+  }
+  return null;
+}
 
 // A walkable camp (build brief §3.12): the chapter's camp map upsampled like a
 // battle's, the soldier at the gate, the camp's people as neutral men to talk
@@ -50,7 +66,7 @@ function campPresentationBase(state){
     decision==='countermine'?'Stores are secured for the countermine; households wait under shelter.':'Households and the engineer await your decision.';
   return {decision,civilianOutcome,stores,waterDetail,engineeringRecovered,stage:state.encounterIndex>0?'river-gate':'tower',summary,
     places:CAMP_PLACES.map(id=>({id,name:campPlaceName(5,id),...point(id)})),
-    interactions:camp.objects.map(o=>interactionOf(state,o,point)),
+    interactions:camp.objects.map(o=>interactionOf(state,o,point)),smithy:smithyOf(camp,point),
     sceneryPads:(camp.sceneryPads??[]).map(p=>{
       const xs=p.cells.map(c=>c[0]),ys=p.cells.map(c=>c[1]),minX=Math.min(...xs),maxX=Math.max(...xs)+1,minZ=Math.min(...ys),maxZ=Math.max(...ys)+1;
       return {id:p.id,kind:p.kind,cells:p.cells.map(([x,y])=>({x,y})),x:(minX+maxX)*FINE/2-hx,z:(minZ+maxZ)*FINE/2-hz,
@@ -94,7 +110,7 @@ function regionalCampPresentation(state){
   return {chapter:state.chapter,decision,summary,purpose:context.purpose,inspection:context.inspection,
     stage:chapter.encounters[state.encounterIndex]?.id??'complete',decisionDetails,outcomeDetails,committedRecords,
     places:CAMP_PLACES.map(id=>({id,name:campPlaceName(state.chapter,id),...point(id)})),
-    interactions:camp.objects.map(o=>interactionOf(state,o,point)),
+    interactions:camp.objects.map(o=>interactionOf(state,o,point)),smithy:smithyOf(camp,point),
     sceneryPads:(camp.sceneryPads??[]).map(p=>{
       const xs=p.cells.map(c=>c[0]),ys=p.cells.map(c=>c[1]),minX=Math.min(...xs),maxX=Math.max(...xs)+1,minZ=Math.min(...ys),maxZ=Math.max(...ys)+1;
       return {id:p.id,kind:p.kind,cells:p.cells.map(([x,y])=>({x,y})),x:(minX+maxX)*FINE/2-hx,z:(minZ+maxZ)*FINE/2-hz,

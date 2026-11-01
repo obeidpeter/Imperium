@@ -224,7 +224,19 @@ function createActorRig(unit={},options={},reuseGroup=null){
     mesh(bucket,new T.TorusGeometry(.10,.008,4,10,Math.PI),bronze,0,-.10,0);
     mesh(bucket,new T.CylinderGeometry(.087,.087,.006,10),black,0,-.118,0);
   }
-  if(unit.campActivity==='work'&&!armed){
+  // The armourer (release 11): a leather apron from chest to knee, and at work his hammer and tongs.
+  if(kit.staff==='smith'){
+    const apron=part(torso,'smith-apron',0,0,.155);
+    mesh(apron,new T.BoxGeometry(.36,.78,.016),leather,0,-.12,0);
+    for(const x of [-.13,.13])mesh(apron,new T.BoxGeometry(.018,.3,.01),leather,x,.38,-.02).rotation.x=-.25;
+  }
+  if(unit.campActivity==='work'&&!armed&&kit.staff==='smith'){
+    const hammer=part(right.hand,'smith-hammer',0,-.05,.03);
+    mesh(hammer,new T.CylinderGeometry(.012,.015,.3,8),leather,0,-.06,0);
+    mesh(hammer,new T.BoxGeometry(.05,.05,.11),metal,0,-.21,.01);
+    const tongs=part(left.hand,'smith-tongs',0,-.05,.03);
+    for(const x of [-.012,.012])mesh(tongs,new T.BoxGeometry(.008,.36,.012),metal,x,-.12,0);
+  }else if(unit.campActivity==='work'&&!armed){
     const tablet=part(left.hand,'courtyard-stores-tablet',0,-.04,.025);
     mesh(tablet,new T.BoxGeometry(.15,.025,.21),leather);
     mesh(tablet,new T.BoxGeometry(.125,.005,.18),black,0,.015,0);

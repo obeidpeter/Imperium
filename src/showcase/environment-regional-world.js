@@ -6,6 +6,7 @@ import {batchStaticEnvironment} from './environment-batching.js';
 import {curiaPropSpot} from './environment-curia.js';
 import {terrainAt,distantRiverCentre} from './environment-layout.js';
 import {campPropCourt} from './camp-composition.js';
+import {addSmithy} from './environment-smithy.js';
 import {LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,worldModelUrl} from '../ui/world-catalog.js';
 import {REGIONAL_WORLD_KITS,REGIONAL_PLANS,REGIONAL_FRONTAGE,REGIONAL_COMPOSITIONS,REGIONAL_CHAPTER_EXTRAS,REGIONAL_HEARINGS,ENCOUNTER_LAYOUTS} from '../ui/world-layouts.js';
 
@@ -189,7 +190,8 @@ function addRegionalServices({root,e,p,m,height,tileSize,geometries},parent){
     freezeFallback(g,geometries);
   }
   for(const interaction of data.interactions??[]){
-    if(interaction.id==='gate')continue;
+    // A chest or locker is drawn by the live stage, open or shut (container-props.js).
+    if(interaction.id==='gate'||interaction.kind==='container')continue;
     // The existing interaction indicator owns this walkable anchor. Physical
     // furniture belongs only to collision pockets, so arrival never walks
     // through a decorative desk or an unregistered post.
@@ -215,7 +217,8 @@ function addRegionalServices({root,e,p,m,height,tileSize,geometries},parent){
     outcomes.push({id:item.id,state:item.state,motif});
   }
   freezeFallback(outcomeGroup,geometries);
-  root.userData.regionalWorld.services={pads:pads.map(p=>p.id),interactions,outcomes};
+  const smithy=addSmithy({p,m,height},parent,data.smithy);if(smithy)freezeFallback(smithy,geometries);
+  root.userData.regionalWorld.services={pads:pads.map(p=>p.id),interactions,outcomes,smithy:!!smithy};
 }
 
 // The tiny fallback props intentionally share existing materials and batches.
