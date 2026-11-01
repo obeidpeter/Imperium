@@ -25,8 +25,8 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 8 | Living camps | merged ([#40](https://github.com/obeidpeter/Imperium/pull/40); [report](camps-release8-report.md)); its five figures followed on 30 October ([report](camps-release8-report.md#the-five-figures-30-october)) |
 | 9 | Landmarks and set pieces | merged ([#41](https://github.com/obeidpeter/Imperium/pull/41); [report](landmarks-release9-report.md)) |
 | 10 | Gate 4 and 0.40.0 | in progress: Practice in real time and the [Gate 4 checklist](gate4-playthrough.md) merged ([#42](https://github.com/obeidpeter/Imperium/pull/42)); the owner's play-through, decision on the turn-based mode and Performance-check files follow releases 11–14 |
-| 11 | Chests, the smith and the armoury | ready for review ([report](chests-release11-report.md)) |
-| 12 | The full-screen world and the camera | planned |
+| 11 | Chests, the smith and the armoury | merged ([#46](https://github.com/obeidpeter/Imperium/pull/46); [report](chests-release11-report.md)) |
+| 12 | The full-screen world and the camera | in progress, in two pull requests: the layout first, then the camera |
 | 13 | The inventory | planned |
 | 14 | Walking between areas | planned |
 
@@ -138,6 +138,10 @@ These are the genre's conventions, built in Imperium's own Roman style. Nothing 
   - **H** held glances at the horizon, and **X** fades what stands between the camera and the soldier.
 - **Keys:** removed actions no longer reset a player's custom keys.
 - **Frame rate:** the full-window canvas caps its pixel ratio so Balanced keeps its frame rate.
+- **Added by the owner (1 November):**
+  - **The 2D view switch.** Switching the battle view from 3D to 2D during a session left the field blank, on main too: the 2D view was given the 3D view's canvas. Each view gets a canvas of its own kind, with the controls rebound, and a browser check switches both ways.
+  - **The unheard oath.** In the finale's oath route, an oath sworn with no rival band in reach says so, naming the nearest band and how far it is.
+- **Two pull requests:** first the layout, walking to places, the 2D view switch and the unheard oath; then the camera.
 
 #### 13. The inventory
 
