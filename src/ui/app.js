@@ -190,7 +190,8 @@ const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>
   if(result&&resultKey!==resultFocusKey){resultFocusKey=resultKey;result.focus({preventScroll:true});
     // A full-window world (release 12) shows the result over the world: nothing scrolls to it.
     if(document.documentElement.dataset.world!=='full')result.closest('.rt-result').scrollIntoView({block:'start',behavior:'instant'});}
-  else if(activeId&&document.getElementById(activeId))document.getElementById(activeId).focus({preventScroll:true});
+  // Focus the page update lost goes back where it was; focus the player has moved since (a frame can pass) stays.
+  else if(activeId&&document.getElementById(activeId)&&(!document.activeElement||document.activeElement===document.body))document.getElementById(activeId).focus({preventScroll:true});
   if(!result)resultFocusKey='';
 });
 function render(){
