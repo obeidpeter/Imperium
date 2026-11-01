@@ -173,7 +173,9 @@ try{
     assert.match(await text(field,'[data-role="deadlineLine"]'),/Optional|opportunit/i,'Optional field opportunities remain visible');
     await field.locator('.rt-toolbox > summary').click();await layout(field,`chapter-v-controls-${suffix}`);
     await field.locator('.rt-toolbox > summary').click();
-    await field.locator('#rt-board').focus();await field.keyboard.press('KeyH');await layout(field,`chapter-v-horizon-${suffix}`);
+    // Release 12: the horizon glance lasts while H is held.
+    await field.locator('#rt-board').focus();await field.keyboard.down('KeyH');await field.waitForFunction(()=>window.__chamber.stage()?.cameraView==='horizon');
+    await layout(field,`chapter-v-horizon-${suffix}`);await field.keyboard.up('KeyH');
     if(suffix==='desktop'){
       const stopped=await tick(field);await field.locator('#rt-board').focus();await field.keyboard.press('KeyI');
       await field.waitForSelector('#modal[open] [data-soldier-preview][data-preview="ready"]',{timeout:120000});

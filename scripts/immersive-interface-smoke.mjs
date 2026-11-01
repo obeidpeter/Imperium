@@ -79,15 +79,18 @@ async function measure(page,label,{camp=false,desktop=false,scale=1}={}){
     await openCampList(page);await page.waitForFunction(()=>document.activeElement?.id==='camp-services');
     await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('main[data-overlay="services"]')&&document.activeElement?.id==='rt-board');
   }
+  // Release 12: one fixed camera. No View choice in the strip; Z, F and a held H move it from the keyboard, the scene keeps the keys,
+  // and the 2D view says that the horizon is a 3D view.
   const tick=await page.evaluate(()=>window.__realtime.world().tick);
-  assert.equal(await page.locator('[data-role="cameraSelect"] option[value="horizon"]').evaluate(el=>el.disabled),true,'The 2D fallback names the unavailable 3D view');
-  await page.locator('[data-role="cameraSelect"]').focus();
-  for(const view of ['overview','overview','follow']){
-    await page.locator('[data-role="cameraSelect"]').selectOption(view);
-    await page.waitForFunction(value=>document.querySelector('[data-role="cameraSelect"]').value===value,view);
-    assert.equal(await page.evaluate(()=>window.__realtime.world().tick),tick,'Camera selection never advances a paused simulation');
-    assert.equal(await page.evaluate(()=>document.activeElement?.dataset.role),'cameraSelect','The native view selector retains keyboard focus');
+  assert.equal(await page.locator('[data-role="cameraSelect"]').count(),0,'No View choice: the camera keeps one bearing');
+  await page.locator('#rt-board').focus();
+  for(const [key,view] of [['z','overview'],['z','follow'],['z','overview'],['f','follow']]){
+    await page.keyboard.press(key);await page.waitForFunction(value=>window.__chamber.stage()?.cameraView===value,view);
+    assert.equal(await page.evaluate(()=>window.__realtime.world().tick),tick,'A camera key never advances a paused simulation');
+    assert.equal(await page.evaluate(()=>document.activeElement?.id),'rt-board','The scene keeps the keys');
   }
+  await page.keyboard.down('h');await page.waitForFunction(()=>/horizon is a 3D view/.test(document.querySelector('[data-role="eventLine"]')?.textContent??''));
+  await page.keyboard.up('h');assert.equal(await page.evaluate(()=>window.__chamber.stage().cameraView),'follow','the 2D view stays on the soldier');
   if(camp){
     await (await revealControl(page,'#camp-company-stories [data-cmd="conversation"][data-id^="company-story:"]')).click();
     await page.locator('#modal [data-cmd="reply"]').filter({hasText:'Read the company’s letter.'}).click();
