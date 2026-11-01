@@ -544,3 +544,10 @@ html[data-world="full"] main.realtime-camp[data-overlay="services"] .world-camp-
 html[data-world="full"] .world-camp-services>.world-departure{grid-column:1/-1;margin:0}
 html[data-world="full"] .world-camp-services>.world-preparation{grid-row:3/span 5}
 @media(max-width:700px){html[data-world="full"] .world-camp-services>.world-preparation{grid-row:auto}}
+/* Compact interface (Settings → Display, on by default) gives the world the room. Off, the strip and the bar are
+   roomier, with larger targets and the "Controlling" line kept on a phone (release 12, as on the turn-based board). */
+html[data-world="full"][data-hud="full"] .rt-top{padding:.45rem .8rem}
+html[data-world="full"][data-hud="full"] .rt-field>.rt-hud{padding:.55rem .8rem;gap:.45rem .8rem}
+html[data-world="full"][data-hud="full"] .rt-panel-list button{min-block-size:2.75rem;padding:.3rem .6rem;font-size:calc(.8rem * var(--text-scale,1))}
+html[data-world="full"][data-hud="full"] .rt-unit-dock>.rt-selection-label{display:block}
+html[data-world="full"][data-hud="full"] .realtime-frame>.rt-chronicle-bar,html[data-world="full"][data-hud="full"] main.realtime-camp>.rt-chronicle-bar{padding:.3rem .8rem;font-size:calc(.75rem * var(--text-scale,1))}
