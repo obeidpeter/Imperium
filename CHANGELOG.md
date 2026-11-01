@@ -2,7 +2,7 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
-### Worlds and gameplay, release 12: the full-screen world and the camera ([plan](docs/worlds-and-gameplay-plan.md)) — in progress
+### Worlds and gameplay, release 12: the full-screen world and the camera ([plan](docs/worlds-and-gameplay-plan.md), [report on the first part](docs/fullscreen-release12-report.md)) — in progress
 
 - **The world fills the window.** In real time the camp, the battlefield and the chamber fill the window, and nothing on the page scrolls. A strip along the top shows the objective, progress, the time, **Pause** and **Menu**. A bar along the bottom holds your portrait and your companions', the message line, the actions, and a button for each panel: **Kit** (I), **Character** (C), **Journal** (J), **Orders** (Q), **Chronicle** (L), **Map** (M), **Company** (R), **Decorations** (A) and **Help**. On a phone they fold into one **Panels** button. In a Contest, one row above the floor counts your support, projects the vote, and holds **Votes & delegates** and **Members**. At 1,280 × 720 the world takes about two-thirds of the window in a battle or a Contest, and three-quarters in camp. The turn-based board keeps its layout.
 - **Everything else opens over the world.** Help, tips and the battle log open at the world's top-left corner; **All actions** and order review at its right edge; a fight's result in the middle, and the chamber's members from its new **Members** button. **Esc** closes them.
