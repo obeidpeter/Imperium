@@ -182,8 +182,12 @@ async function services(checkpoint){
   assert.equal(await preparation.evaluate(element=>element.open),true);await closeCampList(page);
   assert.equal(await exported(),before,'Browsing direct services and preparation preserves the complete campaign save');
   await pause();const peacefulBefore=await page.evaluate(()=>JSON.stringify(window.__realtime.world()));
+  // The refusal shows for 2.6 s; in software rendering one frame of a camp's overview can outlast that, so the
+  // check records each text the event line shows rather than sampling it once a frame (read-only).
+  await page.evaluate(()=>{const line=document.querySelector('[data-role="eventLine"]');window.__eventTexts=[];
+    new MutationObserver(()=>window.__eventTexts.push(line.textContent)).observe(line,{childList:true,characterData:true,subtree:true});});
   await page.locator('#rt-board').focus();await page.keyboard.press('Space');
-  await page.waitForFunction(()=>/Weapons stay sheathed/.test(document.querySelector('[data-role="eventLine"]')?.textContent??''));
+  await page.waitForFunction(()=>window.__eventTexts.some(text=>/Weapons stay sheathed/.test(text)));
   await page.keyboard.press('Shift+KeyT');await page.keyboard.press('Shift+Enter');
   assert.equal(await page.evaluate(()=>JSON.stringify(window.__realtime.world())),peacefulBefore);
   record(`Chapter ${checkpoint.chapter}: direct services, panel Back and peaceful controls protect the save`);
