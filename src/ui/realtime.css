@@ -447,8 +447,9 @@
    actions and order review as panels at its right edge, the result and the chamber's records over the
    middle. The bar sits below the world, never over it. */
 html[data-world="full"],html[data-world="full"] body{block-size:100%;overflow:hidden}
-html[data-world="full"] #app{block-size:100dvh;min-block-size:0;display:flex;flex-direction:column;overflow:hidden}
-html[data-world="full"] #app>main.realtime-frame{flex:1 1 auto;min-block-size:0;display:flex;flex-direction:column;gap:0;padding:0;margin:0;position:relative;overflow:hidden}
+/* clip, not hidden: nothing (a focus, a scroll into view) can scroll the page's frame away from the window. */
+html[data-world="full"] #app{block-size:100dvh;min-block-size:0;display:flex;flex-direction:column;overflow:clip}
+html[data-world="full"] #app>main.realtime-frame{flex:1 1 auto;min-block-size:0;display:flex;flex-direction:column;gap:0;padding:0;margin:0;position:relative;overflow:clip}
 html[data-world="full"] .realtime-frame>*{flex:none}
 html[data-world="full"] .realtime-frame>.rt-chronicle-bar{padding:.1rem .6rem;min-block-size:0;font-size:calc(.68rem * var(--text-scale,1))}
 html[data-world="full"] .realtime-frame>.rt-host{flex:1 1 auto;min-block-size:0;display:flex}
@@ -479,7 +480,7 @@ html[data-world="full"] .rt-workspace>[hidden]{display:none}
 /* The result, and the chamber's records when asked for: over the middle of the world. */
 html[data-world="full"] .realtime-frame>.rt-result,html[data-world="full"] .realtime-frame[data-overlay="records"]>.chamber-records{
   position:absolute;z-index:9;inset-block:calc(var(--rt-world-top,3rem) + .4rem) calc(var(--rt-world-bottom,1rem) + .4rem);inset-inline:50% auto;translate:-50% 0;
-  inline-size:min(58rem,calc(100% - 1.2rem));margin:0;
+  inline-size:min(58rem,calc(100% - 1.2rem));margin:0;align-self:stretch;block-size:auto;
   overflow:auto;overscroll-behavior:contain;box-shadow:0 1rem 3rem #000c}
 html[data-world="full"] .realtime-frame:not([data-overlay="records"])>.chamber-records{display:none}
 /* Behind a result the world keeps the whole area (the page's own rule shrinks the scene to 15rem). */
@@ -530,7 +531,7 @@ html[data-world="full"] .rt-squads{flex-wrap:nowrap}
   html[data-world="full"] .rt-workspace>.rt-support>*{font-size:calc(.78rem * var(--text-scale,1))}
 }
 /* The camp (release 12): its strip, the world, and its list over the world from Menu → Camp. */
-html[data-world="full"] #app>main.realtime-camp{flex:1 1 auto;min-block-size:0;display:flex;flex-direction:column;gap:0;padding:0;margin:0;position:relative;overflow:hidden;max-inline-size:none}
+html[data-world="full"] #app>main.realtime-camp{flex:1 1 auto;min-block-size:0;display:flex;flex-direction:column;gap:0;padding:0;margin:0;position:relative;overflow:clip;max-inline-size:none}
 html[data-world="full"] main.realtime-camp>*{flex:none}
 html[data-world="full"] main.realtime-camp>.rt-chronicle-bar{padding:.1rem .6rem;gap:.6rem;font-size:calc(.68rem * var(--text-scale,1))}
 html[data-world="full"] .world-camp-bar .world-camp-problem{flex:1 1 auto;min-inline-size:0;color:var(--red,#742b30);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -544,7 +545,9 @@ html[data-world="full"] .world-courtyard.world-first .rt-menu{display:inline-fle
 html[data-world="full"] main.realtime-camp:not([data-overlay="services"]) .world-camp-services{display:none}
 html[data-world="full"] main.realtime-camp[data-overlay="services"] .world-camp-services{position:absolute;z-index:9;
   inset-block:calc(var(--rt-world-top,2.2rem) + .4rem) calc(var(--rt-world-bottom,1rem) + .4rem);inset-inline:50% auto;translate:-50% 0;
-  inline-size:min(62rem,calc(100% - 1.2rem));overflow:auto;overscroll-behavior:contain;border-radius:.6rem;box-shadow:0 1rem 3rem #000c}
+  inline-size:min(62rem,calc(100% - 1.2rem));overflow:auto;overscroll-behavior:contain;border-radius:.6rem;box-shadow:0 1rem 3rem #000c;
+  /* The sidebar's own align-self:start would size it to its content, past the world's area. */
+  align-self:stretch;block-size:auto}
 html[data-world="full"] .world-camp-services>.world-departure{grid-column:1/-1;margin:0}
 html[data-world="full"] .world-camp-services>.world-preparation{grid-row:3/span 5}
 @media(max-width:700px){html[data-world="full"] .world-camp-services>.world-preparation{grid-row:auto}}
