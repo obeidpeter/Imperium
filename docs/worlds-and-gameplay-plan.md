@@ -175,8 +175,13 @@ These are the genre's conventions, built in Imperium's own Roman style. Nothing 
 | Story | Issued wins every battle at the first try; bare within two |
 | Standard | Engaged ≥90% at the first try and all within 2; issued ≥80% and all within 3 |
 | Veteran | Engaged ≥70% at the first try and all within 3 |
-| Upgrades count | In Chapters I–III and against champions, engaged beats issued by at least 10 points of first-try wins on Veteran |
+| Upgrades count (adopted 1 November) | In Chapters I–III and the eleven champion battles: on Veteran, engaged ends its wins with at least 3 points more health on average than issued, and wins at least 0.3 rounds sooner on average; on Story, issued ends the champion battles with at least 10 points more health than bare |
 
+- **Upgrades count, as adopted on 1 November.** It replaces a target of first-try wins: engaged beating issued by 10 points on Veteran. Both reference players already win 98.5–99.8% there at the first try, and making kit decide wins would need Veteran's enemies harder than Story's, which the plan rules out. Kit is measured instead by what it changes: the health a win costs and how soon it comes.
+  - Release 11 measured, on Veteran, 4.0 points more health (92.7% → 96.7%) and 0.44 rounds sooner (5.99 → 5.55), and on Story, 17.2 points more health against the champions (76.2% → 93.4%).
+  - Each threshold sits below the low end of its 90% range over seeds.
+  - Each sweep also reports, without a pass mark, the wins that end with the soldier below half health. Release 11: Story 18 → 3 (bare → issued), Standard 6 → 0 and Veteran 8 → 2 (issued → engaged).
+  - `node scripts/upgrades-check.mjs --label=<label>` checks a release's six sweeps; `npm test` checks release 11's.
 - **The levers are identical on every level:**
   - the enemy tiers;
   - the archetypes' kit;
