@@ -16,9 +16,10 @@ function midFight(){
 }
 
 test('a fight saved by an earlier version of the real-time rules restarts from its checkpoint when the chronicle loads',()=>{
-  // Release 4's structures (gate integrity, towers, ramparts and ditches) made it 5, and release 7's
-  // missions (siege works, convoys, the far bank's volleys and the horse's orders) 6.
-  assert.equal(WORLD_VERSION,6);
+  // Release 4's structures (gate integrity, towers, ramparts and ditches) made it 5, release 7's
+  // missions (siege works, convoys, the far bank's volleys and the horse's orders) 6, and release 11's
+  // battlefield chests and caches 7.
+  assert.equal(WORLD_VERSION,7);
   const {state,start}=midFight(),older=JSON.parse(G.serialize(state));
   older.encounter.realtime.world.version=5;older.encounter.realtime.resume.version=5;
   const loaded=G.deserialize(JSON.stringify(older)),w=G.realtimeWorld(loaded);

@@ -287,8 +287,8 @@ test('each re-authored battle has its own opportunity pair; a crossing deploys o
   assert.equal(w.deployment.zone.x1,(w.layout.kx[0]+w.layout.kx[1])*2.5,'two tiles: the near bank');
 });
 
-test('a version 3 battle\'s world saves, restores and validates exactly; the world version is 6',()=>{
-  assert.equal(WORLD_VERSION,6);
+test('a version 3 battle\'s world saves, restores and validates exactly; the world version is 7',()=>{
+  assert.equal(WORLD_VERSION,7);
   for(const id of ['ch4-gate','ch5-wall','ch9-wing']){
     const {world:w}=realtime(id);for(let t=0;t<R;t++)step(w);
     validateWorld(w,fail);const copy=restoreWorld(snapshotWorld(w));assert.equal(worldHash(copy),worldHash(w),id);

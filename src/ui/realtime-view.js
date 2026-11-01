@@ -209,9 +209,16 @@ export function realtimeResult(state,{keymap}={}){
   const debrief=realtimeDebrief(world,{keymap});
   // What the fallen still carry: searched here, the pack receives it when the result is recorded.
   const bodies=won&&!practice?world.actors.filter(a=>!a.alive&&a.side==='enemy'&&a.loot?.length):[];
-  const search=bodies.length?`<section class="rt-search" aria-labelledby="rt-search-title"><h3 id="rt-search-title">Search the fallen</h3><ul class="rt-loot">${bodies.map(b=>
+  // The field's chests and caches that were found (release 11): opened with a key taken here, forced, or taken from.
+  const boxes=won&&!practice?world.objects.filter(o=>o.kind==='container'&&!o.hidden&&(o.contents?.length||o.lock&&!o.unlocked)):[];
+  const boxRow=o=>{const locked=o.lock&&!o.unlocked,hasKey=locked&&world.spoils.some(sp=>sp.itemId===o.lock.key);
+    return `<li><span><strong>${esc(o.name)}</strong>: ${locked?'locked':esc(o.contents.map(id=>ITEMS[id]?.name??id).join(', '))}</span>`+
+      (locked?`<button data-cmd="rt-open-box" data-id="${esc(o.id)}" data-method="key"${hasKey?'':' disabled title="Its key is not among what you have taken here."'}>Use the key</button>`+
+        `<button data-cmd="rt-open-box" data-id="${esc(o.id)}" data-method="force">Force the lock</button>`
+        :`<button data-cmd="rt-box-take" data-id="${esc(o.id)}">Take all</button>`)+'</li>';};
+  const search=bodies.length||boxes.length?`<section class="rt-search" aria-labelledby="rt-search-title"><h3 id="rt-search-title">Search the field</h3><ul class="rt-loot">${bodies.map(b=>
     `<li><span><strong>${esc(b.name)}</strong>: ${esc(b.loot.map(id=>ITEMS[id]?.name??id).join(', '))}</span>`+
-    `<button data-cmd="rt-spoils" data-id="${esc(b.id)}" data-item="*">Take all</button></li>`).join('')}</ul></section>`:'';
+    `<button data-cmd="rt-spoils" data-id="${esc(b.id)}" data-item="*">Take all</button></li>`).join('')}${boxes.map(boxRow).join('')}</ul></section>`:'';
   return `<section class="result command-result rt-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="rt-result-title">
     <span class="eyebrow">${practice?'PRACTICE · ':''}BATTLE RESULT</span>
     <h2 id="rt-result-title" tabindex="-1">${won?'Objective complete':'Try this battle again'}</h2>

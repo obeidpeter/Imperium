@@ -1097,6 +1097,8 @@ case 'soldier-party':{
   const party=[...modal.querySelectorAll('[data-cmd="soldier-party"]')].filter(x=>x.checked).map(x=>x.dataset.id);
   if(party.length>3){b.checked=false;toast('Up to three companions march with you.');break;}
   await soldierAct({kind:'party',party});break;}
+case 'rt-open-box':await change(()=>Game.openFieldContainer(state,{objectId:id,method:b.dataset.method}));break;
+case 'rt-box-take':await change(()=>{const o=state.encounter?.realtime?.world.objects.find(x=>x.id===id);return Game.takeFromContainer(state,{objectId:id,items:[...(o?.contents??[])]});});break;
 case 'rt-spoils':await change(()=>{const body=state.encounter?.realtime?.world.actors.find(a=>a.id===id);
   return Game.takeSpoils(state,{bodyId:id,items:b.dataset.item==='*'?[...(body?.loot??[])]:[b.dataset.item]});});break;
 case 'retry-chapter':if(state){loadedArtChapter=0;cachedChapterRequest=0;offlineProgress='';prepareChapterArt({retry:true,allowTitle:true});toast('Retrying '+

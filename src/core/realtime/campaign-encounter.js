@@ -18,6 +18,7 @@ import {CHAPTERS} from '../../data/campaign.js';
 import {DEPLOYMENT,ROMAN_SQUADS} from '../../data/realtime-squads.js';
 import {deploymentZone} from './deployment.js';
 import {defaultStanding} from './squad-ai.js';
+import {CONTAINER_KINDS,containersInField} from '../../data/containers.js';
 import {fielded,squadCentre} from './squads.js';
 import {chapterOpportunity} from '../command-campaign.js';
 import {DEFAULT_OPPORTUNITIES,WORK_SECONDS,fieldVerb} from './field-objects.js';
@@ -150,9 +151,17 @@ function enemySpec(state,e,unit,index,k){
   for(const [k,v]of Object.entries(tier.mods))attrs[k]=Math.max(k==='combat'?1:4,(attrs[k]??10)+v);
   return {id:unit.id,name:`${FACTION_NAMES[faction]} ${a.name}`,side:'enemy',role,attributes:attrs,kit:[...a.kit],ammo:{...(a.ammo??{})},skirmisher:!!a.skirmisher,
     mounted:!!a.mounted,officer:role==='guard',guard:role==='guard',hidden:!!unit.hidden,at:pos(unit,k),face:[-1,0],unitId:unit.id,faction,
-    loot:lootFor(role,index,state.chapter)};
+    loot:[...lootFor(role,index,state.chapter),...fieldKeyFor(e,role,index)]};
 }
 const pos=(unit,layout)=>{const p=tileCentre(unit,layout);return [p.x,p.z];};
+// The key to a locked battlefield container (containers.js) rides with the first
+// enemy of its carrier's role; the squads' champions carry the later ones.
+const FIELD_KEYS=Object.freeze({'ch3-station':Object.freeze({role:'raider',item:'key_f3'})});
+function fieldKeyFor(e,role,index){
+  const k=e?FIELD_KEYS[e.id]:null;if(!k||role!==k.role)return [];
+  const first=e.units.filter(u=>u.side==='enemy'&&u.hp>0&&u.role!=='trainer').findIndex(u=>u.role===k.role);
+  return first===index?[k.item]:[];
+}
 // What a fallen enemy carries: his worn pieces are left to the field; the
 // purse, trophies and a spare weapon can be taken.
 function lootFor(role,index,chapter){
@@ -293,6 +302,31 @@ function worksGates(e,layout,fine,phases){
   return out;
 }
 
+// Where each battlefield container stands: near the enemy's start, behind the
+// soldier's own, by the objective or out on a flank, snapped to open ground and
+// kept clear of the field's other objects. Pure and deterministic.
+function fieldContainers(e,layout,map,heroAt,phase,others){
+  const list=containersInField(e.id);if(!list.length)return [];
+  const grid=navGrid(map),width=map.width*FINE,height=map.height*FINE,foes=e.units.filter(u=>u.side==='enemy'&&u.hp>0).map(u=>tileCentre(u,layout));
+  const foe=foes.length?{x:foes.reduce((a,p)=>a+p.x,0)/foes.length,z:foes.reduce((a,p)=>a+p.z,0)/foes.length}:{x:width-heroAt.x,z:height-heroAt.z};
+  const dx=foe.x-heroAt.x,dz=foe.z-heroAt.z,d=Math.max(1,span(dx,dz)),ux=dx/d,uz=dz/d;
+  const goal=phase?.goal??phase?.points?.[0]??{x:(heroAt.x+foe.x)/2,z:(heroAt.z+foe.z)/2};
+  const placed=[],out=[];
+  list.forEach((c,i)=>{
+    const side=i%2?-1:1,anchor={enemy:{x:foe.x+ux*d*.2,z:foe.z+uz*d*.2},own:{x:heroAt.x-ux*5,z:heroAt.z-uz*5},
+      objective:{x:goal.x-ux*2.5,z:goal.z-uz*2.5},flank:{x:(heroAt.x+foe.x)/2-uz*d*.35*side,z:(heroAt.z+foe.z)/2+ux*d*.35*side}}[c.anchor]??goal;
+    let spot=null;
+    for(let ring=0;ring<6&&!spot;ring++)for(let k=0;k<8&&!spot;k++){
+      const a=k*Math.PI/4,x=clamp(anchor.x+Math.cos(a)*ring*1.5,2,width-2),z=clamp(anchor.z+Math.sin(a)*ring*1.5,2,height-2);
+      const i2=nearestWalkable(grid,x,z);if(i2<0)continue;const at=cellCentre(grid,i2);
+      if([...others,...placed].some(o=>span(o.x-at.x,o.z-at.z)<2.5))continue;spot=at;
+    }
+    if(!spot)return;placed.push(spot);
+    out.push({id:c.id,kind:'container',container:c.id,name:c.name,x:spot.x,z:spot.z,work_s:CONTAINER_KINDS[c.kind]?.work_s??1,contents:[...c.contents],
+      hidden:!!c.hidden,lock:c.lock?{key:c.lock.key,force:{...(c.lock.force??{})}}:null,unlocked:false,opened:false});
+  });
+  return out;
+}
 export function createEncounterWorld(state,{seed=state.rng}={}){
   const e=state.encounter,cal=calibrate(e),layout=layoutFor(e.width,e.height,cal.k),k=layout,S=cal.k*FINE,difficulty=e.difficulty??state.difficulty??'standard';
   // The battle's variety is drawn first from the world stream (variety.js); the world goes on with the same streams.
@@ -342,6 +376,8 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   const objects=[],field=fieldFor(e,layout,fine,variety.objects);if(field)objects.push(...field.objects,...worksGates(e,layout,fine,phases));
   if(phases.some(p=>p.mode==='recover')){const p=phases.find(x=>x.mode==='recover');objects.push({id:'chest',kind:'chest',name:'The legion’s records',x:p.goal.x,z:p.goal.z,work_s:3});
     mission.objectId='chest';}
+  // Release 11's chests and caches, placed by anchor on open ground (containers.js); no randomness is drawn.
+  objects.push(...fieldContainers(e,layout,map,heroAt,current,objects));
   const world=createWorld({map,seed,rng:streams,actors,controlled:'hero',party,mission,objects,difficulty,weather,timeOfDay:e.timeOfDay??'day',
     practice:e.type==='training',scale:cal.k,...(squads?{squads:squadSpecs,command:e.commandCapacity??0,chapter:state.chapter}:{})});
   world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};if(field)world.field=field.field;

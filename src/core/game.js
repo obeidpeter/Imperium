@@ -214,6 +214,31 @@ export function takeSpoils(state,{bodyId,items}={}){
   body.loot=left;for(const itemId of items)world.spoils.push({itemId,from:body.id});e.staged.spoils=world.spoils.map(s=>s.itemId);
   return result(true,`You take ${items.map(id=>REALTIME_ITEMS[id].name.toLowerCase()).join(', ')} from ${body.name}. It is yours when the result is recorded.`);
 }
+// A won field's chests and caches (release 11, containers.js): opened with a key
+// from the staged spoils (used up) or by force, then taken from like the fallen.
+// Hidden ones that were never found stay hidden. Refused in Practice.
+export function openFieldContainer(state,{objectId,method='key'}={}){
+  const e=state.encounter;if(!isRealtime(state)||e.status!=='won'||state.archiveReplay)return result(false,'Only a won field can be searched.');
+  const world=e.realtime.world,o=world.objects.find(x=>x.id===objectId&&x.kind==='container');
+  if(!o||o.hidden)return result(false,'There is no such container here.');
+  if(!o.lock||o.unlocked){o.opened=true;return result(true,`${o.name} is open.`);}
+  const hero=world.actors.find(a=>a.id===world.heroId);
+  if(method==='force'){const need=Object.entries(o.lock.force??{});
+    if(!need.length||!need.every(([k,v])=>(hero?.attributes?.[k]??0)>=v))return result(false,`Forcing it needs ${need.map(([k,v])=>`${k.toUpperCase()} ${v}`).join(', ')}.`);
+    o.unlocked=true;o.opened=true;return result(true,`You force the lock of ${o.name}.`);}
+  const i=world.spoils.findIndex(sp=>sp.itemId===o.lock.key);if(i<0)return result(false,`${o.name} is locked: its key is not among what you have taken here.`);
+  world.spoils.splice(i,1);e.staged.spoils=world.spoils.map(sp=>sp.itemId);o.unlocked=true;o.opened=true;return result(true,`The key opens ${o.name}.`);
+}
+export function takeFromContainer(state,{objectId,items}={}){
+  const e=state.encounter;if(!isRealtime(state)||e.status!=='won'||state.archiveReplay)return result(false,'Only a won field can be searched.');
+  const world=e.realtime.world,o=world.objects.find(x=>x.id===objectId&&x.kind==='container');
+  if(!o||o.hidden||o.lock&&!o.unlocked)return result(false,'That container is not open.');
+  if(!Array.isArray(items)||!items.length||items.length>12)return result(false,'Nothing to take there.');
+  const left=[...o.contents];for(const id of items){const i=left.indexOf(id);if(i<0)return result(false,'That is not there to take.');left.splice(i,1);}
+  if(world.spoils.length+items.length>60)return result(false,'You cannot carry more from this field.');
+  o.contents=left;o.opened=true;for(const itemId of items)world.spoils.push({itemId,from:o.id});e.staged.spoils=world.spoils.map(sp=>sp.itemId);
+  return result(true,`You take ${items.map(id=>REALTIME_ITEMS[id].name.toLowerCase()).join(', ')} from ${o.name}. It is yours when the result is recorded.`);
+}
 export function getActions(state,unitId){if(state.phase!=='encounter'||!state.encounter||state.encounter.controls==='realtime')return [];const unit=state.encounter.units.find(u=>u.id===unitId);return state.encounter.kind==='contest'?contestActions(state,unit):battleActions(state,unit);}
 export function getTargets(state,unitId,action){if(!getActions(state,unitId).includes(action))return [];const unit=state.encounter.units.find(u=>u.id===unitId);return state.encounter.kind==='contest'?contestTargets(state,unit,action):battleTargets(state,unit,action);}
 // What a click on ground would do with this unit's move this turn: where it
@@ -378,6 +403,8 @@ export const SAVE_LIMIT=1048576;
 function restartOlderFight(state){
   const e=state?.encounter,version=e?.realtime?.world?.version;
   if(state?.phase!=='encounter'||e?.controls!=='realtime'||!Number.isInteger(version)||version<1||version>=WORLD_VERSION||!state.snapshot)return state;
+  // A fight already won but not yet recorded keeps its win: its resolved world is only read for the result.
+  if(e.status==='won'){const kept=clone(state);kept.encounter.realtime.world.version=WORLD_VERSION;try{validateState(kept);return kept;}catch{}}
   validateState(state.snapshot,false);const restarted=clone(state),r=retry(restarted);if(!r.ok)throw new Error(`Invalid save: ${r.message}`);
   return restarted;
 }

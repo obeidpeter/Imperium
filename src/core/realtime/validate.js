@@ -41,7 +41,7 @@ export function validateWorld(world,fail){
   if(world.spoils.some(s=>!s||!ITEMS[s.itemId]||!str(s.from,40)))fail('real-time spoils.');
   if(world.provoked.some(p=>!p||!str(p.id,40)||!str(p.name)||!int(p.tick,0,1e7)))fail('real-time provocations.');
   if(world.actors.some(a=>a.loot!==undefined&&(!Array.isArray(a.loot)||a.loot.length>12||a.loot.some(id=>!ITEMS[id]))))fail('real-time loot.');
-  validateSquads(world,fail);validateField(world,fail);validateBand(world,fail);validateFortifications(world,fail);
+  validateSquads(world,fail);validateField(world,fail);validateContainers(world,fail);validateBand(world,fail);validateFortifications(world,fail);
   const doctrine=world.doctrine;
   if(doctrine?.plan?.reason!==undefined&&!str(doctrine.plan.reason,240)||
     doctrine?.pressureTargetId!==undefined&&doctrine.pressureTargetId!==null&&!str(doctrine.pressureTargetId,40)||
@@ -95,6 +95,15 @@ const FIELD_STATES={gate:['closed','open','breached'],bridge:['damaged','repaire
   breach:['intact','breached'],countermine:['active','disabled'],'siege-engine':['active','disabled'],
   // Release 7's siege works (field-missions.js).
   ram:['active','burnt'],ladder:['raised','thrown']};
+// Release 11's battlefield containers (containers.js): their contents, lock and state.
+const ATTRIBUTE_KEYS=new Set(['str','agi','con','per','combat','field','elo','auth']);
+function validateContainers(world,fail){
+  for(const o of world.objects)if(o?.kind==='container'&&(!str(o.container,40)||!num(o.x)||!num(o.z)
+    ||!Array.isArray(o.contents)||o.contents.length>12||o.contents.some(id=>!ITEMS[id])
+    ||['hidden','unlocked','opened','done'].some(k=>o[k]!==undefined&&typeof o[k]!=='boolean')
+    ||o.lock!==null&&o.lock!==undefined&&(typeof o.lock!=='object'||ITEMS[o.lock.key]?.kind!=='key'||!o.lock.force||typeof o.lock.force!=='object'
+      ||Object.entries(o.lock.force).some(([k,v])=>!ATTRIBUTE_KEYS.has(k)||!int(v,1,60)))))fail('real-time container.');
+}
 function validateField(world,fail){
   const f=world.field,m=world.map;
   for(const o of world.objects)if(o?.field&&(!FIELD_STATES[o.kind]?.includes(o.state)||!int(o.rounds,0,3)||typeof o.done!=='boolean'||!num(o.x)||!num(o.z)

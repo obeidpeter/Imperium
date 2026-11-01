@@ -34,7 +34,7 @@ import {containerProblem,isContainer,revealContainers,takeFrom,takeProblem} from
 
 // 4: interactive fortifications and their saved elevation/work state. An older
 // encounter restarts from its complete checkpoint; career progress is retained.
-export const WORLD_VERSION=6;
+export const WORLD_VERSION=7;
 const ticksOf=seconds=>Math.round(seconds*TIME.ticksPerSecond),LOG_LIMIT=80;
 // Orders share one queue place per actor; each other command kind has its own.
 const ORDER_KINDS=new Set(['move','attack','ability','stop','interact','talk','loot']);

@@ -110,3 +110,93 @@ test('containers are the same on every level',()=>{
   for(const c of Object.values(CAMP_CONTAINERS).flat())assert.equal(containerChapter(c.id)!==null,true);
   assert.equal(containerById('road-sack').contents[0],'coin_purse');
 });
+
+// ——— Battlefield containers: staged like the spoils of the fallen ———
+import {runRealtimeCampaign,playRealtime,heroDecision} from '../scripts/realtime-autoplay.mjs';
+import {actorById} from '../src/core/realtime/abilities.js';
+import {routePreview} from '../src/core/realtime/simulation.js';
+function reach(id,{seed=275}={}){
+  let found=null;
+  const state=Game.newGame('Aurelius Marcellus',seed,{featureEdition:35,progression:true});
+  for(let guard=0;guard<80&&!found;guard++){
+    const chapter=Game.getChapter(state),data=chapter.encounters[state.encounterIndex];
+    if(state.phase==='camp'){
+      if(!state.decisions[chapter.decision.id])Game.choose(state,chapter.decision.options[0].id);
+      if(state.chapter===1&&state.encounterIndex>0&&!state.oath)Game.swearOath(state);
+      assert.ok(Game.startEncounter(state,{controls:'realtime'}).ok);if(data.id===id)found=state;
+    }else if(state.phase==='encounter'){assert.equal(playRealtime(state).status,'won');assert.ok(Game.commitEncounter(state).ok);}
+    else assert.ok(Game.advanceChapter(state).ok);
+  }
+  return found;
+}
+const walkTo=(w,objectId,ticks=900)=>{assert.ok(queueCommand(w,{actorId:'hero',kind:'interact',payload:{objectId}}).ok);
+  let opened=false;for(let i=0;i<ticks&&!opened;i++){step(w);opened=w.events.some(e=>e.kind==='used-object'&&e.objectId===objectId);}return opened;};
+
+test('a battlefield chest stands on reachable open ground, opens with the weapon sheathed, and what is taken is staged until the result is recorded',()=>{
+  const s=reach('ch1-road'),w=Game.realtimeWorld(s),sack=w.objects.find(o=>o.id==='road-sack');
+  assert.ok(sack,'the raider’s sack is on the field');assert.deepEqual(sack.contents,['coin_purse','wine_skin']);
+  const end=routePreview(w,'hero',sack).points.at(-1);assert.ok(end&&Math.hypot(end.x-sack.x,end.z-sack.z)<=1.8,'reachable');
+  const hero=actorById(w,'hero');
+  if(hero.drawn){assert.equal(queueCommand(w,{actorId:'hero',kind:'interact',payload:{objectId:sack.id}}).reason,'NEEDS_SHEATHED');
+    queueCommand(w,{actorId:'hero',kind:'setDrawn',payload:{drawn:false}});step(w);}
+  assert.equal(queueCommand(w,{actorId:'hero',kind:'takeFrom',payload:{objectId:sack.id,items:['coin_purse']}}).reason,'NO_TARGET','not open yet');
+  hero.x=sack.x+1;hero.z=sack.z;hero.px=hero.x;hero.pz=hero.z;
+  assert.ok(walkTo(w,sack.id),'the soldier opens it');
+  assert.equal(queueCommand(w,{actorId:'hero',kind:'takeFrom',payload:{objectId:sack.id,items:['galea_crest']}}).reason,'NO_TARGET','only what is inside');
+  assert.ok(queueCommand(w,{actorId:'hero',kind:'takeFrom',payload:{objectId:sack.id,items:['coin_purse','wine_skin']}}).ok);step(w);
+  assert.deepEqual(w.spoils.map(x=>x.itemId),['coin_purse','wine_skin']);assert.equal(sack.contents.length,0);
+  const pack=s.soldier.pack.length;assert.ok(Game.saveRealtime(s,w).ok);assert.equal(s.soldier.pack.length,pack,'not yet in the pack');
+  const loaded=Game.deserialize(Game.serialize(s));assert.equal(Game.realtimeWorld(loaded).objects.find(o=>o.id==='road-sack').contents.length,0,'a reload cannot refill it');
+  const retried=Game.deserialize(Game.serialize(s));assert.ok(Game.retry(retried).ok);
+  assert.deepEqual(Game.realtimeWorld(retried).objects.find(o=>o.id==='road-sack').contents,['coin_purse','wine_skin'],'Retry restores it');
+  const forged=JSON.parse(Game.serialize(s));forged.encounter.realtime.world.objects.find(o=>o.id==='road-sack').contents=['no_such_item'];
+  assert.throws(()=>Game.deserialize(JSON.stringify(forged)));
+});
+
+test('the station strongbox opens with the key the raider carried, or by a strong enough soldier; the cache waits for Scout',()=>{
+  const s=reach('ch3-station'),w=Game.realtimeWorld(s),box=w.objects.find(o=>o.id==='station-strongbox'),cache=w.objects.find(o=>o.id==='station-cache');
+  assert.ok(box&&cache);assert.equal(cache.hidden,true);
+  assert.ok(w.actors.some(a=>a.side==='enemy'&&a.loot?.includes('key_f3')),'the raiders’ leader carries the key');
+  const hero=actorById(w,'hero');if(hero.drawn){queueCommand(w,{actorId:'hero',kind:'setDrawn',payload:{drawn:false}});step(w);}
+  assert.equal(queueCommand(w,{actorId:'hero',kind:'interact',payload:{objectId:box.id}}).reason,'LOCKED');
+  const weak=JSON.parse(JSON.stringify(w));actorById(weak,'hero').attributes.str=10;
+  assert.equal(queueCommand(weak,{actorId:'hero',kind:'interact',payload:{objectId:box.id,force:true}}).reason,'TOO_WEAK');
+  assert.equal(queueCommand(w,{actorId:'hero',kind:'interact',payload:{objectId:cache.id}}).reason,'NO_TARGET','a hidden cache cannot be targeted');
+  // With the key among the spoils (injected here), the box opens and the key is used up.
+  w.spoils.push({itemId:'key_f3',from:'enemy1'});hero.x=box.x+1;hero.z=box.z;hero.px=hero.x;hero.pz=hero.z;
+  assert.ok(walkTo(w,box.id));assert.equal(box.unlocked,true);assert.ok(!w.spoils.some(x=>x.itemId==='key_f3'));
+  // A strong soldier forces it instead: five seconds of work.
+  const strong=Game.realtimeWorld(s),sb=strong.objects.find(o=>o.id==='station-strongbox'),sh=actorById(strong,'hero');
+  if(sh.drawn){queueCommand(strong,{actorId:'hero',kind:'setDrawn',payload:{drawn:false}});step(strong);}
+  sh.attributes={...sh.attributes,str:14};sh.x=sb.x+1;sh.z=sb.z;sh.px=sh.x;sh.pz=sh.z;
+  assert.ok(queueCommand(strong,{actorId:'hero',kind:'interact',payload:{objectId:sb.id,force:true}}).ok);
+  let opened=false;for(let i=0;i<300&&!opened;i++){step(strong);opened=strong.events.some(e=>e.kind==='unlocked'&&e.objectId===sb.id);}
+  assert.ok(opened,'forced');
+  // Scout reveals the cache within its radius.
+  const scouted=Game.realtimeWorld(s),sc=scouted.objects.find(o=>o.id==='station-cache');
+  scouted.reveals.push({x:sc.x,z:sc.z,radius:30,until:scouted.tick+100});step(scouted);assert.equal(sc.hidden,false);
+});
+
+test('after a won fight the found chests open and are taken from the result once; Practice cannot take',()=>{
+  const s=reach('ch1-road');assert.equal(playRealtime(s).status,'won');
+  const before=Game.serialize(s);
+  assert.equal(Game.takeFromContainer(s,{objectId:'road-sack',items:['galea_crest']}).ok,false);assert.equal(Game.serialize(s),before);
+  const sack=s.encounter.realtime.world.objects.find(o=>o.id==='road-sack'),items=[...sack.contents];
+  assert.ok(Game.takeFromContainer(s,{objectId:'road-sack',items}).ok);
+  assert.equal(Game.takeFromContainer(s,{objectId:'road-sack',items}).ok,false,'nothing left inside');
+  const count=id=>[...s.soldier.pack,...Object.values(s.soldier.ground).flat()].filter(e=>e.id===id).length,had=items.map(count);
+  assert.ok(Game.commitEncounter(s).ok);items.forEach((id,i)=>assert.ok(count(id)>had[i],`${id} reached the pack`));
+});
+
+test('every battlefield container is placed on open ground the soldier can reach, clear of the field’s other objects',()=>{
+  for(const id of Object.keys(FIELD_CONTAINERS)){
+    const scene=fixtures.scenes.find(x=>x.id===`board-${id}`);assert.ok(scene,`${id} fixture`);
+    const s=Game.deserialize(JSON.stringify(scene.state));assert.ok(Game.restartInRealtime(s).ok,id);
+    const w=Game.realtimeWorld(s);
+    for(const c of FIELD_CONTAINERS[id]){
+      const o=w.objects.find(x=>x.id===c.id);assert.ok(o,`${id}: ${c.id} placed`);
+      const end=routePreview(w,'hero',o).points.at(-1);assert.ok(end&&Math.hypot(end.x-o.x,end.z-o.z)<=1.8,`${id}: ${c.id} reachable`);
+      for(const other of w.objects.filter(x=>x!==o))assert.ok(Math.hypot(other.x-o.x,other.z-o.z)>=2.4,`${id}: ${c.id} clear of ${other.id}`);
+    }
+  }
+});

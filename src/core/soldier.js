@@ -4,7 +4,7 @@ import {TP,COURSES,TRAINERS,DECORATIONS,DECORATION_AWARDS,TITLES,COMPANION_RANKS
   from '../data/soldier.js';
 import {STANDING} from '../data/realtime-rules.js';
 import {TRADER_STOCK} from '../data/camps.js';
-import {containerById,containerChapter} from '../data/containers.js';
+import {containerById,containerChapter,containersInField} from '../data/containers.js';
 import {slotProblem} from './realtime/party.js';
 import {squadOrderProblem} from './realtime/squad-orders.js';
 import {SQUAD_STANDING} from '../data/realtime-squads.js';
@@ -424,6 +424,12 @@ export function commitSoldierRewards(state,e){
   const decorations=awardDecorations(state,e.id),denarii=donativeFor(e.id);s.denarii+=denarii;
   // What the soldier took from the field goes to his pack, or to the camp ground if it is full.
   const spoils=(e.staged?.spoils??[]).filter(id=>ITEMS[id]);for(const id of spoils)stow(s,id,`camp:${state.chapter}`);
+  // A battle won in turns has no walkable field: his men search the found containers he could open
+  // himself (a lock only if he is strong enough to force it) and leave what they find on the camp
+  // ground for him to pick up (release 11).
+  if(e.kind==='battle'&&e.controls!=='realtime'&&e.status==='won')for(const c of containersInField(e.id))if(!c.hidden&&(!c.lock||
+    Object.entries(c.lock.force??{}).every(([k,v])=>(soldierAttributes(s)[k]??0)>=v)))for(const id of c.contents)if(ITEMS[id]&&ITEMS[id].kind!=='key'){
+    const strip=s.ground[`camp:${state.chapter}`]??=[];if(strip.length>=GROUND_LIMIT)strip.shift();strip.push({uid:`i${s.nextUid++}`,id});spoils.push(id);}
   for(const line of e.staged?.journal??[])if(typeof line==='string')state.log.push(line.slice(0,240));
   return {tp,decorations,denarii,spoils};
 }
