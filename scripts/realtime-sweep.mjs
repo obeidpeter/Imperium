@@ -40,12 +40,17 @@ import {MISSION_BRANCHES} from '../src/data/mission-operations.js';
 import {PROGRESSION_OPERATIONS} from '../src/data/progression-operations.js';
 
 const arg=(name,fallback)=>process.argv.find(a=>a.startsWith(`--${name}=`))?.split('=')[1]??fallback;
-const SEEDS=Number(arg('seeds',20)),DIFFICULTY=arg('difficulty','standard'),FIRST=4,LAST=Number(arg('last',12)),R=TIME.roundTicks,MAX_SEEDS=60;
+const SEEDS=Number(arg('seeds',20)),DIFFICULTY=arg('difficulty','standard'),FIRST=Number(arg('first',4)),LAST=Number(arg('last',12)),R=TIME.roundTicks,MAX_SEEDS=60;
+// Release 11's reference players (kit-policy.mjs): --kit=bare (the recruit's kit, as before), issued or engaged.
+const KIT=arg('kit','bare');
 // Release 7's missions, as New Game plays them; --missions=0 plays the campaigns begun before them.
 const MISSIONS=arg('missions','1')!=='0';
 // Tries a player is given before a battle counts as failed: Story is won first time, Standard within two, Veteran within three.
 export const TARGETS=Object.freeze({story:{first:1,within:1},standard:{first:.9,within:2},veteran:{first:.7,within:3}});
-const RETRIES=Number(arg('retries',(TARGETS[DIFFICULTY]?.within??2)));
+// Release 11's targets by reference player (docs/worlds-and-gameplay-plan.md, balance targets); otherwise the level's.
+export const PLAYER_TARGETS=Object.freeze({story:{issued:{first:1,within:1},bare:{first:0,within:2}},
+  standard:{engaged:{first:.9,within:2},issued:{first:.8,within:3}},veteran:{engaged:{first:.7,within:3}}});
+const RETRIES=Number(arg('retries',(PLAYER_TARGETS[DIFFICULTY]?.[KIT]??TARGETS[DIFFICULTY])?.within??2));
 // The battles the sweep plays (Chapter XII's confrontation counted once, on its route of the day).
 const BATTLES=CHAPTERS.filter(c=>c.id>=FIRST&&c.id<=LAST).flatMap(c=>c.encounters.filter(e=>e.kind==='battle').map(e=>e.id));
 export const ROUTES=Object.freeze(['backer','battle','defection','settlement','surrender']);
@@ -85,7 +90,7 @@ export function playBattle(state,{maxRounds=40,attempt=1}={}){
 // One seed's campaign in real time: every try of the battles of IV–XII it played.
 export function campaign(seed,{difficulty=DIFFICULTY,choices={},operations={},camps=null,retries=RETRIES}={}){
   const runs=[],ready=Array.from({length:LAST},(_,i)=>i+1);let stopped=null;
-  try{runRealtimeCampaign({seed,difficulty,throughChapter:LAST,ready,choices,operations,retries,missions:MISSIONS,play:playBattle,onEncounter(state,summary){
+  try{runRealtimeCampaign({seed,difficulty,throughChapter:LAST,ready,choices,operations,retries,missions:MISSIONS,play:playBattle,kit:KIT,onEncounter(state,summary){
     // Pass 3's Chapter XII camp, kept on the way: the Senate's recognition recorded, the confrontation ahead.
     if(camps&&state.encounter?.id==='ch12-legitimacy'&&!camps.has(seed)&&state.encounter.status==='won'){
       const copy=G.deserialize(G.serialize(state));if(G.commitEncounter(copy).ok)camps.set(seed,G.serialize(copy));}
@@ -99,7 +104,7 @@ export function campaign(seed,{difficulty=DIFFICULTY,choices={},operations={},ca
 // A seed's Chapter XII camp, the Senate's recognition recorded and the confrontation ahead (serialized).
 export function finaleCamp(seed,{difficulty=DIFFICULTY,retries=RETRIES}={}){
   let camp=null;const stop=new Error('camp');
-  try{runRealtimeCampaign({seed,difficulty,throughChapter:12,ready:Array.from({length:12},(_,i)=>i+1),retries,missions:MISSIONS,play:playBattle,onEncounter(state){
+  try{runRealtimeCampaign({seed,difficulty,throughChapter:12,ready:Array.from({length:12},(_,i)=>i+1),retries,missions:MISSIONS,play:playBattle,kit:KIT,onEncounter(state){
     if(state.encounter?.id!=='ch12-legitimacy'||state.encounter.status!=='won')return;const copy=G.deserialize(G.serialize(state));if(G.commitEncounter(copy).ok)camp=G.serialize(copy);throw stop;}});}
   catch(error){if(error!==stop)return null;}
   return camp;
@@ -151,19 +156,20 @@ export function sweep({seeds=SEEDS,difficulty=DIFFICULTY,retries=RETRIES,onResul
       roundsMedian:percentile(firstWins.map(o=>o.first.rounds),.5),roundsMin:firstWins.length?Math.min(...firstWins.map(o=>o.first.rounds)):null,
       roundsMax:firstWins.length?Math.max(...firstWins.map(o=>o.first.rounds)):null,plans:[...new Set(seen.flatMap(o=>o.first.plans??[]))].sort()};}).filter(f=>f.seeds);
   return {source:`New Game${MISSIONS?' with release 7\'s missions':' as campaigns begun before release 7\'s missions'}${OTHER?'; pass 2 with each battle\'s second operation':''}; the campaign in real time through Chapter ${LAST===12?'XII':'IX'} by legal commands (Contests by the 0.38 autoplay); each real-time battle played by the heuristic bot through legal Commands, a lost battle retried from its checkpoint up to ${retries} times`,
-    difficulty,seeds,retries,seedsUsed:seed,chapters:[FIRST,LAST],otherDecisions:OTHER_DECISIONS,battles,...(finale.length?{finale}:{}),
+    difficulty,kit:KIT,seeds,retries,seedsUsed:seed,chapters:[FIRST,LAST],otherDecisions:OTHER_DECISIONS,battles,...(finale.length?{finale}:{}),
     losses:[...runs,...variants,...routes].filter(r=>r.status!=='won'),stopped,runs,variants,...(routes.length?{routes}:{})};
 }
 
 // Release 3's targets (docs/worlds-and-gameplay-plan.md): what this run shows of each.
 export function targets(report,{baseline=null}={}){
-  const t=TARGETS[report.difficulty]??TARGETS.standard,out=[];
+  const t=PLAYER_TARGETS[report.difficulty]?.[report.kit]??TARGETS[report.difficulty]??TARGETS.standard,out=[];
   const all=[...report.battles.map(b=>({name:b.id,seeds:b.seeds,first:b.firstTry,within:t.within===1?b.firstTry:t.within===2?b.within2:b.within3})),
     ...(report.finale??[]).map(f=>({name:`route ${f.route}`,seeds:f.seeds,first:f.firstTry,within:f.within}))];
   const first=all.reduce((n,b)=>n+b.first,0),seeds=all.reduce((n,b)=>n+b.seeds,0),within=all.reduce((n,b)=>n+b.within,0);
   out.push({target:`won on the first try ≥ ${t.first*100}%`,value:`${first}/${seeds} (${(first/seeds*100).toFixed(1)}%)`,met:first>=t.first*seeds});
   out.push({target:`won within ${t.within} ${t.within===1?'try':'tries'}: all`,value:`${within}/${seeds}`,met:within===seeds});
-  const few=report.battles.filter(b=>b.plans.length<3);
+  // Enemy plans are the squads' (Chapters IV–XII).
+  const few=report.battles.filter(b=>b.chapter>=4&&b.plans.length<3);
   out.push({target:'at least 3 enemy plans in each battle across seeds',value:few.length?few.map(b=>`${b.id} ${b.plans.length}`).join(', '):'every battle',met:!few.length});
   const fin=(report.finale??[]).filter(f=>['battle','backer'].includes(f.route));
   if(fin.length)out.push({target:'the finale’s battle lasts 8–12 of its 16 rounds',value:fin.map(f=>`${f.route} ${f.roundsMin}–${f.roundsMax} (median ${f.roundsMedian})`).join('; '),
@@ -177,7 +183,7 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
   const report=sweep({onResult:(r,pass)=>console.log(`pass ${pass} seed ${String(r.seed).padStart(2)} ${String(r.route?`route:${r.route}`:r.id).padEnd(18)} try ${r.tries} ${r.status.padEnd(5)} round ${String(r.rounds).padStart(2)} of ${r.deadline}`+
     ` · ${r.weather??'—'} · ${(r.plans??[]).join(',')}${r.status==='won'?'':` — ${r.reason}${r.phase?` (${r.phase})`:''}`}`)});
   for(const s of report.stopped)console.log(`pass ${s.pass} seed ${s.seed} stopped${s.id?` at ${s.id}`:''}: ${s.reason}`);
-  console.log(`\n${report.difficulty}, ${report.seeds} seeds (pass 1 used ${report.seedsUsed}), up to ${report.retries} retries`);
+  console.log(`\n${report.difficulty}, the ${report.kit} player, ${report.seeds} seeds (pass 1 used ${report.seedsUsed}), up to ${report.retries} retries`);
   console.log('Battle              first  ≤2  ≤3  rounds(med/max) deadline slack  loss  plans                               tick p95/max (ms)');
   for(const b of report.battles)console.log(`${b.id.padEnd(19)} ${String(b.firstTry).padStart(2)}/${b.seeds} ${String(b.within2).padStart(3)} ${String(b.within3).padStart(3)}  ${String(b.roundsMedian).padStart(6)}/${b.roundsMax}`+
     `       ${String(b.deadline).padStart(3)} ${String(b.slackMin).padStart(5)}  ${b.lossMedian===null?'  —  ':b.lossMedian.toFixed(2)}  ${b.plans.join(',').padEnd(34)}  ${b.tickP95.toFixed(2)}/${b.tickMax.toFixed(1)}  hidden ${b.hidden}, ambushes ${b.ambushes.enemy}:${b.ambushes.ours}`);
@@ -192,7 +198,7 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
       variants:report.variants.map(r=>({...r,tick:fixed(r.tick)})),losses:report.losses.map(r=>({...r,tick:fixed(r.tick)})),
       battles:report.battles.map(b=>({...b,tickP95:+b.tickP95.toFixed(3),tickMax:+b.tickMax.toFixed(2)}))};
     if(out.routes)out.routes=out.routes.map(r=>({...r,tick:fixed(r.tick)}));
-    const file=`realtime-${arg('label','release4')}-sweep-${DIFFICULTY}.json`;
+    const file=`realtime-${arg('label','release4')}-sweep-${DIFFICULTY}${KIT==='bare'?'':`-${KIT}`}.json`;
     await writeFile(new URL(`../docs/evidence/${file}`,import.meta.url),`${JSON.stringify(out,null,1)}\n`);console.log(`Wrote docs/evidence/${file}`);
   }
   if(checks.some(c=>!c.met))process.exitCode=1;
