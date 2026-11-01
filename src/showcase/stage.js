@@ -51,7 +51,10 @@ export {sideOnYaw,actionFraming,diagonalYaw,labelRole,namedFigure,figureStyleFin
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),ease=t=>t*t*(3-2*t);
 // Frame targets divide common refresh rates; see createFrameCadence.
-export const STAGE_QUALITY=Object.freeze({performance:{ratio:1,shadow:1024,fps:30},balanced:{ratio:1.5,shadow:2048,fps:60},high:{ratio:2,shadow:2048,fps:60}});
+// pixels (release 12): the drawing buffer's cap. The world now fills the window, so no quality draws more
+// pixels than its old, largest world did (1920 × 800 CSS pixels at its ratio); the adaptive budget scales from there.
+export const STAGE_QUALITY=Object.freeze({performance:{ratio:1,shadow:1024,fps:30,pixels:1536000},balanced:{ratio:1.5,shadow:2048,fps:60,pixels:3456000},
+  high:{ratio:2,shadow:2048,fps:60,pixels:6144000}});
 const QUALITY=STAGE_QUALITY;
 // Between motions the shadow map follows breathing and cloth only this often.
 const SHADOW_REFRESH_MS={performance:250,balanced:125,high:100};
@@ -392,7 +395,7 @@ export class BattleStage{
       sampleWeatherParticles(this.weatherCloud,this.profile.weather,this.elapsed??0,{reducedMotion:this.reducedMotion,anchor:this.lookTarget,chapter:this.chapter,indoors:this.profile.civic});
     }
     this.resolutionBudget?.reset(q.fps);this.cadence?.reset(q.fps);this.gpuTimer?.reset();
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,q.ratio)*(this.resolutionBudget?.scale??1));
+    this.renderer.setPixelRatio(this.pixelRatio());
     if(this.sun.shadow.mapSize.x!==q.shadow){this.sun.shadow.mapSize.set(q.shadow,q.shadow);this.sun.shadow.map?.dispose();this.sun.shadow.map=null;}
     if(world&&this.worldQuality!==this.quality&&this.environment){
       this.builtQuality=this.quality;
@@ -407,7 +410,13 @@ export class BattleStage{
     }
     this.compositor?.setQuality(this.worldQuality);this.resize();
   }
-  updatePixelRatio(){this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,QUALITY[this.quality].ratio)*(this.resolutionBudget?.scale??1));this.resize();}
+  // The device's ratio, the quality's ratio and its pixel cap for the canvas's size, then the adaptive budget.
+  pixelRatio(){
+    const q=QUALITY[this.quality],r=this.canvas?.getBoundingClientRect?.(),area=r?.width&&r?.height?r.width*r.height:0;
+    const cap=q.pixels&&area?Math.sqrt(q.pixels/area):Infinity;
+    return Math.min(devicePixelRatio||1,q.ratio,cap)*(this.resolutionBudget?.scale??1);
+  }
+  updatePixelRatio(){this.renderer.setPixelRatio(this.pixelRatio());this.resize();}
   setAdaptiveResolution(value){if(this.adaptiveResolution===!!value)return;this.adaptiveResolution=!!value;this.resolutionBudget?.setEnabled(value);}
   // Where a delegate stands during the division: walking at an even pace,
   // one after another, then facing the champion. Reduced motion skips ahead.
@@ -467,6 +476,8 @@ export class BattleStage{
   }
   resize(){
     const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return;this.viewportWidth=r.width;this.viewportHeight=r.height;this.labelSizeDirty=true;
+    // A larger window can meet the quality's pixel cap: the ratio follows the canvas's size.
+    const ratio=this.pixelRatio();if(Math.abs(ratio-this.renderer.getPixelRatio())>.01)this.renderer.setPixelRatio(ratio);
     const previous=this.camera.aspect;this.renderer.setSize(r.width,r.height,false);this.camera.aspect=r.width/r.height;this.camera.updateProjectionMatrix();
     this.compositor?.resize();
     if(Math.abs(previous-this.camera.aspect)>.01&&this.live&&this.cameraView==='horizon')this.orbit.distance=this.liveHorizonDistance();

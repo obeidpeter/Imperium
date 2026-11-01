@@ -81,7 +81,8 @@ export class FlatStage{
   }
   draw(now){
     const world=this.live?.world?.();if(!world)return;
-    const r=this.canvas.getBoundingClientRect(),d=Math.min(globalThis.devicePixelRatio||1,2),w=Math.max(1,Math.round(r.width*d)),h=Math.max(1,Math.round(r.height*d));
+    // Release 12: the window-filling 2D view draws at most 4 megapixels, whatever the screen.
+    const r=this.canvas.getBoundingClientRect(),d=Math.min(globalThis.devicePixelRatio||1,2,Math.sqrt(4e6/Math.max(1,r.width*r.height))),w=Math.max(1,Math.round(r.width*d)),h=Math.max(1,Math.round(r.height*d));
     if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
     const c=this.ctx;c.setTransform(d,0,0,d,0,0);c.fillStyle='#1b211d';c.fillRect(0,0,r.width,r.height);
     const v=this.view(world);this.lastView=v;const img=this.terrainImage(world,v),o=this.screen(v,0,0);
