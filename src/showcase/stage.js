@@ -197,6 +197,8 @@ export class BattleStage{
     this.scene=new T.Scene();this.scene.background=new T.Color(this.profile.sky);this.scene.fog=new T.Fog(this.profile.fog,40,200);this.groundMist=installGroundMist(this.profile);
     this.camera=new T.PerspectiveCamera(40,1,.1,800);this.orbit={yaw:-.55,pitch:.64,distance:27,target:new T.Vector3(0,0,0)};
     this.lookTarget=new T.Vector3(0,.25,0);this.baseTarget=new T.Vector3(0,.25,0);this.cameraKick=0;this.cameraView='overview';
+    // The real-time field's look away (a drag, the scene's edge, a log entry) and its see-through (X): stage-camera.js.
+    this.lookOffset=new T.Vector3();this.seeThrough=false;
     this.sky=createSky(this.scene,this.profile,{quality,reducedMotion});yield;
     this.lighting=createSceneLighting(this.renderer,this.scene,this.profile,{quality});yield;
     this.contactShadows=createContactShadows(this.scene);
@@ -727,6 +729,8 @@ export class BattleStage{
     }
     const conversation=this.conversationFrame(),target=conversation?.target??(this.live&&this.cameraView==='horizon'?this.live.cameraTarget?.()??this.baseTarget.clone():
       this.focusMode&&selected?selected.group.position.clone().add(new T.Vector3(0,selected.group.userData.actor?.mounted?1.2:.85,0)):this.baseTarget.clone());
+    // A look away slides the view over the ground; a conversation and the horizon's glance frame their own subjects.
+    if(!conversation&&this.cameraView!=='horizon')target.add(this.lookOffset);
     let actionGoal=0;
     if(this.animation&&!this.focusMode&&this.cameraView==='overview'&&!this.reducedMotion){const elapsed=(now-this.animation.start)/this.animation.scale;
       const strike=this.actionCamera!==false
@@ -796,10 +800,12 @@ export class BattleStage{
     // The Curia's walls stand down while the camera is beyond them.
     this.sceneryModels?.updateCutaway?.(this.camera);
     const cutawayUnits=[selected,this.actors.get(this.inspected)].filter((actor,index,list)=>actor?.group.visible&&list.indexOf(actor)===index);
+    // See-through (X, the real-time field) widens the cut round the soldier to the walls and roofs about him, in every view.
+    const wide=this.seeThrough?2.4:1;
     this.sceneryOcclusion?.update(this.camera,
       {targets:cutawayUnits.map(actor=>({position:actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.8:1.1,0)),
-        radius:actor.group.userData.actor?.mounted?1.7:1.35})),
-        enabled:this.cameraView!=='overview'||!!this.animation,delta:dt,reducedMotion:this.reducedMotion});
+        radius:(actor.group.userData.actor?.mounted?1.7:1.35)*wide})),
+        enabled:this.cameraView!=='overview'||!!this.animation||this.seeThrough,delta:dt,reducedMotion:this.reducedMotion});
     this.positionLabels();this.ink?.flush?.(now);
     const shadowInterval=(SHADOW_REFRESH_MS[this.quality]??125)*(floor?2:1);
     if(this.shadowDirty||this.animation||!this.reducedMotion&&now-this.lastShadow>=shadowInterval){

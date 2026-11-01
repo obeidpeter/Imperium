@@ -32,7 +32,7 @@ try{runCommandCampaign({featureEdition:35,onCheckpoint:s=>{const id=G.getChapter
 const spec=process.env.PLAYWRIGHT_MODULE??'playwright',pw=await import(spec.startsWith('C:')?pathToFileURL(spec).href:spec);
 const server=http.createServer((req,res)=>serveRequest(req,res,root));await new Promise(done=>server.listen(0,'127.0.0.1',done));
 const browser=await pw.chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
-const report={source,build,browser:browser.version(),method:'Legal earned campaign checkpoints; visible import/settings/camera controls; read-only browser diagnostics.',physicalDeviceTest:false,
+const report={source,build,browser:browser.version(),method:'Legal earned campaign checkpoints; visible import/settings controls and the camera keys; read-only browser diagnostics.',physicalDeviceTest:false,
   captureSettings:{reducedMotion:true,method:'Normal-motion camera movement verified first; Reduce motion then enabled through visible Settings for static whole-body captures'},normalMotion:[],checks:[],errors:[]};
 let activePage,activeCondition;
 async function cameraState(page){return page.evaluate(()=>{
@@ -43,6 +43,11 @@ async function cameraState(page){return page.evaluate(()=>{
     position:stage.camera.position.toArray(),lookTarget:stage.lookTarget.toArray(),tick:world.tick,worldPaused:window.__realtime.paused(),
     stagePaused:stage.paused,hidden:document.hidden,contextLost:stage.contextLost,isReady:stage.isReady};
 });}
+// Release 12: one fixed camera, moved by its keys (F follows, Z shows the whole field, H is held for the horizon).
+const VIEW_KEYS=Object.freeze({follow:'KeyF',overview:'KeyZ',horizon:'KeyH'});
+async function chooseView(page,view){
+  await page.locator('#rt-board').focus();if(view==='horizon')await page.keyboard.down(VIEW_KEYS.horizon);else await page.keyboard.press(VIEW_KEYS[view]);
+}
 async function changingCamera(page,view,before){
   activeCondition={...activeCondition,view,previousFrame:before.renderedFrames,previousPosition:before.position};
   await page.waitForFunction(({view,before})=>{
@@ -80,9 +85,9 @@ try{
     // captures. Only visible controls change views/settings; poses are read-only.
     activeCondition={id,phase:'normal-motion'};
     const initial=await cameraState(page);assert.equal(initial.reducedMotion,false);
-    await page.locator('[data-role="cameraSelect"]').selectOption('overview');
+    await chooseView(page,'overview');
     const overview=await changingCamera(page,'overview',initial);
-    await page.locator('[data-role="cameraSelect"]').selectOption('follow');
+    await chooseView(page,'follow');
     const followStart=await changingCamera(page,'follow',overview),followEnd=await changingCamera(page,'follow',followStart);
     for(const sample of [initial,overview,followStart,followEnd]){
       assert.equal(sample.reducedMotion,false);assert.equal(sample.worldPaused,true);
@@ -96,7 +101,7 @@ try{
     for(const view of ['follow','overview','horizon']){
       const previousFrame=await page.evaluate(()=>window.__chamber.stage().profileFrames);
       activeCondition={id,phase:'static-capture',view,previousFrame};
-      await page.locator('[data-role="cameraSelect"]').selectOption(view);await page.locator('#rt-board').scrollIntoViewIfNeeded();
+      await chooseView(page,view);await page.locator('#rt-board').scrollIntoViewIfNeeded();
       // A view name changes immediately. Even with reduced motion, require
       // actual settled renders and visible whole-body framing, including
       // when the simulation is paused at deployment.
@@ -109,6 +114,7 @@ try{
       const camera=await cameraState(page);assert.equal(camera.reducedMotion,true);
       cameras.push(camera);
       await page.screenshot({path:resolve(out,`${id}-${view}.png`),timeout:wait});
+      if(view==='horizon'){await page.keyboard.up(VIEW_KEYS.horizon);await page.waitForFunction(()=>window.__chamber.stage().cameraView==='overview');}
       assert.equal(await page.evaluate(()=>window.__realtime.world().tick),measured.tick,'camera selection preserves paused simulation');
     }
     if(quality==='balanced'){

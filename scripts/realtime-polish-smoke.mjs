@@ -173,7 +173,10 @@ try{
     assert.match(await text(field,'[data-role="deadlineLine"]'),/Optional|opportunit/i,'Optional field opportunities remain visible');
     await field.locator('.rt-toolbox > summary').click();await layout(field,`chapter-v-controls-${suffix}`);
     await field.locator('.rt-toolbox > summary').click();
-    await field.locator('#rt-board').focus();await field.keyboard.press('KeyH');await layout(field,`chapter-v-horizon-${suffix}`);
+    // Release 12: the horizon is a glance held on H, and a 3D view: this 2D view says so and keeps its layout.
+    await field.locator('#rt-board').focus();await field.keyboard.down('KeyH');
+    await field.waitForFunction(()=>/horizon is a 3D view/.test(document.querySelector('[data-role="eventLine"]')?.textContent??''));
+    await layout(field,`chapter-v-horizon-${suffix}`);await field.keyboard.up('KeyH');
     if(suffix==='desktop'){
       const stopped=await tick(field);await field.locator('#rt-board').focus();await field.keyboard.press('KeyI');
       await field.waitForSelector('#modal[open] [data-soldier-preview][data-preview="ready"]',{timeout:120000});

@@ -26,7 +26,7 @@ Each release's changelog entry records what it actually delivered and measured. 
 | 9 | Landmarks and set pieces | merged ([#41](https://github.com/obeidpeter/Imperium/pull/41); [report](landmarks-release9-report.md)) |
 | 10 | Gate 4 and 0.40.0 | in progress: Practice in real time and the [Gate 4 checklist](gate4-playthrough.md) merged ([#42](https://github.com/obeidpeter/Imperium/pull/42)); the owner's play-through, decision on the turn-based mode and Performance-check files follow releases 11–14 |
 | 11 | Chests, the smith and the armoury | merged ([#46](https://github.com/obeidpeter/Imperium/pull/46); [report](chests-release11-report.md)) |
-| 12 | The full-screen world and the camera | in progress, in two pull requests: the layout first, then the camera |
+| 12 | The full-screen world and the camera | in progress: the full-screen world merged ([#47](https://github.com/obeidpeter/Imperium/pull/47); [report](fullscreen-release12-report.md)); the fixed camera in a second pull request ([report](camera-release12-report.md)) |
 | 13 | The inventory | planned |
 | 14 | Walking between areas | planned |
 
@@ -147,6 +147,12 @@ These are the genre's conventions, built in Imperium's own Roman style. Nothing 
   - What used to follow the world opens **in place over it**, rather than in the one dialog: help, tips and the battle log at its top-left corner, All actions and order review at its right edge, a fight's result and the chamber's members in the middle, and the camp's list under **Menu → Camp**. The player sees the same thing; their focus, pause and live updates stay as they were. The Menu, Settings, the panels (I C J Q L M R A) and conversations stay in the dialog.
   - Talking to a person from the camp list takes the soldier to that person at once, as map travel does, rather than walking there.
   - The pixel cap is a budget per quality: at most the pixels of a 1,920 × 800 view at that quality's own resolution.
+- **As built in the second pull request** ([report](camera-release12-report.md)):
+  - The bearing is the 2D view's (from the south-east); the elevation is a true isometric view's, about 35°, as the 2D drawing's 30° made a perspective camera look too far past the soldier.
+  - A drag is the middle button's, two fingers' on a touch screen, or the scene's edge with **Edge scrolling** (now in 2D too); the left button still moves and steers. The view springs back when the soldier is ordered somewhere, the arrows walk him, a speaker walks a chamber's floor or **F** is pressed; the whole-field view stays where it was moved until **Z** or **F**. Battle-log entries and the wayfinders look away the same way.
+  - The held glance turns toward the chapter's nearest landmark and gives the view back as it was when **H** is let go, the scene loses the keys, the page hides or a panel opens.
+  - **X** widens the existing cutaway 2.4 times round the soldier and keeps it in the whole-field view.
+  - The arena, which runs the same field, takes the same camera. A chamber's arrows still step on its floor's own grid, north up.
 
 #### 13. The inventory
 

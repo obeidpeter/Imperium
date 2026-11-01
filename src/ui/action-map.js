@@ -13,8 +13,8 @@ export const DEFAULT_KEYMAP=Object.freeze({
   interact_nearest:['KeyE'],...Object.fromEntries(digits.map((code,i)=>[`ability_${i+1}`,[code]])),ability_bar:['KeyS'],pause:['KeyP','Pause'],
   slow_time:['KeyV'],step_round:['KeyN'],walk_toggle:['KeyW'],show_usable:['KeyU'],party_prev:['BracketLeft'],party_next:['BracketRight'],
   control_hero:['Home'],...Object.fromEntries([1,2,3,4,5,6].map(n=>[`select_squad_${n}`,[`Shift+Digit${n}`]])),yield_floor:['KeyY'],war_cry:['KeyB'],
-  quick_save:['F2'],cancel_or_menu:['Escape'],camera_follow:['KeyF'],camera_overview:['KeyZ'],camera_horizon:['KeyH'],camera_rotate_left:['Comma'],
-  camera_rotate_right:['Period'],zoom_in:['Equal','NumpadAdd'],zoom_out:['Minus','NumpadSubtract'],see_through:['KeyX'],show_ranges:['KeyG'],
+  quick_save:['F2'],cancel_or_menu:['Escape'],camera_follow:['KeyF'],camera_overview:['KeyZ'],camera_horizon:['KeyH'],
+  zoom_in:['Equal','NumpadAdd'],zoom_out:['Minus','NumpadSubtract'],see_through:['KeyX'],show_ranges:['KeyG'],
   panel_kit:['KeyI'],panel_character:['KeyC'],panel_journal:['KeyJ'],panel_orders:['KeyQ'],panel_chronicle:['KeyL'],panel_map:['KeyM'],panel_company:['KeyR'],
   panel_decorations:['KeyA'],panel_options:['KeyO'],map_overlay:['Shift+KeyM'],help:['Shift+Slash']});
 // Keys that keep their meaning whatever the player chooses.
@@ -89,8 +89,8 @@ export const KEY_GROUPS=Object.freeze([
   ['Party and squads',[['party_prev','Previous party member'],['party_next','Next party member'],['control_hero','Your own soldier'],
     ...Array.from({length:6},(_,i)=>[`select_squad_${i+1}`,`Squad ${i+1} in or out of the selection`])]],
   ['Contests',[['yield_floor','Yield the floor']]],
-  ['Camera',[['camera_follow','Follow'],['camera_overview','Overview'],['camera_horizon','Horizon (3D)'],['camera_rotate_left','Turn the view left (3D)'],
-    ['camera_rotate_right','Turn the view right (3D)'],['zoom_in','Zoom in'],['zoom_out','Zoom out'],['see_through','See through'],['show_ranges','Show ranges']]],
+  ['Camera',[['camera_follow','Follow your soldier'],['camera_overview','The whole field, or back'],['camera_horizon','Glance at the horizon (hold, 3D)'],
+    ['zoom_in','Zoom in'],['zoom_out','Zoom out'],['see_through','See through walls and roofs (3D)'],['show_ranges','Show ranges']]],
   ['Panels and saving',[['panel_kit','Kit'],['panel_character','Character'],['panel_journal','Journal'],['panel_orders','Mission orders'],['panel_chronicle','Chronicle'],
     ['panel_map','Map'],['map_overlay','Map over the scene'],['panel_company','Company'],['panel_decorations','Decorations and titles'],['panel_options','Options'],
     ['help','Controls & rules'],['quick_save','Quick save']]]

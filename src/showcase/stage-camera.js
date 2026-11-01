@@ -2,9 +2,12 @@ import * as T from '../../vendor/three/three.module.js';
 import {actorVisible} from './stage-readout.js';
 import {findFocusCamera} from './stage-focus-camera.js';
 import {isAlive} from './session.js';
+import {FIELD_PITCH,FIELD_YAW,bearingToward,boundedOffset,screenRight,screenUp} from './camera-bearing.js';
 
 // The 3D board's camera views: the tactical overview, the follow view on the
-// selected unit, the horizon, and zoom.
+// selected unit, the horizon, and zoom. The real-time field (fixedCamera, set by realtime-field.js)
+// keeps one bearing and elevation (camera-bearing.js) in all of them: it never turns, the player looks
+// away by dragging (pan) and springs back, and a held glance turns toward the horizon's nearest landmark.
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 // Action camera: during a committed attack the overview closes in on the
 // exchange and turns a little side-on, then eases back. Reduced motion, focus
@@ -53,19 +56,20 @@ export const stageCamera={
       }));
   },
   home(){
-    this.followCollision=null;
+    this.followCollision=null;this.glanceFrom=null;
     if(this.ceremony){
       // Home also gives the view back to the ceremony's story beats (stage.js).
       const focus=this.world(this.ceremony.focus??{x:3.5,y:3.5});this.focusMode=false;this.cameraView='ceremony';this.ceremonyHeld=false;this.orbit.yaw=this.ceremony.yaw??-.62;
       this.orbit.pitch=this.ceremony.pitch??.3;this.orbit.distance=this.ceremony.distance??17;this.baseTarget.set(focus.x,focus.y+1.1,focus.z);return;
     }
-    this.focusMode=false;this.cameraView='overview';this.orbit.yaw=this.profile?.staging?.camera.yaw??(this.encounter.kind==='contest'?-.28:-.55);
-    this.orbit.pitch=this.profile?.staging?.camera.pitch??(this.encounter.kind==='contest'?.76:.67);this.baseTarget.set(0,.7,0);
+    const staging=this.profile?.staging?.camera,contest=this.encounter.kind==='contest';
+    this.focusMode=false;this.cameraView='overview';this.orbit.yaw=this.fixedCamera?FIELD_YAW:staging?.yaw??(contest?-.28:-.55);
+    this.orbit.pitch=this.fixedCamera?FIELD_PITCH:staging?.pitch??(contest?.76:.67);this.baseTarget.set(0,.7,0);this.lookOffset?.set(0,0,0);
     if(this.encounter.id==='ch1-training'){
       const alive=this.encounter.units.filter(isAlive);
       if(alive.length){
         const center=alive.reduce((v,u)=>v.add(this.world(u)),new T.Vector3()).divideScalar(alive.length);this.baseTarget.copy(center);this.baseTarget.y+=.5;
-        this.orbit.pitch=.58;
+        if(!this.fixedCamera)this.orbit.pitch=.58;
       }
     }
     this.orbit.distance=this.overviewDistance();
@@ -78,13 +82,61 @@ export const stageCamera={
       // A real-time battlefield can be over a hundred metres across. Fitting
       // every corner at eye level makes the actual fight a few pixels high.
       // Horizon follows the controlled exchange; Z still offers the whole field.
-      this.focusMode=true;this.cameraView='horizon';this.orbit.yaw=this.profile?.staging?.camera.yaw??-.55;
+      // The fixed camera's glance turns toward the nearest landmark on the horizon; the others keep the scene's bearing.
+      this.focusMode=true;this.cameraView='horizon';this.orbit.yaw=this.fixedCamera?this.glanceYaw(liveTarget):this.profile?.staging?.camera.yaw??-.55;
       this.orbit.pitch=.14;this.orbit.distance=this.liveHorizonDistance();this.baseTarget.copy(liveTarget);return;
     }
     this.focusMode=false;this.cameraView='horizon';this.orbit.yaw=-.55;this.orbit.pitch=.105;
     this.baseTarget.set(0,2.7,0);this.orbit.distance=Math.max(28,this.overviewDistance());
   },
   liveHorizonDistance(){return clamp(24/Math.max(.7,this.camera.aspect),20,34);},
+  // The bearing that looks from `from` toward the chapter's nearest landmark on the horizon (environment-horizon.js),
+  // or the field's own bearing where the horizon has none.
+  glanceYaw(from){
+    let nearest=null,best=Infinity;
+    for(const mark of this.environment?.horizon?.stats?.landmarks??[]){const d=Math.hypot(mark.x-from.x,mark.z-from.z);if(d<best){best=d;nearest=mark;}}
+    return nearest?bearingToward(from,nearest):FIELD_YAW;
+  },
+  // The fixed camera's look away, as a player drags the scene (dx, dy in pixels, the ground following the pointer)
+  // or the pointer rests at its edge: the view slides over the ground, never off the board, and springs back
+  // when he moves or presses F. False where the camera has none (the turns' board).
+  pan(dx,dy){
+    if(!this.fixedCamera||!this.lookOffset||!['follow','overview'].includes(this.cameraView)||![dx,dy].every(Number.isFinite))return false;
+    const height=this.viewportHeight||this.canvas?.clientHeight||1,yaw=this.orbit.yaw,
+      metres=2*this.orbit.distance*Math.tan(this.camera.fov*Math.PI/360)/height,along=dy*metres/Math.max(.35,Math.sin(this.orbit.pitch));
+    const right=screenRight(yaw),up=screenUp(yaw),anchor=this.lookAnchor();
+    const next=boundedOffset(anchor,{x:this.lookOffset.x-right.x*dx*metres+up.x*along,z:this.lookOffset.z-right.z*dx*metres+up.z*along},this.boardBounds());
+    this.lookOffset.set(next.x,0,next.z);this.wake?.();return true;
+  },
+  // Where the view looks from before any look away: the soldier followed, or the overview's centre.
+  lookAnchor(){
+    const actor=this.focusMode?this.actors?.get(this.selected):null;
+    return actor?.group?.visible?actor.group.position:this.baseTarget;
+  },
+  // The board's rectangle in the scene, which a look away stays over.
+  boardBounds(){
+    if(!this.encounter?.width||!this.encounter?.height)return null;const a=this.world({x:0,y:0}),b=this.world({x:this.encounter.width-1,y:this.encounter.height-1});
+    return {minX:Math.min(a.x,b.x),maxX:Math.max(a.x,b.x),minZ:Math.min(a.z,b.z),maxZ:Math.max(a.z,b.z)};
+  },
+  // A held glance at the horizon (the fixed camera's H): on, it keeps the view it leaves and looks from the soldier
+  // toward the nearest landmark; off, it gives that view back as it was, unless another view was chosen meanwhile.
+  glance(on){
+    if(on){
+      if(this.cameraView==='horizon'||!this.live?.cameraTarget?.())return false;
+      this.glanceFrom={view:this.cameraView,focusMode:this.focusMode,orbit:{yaw:this.orbit.yaw,pitch:this.orbit.pitch,distance:this.orbit.distance},
+        target:this.baseTarget.clone(),offset:this.lookOffset?.clone()};
+      this.horizon();this.wake?.();return this.cameraView==='horizon';
+    }
+    const from=this.glanceFrom;this.glanceFrom=null;if(!from||this.cameraView!=='horizon')return false;
+    this.cameraView=from.view;this.focusMode=from.focusMode;Object.assign(this.orbit,from.orbit);this.baseTarget.copy(from.target);
+    if(from.offset)this.lookOffset?.copy(from.offset);this.wake?.();return true;
+  },
+  // Back to the soldier: the look away ends (moving, F). The overview keeps the place it was moved to until Z or F.
+  springBack({overview=false}={}){
+    // During a glance, the view it gives back is the one that springs back.
+    const view=this.glanceFrom?.view??this.cameraView,offset=this.glanceFrom?this.glanceFrom.offset:this.lookOffset;
+    if(!offset||view==='overview'&&!overview)return false;const moved=offset.lengthSq()>1e-6;offset.set(0,0,0);if(moved)this.wake?.();return moved;
+  },
   conversationFrame(){
     // A chosen overview and a manually dragged camera belong to the player.
     // In a follow view, fit the two actual people without rotating the camera
@@ -103,16 +155,18 @@ export const stageCamera={
   focusSelected({position:livePosition,distance,preferredYaw,preferredPitch}={}){
     const u=this.encounter.units.find(u=>u.id===this.selected);
     if(u){
-      const position=livePosition??this.world(u),mounted=['cavalry','heavy'].includes(u.role),view=findFocusCamera(this.environment,{position,mounted,distance,preferredYaw,preferredPitch,
-        sceneryGroups:[this.sceneryModels?.group,this.fieldFeatures?.group]});
+      const position=livePosition??this.world(u),mounted=['cavalry','heavy'].includes(u.role);
+      // The fixed camera never turns to see past scenery: it keeps its bearing and cuts the scenery away (environment-occlusion.js).
+      const view=this.fixedCamera?{yaw:FIELD_YAW,pitch:FIELD_PITCH,distance:Number.isFinite(distance)?distance:this.orbit.distance}
+        :findFocusCamera(this.environment,{position,mounted,distance,preferredYaw,preferredPitch,sceneryGroups:[this.sceneryModels?.group,this.fieldFeatures?.group]});
       if(!view){this.home();return;}this.focusMode=true;this.cameraView='follow';this.baseTarget.copy(position);this.baseTarget.y+=mounted?1.2:.85;
-      Object.assign(this.orbit,view);
+      Object.assign(this.orbit,view);this.lookOffset?.set(0,0,0);this.glanceFrom=null;
       this.followCollision={selected:this.selected,position:new T.Vector3().copy(position),view:{...view}};this.followGeometryDirty=false;
     }
   },
   refreshFollowCamera(position,mounted=false){
     const previous=this.followCollision;
-    if(!previous||!position||!this.focusMode||this.cameraView!=='follow'||this.drag||this.followFramingActive)return false;
+    if(this.fixedCamera||!previous||!position||!this.focusMode||this.cameraView!=='follow'||this.drag||this.followFramingActive)return false;
     // A manual rotation, pitch or zoom belongs to the player until Follow is
     // chosen again. Checking coordinates here is cheap; traversing geometry is
     // reserved for a two-metre movement or a completed scenery replacement.
@@ -124,7 +178,13 @@ export const stageCamera={
     Object.assign(this.orbit,view);previous.position.copy(position);previous.view={...view};this.followGeometryDirty=false;return true;
   },
   focusPoint(tile){
-    if(!tile||!Number.isFinite(tile.x)||!Number.isFinite(tile.y)){this.home();return;}const pos=this.world(tile);this.focusMode=false;
+    if(!tile||!Number.isFinite(tile.x)||!Number.isFinite(tile.y)){this.home();return;}const pos=this.world(tile);
+    // The fixed camera looks there as a drag would, and springs back as one does.
+    if(this.fixedCamera&&this.lookOffset&&['follow','overview'].includes(this.cameraView)){
+      const anchor=this.lookAnchor(),next=boundedOffset(anchor,{x:pos.x-anchor.x,z:pos.z-anchor.z},this.boardBounds());this.lookOffset.set(next.x,0,next.z);
+      this.hoverRing.visible=true;this.hoverRing.position.copy(pos);this.hoverRing.position.y+=.08;this.wake?.();return;
+    }
+    this.focusMode=false;
     this.baseTarget.set(pos.x,pos.y+.85,pos.z);this.hoverRing.visible=true;this.hoverRing.position.copy(pos);this.hoverRing.position.y+=.08;
   },
   zoom(delta){this.followCollision=null;this.orbit.distance=clamp(this.orbit.distance+delta,5.5,Math.max(85,this.orbit.distance,this.overviewDistance()));}

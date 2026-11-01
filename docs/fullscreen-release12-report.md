@@ -46,7 +46,7 @@ How each kind of check was made:
 | `keymapFrom` drops unknown actions instead of discarding a player's keys | As planned, entry by entry: an unknown action, a reserved key or more than two keys drop only that entry. A key the player chose wins over a default that shares it; a default that loses its key shows **no key**. |
 | The full-window canvas caps its pixel ratio, or scales adaptively, so Balanced keeps its frame rate; the Performance check is re-run | A pixel budget per quality (below). The Performance check ran in the browser smoke, in software rendering only; it says nothing about a device's frame rate. The owner's phone and laptop files after this release remain the test. |
 | The turn-based board keeps its layout | As planned. |
-| The camera | The second pull request. |
+| The camera | The second pull request ([report](camera-release12-report.md)). |
 
 ## Overlays in place
 

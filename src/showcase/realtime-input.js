@@ -1,10 +1,11 @@
 // The scene's pointer in real time (build brief §2.7, §3.14). Pointer Events
 // unify mouse, touch and pen. The left button acts where the pointer is and,
 // held over ground, keeps steering (the page re-issues the move every 200 ms);
-// the right button uses the current ability; the middle button turns the view
+// the right button uses the current ability; the middle button drags the view
+// over the ground (release 12: the camera keeps one bearing and never turns)
 // and the wheel zooms. On a Mac, Ctrl+click is the right button. Touch: a tap
 // is a left click, a still finger held for the hold delay inspects (lifting it
-// then does nothing), two fingers pinch to zoom and twist to turn.
+// then does nothing), two fingers pinch to zoom and drag the view together.
 // The scene keeps its browser defaults to itself: no autoscroll, page zoom,
 // context menu, long-press callout, pull-to-refresh or swipe navigation. There
 // is no dblclick handler anywhere.
@@ -37,7 +38,7 @@ export function bindRealtimeInput(canvas,handlers,{holdDelay=()=>450,swapButtons
       if(touches.size===2){
         // Once two fingers are down the touch is a gesture: no finger lifted from it taps.
         gesture=true;timers.clearTimeout(longPress);longPress=null;const [a,b]=[...touches.values()];
-        pinch={distance:Math.hypot(a.x-b.x,a.y-b.y),angle:Math.atan2(b.y-a.y,b.x-a.x),y:(a.y+b.y)/2};
+        pinch={distance:Math.hypot(a.x-b.x,a.y-b.y),x:(a.x+b.x)/2,y:(a.y+b.y)/2};
       }else if(touches.size===1){
         const start=point(e);timers.clearTimeout(longPress);
         longPress=timers.setTimeout(()=>{const t=touches.get(e.pointerId);if(t&&!t.moved&&touches.size===1){t.inspected=true;handlers.inspect?.(start);}},holdDelay());
@@ -56,13 +57,14 @@ export function bindRealtimeInput(canvas,handlers,{holdDelay=()=>450,swapButtons
       const t=touches.get(e.pointerId);if(!t)return;t.x=e.clientX;t.y=e.clientY;
       if(Math.hypot(t.x-t.startX,t.y-t.startY)>TAP_SLOP){t.moved=true;timers.clearTimeout(longPress);longPress=null;}
       if(touches.size===2&&pinch){
-        const [a,b]=[...touches.values()],distance=Math.hypot(a.x-b.x,a.y-b.y),angle=Math.atan2(b.y-a.y,b.x-a.x),y=(a.y+b.y)/2;
-        handlers.zoom?.((pinch.distance-distance)*.06);handlers.rotate?.(Math.atan2(Math.sin(angle-pinch.angle),Math.cos(angle-pinch.angle)),(y-pinch.y)*.004);
-        pinch={distance,angle,y};
+        // The fingers' spread zooms; their midpoint drags the ground with it.
+        const [a,b]=[...touches.values()],distance=Math.hypot(a.x-b.x,a.y-b.y),x=(a.x+b.x)/2,y=(a.y+b.y)/2;
+        handlers.zoom?.((pinch.distance-distance)*.06);handlers.pan?.(x-pinch.x,y-pinch.y);
+        pinch={distance,x,y};
       }
       return;
     }
-    if(mouse?.middle){handlers.rotate?.(-(e.clientX-mouse.x)*.006,(e.clientY-mouse.y)*.004);mouse.x=e.clientX;mouse.y=e.clientY;return;}
+    if(mouse?.middle){handlers.pan?.(e.clientX-mouse.x,e.clientY-mouse.y);mouse.x=e.clientX;mouse.y=e.clientY;return;}
     if(held)held=point(e);
     handlers.hover?.(point(e));
   });

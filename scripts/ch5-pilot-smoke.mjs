@@ -133,9 +133,11 @@ try{
   for(const path of loaded)assert.equal(assetResponses.get(path),200,`${path} loads from the production bundle`);
   record('Earned Chapter V camp restores in balanced 3D with every pilot scenery placement',{expectedScenery,assets:loaded});
   await geometry('Desktop courtyard geometry');await screenshot('courtyard-desktop.png');
-  await page.locator('#rt-board').focus();await page.keyboard.press('KeyH');
+  // Release 12: the horizon is a glance while H is held; letting it go gives the view back.
+  await page.locator('#rt-board').focus();await page.keyboard.down('KeyH');
   await page.waitForFunction(()=>{try{return JSON.parse(document.querySelector('#rt-board').dataset.renderStats).cameraView==='horizon';}catch{return false;}});
   await screenshot('courtyard-horizon.png');
+  await page.keyboard.up('KeyH');await page.waitForFunction(()=>window.__chamber.stage().cameraView==='follow');
   await page.keyboard.press('KeyZ');
   await page.waitForFunction(()=>{try{return JSON.parse(document.querySelector('#rt-board').dataset.renderStats).cameraView==='overview';}catch{return false;}});
   await page.setViewportSize({width:390,height:844});await geometry('Narrow courtyard geometry');await screenshot('courtyard-narrow.png');

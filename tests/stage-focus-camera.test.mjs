@@ -5,6 +5,7 @@ import * as T from '../vendor/three/three.module.js';
 import {findFocusCamera} from '../src/showcase/stage-focus-camera.js';
 import {stageCamera} from '../src/showcase/stage-camera.js';
 import {followRealtimeCamera} from '../src/showcase/realtime-field.js';
+import {FIELD_PITCH,FIELD_YAW} from '../src/showcase/camera-bearing.js';
 import {beginLiveCloseUp,sampleLiveCloseUp} from '../src/showcase/live-figures.js';
 import {createEnvironment,gridToWorld} from '../src/showcase/environment.js';
 
@@ -75,19 +76,28 @@ test('Loaded generated scenery replaces a hidden fallback and is included by the
   geometry.dispose();material.dispose();
 });
 
-test('Real-time Follow tests the moved actor against loaded scenery and retains flat-view controls',()=>{
+test('Real-time Follow keeps the field\'s one bearing past loaded scenery, from the moved actor, in both views (release 12)',()=>{
   const group=new T.Group(),loaded=new T.Group(),geometry=new T.BoxGeometry(2,5,1),material=new T.MeshStandardMaterial(),prop=new T.Mesh(geometry,material);
-  prop.position.set(0,3,2.4);prop.raycast=()=>{};loaded.add(prop);
+  // A wall between the soldier and where the fixed camera stands: the turns' Follow would turn away from it.
+  prop.position.set(1.6,3,1.6);prop.raycast=()=>{};loaded.add(prop);
   const actor={id:'hero',x:10,z:10},encounter={units:[{id:'hero',role:'soldier',x:0,y:0}]},before=JSON.stringify({actor,encounter}),stage=Object.create(stageCamera);
-  let wakes=0;Object.assign(stage,{encounter,environment:{group},sceneryModels:{group:loaded},orbit:{yaw:0,pitch:.36,distance:9},baseTarget:new T.Vector3(),
-    world:tile=>new T.Vector3((tile.x+.5)*2.5-10,0,(tile.y+.5)*2.5-10),wake(){wakes++;},home(){assert.fail('A clear angle exists');}});
+  let wakes=0;Object.assign(stage,{fixedCamera:true,encounter,environment:{group},sceneryModels:{group:loaded},orbit:{yaw:0,pitch:.36,distance:9},baseTarget:new T.Vector3(),
+    lookOffset:new T.Vector3(3,0,-2),world:tile=>new T.Vector3((tile.x+.5)*2.5-10,0,(tile.y+.5)*2.5-10),wake(){wakes++;},home(){assert.fail('The fixed camera never gives up on Follow');}});
   followRealtimeCamera(stage,actor);
-  assert.equal(stage.selected,'hero');assert.equal(stage.cameraView,'follow');assert.equal(wakes,1);assert.equal(stage.orbit.distance,9);
+  assert.equal(stage.selected,'hero');assert.equal(stage.cameraView,'follow');assert.equal(wakes,1);
+  assert.deepEqual({...stage.orbit},{yaw:FIELD_YAW,pitch:FIELD_PITCH,distance:9},'the bearing and elevation stay; the scenery is cut away instead (environment-occlusion.js)');
   assert.deepEqual(stage.followCollision.position.toArray(),[0,0,0],'Uses live metres instead of the original encounter tile');
-  assert.notDeepEqual(stage.orbit,{yaw:0,pitch:.87,distance:9});assertSightlines({group},{x:0,y:0,z:0},false,stage.orbit,[loaded]);
+  assert.deepEqual(stage.lookOffset.toArray(),[0,0,0],'Follow springs back from a look away');
+  assert.equal(stage.refreshFollowCamera(new T.Vector3(4,0,0)),false,'and never turns as he moves');assert.equal(stage.orbit.yaw,FIELD_YAW);
   assert.equal(JSON.stringify({actor,encounter}),before);
-  const flat={orbit:{yaw:.5,pitch:.5,distance:12},wake(){wakes++;}};followRealtimeCamera(flat,actor,'chamber');
-  assert.equal(flat.cameraView,'follow');assert.equal(flat.selected,'hero');assert.deepEqual(flat.orbit,{yaw:.5,pitch:.98,distance:13});assert.equal(wakes,2);
+  stage.orbit.distance=40;followRealtimeCamera(stage,actor,'chamber');assert.equal(stage.orbit.distance,19,'a chamber follows from its own nearer distances');
+  const turns=Object.create(stageCamera);Object.assign(turns,{encounter,environment:{group},sceneryModels:{group:loaded},orbit:{},baseTarget:new T.Vector3(),
+    world:()=>new T.Vector3(),home(){assert.fail('A clear angle exists');}});
+  turns.selected='hero';turns.focusSelected({preferredYaw:FIELD_YAW,preferredPitch:FIELD_PITCH,distance:9});
+  assert.notEqual(turns.orbit.yaw,FIELD_YAW,'the turns\' board still turns clear of the same wall');assertSightlines({group},{x:0,y:0,z:0},false,turns.orbit,[loaded]);
+  const flat={orbit:{yaw:.5,pitch:.5,distance:12},springs:0,springBack({overview}){this.springs+=overview?1:0;},wake(){wakes++;}};followRealtimeCamera(flat,actor,'chamber');
+  assert.equal(flat.cameraView,'follow');assert.equal(flat.selected,'hero');assert.deepEqual(flat.orbit,{yaw:.5,pitch:FIELD_PITCH,distance:13});assert.equal(wakes,3);
+  assert.equal(flat.springs,1,'the 2D view springs back too');
   geometry.dispose();material.dispose();
 });
 

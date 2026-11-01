@@ -133,9 +133,10 @@ async function exported(){
   await settingsCommand(page,'export');const code=await page.locator('#save-code').inputValue();await closePanel(page);
   return Game.serialize(await restoreCode(code));
 }
+// Release 12: the horizon is a glance held on its key; glanceEnd lets it go and the view comes back.
 async function camera(mode,key){
   const previousFrame=await page.evaluate(()=>window.__chamber.stage().profileFrames);
-  await page.locator('#rt-board').focus();await page.keyboard.press(key);
+  await page.locator('#rt-board').focus();if(mode==='horizon')await page.keyboard.down(key);else await page.keyboard.press(key);
   try{
     await page.waitForFunction(({expected,previousFrame})=>{try{const stage=window.__chamber.stage();return stage.cameraView===expected&&stage.cameraSettled&&stage.profileFrames>=previousFrame+2&&JSON.parse(document.querySelector('#rt-board').dataset.renderStats).cameraView===expected;}catch{return false;}},{expected:mode,previousFrame});
   }catch(error){
@@ -161,6 +162,9 @@ async function camera(mode,key){
   }
   report.cameraEvidence.push(await page.evaluate(previousFrame=>{const stage=window.__chamber.stage();return {camp:window.__realtime.world().campId,view:stage.cameraView,settled:stage.cameraSettled,previousFrame,renderedFrames:stage.profileFrames,reducedMotion:stage.reducedMotion,position:stage.camera.position.toArray(),lookTarget:stage.lookTarget.toArray()};},previousFrame));
   assert.equal(report.cameraEvidence.at(-1).reducedMotion,true,'The live stage applies the static inventory capture preference');
+}
+async function glanceEnd(){
+  await page.keyboard.up('KeyH');await page.waitForFunction(()=>window.__chamber.stage().cameraView!=='horizon');
 }
 async function screenshot(name){
   await pause();await page.locator('#rt-board').scrollIntoViewIfNeeded();
@@ -224,7 +228,7 @@ try{
     for(const url of checkpoint.urls)assert.equal(assetResponses.get(new URL(url,base).pathname),200,`Chapter ${checkpoint.chapter}: ${url} loads locally`);
     for(const [mode,key]of [['follow','KeyF'],['horizon','KeyH'],['overview','KeyZ']]){
       await camera(mode,key);
-      if(mode==='horizon')await screenshot(`chapter-${String(checkpoint.chapter).padStart(2,'0')}-horizon.png`);
+      if(mode==='horizon'){await screenshot(`chapter-${String(checkpoint.chapter).padStart(2,'0')}-horizon.png`);await glanceEnd();}
     }
     record(`Chapter ${checkpoint.chapter}: every regional asset loads, all three cameras work and previous scenery retires`,{placements:checkpoint.expectedModels,uniqueAssets:checkpoint.urls.length,assets:checkpoint.urls});
     if(!partial&&[1,8,12].includes(checkpoint.chapter)){await services(checkpoint);await narrow(checkpoint.chapter);}
@@ -238,7 +242,7 @@ try{
   record('Performance quality releases every generated scenery master while retaining the playable camp');
   await menuCommand(page,'settings');await (await revealControl(page,'#graphics-quality')).selectOption('balanced');await closePanel(page);
   await ready(last,'balanced',{kits:false});await restore(chapters[0]);await pause();await camera('horizon','KeyH');
-  await screenshot('chapter-01-return.png');
+  await screenshot('chapter-01-return.png');await glanceEnd();
   assert.deepEqual(report.residency.at(-1).cache,report.residency[0].cache,'Returning to Chapter I retains only its original working set');
   record('Returning across all regions restores Chapter I without accumulating scenery masters');
   // A real HTTP failure with an empty module cache tests the shipped fallback
@@ -254,7 +258,7 @@ try{
   await page.locator('#rt-board').focus();await page.keyboard.down('ArrowRight');
   try{await page.waitForFunction(before=>{const world=window.__realtime.world(),hero=world.actors.find(a=>a.id===world.controlled);return world.tick>=before.tick+10&&Math.hypot(hero.x-before.x,hero.z-before.z)>.1;},beforeMove,{timeout:30000});}
   finally{await page.keyboard.up('ArrowRight');}
-  await pause();await camera('horizon','KeyH');await screenshot('chapter-01-all-models-unavailable.png');
+  await pause();await camera('horizon','KeyH');await screenshot('chapter-01-all-models-unavailable.png');await glanceEnd();
   await (await revealControl(page,'[data-cmd="conversation"][data-id="table"]')).click();
   await page.locator('#modal[open]').waitFor({state:'visible'});await closePanel(page);
   record('With every model request unavailable, the procedural camp still renders, moves and opens its direct services',

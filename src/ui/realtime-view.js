@@ -90,7 +90,6 @@ export function fieldMarkup({state,keymap,kind='field'}){
   return `<section class="rt-field" data-live data-kind="${kind}" data-encounter="${esc(e.id)}" aria-label="${esc(e.title)}, ${chamber?'the chamber':'in real time'}">
     <header class="rt-top">
       ${camp?'':`<div class="rt-mission"><p class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')}</p><h2>${esc(e.title)}</h2></div>`}
-      <label class="rt-view-control">View<select data-role="cameraSelect" aria-label="World view"><option value="follow"${chamber?'':' selected'}>Follow</option><option value="overview"${chamber?' selected':''}>Overview</option><option value="horizon">Horizon</option></select></label>
       <div class="rt-time" role="group" aria-label="Time">
         <span class="rt-paused" data-role="pausedBand" hidden>Paused</span>
         <button data-role="pauseButton" class="rt-pause" type="button" data-shortcut="pause" aria-keyshortcuts="${key('pause')}" aria-pressed="false">Pause</button>

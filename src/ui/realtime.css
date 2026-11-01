@@ -394,10 +394,6 @@
 .world-first .rt-chronicle-bar{padding:.15rem .5rem;font-size:calc(.7rem * var(--text-scale,1))}
 .world-first .rt-camp-note{font-size:calc(.75rem * var(--text-scale,1));margin:.35rem .2rem}
 .world-courtyard.world-first .rt-menu{display:none}
-.world-first .rt-view-control{display:flex;align-items:center;gap:.35rem;color:var(--rt-muted);font-size:calc(.75rem * var(--text-scale,1));margin:0}
-.rt-view-control select{inline-size:auto;max-inline-size:12rem;min-block-size:2.75rem;padding:.3rem .5rem;border:1px solid var(--rt-line);border-radius:.35rem;
-  background:var(--rt-panel);color:#f4ead5;font:inherit;font-size:calc(.8rem * var(--text-scale,1))}
-.rt-view-control select:focus-visible{outline:3px solid var(--rt-focus);outline-offset:2px}
 .world-first .world-camp-services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem 1.2rem;scroll-margin-block-start:1rem;
   background:var(--plaster,#e9e0ce);border-block-start:1px solid var(--line,#c8bca3);padding:.75rem 1rem}
 .world-services-heading{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:space-between;align-items:center}
@@ -409,7 +405,7 @@
 .world-first .rt-hud{gap:.3rem .65rem;padding:.35rem .65rem}
 .world-first .rt-support{margin-block-start:.1rem}
 /* Camp has one departure objective. Its local story remains in a disclosure
-   after the world; the camera and pause share one short row above it. */
+   after the world; pause and the Menu share one short row above it. */
 .world-first [data-kind="camp"] .rt-top{justify-content:space-between}
 .world-first [data-kind="camp"] .rt-support>.rt-status-strip{display:block;padding:0;background:transparent}
 .world-first [data-kind="camp"] .rt-mission-details>summary{min-block-size:2.75rem;padding:.35rem .5rem}
@@ -426,8 +422,7 @@
   .world-departure-title{flex-basis:12rem}.world-camp-actions{flex:1 1 auto;justify-content:flex-end}
   .world-first .rt-field{--rt-scene-height:clamp(20rem,54dvh,34rem)}.world-first .rt-field .rt-scene{min-block-size:20rem}
   .world-first .rt-mission{flex:1 1 12rem}.world-first .rt-top{gap:.25rem .5rem}
-  .world-first .rt-view-control{order:2}.world-first .rt-time{flex:0 1 auto;margin-inline-start:auto}
-  .world-first [data-kind="camp"] .rt-view-control{order:0}
+  .world-first .rt-time{flex:0 1 auto;margin-inline-start:auto}
   .world-first .rt-top>.rt-menu{margin-inline-start:auto}
   .world-first .world-camp-services{grid-template-columns:minmax(0,1fr);padding:.65rem;gap:.7rem}
   .world-camp-services>.world-preparation{grid-column:1;grid-row:auto}
@@ -518,8 +513,6 @@ html[data-world="full"] .rt-squads{flex-wrap:nowrap}
   /* A phone keeps the world large: one row each for the actions and for the people, both scrolling sideways. */
   html[data-world="full"] .rt-top{gap:.3rem;padding-inline:.4rem}
   html[data-world="full"] .rt-top button{white-space:nowrap;padding-inline:.55rem}
-  html[data-world="full"] .rt-view-control{font-size:0;gap:0}
-  html[data-world="full"] .rt-view-control select{font-size:calc(.75rem * var(--text-scale,1));max-inline-size:7rem}
   html[data-world="full"] .rt-hud>.rt-ability-area{display:flex;flex-wrap:nowrap;align-items:center;gap:.3rem;overflow-x:auto;overscroll-behavior-x:contain}
   html[data-world="full"] .rt-ability-area>.rt-current{display:none}
   html[data-world="full"] .rt-ability-area .rt-ability-bar{flex:none;flex-wrap:nowrap}

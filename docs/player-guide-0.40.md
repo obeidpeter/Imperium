@@ -92,16 +92,17 @@ and a button for each panel. The main action bar shows common actions;
 reveal the selected action. **Options → Time controls** contains half
 speed and one-round stepping. **All actions** offers every action as a
 text list. Everything else opens over the world and closes with **Esc**:
-tips, camera controls and the battle log at its top-left corner, **All
-actions** and order review at its right edge, and a fight's result in
-the middle.
+tips and the battle log at its top-left corner, **All actions** and
+order review at its right edge, and a fight's result in the middle. The
+camera follows your soldier from one fixed angle: see
+[The 3D camera](#the-3d-camera).
 
 In a walkable camp, the strip names the chapter, your rank, the next
 mission and any departure requirement. Walk to people and places to use
 them. **Menu → Camp** opens the camp's list over the world: the chapter
 decision, battle preparation, people, places, the local report and
 **March out**. Choosing a person there walks you to them; **Esc** closes
-the list. The camera selector and **Pause/Resume** stay in the strip.
+the list. **Pause/Resume** and the **Menu** stay in the strip.
 
 Optional exercises appear when deployment, squad orders, engineering or
 political commitments become available. Open the **Tip** to follow a short
@@ -216,8 +217,8 @@ Ctrl with a number.
 | Kit, character, journal        | **I**, **C**, **J**                      | Menu buttons                       | **I**, **C**, **J**                                              |
 | Mission orders, chronicle, map | **Q**, **L**, **M**                      | Menu buttons                       | **Q**, **L**, **M**                                              |
 | Quick save                     | **F2**                                   | **Menu → Save & load → Quick save**              | **F2**                                                           |
-| Turn and zoom the 3D view      | Middle-drag; scroll wheel                | Two-finger twist; pinch            | **,** and **.**; **+ / −**                                       |
-| Follow, overview, horizon      | **F**, **Z**, **H**                      | Camera buttons                     | **F**, **Z**, **H**                                              |
+| Look further; zoom             | Middle-drag; scroll wheel                | Two-finger drag; pinch             | **+ / −**                                                        |
+| Follow, whole field, horizon   | **F**, **Z**, hold **H**                 | Moving springs back; pinch out     | **F**, **Z**, hold **H**                                         |
 | Settings, help and saves       | **Esc** for the Menu; **?** for help     | **Menu** button                    | **Esc**; **?**                                                   |
 
 > **Tip** Press **P** whenever a fight gets busy. While paused you can
@@ -640,9 +641,9 @@ over it.
   **Decorations** and **Help**, each with its key. On a phone they fold
   into one **Panels** button.
 
-- **Over the world**, when you open them: tips, camera controls and the
-  battle log at the top-left corner; **All actions** and order review at
-  the right edge; a fight's result in the middle. **Esc** closes them.
+- **Over the world**, when you open them: tips and the battle log at the
+  top-left corner; **All actions** and order review at the right edge; a
+  fight's result in the middle. **Esc** closes them.
 
 ## Panels
 
@@ -673,9 +674,10 @@ panels**. Conversations, the chronicle and the Menu always pause it.
 - **Shift**+click forces an attack. Hold **U** to see everything you can
   use.
 
-- Scroll wheel: zoom. Middle-drag: turn the 3D view. Moving the pointer
-  to the edge of the screen scrolls the view when **Edge scrolling** is
-  on.
+- Scroll wheel: zoom, as far out as the whole field. Middle-drag: slide
+  the view to look further; it springs back when your soldier moves or
+  you press **F**. Moving the pointer to the edge of the scene slides the
+  view too when **Edge scrolling** is on.
 
 - **Swap mouse buttons** in **Settings → Controls → Mouse & touch** for
   left-handed play.
@@ -701,8 +703,8 @@ panels**. Conversations, the chronicle and the Menu always pause it.
   contains **Half speed** and **Play one round**. In a Contest, **End hour**
   ends the current hour.
 
-- Drag with two fingers to look around, pinch to zoom and twist to turn
-  the 3D view.
+- Drag with two fingers to look further and pinch to zoom; the view
+  springs back when your soldier moves.
 
 - Tap portraits to take control of companions, and standards to select
   squads (tap more to add them, **Clear** to finish). With a squad
@@ -746,12 +748,11 @@ has loot; otherwise it is cleared. No new enemy is chosen automatically.
 | **B**                   | Raise the war cry, shown in the message line. It changes nothing in the rules; your companions answer it.                                                                                                                                                   |
 | **F2**                  | Quick save                                                                                                                                                                                                                                                  |
 | **Esc**                 | Each press clears one thing: the open panel, then the current target, then the squad selection; with nothing left, it opens the Menu. In full screen, the browser uses the first press to leave full screen.                                                |
-| **F**                   | Follow the soldier you control                                                                                                                                                                                                                              |
-| **Z**                   | Zoom out to the overview, and back                                                                                                                                                                                                                          |
-| **H** (3D)              | Horizon view                                                                                                                                                                                                                                                |
-| **,** / **.** (3D)      | Turn the view                                                                                                                                                                                                                                               |
-| **+ / −**               | Zoom                                                                                                                                                                                                                                                        |
-| **X**                   | See through the walls, roofs and trees that hide your soldier                                                                                                                                                                                               |
+| **F**                   | Follow the soldier you control, and bring the view back to him                                                                                                                                                                                                |
+| **Z**                   | The whole field, and back                                                                                                                                                                                                                                     |
+| **H** (hold, 3D)        | Glance at the horizon while the key is held                                                                                                                                                                                                                   |
+| **+ / −**               | Zoom                                                                                                                                                                                                                                                          |
+| **X** (3D)              | See through the walls, roofs and trees between the camera and your soldier; press again to stand them back up                                                                                                                                                 |
 | **G**                   | Show ranges: your weapon's reach, throwing range and the area of the current ability                                                                                                                                                                        |
 | **I C J Q L M R A O ?** | Open the panels listed above                                                                                                                                                                                                                                |
 
@@ -764,19 +765,24 @@ scene.
 
 ## The 3D camera
 
-The **View** selector offers Follow, Overview and Horizon in camps, battles and chambers. It changes only the camera, including while paused. Horizon is unavailable in the flat 2D view.
+The camera follows your soldier from one fixed angle, the 2D view's: it
+looks from the south-east toward the north-west, so up on the screen is
+north-west on the map in both views, and the arrow keys walk that way.
+It never turns. Moving the camera never spends anything or changes the
+rules, and it works while paused.
 
-Moving the camera never spends anything or changes the rules.
+| **Control**                | **What it does**                                                                                                                                                                                                                                                                                       |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Follow** (**F**)         | Bring the view back to the soldier you control, at the usual distance. Taking control of a companion follows him.                                                                                                                                                                                      |
+| Scroll wheel, or **+ / −** | Zoom, from close by out to the whole field. On a touch screen, pinch.                                                                                                                                                                                                                                  |
+| Middle-drag                | Slide the view over the ground to look further. On a touch screen, drag with two fingers; with **Edge scrolling** on, rest the pointer at the scene's edge. The view springs back when your soldier moves or you press **F**. A battle-log entry and the **Target** and **Objective** pointers look there the same way. |
+| **Z**                      | The whole field, for squads, deployment and a chamber's floor; press again, or **F**, to come back. Moving your soldier leaves this view where it is.                                                                                                                                                  |
+| Hold **H** (3D)            | Glance at the horizon: the view lowers and turns toward the chapter's nearest landmark, with the sky, the region's skyline (the Danube's woods, the Euphrates' buttes, the Alps, Palmyra, Rome) and landmarks such as Novae's gate, the bridge over the Adda or the Colosseum. Let go and the view comes back as it was. Distant scenery cannot be used or given orders. |
+| **X** (3D)                 | See through: the walls, roofs and trees between the camera and your soldier fade in a wide circle round him; press again to stand them back up. A smaller circle fades on its own whenever something hides him.                                                                                       |
+| **Switch to 2D / 3D**      | Change between the 3D scene and the 2D isometric view. Commands, saves and progress are shared, and switching never restarts an encounter.                                                                                                                                                             |
 
-| **Control**                | **What it does**                                                                                                                                                                                                                            |
-|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Follow** (**F**)         | Keep the soldier you control at the centre, with the camera moved clear of walls and buildings that would hide him. Once you turn or zoom the view yourself, it keeps your angle and distance until you choose Follow again. On by default. |
-| Scroll wheel, or **+ / −** | Zoom. On a touch screen, pinch.                                                                                                                                                                                                             |
-| Middle-drag, or **, / .**  | Turn the view around your soldier, in steps of 45° with the keys                                                                                                                                                                            |
-| **Overview** (**Z**)       | The wide tactical view; press again to come back                                                                                                                                                                                            |
-| **Horizon** (**H**)        | Lower the view to show the sky, the region's skyline (the Danube's woods, the Euphrates' buttes, the Alps, Palmyra, Rome) and the chapter's three landmarks, such as Novae's gate, the bridge over the Adda or the Colosseum; drag to look in another direction. Distant scenery cannot be used or given orders. |
-| **See through** (**X**)    | Fade the walls, roofs and trees that stand between the camera and your soldier                                                                                                                                                              |
-| **Switch to 2D / 3D**      | Change between the 3D scene and the 2D isometric view. Commands, saves and progress are shared, and switching never restarts an encounter.                                                                                                  |
+In a chamber the arrow keys step one place at a time on the floor's own
+grid: **↑** is north, up and to the right on the screen.
 
 ## Watching a fight
 
@@ -787,8 +793,8 @@ Moving the camera never spends anything or changes the rules.
   can be turned off in **Settings → Graphics**.
 
 - **Combat close-ups** briefly bring the camera in on critical blows, then
-  return. They never happen while paused, while you turn the view or
-  with reduced motion.
+  return. They never happen while paused, over the whole field or with
+  reduced motion.
 
 ## Changing the controls
 
@@ -1654,8 +1660,8 @@ In the real-time final battle, two clean reconnaissance operations intercept one
 - The confrontation is fought before **Aurelian's walls**, beyond the
   field's east edge: brick stretches still rising behind scaffolds,
   square towers, and the double gate between its round towers. They are
-  scenery and change no route. Turn the view toward them and the camera
-  comes in to their face rather than passing into them. On Performance, or
+  scenery and change no route. Near them the camera comes in to their
+  face rather than passing into them. On Performance, or
   if they cannot be downloaded, a simpler wall stands in their place.
 
 - Higher standing keeps more routes open and improves your position. A
@@ -1802,7 +1808,7 @@ expand when you need them.
 | Keep fighting       | Off by default: after a kill, your soldier engages whoever is attacking him.                     |
 | Quick-cast          | Off by default: an ability's number uses it at the pointer at once.                              |
 | Hold to move        | On by default: hold the mouse button down to keep moving toward the pointer.                     |
-| Edge scrolling      | Off by default: the view scrolls when the pointer reaches the edge of the screen.                |
+| Edge scrolling      | Off by default: the view slides when the pointer reaches the edge of the scene, and springs back when your soldier moves. |
 | Swap mouse buttons  | For left-handed play.                                                                            |
 | Labels              | While **U** is held, or always.                                                                  |
 | Touch hold delay    | How long to hold a finger still to inspect: 0.25 to 1.2 seconds.                                 |
@@ -1926,7 +1932,7 @@ its checkpoint.
 | Speeches unaffected by your soldier                            | Eloquence, Authority and decorations add to Resolve, Denounce, Rebut and Invoke Record, never taking them below their 0.38 values |
 | A Formation lasts for the current round                        | Formations last until you order another                                                                                           |
 | Wounds reduce readiness                                        | Wounded companions spend a few encounters in the valetudinarium                                                                   |
-| **Pause** opened settings and saves; **Home** reset the camera | **Esc** opens the **Menu** and **P** only pauses; **Home** takes back your own soldier and **Z** is the overview                  |
+| **Pause** opened settings and saves; **Home** reset the camera | **Esc** opens the **Menu** and **P** only pauses; **Home** takes back your own soldier and **Z** is the whole field               |
 | **Action camera** on every committed attack                    | **Combat close-ups** on critical blows only                                                                                       |
 | **Next ready unit** (**N**); **Show grid** (**G**)             | Play one round while paused (**N**); show ranges (**G**)                                                                          |
 | **Confirm moves**; **Turn resolved** panel; **Speed 1× / 2×**  | Removed; the battle log; game speed and slow time                                                                                 |

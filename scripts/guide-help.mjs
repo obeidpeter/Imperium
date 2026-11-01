@@ -18,8 +18,8 @@ export const KEY_CELLS=Object.freeze({
   '**Space**':['combat_toggle'],'**T** / **Shift+T**':['target_next_enemy','target_next_friend'],'**E**':['interact_nearest'],'**1–0**':digits(10),
   '**S**':['ability_bar'],'**P** or Pause':['pause'],'**V**':['slow_time'],'**N**':['step_round'],'**W**':['walk_toggle'],'**U** (hold)':['show_usable'],
   '**\\[** / **\\]**':['party_prev','party_next'],'**Home**':['control_hero'],'**Shift+1–6**':[1,2,3,4,5,6].map(n=>`select_squad_${n}`),'**Y**':['yield_floor'],
-  '**B**':['war_cry'],'**F2**':['quick_save'],'**F**':['camera_follow'],'**Z**':['camera_overview'],'**H** (3D)':['camera_horizon'],
-  '**,** / **.** (3D)':['camera_rotate_left','camera_rotate_right'],'**+ / −**':['zoom_in','zoom_out'],'**X**':['see_through'],'**G**':['show_ranges'],
+  '**B**':['war_cry'],'**F2**':['quick_save'],'**F**':['camera_follow'],'**Z**':['camera_overview'],'**H** (hold, 3D)':['camera_horizon'],
+  '**+ / −**':['zoom_in','zoom_out'],'**X** (3D)':['see_through'],'**G**':['show_ranges'],
   '**I C J Q L M R A O ?**':['panel_kit','panel_character','panel_journal','panel_orders','panel_chronicle','panel_map','panel_company','panel_decorations','panel_options','help'],
   '**I**':['panel_kit'],'**C**':['panel_character'],'**J**':['panel_journal'],'**Q**':['panel_orders'],'**L**':['panel_chronicle'],'**M**':['panel_map'],
   '**R**':['panel_company'],'**A**':['panel_decorations'],'**O**':['panel_options'],'**?**':['help']});

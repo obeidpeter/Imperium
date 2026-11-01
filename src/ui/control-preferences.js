@@ -36,7 +36,7 @@ export const POINTER_SETTINGS=Object.freeze([
   ['keep-fighting','keepFighting','Keep fighting','After a kill, your soldier engages whoever is attacking him.'],
   ['quick-cast','quickCast','Quick-cast','An ability’s number uses it at the pointer at once.'],
   ['hold-to-move','holdToMove','Hold to move','Hold the mouse button down to keep moving toward the pointer.'],
-  ['edge-scroll','edgeScroll','Edge scrolling','The 3D view slides when the pointer reaches the edge of the scene.'],
+  ['edge-scroll','edgeScroll','Edge scrolling','The view slides when the pointer reaches the edge of the scene, and springs back when your soldier moves.'],
   ['swap-buttons','swapButtons','Swap mouse buttons','For left-handed play.']]);
 function pointerPreferences(settings){
   return POINTER_SETTINGS.map(([id,key,label,hint])=>`<label class="setting" for="${id}"><span>${label}<small class="muted">${hint}</small></span>`+
