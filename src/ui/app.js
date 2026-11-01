@@ -186,7 +186,9 @@ const renderScheduler=createRenderScheduler(requestAnimationFrame,({activeId})=>
   }
   if(pendingReplay){replay.start(pendingReplay,settings.reducedMotion||document.hidden);pendingReplay=null;}
   const result=document.querySelector('.rt-result h2'),resultKey=result?`${state?.encounter?.id}:${state?.encounter?.status}`:'';
-  if(result&&resultKey!==resultFocusKey){resultFocusKey=resultKey;result.focus({preventScroll:true});result.closest('.rt-result').scrollIntoView({block:'start',behavior:'instant'});}
+  if(result&&resultKey!==resultFocusKey){resultFocusKey=resultKey;result.focus({preventScroll:true});
+    // A full-window world (release 12) shows the result over the world: nothing scrolls to it.
+    if(document.documentElement.dataset.world!=='full')result.closest('.rt-result').scrollIntoView({block:'start',behavior:'instant'});}
   else if(activeId&&document.getElementById(activeId))document.getElementById(activeId).focus({preventScroll:true});
   if(!result)resultFocusKey='';
 });
@@ -208,6 +210,8 @@ function render(){
   document.documentElement.dataset.quality=graphics.mode;
   document.documentElement.dataset.contrast=settings.highContrast?'high':'standard';
   document.documentElement.dataset.hud=settings.compactHud===false?'full':'compact';
+  // Release 12: a real-time battle or chamber fills the window (realtime.css), with what used to follow the world over it.
+  const world=fullWorld();document.documentElement.dataset.world=world?'full':'';if(!world)pageOverlay='';
   document.documentElement.style.setProperty('--text-scale',settings.textScale||1);
   const activeId=document.activeElement?.id;
   // A new screen starts afresh; within one, the page is updated in place, so the
@@ -217,6 +221,7 @@ function render(){
   sessionControls.release();
   updatePage(app,screen==='title'?titleView():state?.phase==='encounter'?battle():state?.phase==='promotion'?promotion():state?.phase==='epilogue'?ending()
     :campMode()?realtimeCamp():camp());
+  const frame=app.querySelector('main.realtime-frame');if(frame){if(pageOverlay)frame.dataset.overlay=pageOverlay;else delete frame.dataset.overlay;}
   refreshTrackedErrand();
   syncSessionControls();
   const target=fieldTarget();
@@ -270,6 +275,18 @@ function mountPainting(){
 let field=null;
 // A field's world handed to the field built after it for another view (rebuildField).
 let keptField=null;
+// Release 12: a real-time battle or chamber fills the window; pageOverlay names a page-drawn section shown over
+// the world on request (the chamber's records), which Esc or its button closes.
+let pageOverlay='';
+function fullWorld(){const t=fieldTarget();return !!t&&t.kind!=='camp';}
+function togglePageOverlay(name){
+  pageOverlay=pageOverlay===name?'':name;render();
+  const shown=pageOverlay?app.querySelector(`.realtime-frame[data-overlay="${pageOverlay}"] > .chamber-records`):null;
+  for(const b of app.querySelectorAll('[data-cmd="page-overlay"]'))b.setAttribute('aria-expanded',String(b.dataset.id===pageOverlay));
+  if(shown){shown.tabIndex=-1;shown.focus({preventScroll:true});}else field?.element?.querySelector('canvas')?.focus({preventScroll:true});
+}
+// Esc from the scene closes a page overlay before it opens the Menu.
+const menuOrClose=()=>{if(pageOverlay){togglePageOverlay(pageOverlay);return;}showNavigation();};
 // What the field plays: a fight's saved world, or (a chamber) the Contest itself, which a retry or a load replaces.
 const fieldSource=()=>chamberMode()?state.encounter:state?.encounter?.realtime?.resume??state?.encounter?.realtime?.world??null;
 // A camp walks in real time when its chapter does (and the 3D view is on: 2D parity comes with its own view).
@@ -337,7 +354,7 @@ const lessonFor=kind=>(world,seen)=>settings.guide===false?null:realtimeLesson({
 function rememberExercise(id,complete){settings.lessonProgress=rememberLesson(settings.lessonProgress,id,complete);saveSettings();}
 function chamberCallbacks(){
   return {
-    lesson:lessonFor('chamber'),onLessonProgress:rememberExercise,onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
+    lesson:lessonFor('chamber'),onLessonProgress:rememberExercise,onMenu:menuOrClose,onPanel:name=>openPanel(name),onQuickSave:()=>quickSave(),
     chamber:{state:()=>state,apply:op=>chamberApply(op),known:id=>chamberKnown().has(id),ask:id=>{if(!chamberKnown().has(id)){chamberKnown().add(id);render();}},
       inspect:id=>showModal('Inspect a document',documentPreview(state,id))}
   };
@@ -407,7 +424,7 @@ function campCallbacks(){
     lesson:lessonFor('camp'),onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
     // A chest opens its contents (release 11); other objects their conversation.
     onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.container){showSoldierPanel('container',o.container);return;}if(o?.talk)showConversation(o.talk);},
-    onMenu:()=>showNavigation(),onPanel:name=>openPanel(name),onHud:world=>{noteVisit(world);refreshMissionPanel();},onQuickSave:()=>quickSave()
+    onMenu:menuOrClose,onPanel:name=>openPanel(name),onHud:world=>{noteVisit(world);refreshMissionPanel();},onQuickSave:()=>quickSave()
   };
 }
 function noteVisit(world){
@@ -598,7 +615,7 @@ function fieldCallbacks(){
     onResume:()=>{if(Game.clearResume(state).ok){if(field)field.source=fieldSource();if(!sessionGate.busy&&!saveConflict)sessionGate.run(()=>persist()).catch(()=>{});}},
     onQuickSave:()=>quickSave(),
     onEnd:world=>change(()=>{const r=Game.resolveRealtime(state,world);if(field)field.source=fieldSource();return r;}),
-    onMenu:()=>showNavigation(),
+    onMenu:menuOrClose,
     onPanel:name=>fieldPanel(name),
     onTalk:id=>fieldTalk(id),
     onLoot:id=>fieldLoot(id),
@@ -1077,6 +1094,7 @@ document.addEventListener('click',
         }else toast('Offline content is available from the production build.');break;
       }
 case 'close-modal':modal.close();break;
+case 'page-overlay':togglePageOverlay(id);break;
 case 'rt-take':takeLoot(id,b.dataset.item);break;
 case 'rt-take-from':takeFromField(id,b.dataset.item);break;
 case 'conversation':showConversation(id);break;
