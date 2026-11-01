@@ -132,7 +132,7 @@ All in headless Chromium with software rendering (SwiftShader), on the productio
 - **`smoke:world`** (all twelve camps) did not run locally.
 - **CI's first run on the pull request** passed six of its seven jobs: `npm run verify` on Node 20 and 22, both benchmarks, the usability and navigation checks, and the twelve camps. In the browser smoke job, the order review passed and 20 of `smoke`'s 21 scenarios passed. The finale failed, so the polish and cavalry checks after it did not run.
 - **The finale's failure was the check's.** It walked the soldier to the nearest enemy and swore the oath within 20 m of him. The nearest enemy is now the claimant's guard captain, this release's champion, who comes for the soldier. He belongs to no band, so the oath reached none: the nearest band stood 31 m away, beyond the 23 m reach. The check now walks to the nearest band's men, and passes locally; on failure it reports whom the oath was sworn beside. The rule is unchanged. The sweeps' bot has always walked to a band, and wins the oath route on every seed.
-- **Then, locally:** the polish and cavalry checks.
+- **Then, locally:** `smoke:polish` passed its 20 checks, and `smoke:cavalry` its 4.
 
 ## Limitations
 
