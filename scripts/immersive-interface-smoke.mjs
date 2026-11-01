@@ -83,8 +83,9 @@ async function measure(page,label,{camp=false,desktop=false,scale=1}={}){
   // and the 2D view says that the horizon is a 3D view.
   const tick=await page.evaluate(()=>window.__realtime.world().tick);
   assert.equal(await page.locator('[data-role="cameraSelect"]').count(),0,'No View choice: the camera keeps one bearing');
-  await page.locator('#rt-board').focus();
-  for(const [key,view] of [['z','overview'],['z','follow'],['z','overview'],['f','follow']]){
+  // A chamber opens on its whole floor, a camp or a battle on the soldier: Z toggles from either.
+  await page.locator('#rt-board').focus();const first=await page.evaluate(()=>window.__chamber.stage()?.cameraView),other=first==='overview'?'follow':'overview';
+  for(const [key,view] of [['z',other],['z',first],['z',other],['f','follow']]){
     await page.keyboard.press(key);await page.waitForFunction(value=>window.__chamber.stage()?.cameraView===value,view);
     assert.equal(await page.evaluate(()=>window.__realtime.world().tick),tick,'A camera key never advances a paused simulation');
     assert.equal(await page.evaluate(()=>document.activeElement?.id),'rt-board','The scene keeps the keys');
