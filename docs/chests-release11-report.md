@@ -123,7 +123,14 @@ The engaged soldier also wins Chapters I–III a quarter of a round sooner on Ve
 
 ## The browser checks
 
-To be completed with this release's runs.
+All in headless Chromium with software rendering (SwiftShader), on the production build:
+
+- **The stage benchmark** (`--check`, as CI runs it) passed on Chapters V and XII. It used 43 and 46 shader programs in Chapter V at Performance and Balanced, and 41 and 47 in Chapter XII, with none compiled after the first frame. Draw calls and triangles stayed within the recorded ceilings. Chapter V's numbers are identical to main's: the benchmark's scenes are turn-based boards, which draw no containers.
+- **Shader programs in a live camp.** A New Game was restored through the visible interface into Chapter I's camp in real time, at Balanced, and the WebGL programs linked were counted. Main links 46. The first build of this release linked 47: the containers' fieldwork materials have a program no camp otherwise draws. The containers now use the scenery's own palette (`environment.js` lends it), and the camp links 46 again. Its three containers cost three draw calls, one per material, and 2,220 triangles.
+- **`smoke:ch5-pilot`** passed: Chapter V's courtyard and fortress from checkpoints earned by legal commands, every pilot scenery placement in Balanced 3D, the decision through export and restore, March out and an exact Retry.
+- **`smoke`:** 16 of its 21 scenarios passed before the local run reached its 30-minute limit and was stopped. The 16 cover the camps' departures, real-time squads, the drill, Chapter V's field and approach, phone touch, the performance check, the arena, the 2D view, deployment and the chamber Contests. The five cut off are the hearing, the finale, settings and help, Practice and an old chronicle.
+- **`smoke:world`** (all twelve camps) did not run locally.
+- **In CI on the pull request:** `npm run verify` on Node 20 and 22, the main smoke with the polish checks, the usability, Chapter V pilot, immersive and siege checks, the twelve-camp check, the twelve-chapter benchmark and the stage benchmark against its ceilings, all in full.
 
 ## Limitations
 
