@@ -4,6 +4,7 @@
 // world otherwise. Companions follow their standing orders. Used by the tests,
 // the Gate 2 deadline sweep (realtime-sweep.mjs) and
 // `node scripts/realtime-autoplay.mjs` (development only).
+import {campPolicy,searchWonField} from './kit-policy.mjs';
 import {pathToFileURL} from 'node:url';
 import * as G from '../src/core/game.js';
 import {queueCommand,step,roundOf} from '../src/core/realtime/simulation.js';
@@ -209,8 +210,10 @@ function playTurnEncounter(state){
   if(summary.status!=='lost'||state.encounter.fallback||!G.acceptFallback(state).ok)return summary;
   return {...playEncounter(state,contestPolicy(state)),fallback:true};
 }
+// `kit` names a reference player's camp policy (kit-policy.mjs): 'bare' (the recruit's kit, as before),
+// 'issued' or 'engaged'.
 export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapter=3,choices={},settings={controlsModel:'realtime'},
-  ready=undefined,onEncounter=null,play=playRealtime,retries=0,missions=true,operations={}}={}){
+  ready=undefined,onEncounter=null,play=playRealtime,retries=0,missions=true,operations={},kit='bare'}={}){
   const state=G.newGame('Aurelius Marcellus',seed,{featureEdition:35,progression:true,difficulty,missions}),encounters=[];let guard=0;
   while(state.phase!=='epilogue'&&state.chapter<=throughChapter&&guard++<200){
     const chapter=G.getChapter(state);
@@ -225,6 +228,7 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
       if(state.chapter===10){if(!state.allocation)G.allocate(state,{river:2,farms:2,town:2});if(!state.judgment)G.judge(state,state.decisions.ch10);}
       // An operation chosen in camp other than the first, by its battle (`operations`: { 'ch10-road':'south' }).
       const plan=G.operationChoices(state);if(plan.enabled&&operations[plan.encounterId]){const r=G.chooseOperation(state,operations[plan.encounterId]);if(!r.ok)throw new Error(r.message);}
+      campPolicy(state,kit);
       const data=chapter.encounters[state.encounterIndex],controls=data.kind==='battle'?controlsFor(settings,state.chapter,ready):'turns';
       const r=G.startEncounter(state,controls==='realtime'?{controls}:{});if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);
     }else if(state.phase==='encounter'){
@@ -235,6 +239,7 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
         const r=G.retry(state);if(!r.ok)throw new Error(r.message);
       }
       if(state.encounter.status!=='won')throw new Error(`Real-time autoplay lost ${state.encounter.id}: ${summary.reason??''}\n${state.encounter.log.slice(-8).join('\n')}`);
+      searchWonField(state,kit);
       const r=G.commitEncounter(state);if(!r.ok)throw new Error(r.message);
     }else if(state.phase==='promotion'){const r=G.advanceChapter(state);if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);}
   }

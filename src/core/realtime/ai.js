@@ -100,6 +100,8 @@ function nearest(list,p){let best=null,bd=Infinity;for(const o of list){const d=
 // approachAssignment): against Engineering the archers shoot the soldier, and
 // against a defensive advance the horse and raiders go for him.
 function chooseTarget(world,actor){
+  // A champion (release 11, champions.js) seeks the soldier out: he knows where he is, seen or not.
+  if(actor.ai.role==='champion'){const hero=actorById(world,world.heroId);if(hero&&standing(hero)&&hostile(actor,hero)&&!hero.hidden)return hero;}
   const foes=foesOf(world,actor);if(!foes.length)return null;
   const anchor=actor.ai.anchor??actor,hero=actorById(world,world.heroId);
   if(hero&&foes.includes(hero)&&(world.approach==='breach'&&derivedValues(actor).weapon.ranged||world.approach==='advance'&&['cavalry','raider'].includes(actor.ai.role)))return hero;

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createWorld,queueCommand,step,snapshotWorld,restoreWorld,worldHash} from '../src/core/realtime/simulation.js';
 import {formationGroup,orderDelayTicks,reservedCommand} from '../src/core/realtime/command.js';
-import {exchangeSpread,memberFell,membersOf,squadModifiers,squadById} from '../src/core/realtime/squads.js';
+import {exchangeSpread,memberFell,membersOf,squadModifiers,squadById,singleWard} from '../src/core/realtime/squads.js';
 import {splitStreams} from '../src/core/realtime/rng-streams.js';
 import {combatBreakdown} from '../src/core/battle.js';
 import {makeUnit} from '../src/core/shared.js';
@@ -145,11 +145,13 @@ test('a squad fights a single man as one body: a tenth of the 0.38 exchange a se
   // The soldier walks into a Gothic shield guard's ground; nothing else is near.
   const w=world([gothic('g',[22,30],{role:'guard'}),roman('far',[90,10])],{actors:[hero({at:[20,30],face:[1,0]})]});
   const band=squadById(w,'g'),soldier=w.actors.find(a=>a.id==='hero'),start=soldier.hp;
-  const expected=squadModifiers(w,band,{id:'hero',side:'player',x:soldier.x,z:soldier.z,fx:1,fz:0,formation:null,braced:false,guard:null,members:['hero']}).damage*.1;
+  // His own armour and shield turn their share (release 11, singleWard).
+  const expected=squadModifiers(w,band,{id:'hero',side:'player',x:soldier.x,z:soldier.z,fx:1,fz:0,formation:null,braced:false,guard:null,members:['hero']}).damage*.1
+    *singleWard(soldier,'front').factor;assert.ok(singleWard(soldier,'front').factor<1,'his kit turns part of the blows');
   const dealt=[];for(let i=0;i<R*3;i++)for(const e of step(w))if(e.kind==='exchange'&&e.targetId==='hero')dealt.push(e.damage);
   const hits=w.log.filter(l=>/hits Hero/.test(l.text)).length,lost=start-soldier.hp,total=dealt.reduce((n,d)=>n+d,0);
   assert.ok(lost>0,'the band wounds him');
-  // 30 exchanges, each a tenth of a 0.38 hit (the frontal shield counted) times one draw of the spread.
+  // 30 exchanges, each a tenth of a 0.38 hit (the frontal shield counted) times one draw of the spread, less his ward.
   assert.equal(dealt.length,30);
   assert.ok(dealt.every(d=>EXCHANGE.spread.some(([f])=>Math.abs(d-expected*f)<1e-9)),'every exchange is the tenth times a spread factor');
   // Whole points only, never more than they add up to.

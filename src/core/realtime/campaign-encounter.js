@@ -19,6 +19,7 @@ import {DEPLOYMENT,ROMAN_SQUADS} from '../../data/realtime-squads.js';
 import {deploymentZone} from './deployment.js';
 import {defaultStanding} from './squad-ai.js';
 import {CONTAINER_KINDS,containersInField} from '../../data/containers.js';
+import {championFor} from '../../data/champions.js';
 import {fielded,squadCentre} from './squads.js';
 import {chapterOpportunity} from '../command-campaign.js';
 import {DEFAULT_OPPORTUNITIES,WORK_SECONDS,fieldVerb} from './field-objects.js';
@@ -302,6 +303,13 @@ function worksGates(e,layout,fine,phases){
   return out;
 }
 
+function championSpec(e,layout,map,heroAt){
+  const c=championFor(e.id),first=e.units.find(u=>u.side==='enemy'&&u.hp>0);if(!c||!first)return null;
+  const at=tileCentre(first,layout),dx=heroAt.x-at.x,dz=heroAt.z-at.z,d=Math.max(1,span(dx,dz)),grid=navGrid(map);
+  const i=nearestWalkable(grid,at.x+dx/d*3,at.z+dz/d*3);if(i<0)return null;const spot=cellCentre(grid,i);
+  return {id:c.id,name:c.name,side:'enemy',role:'champion',attributes:{...c.attributes},kit:[...c.kit],ammo:{},mounted:!!c.mounted,officer:true,
+    at:[spot.x,spot.z],face:[dx/d,dz/d],unitId:null,faction:c.faction,alert:true,aware:['hero'],loot:[...c.loot],champion:true};
+}
 // Where each battlefield container stands: near the enemy's start, behind the
 // soldier's own, by the objective or out on a flank, snapped to open ground and
 // kept clear of the field's other objects. Pure and deterministic.
@@ -353,6 +361,9 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
   }
   const heroAt=tileCentre(hero,k);
   party.forEach((id,i)=>actors.push(companionSpec(state,id,[heroAt.x+SPREAD[i+1][0],heroAt.z+SPREAD[i+1][1]],{side:'player'})));
+  // Release 11's champion (champions.js): in a squad battle, one single man by the enemy's first company
+  // who seeks the soldier out. The same on every level; no randomness is drawn.
+  const champion=squads?championSpec(e,layout,fine,heroAt):null;if(champion)actors.push(champion);
   const op=operationOf(e),index=e.operation?.index??0,escortUnit=e.units.find(u=>e.mission?.escortIds?.includes(u.id));
   const phases=op?op.phases.map(p=>phaseMission(e,p,k,{escortPoint:escortUnit?{x:escortUnit.x,y:escortUnit.y}:null})):[phaseMission(e,{mode:e.mission.mode,goal:[e.goal.x,e.goal.y],
     points:e.mission.points.map(p=>[p.x,p.y]),hold:e.mission.holdRequired},k)];
