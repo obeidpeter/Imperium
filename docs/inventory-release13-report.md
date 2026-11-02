@@ -1,6 +1,6 @@
-# Worlds and gameplay, release 13, first part: the inventory
+# Worlds and gameplay, release 13: the inventory and its pictures
 
-Release 13 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md) gives Imperium an inventory in the manner of the classic isometric role-playing games, in its own Roman style. This first part is the screen itself: one full-screen inventory for the soldier's kit, and for what he finds and trades, with drag and drop, a keyboard route and a list mode for phones and large text. The second part, a picture of every piece rendered from generated models, follows once the owner has given a verdict on the pilot's eight pictures. This report records what changed, how it was checked and what was not checked. The [changelog](../CHANGELOG.md) describes the changes for players.
+Release 13 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md) gives Imperium an inventory in the manner of the classic isometric role-playing games, in its own Roman style. This first part is the screen itself: one full-screen inventory for the soldier's kit, and for what he finds and trades, with drag and drop, a keyboard route and a list mode for phones and large text. The [second part](#second-part-the-item-pictures), below, gives every piece a picture rendered from generated models. This report records what changed, how it was checked and what was not checked. The [changelog](../CHANGELOG.md) describes the changes for players.
 
 Credits: the pilot's eight models (160 credits, recorded in `art-source/models/item-pictures-credits.json`) were made before this part; this part spent none.
 
@@ -60,3 +60,43 @@ All in headless Chromium with software rendering (SwiftShader), on the productio
 - **`smoke`:** all its scenarios, with no page or console errors: among them the chamber hearing, whose documents are read from the inventory, the arena, every Contest and the finale.
 - **`smoke:polish`** (20 checks, among them the equipped soldier's figure, its turn and reset buttons and the battle's pause kept while Kit is open), **`smoke:immersive`** (20 pages), **`smoke:ch5-pilot -- --river-gate`** (9), **`smoke:world`** (21: every camp's models and cameras, and in Chapters I, VIII and XII the Kit and Company panels open over the world and leave the save unchanged), **`smoke:cavalry`** (4), **`smoke:orders`** (4) and **`smoke:errands`** (2): all passed.
 - **Not run here:** `smoke:siege` and the two benchmarks, which draw the battles and the turn-based board that this part does not change; CI runs them on the pull request's last commit.
+
+## Second part: the item pictures
+
+The second part gives every piece a picture, rendered from a generated model; the [art record](art-generation.md#item-pictures--12-november-2026) has the models, the review and the credits, and [the asset pipeline](asset-pipeline.md#item-pictures--2026-11-02) how they are made.
+
+How each kind of check was made:
+
+- **Automated tests** (Node.js): `npm test`. New: `item-pictures`.
+  - Every item has a rendered picture or keeps its drawn outline, never both.
+  - Each picture lies inside the atlas at its planned shape, and none overlaps another.
+  - The atlas is a WebP of its recorded size and dimensions, within the plan's 120 KB, and in every chapter's offline pack.
+  - A pictured item shows its place in the atlas, a drawn one keeps its outline, and a fine piece names its finish.
+  - Every picture's model was accepted at review and paid for from the pictures' credits, within the cap.
+- **The real interface:** RESULTS
+- **Not performed:** a person looking at them, and any check on a phone, a tablet or a laptop screen. The pictures were reviewed at their pack sizes in software-rendered screenshots only.
+
+| Change | Where it shows | Code | State and randomness |
+| --- | --- | --- | --- |
+| A picture of every piece | The pack, the worn places, the ground, chests, the fallen and trade | `ui/item-art.js` (`itemPicture`), `data/item-pictures.js` (generated) | presentation only |
+| A fine piece's finish | The same | `ui/inventory.css` | presentation only |
+| The atlas in every chapter's pack | Offline play | `ui/art.js` (`chapterAssets`) | none |
+| The pictures' tools | Contributors | `scripts/assets/item-atlas.mjs`, `build-item-atlas.py`, `render-item-pictures.py` (`--across`, `--drop-stand`) | none |
+
+### Against the plan
+
+| Plan item | As built |
+| --- | --- |
+| Every item has its own picture, rendered from a generated model in one consistent style | 35 pictures for 105 pieces: fine and named pieces share their kind's picture in their finish, and things of one sort share one (the keys, the jars, the sacks, the letters). Three quest objects keep their drawn outline. |
+| Tripo models rendered offline in Blender to one WebP atlas (96 px cells, ≤120 KB) | One WebP of about 115 KB at 80 pixels a cell and quality 78. At 96 pixels the first 33 pictures already came to 124 KB at quality 72. |
+| Today's drawn icons remain the fallback | For items with no picture. |
+| The models themselves never ship | As planned: the raw models stay outside the repository, and only the atlas ships. |
+| About 35 models, 700 credits, in a 1,000-credit cap with a 300 reserve | 39 models and 780 credits: four were rejected at review and made again, three of them from the reserve with the owner's approval. |
+
+### Limitations
+
+- **The gladius's guard is a slim bar** where a Roman one is a block; its blade, ribbed grip and round pommel are a gladius's.
+- **The cloak shows its hood**, which a *sagum* did not have, and the brooch is a plain T-shaped pin.
+- **One picture per kind.** Fine pieces differ from plain ones only by a tint, and the keys, jars, sacks and documents share a picture each.
+- **No picture shows in 3D or on the figures,** whose kit stays code-built, as the plan intended.
+- **Chapter XII's 2D download is near its limit.** With the atlas, which every chapter carries, it is 23,949,763 bytes of 24,000,000: about 50 KB to spare. Its 3D download has 2.8 MB, and Chapter VII's 2D download, the next closest, about 330 KB.
