@@ -518,7 +518,7 @@ up, or keep the labels on in **Settings → Controls → Mouse & touch**.
   target spends nothing. A target chosen with **T** takes the message
   line's place in the bar, with a word on what he is doing where there
   is room; **Target details** beside it opens the whole forecast over
-  the world, led by that word.
+  the world, led by that word, and **Esc** closes it again.
 
 ## Abilities
 
@@ -657,9 +657,12 @@ over it.
   keeps its room when it has nothing to say, so the world never changes
   size. A message too long for it ends in an ellipsis: **More** at its
   end, or a tap on the line, opens the whole of it over the world until
-  you close it, and pointing at it shows it too. A message from the
-  game itself, such as the gate sentry's word or a save in progress,
-  is said on the same line.
+  you close it (**More** again, or **Esc**), and pointing at it shows it
+  too. A message from the game itself, such as the gate sentry's word,
+  a save in progress or "Chronicle restored", is said on the same line.
+
+  The keys stay the world's wherever you click outside a control: on the
+  strip's text or the bar's, they still pause, label and walk.
 
 - **Bottom right:** a button for each panel: **Kit**, **Character**,
   **Journal**, **Orders**, **Chronicle**, **Map**, **Company**,
@@ -684,7 +687,7 @@ over it.
 | **A**   | Decorations and titles                                                                                    |
 | **O**   | Settings                                                                                                  |
 | **?**   | How to play, the in-game help                                                                             |
-| **Esc** | Closes the open panel; with none open, clears your target or squad selection, and then opens the **Menu** |
+| **Esc** | Closes the open panel; with none open, a message opened whole or **Target details**, then clears your target or squad selection, and then opens the **Menu** |
 
 Opening a panel pauses the world, unless you turn off **Pause in
 panels**. Conversations, the chronicle and the Menu always pause it.
@@ -772,7 +775,7 @@ has loot; otherwise it is cleared. No new enemy is chosen automatically.
 | **Y**                   | In a Contest, yield the floor and end the hour                                                                                                                                                                                                              |
 | **B**                   | Raise the war cry, shown in the message line. It changes nothing in the rules; your companions answer it.                                                                                                                                                   |
 | **F2**                  | Quick save                                                                                                                                                                                                                                                  |
-| **Esc**                 | Each press clears one thing: the open panel, then the current target, then the squad selection; with nothing left, it opens the Menu. In full screen, the browser uses the first press to leave full screen.                                                |
+| **Esc**                 | Each press clears one thing: the open panel, then a message opened whole or **Target details**, then the current target, then the squad selection; with nothing left, it opens the Menu. In full screen, the browser uses the first press to leave full screen.                                                |
 | **F**                   | Follow the soldier you control, and bring the view back to him                                                                                                                                                                                                |
 | **Z**                   | The whole field, and back                                                                                                                                                                                                                                     |
 | **H** (hold, 3D)        | Glance at the horizon while the key is held                                                                                                                                                                                                                   |

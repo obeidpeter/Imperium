@@ -356,3 +356,59 @@ Run locally, one at a time, on the production build of this branch, in headless 
 
 - No device was used.
 - Screen readers were not tested beyond the text of the announcement and of the line.
+
+## After Gate 4, third round
+
+The owner approved five more polish items. The first, bringing the README and the Gate 4 checklist up to date, the owner is doing. Main's CI after the second round failed `chamberCouncil` again, at the same step, which led to the first item below. Before-and-after probes ran on production builds of main and of this branch, in headless Chromium with software rendering, in 2D on Performance.
+
+### The keys work wherever you click outside a control
+
+- **Found while looking again at main's `chamberCouncil` failure.** The page's `main` has `tabindex="-1"`, so a click on any part of the page that is not a control puts the focus on `main`: the strip's text, the bar's text, a portrait. The field took its keys only from the world or from controls inside it (`fieldShortcutAllowed`, `src/ui/realtime-shortcuts.js`). From `main`, or from the body once a focused control was gone, every key went unheard.
+- **Measured on main's build:** in Chapter II's camp, P paused with the world focused. After a click on the strip's text ("Chapter II · Miles · Next: …") the focus was on `main`, P did nothing, and holding U showed no labels.
+- **Now:** a key pressed with the focus on the page around the world (its `main`, its body, anything that holds the world) is the world's, as from the world itself. Tab still moves the focus. Dialogs, text fields and the page's own panel keys keep theirs.
+- **Measured on this branch:** after the same click, with the focus on `main`, P paused and holding U showed the labels.
+- **The CI failure:** the step holds U and waits for the rivals' plans on the message line. Locally it passed every time: three instrumented runs and a run of smoke b's first five scenarios in CI's order. In those runs the focus never left the world, and the plans showed 1–2 ms after the key. Focus left on the page is one way the key could go unheard, and the only one found. The check now says what it saw if it fails again: the line, where the focus is, any open dialog, and whether U reached the field at all.
+- **Checks:**
+  - `realtime-playtest-controls`: from the page, P, U, the arrows, Space and Enter are the world's; Tab, an open dialog and a modifier are not.
+  - `smoke`, `campExitDeparture`: after a click on the strip's text, which takes the focus from the world, P still pauses the camp and again resumes it.
+
+### Esc closes what is open on the bar first
+
+- **Before (main's build):** on Chapter I's road at 580 wide, with a target chosen by **T** and **Target details** open, Esc cleared the target and left the details open.
+- **Now:** Esc closes a message opened whole with **More**, then **Target details**, before the chamber's conversation, a chosen speech or ability, the target, the list or the Menu.
+- **Measured on this branch:** on the road, Esc closed the details and kept the target. In a new chronicle's first camp at 390 wide, Esc closed the sentry's words opened with More, set More back to not expanded, and left the Menu shut.
+- **Checks:** `smoke:polish`: with Target details open, Esc closes them, keeps the target and leaves the Menu shut. A message opened with More holds only while it is open, so the camp's More check cannot reopen it reliably; the probe above covers More with Esc.
+
+### U lets go when you switch away
+
+- **Before (main's build):** U held, then the window losing the focus (an injected `blur` on the window, standing in for another window or tab): the labels stayed on, because U's release never reached the page.
+- **Now:** the window losing the focus lets U go. Its labels, a battle's intentions and the chamber's plans go, as on U's release, and held arrows and the horizon glance stop as before.
+- **Measured on this branch:** with the same injected blur, the labels went.
+
+### "Chronicle restored" moves onto the bar
+
+- **Before (main's build):** after a restore, "Chronicle restored. Chapter access was checked from earned milestones." floated over the open camp for up to 6.5 seconds, and it caught the clicks under it. The bar's event line was empty.
+- **Now:** a message given while a full-screen page's world is still opening floats over the page as before. Once the world opens, it finishes its time on the bar's event line (`handOverNote`, `src/ui/app.js`). A floating message never catches a click.
+- **Measured on this branch:** the camp opened with the message on the bar's event line, and nothing floating.
+
+### The 2D view's passing numbers cross no name
+
+- **Before:** a blow's number, "Blocked", "Miss" or a heal was drawn over its figure wherever the names fell. So was a mark over a figure with no name, such as an enemy's notice, and either could cover a neighbour's name.
+- **Now:** they are placed with the names and after them, at the lowest priority. Each keeps its first place unless that place is taken, crosses no name and moves none. A lasting mark over a name still keeps its room in the name's place.
+- **Checks:** `stage-label-layout`: with a number over every figure in Chapter II's camp, each is drawn clear of every name and every other number, and no name moves.
+
+### The twelve camps' halves rebalanced
+
+- **Before:** in the second round's CI, half b (Chapters VII–XII) took 27.5 minutes and half a (I–VII) 17. Half b's later camps are the slower, at about 2.6 minutes each against 1.6, and it also ran Chapter VIII's and Chapter XII's service and narrow-layout checks, about 4 minutes each.
+- **Now:** half a is Chapters I–VIII and half b VIII–XII, with Chapter VIII in both. Chapter VIII's service and narrow-layout checks run once, in half a; Chapter XII's, Performance and the return stay in half b, and the failed downloads stay in half a with Chapter I. The estimate is about 24 and 22 minutes; this pull request's CI run records the actual times.
+
+### The browser checks (third round)
+
+Run locally, one at a time, on the production build of this branch, in headless Chromium with software rendering:
+
+- `smoke`: `campExitDeparture` (161 seconds), `chamberCouncil`, `realtimeFlat`, `viewSwitch`, `chamberViewFallback`, `chamberContests` and `settingsAndHelp` passed, with no page or console errors.
+- `smoke:polish`: all 23 checks passed, including the new one for Esc and Target details.
+- `smoke:usability`: all 15 flows passed, at the phone and desktop widths.
+- The probes: before on main's build, after on this branch, as given above. The window blur is injected.
+- The twelve camps' halves, and the rest of the browser checks, ran only in CI.
+- Not checked: no device, and no screen reader.

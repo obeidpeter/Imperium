@@ -35,6 +35,11 @@ test('Pause works with a command-list button focused, while native controls and 
   assert.equal(allowed('ArrowDown',canvas),true);assert.equal(allowed('KeyP',input),false);
   assert.equal(allowed('KeyP',button,{modalOpen:true}),false);assert.equal(allowed('KeyP',outside),false);
   assert.equal(allowed('KeyP',button,{ctrlKey:true}),false);assert.equal(allowed('KeyP',button,{defaultPrevented:true}),false);
+  // Focus left on the page around the world (its body, or its main after a click on the strip's text): the keys are the
+  // world's, as from the canvas, and Tab still moves the focus. Dialogs and modifier keys keep theirs.
+  const page={closest:()=>null,contains:t=>t===root||t===button};
+  for(const code of ['KeyP','KeyU','ArrowDown','Space','Enter'])assert.equal(allowed(code,page),true,`${code} from the page`);
+  assert.equal(allowed('Tab',page),false,'Tab moves the focus');assert.equal(allowed('KeyP',page,{modalOpen:true}),false);assert.equal(allowed('KeyP',page,{altKey:true}),false);
 });
 
 test('pressing Space never erases its readable shortcut label',()=>{

@@ -168,10 +168,10 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       // a squad's low morale, the page's marks) has its room kept in the name's place, so no other name covers it; a
       // passing number does not, so names do not jump while blows land.
       const names=[];let heroBody=null;
-      const name=(id,text,x,baseline,{size,weight=600,color='#f6efdb',priority=50,pin=false,tag=null,reserve=false})=>{
+      const name=(id,text,x,baseline,{size,weight=600,color='#f6efdb',priority=50,pin=false,tag=null,reserve=false,kind='name'})=>{
         const font=`${weight} ${size}px system-ui`,tagH=tag&&reserve?Math.ceil(tag.size*.8)+3:0;c.font=font;
         const width=Math.ceil(c.measureText(pin?`↘ ${text}`:text).width)+(pin?16:8),height=Math.ceil(size)+(pin?10:6)+tagH;
-        names.push({id,text,font,size,color,priority,pin,tag,tagH,visible:true,width,height,x,y:baseline+size*.2+12});
+        names.push({id,text,font,size,color,priority,pin,tag,tagH,kind,visible:true,width,height,x,y:baseline+size*.2+12});
       };
       // The deployment zone, tinted until the advance sounds.
       if(zone){const q=[flat.screen(v,zone.x0,zone.z0),flat.screen(v,zone.x1,zone.z0),flat.screen(v,zone.x1,zone.z1),flat.screen(v,zone.x0,zone.z1)];
@@ -249,13 +249,15 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         }
         // Names: his own, the target's, and everyone's in camp.
         const named=a.id===w.controlled||a.id===hero?.lock||w.kind==='camp'||w.party?.includes(a.id)||civic?.role==='speaker';
-        const mark=marks[a.id]||noticeMark(w,a),tag=(floating.get(a.id)?.until>now&&floating.get(a.id))||mark;
+        const mark=marks[a.id]||noticeMark(w,a),float=floating.get(a.id)?.until>now&&floating.get(a.id),tag=float||mark;
         c.textAlign='center';
         // Close in (a chamber's few tiles fill the view) the names and marks stay text-sized.
-        const tagSize=clamp(v.th*.6,12,22);
-        if(named&&a.alive)name(`actor:${a.id}`,`${a.id===w.controlled?'★ ':''}${a.name}`,p.x,p.y-v.th*3.3,{size:clamp(v.th*.4,10,16),weight:650,
-          priority:a.id===w.controlled?100:a.id===hero?.lock?90:w.party?.includes(a.id)||civic?.role==='speaker'?80:mark?75:70,tag:tag&&{...tag,size:tagSize},reserve:!!mark});
-        else if(tag){c.font=`800 ${tagSize}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,p.y-v.th*3.6);}
+        const tagSize=clamp(v.th*.6,12,22),nameSize=clamp(v.th*.4,10,16);
+        if(named&&a.alive){
+          name(`actor:${a.id}`,`${a.id===w.controlled?'★ ':''}${a.name}`,p.x,p.y-v.th*3.3,{size:nameSize,weight:650,
+            priority:a.id===w.controlled?100:a.id===hero?.lock?90:w.party?.includes(a.id)||civic?.role==='speaker'?80:mark?75:70,tag:mark&&{...tag,size:tagSize},reserve:!!mark});
+          if(float&&!mark)name(`float:actor:${a.id}`,float.text,p.x,p.y-v.th*3.3-nameSize-4,{size:tagSize,weight:800,color:float.color,priority:10,kind:'float'});
+        }else if(tag)name(`float:actor:${a.id}`,tag.text,p.x,p.y-v.th*3.6,{size:tagSize,weight:800,color:tag.color,priority:float?10:30,kind:'float'});
       }
       // Each squad's standard over its foremost man: its name, strength and morale (an amber
       // ring with a notch when shaken, a crimson ring split in two when broken).
@@ -265,10 +267,12 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         c.beginPath();c.moveTo(p.x+v.tw*.18,p.y-hgt*.2);c.lineTo(p.x+v.tw*.18,top);c.lineWidth=2;c.strokeStyle='#3b2f22';c.stroke();
         c.fillStyle=mine?'#7a2a1f':'#5b3a2c';c.fillRect(p.x+v.tw*.18,top,v.tw*.34,v.th*.55);if(chosen.has(q.id)){c.lineWidth=2;c.strokeStyle='#f3d48d';c.strokeRect(p.x+v.tw*.18,top,v.tw*.34,v.th*.55);}
         const bw=v.tw*.6;c.fillStyle='#0d1715cc';c.fillRect(p.x-bw/2,top-7,bw,4);c.fillStyle=mine?'#abc89a':'#db9e81';c.fillRect(p.x-bw/2,top-7,bw*clamp(q.strength/q.maxStrength,0,1),4);
-        const low=q.morale<=40&&{text:'!',color:q.broken?'#ff8f8f':'#f1c27d'},tag=(floating.get(q.id)?.until>now&&floating.get(q.id))||low,tagSize=Math.max(12,v.th*.6);
+        const low=q.morale<=40&&{text:'!',color:q.broken?'#ff8f8f':'#f1c27d'},float=floating.get(q.id)?.until>now&&floating.get(q.id),tag=float||low,tagSize=Math.max(12,v.th*.6);
         c.textAlign='center';
-        if(mine||chosen.has(q.id))name(`squad:${q.id}`,q.name,p.x,top-10,{size:Math.max(10,v.th*.38),weight:650,priority:chosen.has(q.id)?85:55,tag:tag&&{...tag,size:tagSize},reserve:!!low});
-        else if(tag){c.font=`800 ${tagSize}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,top-10-Math.max(12,v.th*.5));}
+        if(mine||chosen.has(q.id)){
+          const size=Math.max(10,v.th*.38);name(`squad:${q.id}`,q.name,p.x,top-10,{size,weight:650,priority:chosen.has(q.id)?85:55,tag:low&&{...tag,size:tagSize},reserve:!!low});
+          if(float&&!low)name(`float:squad:${q.id}`,float.text,p.x,top-10-size-4,{size:tagSize,weight:800,color:float.color,priority:10,kind:'float'});
+        }else if(tag)name(`float:squad:${q.id}`,tag.text,p.x,top-10-Math.max(12,v.th*.5),{size:tagSize,weight:800,color:tag.color,priority:float?10:30,kind:'float'});
       }
       // The keyboard's order marker, and where each selected squad is going (or whom it attacks).
       if(marker&&(chosen.size||zone)){const p=flat.screen(v,marker.x,marker.z);ellipse(p,v.tw*.34,'#f3d48d',{width:3});ellipse(p,v.tw*.07,null,{fill:'#f3d48d'});}
@@ -301,6 +305,8 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       flat.labelBoxes=[...placed.values()].filter(r=>r.visible).map(({id,x,y,width,height,reason})=>({id,x,y,width,height,reason}));
       for(const n of names){
         const r=placed.get(n.id);if(!r?.visible)continue;const cx=r.x+r.width/2,top=r.y+n.tagH;c.font=n.font;c.textAlign='center';
+        // A passing number, or a mark over a figure with no name: just its text, where it found room.
+        if(n.kind==='float'){c.fillStyle=n.color;c.fillText(n.text,cx,top+3+n.size*.8);continue;}
         if(r.reason==='edge'){c.fillStyle='#29281deb';c.fillRect(r.x,r.y,r.width,r.height);c.strokeStyle='#ac9659';c.lineWidth=1;c.strokeRect(r.x+.5,r.y+.5,r.width-1,r.height-1);
           c.fillStyle='#e8d7a6';c.fillText(`${EDGE_ARROWS[r.edge]} ${n.text}`,cx,r.y+r.height/2+n.size*.35);}
         else{
