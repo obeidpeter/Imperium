@@ -44,7 +44,7 @@ test('the camp strip carries the offline and artwork notices on its own line, ne
     const state=camp(chapter),art='Preparing chapter artwork · 3/9';
     const doc=documentFor(createCampaignViews(()=>({state,screen:'game',settings:{},lastSaved:'saved',currentChapterOffline:true,artProgress:art})).realtimeCamp());
     const bar=doc.querySelector('main > .world-camp-bar');
-    for(const [id,text] of [['offline-status','This chapter is ready offline'],['art-loading-status',art]]){
+    for(const [id,text] of [['offline-status','✓ This chapter is ready offline'],['art-loading-status',art]]){
       const node=doc.getElementById(id);assert.ok(node&&bar.contains(node),`Chapter ${chapter}: ${id} sits on the strip's line`);
       assert.equal(node.textContent,text);assert.equal(node.getAttribute('title'),text,'its whole text is its tooltip');assert.equal(node.hasAttribute('hidden'),false);
       assert.equal(node.getAttribute('role'),'status','it is still announced');

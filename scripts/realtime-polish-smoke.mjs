@@ -117,8 +117,12 @@ try{
   }
   const road=await restore({width:580,height:700},'ch1-road');
   await layout(road,'road-narrow');
+  const untargeted=await road.evaluate(()=>document.querySelector('#rt-board').getBoundingClientRect().height);
   await road.locator('#rt-board').focus();await road.keyboard.press('KeyT');
   await road.waitForFunction(()=>/\d+ m.*HP/.test(document.querySelector('[data-role="targetLine"]')?.textContent??''));
+  // Polish after Gate 4: the target's line takes the message line's place, and its details open over the world.
+  assert.equal(await road.evaluate(()=>document.querySelector('#rt-board').getBoundingClientRect().height),untargeted,'Choosing a target by keyboard keeps the world’s size');
+  evidence.checks.push({name:'Choosing a target by keyboard keeps the world’s size',pass:true,worldHeight:untargeted});
   const before=await text(road,'[data-role="targetLine"]'),initial=Number(before.match(/(\d+) m/)?.[1]);
   assert.ok(initial>5,`The selected enemy starts at a measurable distance: ${before}`);
   await road.keyboard.press('Enter');await pause(road,false);

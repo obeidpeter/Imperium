@@ -8,7 +8,7 @@ import {CONFIG} from '../config.js';
 import {CAREER_GUIDANCE} from '../data/campaign-guidance.js';
 import {heroPortrait,speakerPortrait,chapterScene,promotionScene} from './art.js';
 import {figurePreview} from './soldier-views.js';
-import {esc,roman,actionNames,companyPanel} from './view-helpers.js';
+import {esc,roman,actionNames,companyPanel,offlineNotice} from './view-helpers.js';
 import {skirmishControls} from '../core/controls-model.js';
 import {soldierCampCard} from './soldier-views.js';
 import {LANDING_FACTS,chronicleCard,heroFacts,journeySection} from './landing-view.js';
@@ -35,8 +35,7 @@ export function quartermasterPanel(state){
 export function createCampaignViews(context) {
 function header({immersive=false}={}){
   const {state,screen,saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}=context(),landing=screen==='title';
-  const ready=offline?'All chapters available offline':currentChapterOffline?'This chapter is ready offline':'';
-  const offlineText=[ready,offlineProgress].filter(Boolean).join(' · ');
+  const offlineText=offlineNotice({offline,chapterReady:currentChapterOffline&&!!state,progress:offlineProgress});
   return `<header class="topbar site-header ${landing?'landing-header':'game-header'}${immersive?' world-header':''}"><button class="brand" data-cmd="home" aria-label="Imperium title screen"><img src="./icon.svg" width="35" height="42" alt=""><span><strong>IMPERIUM</strong>${landing?'<small>FROM RECRUIT TO EMPEROR</small>':''}</span></button><nav class="topnav" aria-label="${landing?'Site':'Game'} navigation">${landing?'<div class="desktop-nav"><a href="#rise">The rise</a><a href="#play">The game</a><a href="#world">The world</a><button class="ghost" data-cmd="history">History</button></div>':`<span class="save-status game-status" role="status">${saving?'Saving…':lastSaved?'Chronicle saved':''}</span>${state?'<button class="ghost" data-cmd="soldier-panel" data-id="mission">Mission</button>':''}`}<button class="ghost menu-toggle" data-cmd="menu" aria-haspopup="dialog">Menu</button></nav></header>${saveProblem?`<div class="notice system-notice" role="alert">${esc(saveProblem)} <button data-cmd="export">Export a save code</button> ${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div>`:''}<div id="offline-status" class="offline-banner" role="status" ${offlineText?'':'hidden'}>${esc(offlineText)}</div><p id="art-loading-status" class="art-loading-status" role="status" ${artProgress?'':'hidden'}>${esc(artProgress||'')}</p>`;
 }
 function footer(){if(context().screen!=='title')return `<footer class="footer game-footer"><span>IMPERIUM · ${CONFIG.version}</span><button class="ghost" data-cmd="help">Help</button></footer>`;return `<footer class="footer site-footer"><div class="footer-brand"><strong>IMPERIUM</strong><span>An original Roman tactical chronicle · c. AD 250–276</span></div><nav class="footer-links" aria-label="Help and information"><button class="ghost" data-cmd="help">How to play</button><button class="ghost" data-cmd="settings">Accessibility</button><button class="ghost" data-cmd="settings">Settings</button><button class="ghost" data-cmd="credits">Credits</button><button class="ghost" data-cmd="privacy">Privacy</button></nav><span class="footer-version">Version ${CONFIG.version} · Free browser play</span></footer>`;}
@@ -151,7 +150,7 @@ function camp(){
 // stops the departure, and whether the chronicle is saved. Menu, Help and the panels are the field's own.
 function worldCampBar(state,ch,next){
   const {saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}=context();
-  const ready=offline?'All chapters available offline':currentChapterOffline?'This chapter is ready offline':'',offlineText=[ready,offlineProgress].filter(Boolean).join(' · ');
+  const offlineText=offlineNotice({offline,chapterReady:currentChapterOffline,progress:offlineProgress});
   const problem=Game.departureCheck(state);
   // The offline and artwork notices say their piece on the strip's own line, beside the save, rather than as bands under
   // it that take the world's room when they come (the owner's request after Gate 4). The page updates them in place

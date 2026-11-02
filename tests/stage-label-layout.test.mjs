@@ -45,3 +45,40 @@ test('Missing, offscreen and invalid body bounds preserve the established label 
   const obstacles=[{x:NaN,y:0,width:100,height:100},{x:0,y:0,width:0,height:100},{x:400,y:0,width:100,height:100},{x:0,y:-120,width:100,height:100}];
   assert.deepEqual([...layoutStageLabels(items,{...viewport,obstacles})],[...before]);
 });
+
+// The 2D view places its names the same way (after Gate 4): in every camp, at a desktop and a phone's size, no two
+// names it draws overlap, the soldier you control is named and no other name covers him, and a lasting mark keeps its
+// room in its name's place. Presentation only: the world is read, never written, and the same frame places the same.
+test('The 2D view names a camp without overlaps, clear of the soldier, keeping a mark’s room',async()=>{
+  const G=await import('../src/core/game.js'),{FlatStage,createFlatPresenter}=await import('../src/showcase/flat-stage.js');
+  const camp=chapter=>{const s=G.newGame('T',275,{featureEdition:35,progression:true,path:'legionary'});s.chapter=chapter;s.encounterIndex=0;s.phase='camp';return G.createCampWorld(s);};
+  const frame=(world,width,height,marks={})=>{
+    const stage={screen:FlatStage.prototype.screen},texts=[];
+    const v=FlatStage.prototype.view.call({canvas:{getBoundingClientRect:()=>({width,height})},cameraView:'follow',zoomLevel:1,lookOffset:{x:0,z:0}},world);
+    const c=new Proxy({},{get:(t,k)=>k==='measureText'?text=>({width:String(text).length*7}):k in t?t[k]:(...a)=>{if(k==='fillText')texts.push({text:a[0],x:a[1],y:a[2]});},
+      set:(t,k,value)=>{t[k]=value;return true;}});
+    const presenter=createFlatPresenter({},{world:()=>world,alpha:()=>1});presenter.setMarks(marks);presenter.draw(c,v,stage,0);
+    return {boxes:stage.labelBoxes,texts,v};
+  };
+  for(let chapter=1;chapter<=12;chapter++)for(const [width,height]of [[1280,640],[390,560]]){
+    const world=camp(chapter),before=JSON.stringify(world),{boxes,v}=frame(world,width,height),where=`Chapter ${chapter} at ${width}`;
+    assert.ok(boxes.length>=3,`${where}: names are drawn`);
+    for(const [i,box]of boxes.entries()){
+      assert.ok(boxes.slice(i+1).every(other=>!labelsOverlap(box,other)),`${where}: ${box.id} overlaps no other name`);
+      assert.ok(box.x>=8&&box.y>=8&&box.x+box.width<=width-8&&box.y+box.height<=height-8,`${where}: ${box.id} is inside the view`);
+    }
+    const hero=world.actors.find(a=>a.id===world.controlled),p=FlatStage.prototype.screen(v,hero.x,hero.z);
+    const body={x:p.x-v.tw*.22,y:p.y-v.th*2.6,width:v.tw*.44,height:v.th*2.9};
+    assert.ok(boxes.some(b=>b.id===`actor:${hero.id}`),`${where}: the soldier is named`);
+    assert.ok(boxes.every(b=>!labelsOverlap(b,body,4)),`${where}: no name covers the soldier`);
+    assert.deepEqual(frame(world,width,height).boxes,boxes,`${where}: the same frame places the same`);
+    assert.equal(JSON.stringify(world),before,`${where}: the world is unchanged`);
+  }
+  // A lasting mark rides above its name inside the name's place, so no other name can cover it.
+  const world=camp(2),other=world.actors.find(a=>a.id!==world.controlled&&a.alive),id=`actor:${other.id}`;
+  const plain=frame(world,1280,640).boxes.find(b=>b.id===id),marked=frame(world,1280,640,{[other.id]:{text:'!',color:'#fff'}});
+  const box=marked.boxes.find(b=>b.id===id),mark=marked.texts.find(t=>t.text==='!');
+  assert.ok(plain&&box&&mark,'the marked name and its mark are drawn');
+  assert.ok(box.height>plain.height,'its place is taller by the mark');
+  assert.ok(mark.y>box.y&&mark.y<box.y+box.height,'the mark is drawn inside it');
+});

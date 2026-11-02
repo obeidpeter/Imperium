@@ -36,7 +36,10 @@ const reachNote=action=>action==='address'?`${Chamber.SPEECH_REACH.address*Chamb
 
 export function createChamberControl({world:getWorld,dom,say:speak,message:line,presenter:getPresenter,canvas,keymap,rules,takeControl,pick=null,paused=()=>false,announce=()=>{}}){
   const say=(text,options)=>speak(hourly(text),options),message=(text,warning)=>line(hourly(text),warning);
-  let speech='persuade',armed=null,target=null,talking=null,show=null,hover=null,keyboardTarget=false,targetKey='';
+  let speech='persuade',armed=null,target=null,talking=null,show=null,hover=null,keyboardTarget=false,targetKey='',rivalsHeld=false;
+  // While U is held the message line says where each rival means to walk (rivalArrows). The readouts of the pointer
+  // and of the keyboard's target, which every update of the page refreshes, leave it alone until U is let go.
+  const readout=(text,warning)=>{if(!rivalsHeld)message(text,warning);};
   let partyKey='',barKey='',hudKey='',coalitionKey='',reachKey='',logKey='',badgesKey='',lastNow=0;
   const state=()=>rules.state();
   const contest=()=>{const s=state();return s?.phase==='encounter'&&s.encounter?.kind==='contest'?s.encounter:null;};
@@ -196,38 +199,38 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
     if(refresh&&keyboardTarget)return;
     if(!refresh)keyboardTarget=false;
     hover=pick;
-    if(show){canvas.dataset.cursor='use';message(show.kind==='division'?'Click: skip the division.':'Click: skip the rivals’ hour.');setBadges(null);presenter()?.setRoute(null);return;}
-    if(!live()){canvas.dataset.cursor='walk';message(contest()?.status==='won'?'The motion carries. Record the result below.':'The motion is defeated. Below: retry, or a patron’s backing.');setBadges(null);return;}
-    const sp=unit(me());if(!sp||!pick){message(' ');setBadges(null);return;}
+    if(show){canvas.dataset.cursor='use';readout(show.kind==='division'?'Click: skip the division.':'Click: skip the rivals’ hour.');setBadges(null);presenter()?.setRoute(null);return;}
+    if(!live()){canvas.dataset.cursor='walk';readout(contest()?.status==='won'?'The motion carries. Record the result below.':'The motion is defeated. Below: retry, or a patron’s backing.');setBadges(null);return;}
+    const sp=unit(me());if(!sp||!pick){readout(' ');setBadges(null);return;}
     const action=armed??speech;
     if(pick.actorId===MAGISTRATE){
       canvas.dataset.cursor='talk';presenter()?.setRoute(null);setBadges(null);
-      message(`Click: talk to the presiding magistrate${Chamber.hearingDocuments(state()).length?', who receives the evidence':''}.`);return;
+      readout(`Click: talk to the presiding magistrate${Chamber.hearingDocuments(state()).length?', who receives the evidence':''}.`);return;
     }
     if(pick.actorId){
-      const person=unit(pick.actorId);if(!person){message(' ');return;}presenter()?.setRoute(null);
+      const person=unit(pick.actorId);if(!person){readout(' ');return;}presenter()?.setRoute(null);
       if(person.id===sp.id){
         const p=action==='address'?Chamber.forecastFrom(state(),commandFor('address')):null;canvas.dataset.cursor='use';
-        message(`${sp.name}: ${sp.resolve} of ${sp.maxResolve} Resolve, ${sp.acted?'has spoken this hour':'one speech this hour'}.${p?.ok?` Right-click: Address the Chamber: ${Chamber.forecastLine(p)}`:''}`);
+        readout(`${sp.name}: ${sp.resolve} of ${sp.maxResolve} Resolve, ${sp.acted?'has spoken this hour':'one speech this hour'}.${p?.ok?` Right-click: Address the Chamber: ${Chamber.forecastLine(p)}`:''}`);
         setBadges(p?.ok?p.forecast:null);return;
       }
       const command=commandFor(action,person),p=command?Chamber.forecastFrom(state(),command):null;
       canvas.dataset.cursor='talk';
-      message(`Click: talk to ${person.name}${person.bloc?` (${person.bloc}, ${signed(person.stance)})`:person.role==='speaker'?` (${person.resolve} Resolve)`:''}`+
+      readout(`Click: talk to ${person.name}${person.bloc?` (${person.bloc}, ${signed(person.stance)})`:person.role==='speaker'?` (${person.resolve} Resolve)`:''}`+
         (p?` · Right-click: ${p.ok?`${Chamber.SPEECH_NAMES[action]}: ${Chamber.forecastLine(p)}`:whyNot(action,person,p)}`:''),!!p&&!p.ok);
       setBadges(p?.ok?p.forecast:null);return;
     }
-    if(!Number.isFinite(pick.x)){message(' ');return;}
+    if(!Number.isFinite(pick.x)){readout(' ');return;}
     const tile=pointTile(pick),e=contest(),inside=tile.x>=0&&tile.y>=0&&tile.x<e.width&&tile.y<e.height;
     const place=inside?Chamber.reach(state(),sp.id).find(p=>p.x===tile.x&&p.y===tile.y):null,taken=place&&e.units.some(u=>u.id!==sp.id&&u.x===tile.x&&u.y===tile.y);
     const address=action==='address'?Chamber.forecastFrom(state(),commandFor('address')):null,right=address?` · Right-click: Address the Chamber from where he stands: ${address.ok?Chamber.forecastLine(address):address.message}`:'';
     if(place&&!taken){
       const here=tile.x===sp.x&&tile.y===sp.y;canvas.dataset.cursor='walk';
-      message(`${here?`${sp.name} stands here`:`Click: walk here`}${right}`);
+      readout(`${here?`${sp.name} stands here`:`Click: walk here`}${right}`);
       presenter()?.setRoute(here?null:{points:walkRoute(e,{x:sp.x,y:sp.y},tile,sp.id)});setBadges(address?.ok?address.forecast:null);return;
     }
     canvas.dataset.cursor=address?'use':'blocked';presenter()?.setRoute(null);setBadges(address?.ok?address.forecast:null);
-    message(`${sp.moved&&!Chamber.speakers(state()).find(s=>s.id===sp.id)?.canWalk?`${sp.name} has walked and spoken this hour.`:'Outside his reach this hour: he may walk inside the pale circles.'}${right}`,!address);
+    readout(`${sp.moved&&!Chamber.speakers(state()).find(s=>s.id===sp.id)?.canWalk?`${sp.name} has walked and spoken this hour.`:'Outside his reach this hour: he may walk inside the pale circles.'}${right}`,!address);
   }
   // Click: talk, or walk. Right-click: the chosen speech. Touch: a tap walks or talks; with a speech armed, it gives it.
   function press(pick,{button='left',touch=false}={}){
@@ -410,6 +413,8 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
     dom.clockRing?.setAttribute('stroke-dasharray',`${Math.round((e.status==='active'?h.hour-1:h.of)/h.of*100)} 100`);
     if(dom.yieldButton)dom.yieldButton.disabled=e.status!=='active';if(dom.motionButton){dom.motionButton.disabled=e.status!=='active';dom.motionButton.setAttribute('aria-pressed',String(talking===MOTION));}
     if(talking)renderTalk();if(keyboardTarget)refreshTarget();else if(hover)hoverAt(hover,{refresh:true});
+    // Held across an hour's end, U says the new hour's plans.
+    if(rivalsHeld)rivalLine();
   }
 
   // Keyboard targeting is a live view of the selected person, not the sentence
@@ -422,7 +427,7 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
     const text=`${t.name}${t.bloc?`, ${t.bloc}, ${signed(t.stance)}`:t.role==='speaker'?`, ${t.resolve} Resolve`:''}, ${(Math.abs(t.x-sp.x)+Math.abs(t.y-sp.y))*Chamber.SEAT} m. `+
       `${f?(f.ok?`${Chamber.SPEECH_NAMES[speech]} (${keyOf(speech)}): ${Chamber.forecastLine(f)}.`:whyNot(speech,t,f)):''} Enter talks to him.`;
     const key=`${text}|${!!f&&!f.ok}`;
-    if(key!==targetKey||spoken){targetKey=key;message(text,!!f&&!f.ok);setBadges(f?.ok?f.forecast:null);}
+    if(key!==targetKey||spoken){targetKey=key;readout(text,!!f&&!f.ok);setBadges(f?.ok?f.forecast:null);}
     if(spoken)announce(text);
   }
 
@@ -461,12 +466,15 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
     apply({kind:'yield'}).then(r=>{if(r?.ok&&silent.length)say(`The floor is yielded: ${silent.map(s=>s.name).join(' and ')} did not speak this hour.`);});
   }
   // U: where each rival means to walk, and whom he means to speak to, as the 0.38 plans have it.
+  function rivalLine(plans=Chamber.rivalWalks(state())){message(plans.map(r=>r.message).join(' ')||'The rivals have no plan this hour.');}
   function rivalArrows(){
-    const plans=Chamber.rivalWalks(state());
-    message(plans.map(r=>r.message).join(' ')||'The rivals have no plan this hour.');
+    const plans=Chamber.rivalWalks(state());rivalsHeld=true;rivalLine(plans);
     return plans.flatMap(r=>{const t=unit(r.targetId),from=tilePoint(r.from),to=tilePoint(r.to),out=[];
       if(r.from.x!==r.to.x||r.from.y!==r.to.y)out.push({id:r.id,from,to,strike:false,label:r.name});if(t)out.push({id:r.id,from:to,to:tilePoint(t),strike:true,label:r.name});return out;});
   }
+
+  // U let go: the line says again what the pointer or the keyboard's target shows.
+  function hideRivals(){if(!rivalsHeld)return;rivalsHeld=false;targetKey='';if(keyboardTarget)refreshTarget();else if(hover)hoverAt(hover,{refresh:true});}
 
   // ——— The Command list: every chamber action without pointing (guide "Accessibility"). ———
   function options(actorId){return Chamber.chamberOptions(state(),actorId);}
@@ -479,7 +487,7 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
     return false;
   }
 
-  function reset(){closeTalk();partyKey='';barKey='';hudKey='';coalitionKey='';reachKey='';logKey='';badgesKey='';show=null;target=null;armed=null;hover=null;keyboardTarget=false;targetKey='';lastForecast=null;
+  function reset(){closeTalk();rivalsHeld=false;partyKey='';barKey='';hudKey='';coalitionKey='';reachKey='';logKey='';badgesKey='';show=null;target=null;armed=null;hover=null;keyboardTarget=false;targetKey='';lastForecast=null;
     if(dom.rivalsBand)dom.rivalsBand.hidden=true;setBadges(null);presenter()?.setRoute?.(null);message('');buildParty();buildBar();update();}
   // The page changed the Contest (a panel's speech, a retry, a load): the world, the HUD and an hour's end follow.
   function sync(outcome=null){
@@ -493,7 +501,7 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
     // Talk to a member from the page (the members list, the coalition panel's seats); quietly, the conversation a
     // field built again for another view had open.
     talk(personId,{quiet=false}={}){if(show)skip();if(live()&&(unit(personId)||personId===MAGISTRATE&&magistrate()||personId===MOTION))openTalk(personId,{quiet});},toggleMotion,
-    hover:hoverAt,press,act,update,sync,reset,options,use,rivalArrows,canControl,skip,
+    hover:hoverAt,press,act,update,sync,reset,options,use,rivalArrows,hideRivals,canControl,skip,
     // A new presenter (the stage rebuilt): the reach and the forecast marks are drawn again.
     invalidate(){reachKey='';badgesKey='';hudKey='';barKey='';},
     speakers:()=>Chamber.speakers(state()).filter(s=>s.standing),

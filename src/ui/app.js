@@ -1,6 +1,6 @@
 import {chapterHas3D,createBattleStageController} from './battle-stage-controller.js';
 import {createCeremonyController} from './ceremony-controller.js';
-import {esc,roman} from './view-helpers.js';
+import {esc,roman,offlineNotice} from './view-helpers.js';
 import {createCampaignViews,allocationDraftPreview} from './campaign-views.js';
 import {createPanels} from './panels.js';
 import {createRenderScheduler,createRenderHold,prepareShareCard} from './render-controller.js';
@@ -161,9 +161,14 @@ function toast(text,{problem=false}={}){
     note.textContent=text;note.scrollIntoView({block:'nearest'});return;
   }
   feedback=text;const inline=document.querySelector('#action-feedback');if(inline){inline.textContent=text;inline.hidden=false;return;}
+  // The full-screen camp, field and chamber have no site header (release 12): the world's own message line says it, for
+  // as long as the note below would stay. It was announced above; the line is not announced again.
+  if(field?.runtime&&field.element?.isConnected){field.runtime.say(text,{warning:problem,ms:6500});return;}
   let note=document.querySelector('.system-feedback');
   if(!note){
-    note=document.createElement('p');note.className='system-feedback';note.setAttribute('role','status');document.querySelector('.topbar')?.after(note);
+    note=document.createElement('p');note.className='system-feedback';note.setAttribute('role','status');
+    // Without a site header to sit under, it floats over the page (realtime.css), so nothing below it moves.
+    const topbar=document.querySelector('.topbar');if(topbar)topbar.after(note);else document.body.append(note);
   }
   note.textContent=text;note.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>note.hidden=true,6500);
 }
@@ -953,8 +958,7 @@ function paint(animation=null){
 }
 function updateLoadingStatus(){
   const regions=[['art-loading-status',artProgress],
-    ['offline-status',
-      offline?'✓ ALL CHAPTERS AVAILABLE OFFLINE':offlineProgress||(currentChapterOffline&&state?`✓ CHAPTER ${roman(state.chapter)} AVAILABLE OFFLINE`:'')]];
+    ['offline-status',offlineNotice({offline,chapterReady:currentChapterOffline&&!!state,progress:offlineProgress})]];
   for(const [id,text]of regions){
     let node=document.getElementById(id);
     if(!node&&text){
