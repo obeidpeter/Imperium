@@ -612,10 +612,11 @@ html[data-world="full"] .rt-hud .rt-message-lines>.rt-event:empty{display:none}
   html[data-world="full"] .rt-chamber-strip>.rt-records{order:3}
 }
 
-/* Release 14: the card between areas, over the page while the next world is built. Presentation only: it takes
-   no pointer and leaves the focus where it is; reduced motion shows it without fading. */
+/* Release 14: the card between areas, over the page while the next world is built (opaque, so the world's own
+   loading line does not show through). Presentation only: it takes no pointer and leaves the focus where it is;
+   reduced motion shows it without fading. */
 .area-card{position:fixed;inset:0;z-index:40;display:grid;place-content:center;gap:.35rem;text-align:center;pointer-events:none;
-  background:radial-gradient(ellipse at center,#141a17e6 0,#141a17b3 55%,#141a1700 100%);color:#f6efdb;animation:area-card-in .35s ease-out}
+  background:#141a17;color:#f6efdb;animation:area-card-in .35s ease-out}
 .area-card.is-leaving{opacity:0;transition:opacity .45s}
 .area-card-way{margin:0;font:600 calc(.85rem * var(--text-scale,1)) system-ui;letter-spacing:.12em;text-transform:uppercase;color:#d9c79b}
 .area-card-title{margin:0;font-size:calc(1.9rem * var(--text-scale,1));font-family:Georgia,'Times New Roman',serif;max-inline-size:min(36rem,calc(100vw - 2rem))}

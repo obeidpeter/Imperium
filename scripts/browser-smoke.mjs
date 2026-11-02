@@ -632,6 +632,54 @@ async function campGateDeparture(){
   }
   console.log('ok - camp gate reply: one March out reply saves the conversation and enters both a field and a chamber');
 }
+// Release 14: leaving camp on foot. The soldier is sent to the camp's way out with the world's own interact
+// command, as All actions sends him. In a new chronicle's first camp, the drill yard refuses in the gate sentry's
+// words and the save stays as it was; in Chapter II's camp, the road out marches the column to the broken
+// causeway, with a card naming it, in 2D and 3D.
+async function campExitDeparture(){
+  const camp=async(code,view)=>{
+    const page=await open();
+    await page.addInitScript(v=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:v}));}catch{}},view);
+    await page.goto(base);await settingsCommand(page,'restore');await restoreCamp(page,code);
+    await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');return page;
+  };
+  const useExit=page=>page.evaluate(()=>window.__realtime.issue({actorId:'hero',kind:'interact',payload:{objectId:'exit'}}));
+  // The chronicle as the page saved it (storage.js: IndexedDB 'sacramentum', store 'saves', record 'campaign').
+  const saved=page=>page.evaluate(()=>new Promise(resolve=>{const r=indexedDB.open('sacramentum',1);r.onerror=()=>resolve(null);
+    r.onsuccess=()=>{try{const get=r.result.transaction('saves').objectStore('saves').get('campaign');get.onsuccess=()=>{r.result.close();resolve(get.result?JSON.stringify(get.result):null);};
+      get.onerror=()=>resolve(null);}catch{resolve(null);}};}));
+  {
+    const page=await camp(Game.encodeSave(Game.newGame('Exit',275,{featureEdition:35,progression:true,path:'legionary'})),'3d');
+    const exit=await page.evaluate(()=>window.__realtime.world().objects.find(o=>o.kind==='exit'));
+    assert.equal(exit?.name,'The drill yard','The first camp’s way out leads to the drill');
+    const used=()=>page.evaluate(()=>window.__realtime.world().objects.find(o=>o.kind==='exit').at??null);
+    assert.equal((await useExit(page)).ok,true,'The soldier walks to the way out');
+    await page.waitForFunction(()=>/^The gate sentry: “/.test(document.querySelector('#announcement')?.textContent??''),null,{timeout:60000})
+      .catch(async()=>assert.fail(`The sentry says what is missing: ${await text(page,'#announcement')}`));
+    assert.match(await text(page,'#announcement'),/decision/,'The departure check is the sentry’s line');
+    // Walking there recorded his first visit to the drill field (a save of its own). From where he stands now, the way
+    // out is used again: the refusal itself saves and changes nothing.
+    await page.waitForFunction(()=>!/Saving/.test(document.querySelector('.save-status')?.textContent??''),null,{timeout:30000});
+    const before=await saved(page),first=await used();assert.ok(before,'The chronicle is saved');
+    assert.equal((await useExit(page)).ok,true,'He uses the way out again');
+    await page.waitForFunction(at=>(window.__realtime.world().objects.find(o=>o.kind==='exit').at??null)!==at,first,{timeout:60000});
+    await page.waitForTimeout(500);
+    assert.equal(await page.evaluate(()=>document.documentElement.dataset.phase),'camp','Nothing happens');assert.equal(await saved(page),before,'The refusal leaves the save as it was');
+    await page.context().close();
+  }
+  const code=battleCampCode('ch2-marsh');
+  for(const view of ['2d','3d']){
+    const page=await camp(code,view);
+    assert.equal((await useExit(page)).ok,true,`${view}: the soldier walks to the road out`);
+    await page.waitForSelector('.area-card',{timeout:120000}).catch(()=>assert.fail(`${view}: a card names where the column goes`));
+    assert.match(await text(page,'.area-card'),/The road out.*The broken causeway/,`${view}: the card names the way and the place`);
+    await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:120000}).catch(()=>assert.fail(`${view}: the field opens`));
+    assert.equal(await page.evaluate(()=>window.__realtime.world().encounterId),'ch2-marsh',`${view}: the next encounter`);
+    await page.waitForSelector('.area-card',{state:'detached',timeout:30000}).catch(()=>assert.fail(`${view}: the card goes`));
+    await page.context().close();
+  }
+  console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words and changes nothing; Chapter II’s road out marches to the causeway with a card, in 2D and 3D');
+}
 // Every chamber command is recorded through the page's save transaction: wait for it before the next.
 const chamberIdle=page=>page.waitForFunction(()=>window.__chamber.pending()===0,null,{timeout:60000});
 const chamberHour=page=>page.evaluate(()=>window.__chamber.hour());
@@ -982,7 +1030,7 @@ let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 // Check departure races first, before the longer whole-campaign scenarios.
-for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,viewSwitch,realtimeDeployment,
+for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,campExitDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,viewSwitch,realtimeDeployment,
   chamberCouncil,chamberViewFallback,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();
