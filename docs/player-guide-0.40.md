@@ -1010,10 +1010,11 @@ arming cap under the helmet; a cloak over everything.
   contents or goods beside your pack. Drag a piece into the pack to put
   it where you want it, or use **Take**, **Take all** or **Buy**; drag a
   piece of yours onto a trader to sell it, or choose it and **Sell**.
-  After a victory, **Search the field** lists the fallen and the field's
-  containers that still hold something. What you take from a battlefield
-  is kept when you continue, and **Retry** puts it back. Practice can look
-  but not take.
+  After a victory, walk the field to search them (see **Walk the field**),
+  or use **Search the field** in the result, which lists the fallen and the
+  field's containers that still hold something. What you take from a
+  battlefield is kept when you continue, and **Retry** puts it back.
+  Practice can look but not take.
 
 - **Coin:** you are paid in **denarii** each chapter, with donatives
   after some victories. Denarii buy kit from the quartermaster and
@@ -1283,7 +1284,8 @@ struck stops the work. Using an object spends no Command and no Stamina.
 
 - **Battlefield containers.** Most battles hide one or two: an officer's
   strongbox, a raider's cache, abandoned baggage. Open one during the
-  fight, or after a victory from **Search the field**.
+  fight, or after a victory on the walked field or from **Search the
+  field**.
 
 - After each encounter the **After-Action Chronicle** names
   distinguished service and turning points and, after a defeat, gives a
@@ -1292,6 +1294,25 @@ struck stops the work. Using an object spends no Command and no Stamina.
   battle log. These are highlights, not a complete replay; older or sparse
   saves may show fewer. Retry advice follows recorded events or the
   mission's unmet requirement.
+
+- **Walk the field.** After a won battle, the result offers **Walk the
+  field** beside **Continue**. It comes first while one of the fallen or a
+  found chest still holds something. The field stays open and peaceful.
+  - The enemy still standing have gone. Weapons stay sheathed, nothing
+    fights and the clock no longer counts against you.
+  - Click one of the fallen or a chest to search it. A chest still locked
+    opens with its key once you have taken it here, or by force if you
+    are strong enough. A key that left with an enemy who lived opens
+    nothing, and a cache nobody found in the fight stays hidden.
+  - **The road to camp** stands where you entered the field. Take it to
+    record the result, as **Continue** does. The first time, if anything
+    worth taking is still there, it says what; take it again to leave
+    anyway. After a chapter's last battle it leads on to the promotion.
+  - **Result**, in the strip above the field, shows the result again.
+  - Nothing on the walked field is saved but what you take. A reload
+    shows the result, and **Walk the field** opens the field again.
+  - In Practice nothing is taken, and **The road back** returns you to
+    your chronicle. A defeat keeps **Retry**.
 
 # Companions and command
 

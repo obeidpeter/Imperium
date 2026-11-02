@@ -2,6 +2,15 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 14, second part: the field after a victory ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/walking-release14-report.md#second-part-the-field-after-a-victory))
+
+- **Walk the field.** After a won real-time battle the result offers **Walk the field** beside **Continue**, first while one of the fallen or a found chest still holds something. The field stays open and peaceful: the enemy still standing have gone, weapons stay sheathed, nothing fights and no clock runs against you. A strip above the field says what to do, with **Result** to see the result again and **Continue**.
+- **Search where they fell.** Click one of the fallen or a chest to search it in the inventory, as in the fight. A chest still locked shows its two ways in: **Use the key** once you have taken its key here, or **Force the lock** if you are strong enough. A key that left with an enemy who lived opens nothing, and a cache nobody found in the fight stays hidden. What you take is kept with the result, as before.
+- **The road to camp** stands where you entered the field, a waypost like the camps'. Taking it records the result, as **Continue** does. The first time, if anything worth taking is still on the field, it says what and nothing changes; take it again to leave anyway. After a chapter's last battle it leads on to the promotion. In Practice, **The road back** returns you to your chronicle. A defeat keeps **Retry**, and the drill yard has nothing to search, so the drill is recorded as before.
+- **Only what you take is saved.** The walked field is built from the recorded fight each time. A reload shows the result, and **Walk the field** opens the field again with everything you took.
+- **Smaller changes.** The walked field keeps the victory's music, even when your soldier is badly hurt, and the fight's lessons are over.
+- **For contributors.** `core/realtime/aftermath.js` builds the walking world from the chronicle's resolved fight and copies the chronicle's searches back into it (`syncAftermath`); `fieldUnsearched` names what is left. The world is peaceful (refusals say **The fight is over: weapons stay sheathed…**) and calm: no enemy, squad, band, field-round or objective system runs, so it never ends. Its takes and locks are the chronicle's (`takeSpoils`, `openFieldContainer`, `takeFromContainer`); the world refuses its own, the fight's works and kit changes. New checks: `tests/aftermath.test.mjs`, `tests/aftermath-page.test.mjs` and the browser check `fieldAftermath`.
+
 ### Worlds and gameplay, release 13, second part: item pictures ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/inventory-release13-report.md#second-part-the-item-pictures))
 
 - **Every piece has a picture.** The inventory shows a picture of each piece, rendered from a generated model in one look: in the pack at its shape, in the worn places, on the ground, and in chests, the fallen's belongings and the traders' goods. There are 35 pictures for 105 pieces, as finer pieces of one kind share their kind's picture.

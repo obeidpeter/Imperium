@@ -30,6 +30,7 @@ import {closePanel,closedBy,menuCommand,revealControl,settingsCommand,settingsPa
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign,protectCoalition} from './command-autoplay.mjs';
+import {runRealtimeCampaign} from './realtime-autoplay.mjs';
 import {playEncounter,command} from './autoplay.mjs';
 import {tpAuditTotal} from '../src/core/tp-audit.js';
 import {sceneryPlacements} from '../src/showcase/scenery-models.js';
@@ -519,6 +520,12 @@ async function restoreChamber(page,code,view='3d',{beforeStart=null}={}){
   await (await revealControl(page,'[data-cmd="start"]')).click();
   await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
 }
+// The chronicle as the page saved it (storage.js: IndexedDB 'sacramentum', store 'saves', record 'campaign'), as JSON.
+const savedRecord=page=>page.evaluate(()=>new Promise(resolve=>{const r=indexedDB.open('sacramentum',1);r.onerror=()=>resolve(null);
+  r.onsuccess=()=>{try{const get=r.result.transaction('saves').objectStore('saves').get('campaign');get.onsuccess=()=>{r.result.close();resolve(get.result?JSON.stringify(get.result):null);};
+    get.onerror=()=>resolve(null);}catch{resolve(null);}};}));
+const savedChronicle=async page=>{const record=await savedRecord(page);return record?JSON.parse(JSON.parse(record).payload):null;};
+const saveIdle=page=>page.waitForFunction(()=>!/Saving/.test(document.querySelector('.save-status')?.textContent??''),null,{timeout:30000});
 async function restoreCamp(page,code){
   await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');
   await closedBy(page,()=>page.click('[data-cmd="confirm-import"]'));
@@ -648,10 +655,7 @@ async function campExitDeparture(){
     await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');return page;
   };
   const useExit=page=>page.evaluate(()=>window.__realtime.issue({actorId:'hero',kind:'interact',payload:{objectId:'exit'}}));
-  // The chronicle as the page saved it (storage.js: IndexedDB 'sacramentum', store 'saves', record 'campaign').
-  const saved=page=>page.evaluate(()=>new Promise(resolve=>{const r=indexedDB.open('sacramentum',1);r.onerror=()=>resolve(null);
-    r.onsuccess=()=>{try{const get=r.result.transaction('saves').objectStore('saves').get('campaign');get.onsuccess=()=>{r.result.close();resolve(get.result?JSON.stringify(get.result):null);};
-      get.onerror=()=>resolve(null);}catch{resolve(null);}};}));
+  const saved=savedRecord;
   {
     const page=await camp(Game.encodeSave(Game.newGame('Exit',275,{featureEdition:35,progression:true,path:'legionary'})),'3d');
     const exit=await page.evaluate(()=>window.__realtime.world().objects.find(o=>o.kind==='exit'));
@@ -683,6 +687,74 @@ async function campExitDeparture(){
     await page.context().close();
   }
   console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words and changes nothing; Chapter II’s road out marches to the causeway with a card, in 2D and 3D');
+}
+// Release 14: the field after a victory. Chapter III's station, won from New Game by the legal-command bot and not yet
+// recorded (realtime-autoplay.mjs), restored through Import. The result offers to walk the field; walked, the fallen
+// archer is searched and the strongbox (its key left with the raiders' leader, who lived) forced, each through the
+// chronicle; the road to camp first names what is left behind and changes nothing, then records the result once.
+function wonStationCode(){
+  let code=null;const stop=new Error('stop');
+  try{runRealtimeCampaign({throughChapter:3,ready:[1,2,3],seed:275,onEncounter:s=>{if(s.encounter?.id==='ch3-station'&&s.encounter.status==='won'){code=Game.encodeSave(s);throw stop;}}});}
+  catch(error){if(error!==stop)throw error;}
+  assert.ok(code,'The bot wins the station');return code;
+}
+async function fieldAftermath(){
+  const code=wonStationCode(),expected=Game.decodeSave(code);
+  assert.deepEqual(Game.fieldUnsearched(expected).map(u=>u.id),['enemy0','station-strongbox'],'The archer and the strongbox are left to search');
+  const page=await open();
+  await page.addInitScript(()=>{try{localStorage.setItem('sacramentum.settings',JSON.stringify({controlsModel:'realtime',quality:'performance',battleView:'3d'}));}catch{}});
+  await page.goto(base);await settingsCommand(page,'restore');
+  await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await closedBy(page,()=>page.click('[data-cmd="confirm-import"]'));
+  await page.waitForSelector('.rt-result [data-cmd="walk-field"].primary',{timeout:120000}).catch(()=>assert.fail('The won station offers to walk the field, first'));
+  const issue=command=>page.evaluate(c=>window.__realtime.issue(c),command);
+  const running=async()=>{if(await page.evaluate(()=>window.__realtime.paused())){await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');}};
+  const closeWindow=async()=>{await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('#modal')?.open);};
+  await page.click('.rt-result [data-cmd="walk-field"]');
+  await page.waitForFunction(()=>window.__realtime.world()?.aftermath===true&&!!document.querySelector('.rt-aftermath'),null,{timeout:60000})
+    .catch(()=>assert.fail('The field is walked, with its strip'));
+  assert.equal(await page.locator('.rt-result').count(),0,'The strip stands in for the result');
+  assert.equal(await page.evaluate(()=>document.querySelector('main.realtime-frame').dataset.outcome),'walking');
+  await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:120000});
+  assert.equal(await page.evaluate(()=>window.__realtime.world().actors.some(a=>a.side==='enemy'&&a.alive)),false,'The living raiders have gone');
+  const drawn=await issue({actorId:'hero',kind:'setDrawn',payload:{drawn:true}});
+  assert.equal(drawn.ok,false);assert.equal(drawn.reason,'PEACEFUL_FIELD','Weapons stay sheathed');
+  // The road at once: it names what is still on the field, and nothing is recorded or saved.
+  await saveIdle(page);const before=await savedRecord(page);await running();
+  assert.equal((await issue({actorId:'hero',kind:'interact',payload:{objectId:'exit'}})).ok,true,'The soldier walks to the road');
+  await page.waitForFunction(()=>/^Still on the field: /.test(document.querySelector('#announcement')?.textContent??''),null,{timeout:120000})
+    .catch(async()=>assert.fail(`The road names what is left: ${await text(page,'#announcement')}`));
+  assert.match(await text(page,'#announcement'),/Gothic archer \(fallen\), The station strongbox/);
+  assert.equal(await page.evaluate(()=>document.documentElement.dataset.phase),'encounter','Nothing is recorded yet');
+  assert.equal(await savedRecord(page),before,'The warning changes nothing');
+  // The fallen archer: walked to and searched; what he carried is staged with the result in the saved chronicle.
+  await running();await issue({actorId:'hero',kind:'loot',payload:{targetId:'enemy0'}});
+  await page.waitForSelector('#modal[open] [data-cmd="rt-take"][data-item="*"]',{timeout:120000}).catch(()=>assert.fail('The archer’s belongings open'));
+  await page.click('#modal [data-cmd="rt-take"][data-item="*"]');
+  await page.waitForFunction(()=>window.__realtime.world().actors.find(a=>a.id==='enemy0')?.loot?.length===0,null,{timeout:60000})
+    .catch(()=>assert.fail('The walked field follows the take'));
+  await saveIdle(page);assert.deepEqual((await savedChronicle(page)).encounter.staged.spoils,['coin_purse','quiver'],'Staged in the saved chronicle');
+  await closeWindow();
+  // The strongbox: no key was taken here, so the strong soldier forces it, then takes all it holds.
+  await running();await issue({actorId:'hero',kind:'interact',payload:{objectId:'station-strongbox'}});
+  await page.waitForSelector('#modal[open] [data-cmd="rt-open-box"][data-method="force"]:not([disabled])',{timeout:120000}).catch(()=>assert.fail('The locked strongbox offers force'));
+  assert.equal(await page.locator('#modal [data-cmd="rt-open-box"][data-method="key"]').isDisabled(),true,'Its key is not on the field');
+  await page.click('#modal [data-cmd="rt-open-box"][data-method="force"]');
+  await page.waitForSelector('#modal[open] [data-cmd="rt-take-from"][data-item="*"]',{timeout:60000}).catch(()=>assert.fail('Forced open, it shows what it holds'));
+  await page.click('#modal [data-cmd="rt-take-from"][data-item="*"]');
+  await page.waitForFunction(()=>window.__realtime.world().objects.find(o=>o.id==='station-strongbox')?.contents?.length===0,null,{timeout:60000})
+    .catch(()=>assert.fail('The strongbox is emptied'));
+  await closeWindow();
+  // The road again: nothing is left, so it records the result once and the column comes back to camp.
+  await saveIdle(page);await running();
+  assert.equal((await issue({actorId:'hero',kind:'interact',payload:{objectId:'exit'}})).ok,true);
+  await page.waitForSelector('.area-card',{timeout:120000}).catch(()=>assert.fail('A card names the camp'));
+  assert.match(await text(page,'.area-card'),/The road to camp/);
+  await page.waitForFunction(()=>document.documentElement.dataset.phase==='camp',null,{timeout:60000});await saveIdle(page);
+  const recorded=await savedChronicle(page);
+  assert.equal(recorded.history.filter(h=>h.id==='ch3-station').length,1,'The station is recorded once');
+  assert.ok([...recorded.soldier.pack,...Object.values(recorded.soldier.ground??{}).flat()].some(e=>e.id==='gladius_fine'),'The strongbox’s sword reached the soldier');
+  await page.context().close();
+  console.log('ok - field after a victory: a restored won station is walked; the road names the archer and the strongbox and changes nothing; both are searched through the chronicle; the road then records the result once and returns to camp');
 }
 // Every chamber command is recorded through the page's save transaction: wait for it before the next.
 const chamberIdle=page=>page.waitForFunction(()=>window.__chamber.pending()===0,null,{timeout:60000});
@@ -1035,7 +1107,7 @@ let failed=false;
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 // Check departure races first, before the longer whole-campaign scenarios.
 const scenarios=[campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,campExitDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,viewSwitch,realtimeDeployment,
-  chamberCouncil,chamberViewFallback,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle];
+  chamberCouncil,chamberViewFallback,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle,fieldAftermath];
 // CI's two smoke jobs: group a is the scenarios named here (about half the time in CI), group b every other one,
 // so a new scenario always runs in one of them.
 const groupA=['campStartupDeparture','campSaveDeparture','campRouteChoice','campGateDeparture','campExitDeparture','realtimeSquads','drillDesktop',
