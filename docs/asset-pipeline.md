@@ -481,4 +481,4 @@ Release 13 gives every piece in the inventory a picture rendered from a generate
    - that the atlas is the recorded size, within its 120 KB budget, and in every chapter's pack;
    - that each picture's model was accepted and paid for from the ledger.
 
-`src/ui/item-art.js` draws a picture as an SVG whose `viewBox` cuts the item's place from the atlas, so it fits any box without stretching: the pack's cells, the worn places, the details and the trader's goods. An item with no picture keeps its drawn silhouette.
+`src/ui/item-art.js` draws a picture as two nested SVGs: the outer fits the item's place into any box without stretching (the pack's cells, the worn places, the details and the traders' goods), and the inner, the place's own size, clips the atlas to it, so a box of another shape never shows the neighbouring pictures. An item with no picture keeps its drawn silhouette.

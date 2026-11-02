@@ -73,7 +73,10 @@ How each kind of check was made:
   - The atlas is a WebP of its recorded size and dimensions, within the plan's 120 KB, and in every chapter's offline pack.
   - A pictured item shows its place in the atlas, a drawn one keeps its outline, and a fine piece names its finish.
   - Every picture's model was accepted at review and paid for from the pictures' credits, within the cap.
-- **The real interface:** RESULTS
+- **The real interface:** the production build in headless Chromium with software rendering (SwiftShader).
+  - `smoke:usability`'s inventory flow now also checks that every piece in the pack with a picture shows it, cut from the atlas, and that the page loads the atlas. All 13 flows passed on a build before the fix below; their run on the fixed build is recorded when it ends.
+  - Screens of the inventory, the armourer's rack and the quartermaster's goods were captured at 390, 1,024, 1,280 and 1,920 pixels wide, from a checkpoint earned by legal commands.
+  - The screens showed one fault, fixed here: a picture in a box of another shape, such as a spear in the square of a trader's list, showed the edges of its neighbours in the atlas. Each picture is now clipped to its own place.
 - **Not performed:** a person looking at them, and any check on a phone, a tablet or a laptop screen. The pictures were reviewed at their pack sizes in software-rendered screenshots only.
 
 | Change | Where it shows | Code | State and randomness |
