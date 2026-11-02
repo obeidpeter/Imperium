@@ -175,6 +175,11 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
           c.fillStyle=empty?'#57503f':'#7a5a2e';if(o.opened)c.fillRect(p.x-v.tw*.2,p.y-v.th*.95,v.tw*.4,v.th*.12);else c.fillRect(p.x-v.tw*.21,p.y-v.th*.58,v.tw*.42,v.th*.12);
           if(locked){c.fillStyle='#3b3f3a';c.beginPath();c.arc(p.x,p.y-v.th*.25,v.tw*.05,0,Math.PI*2);c.fill();}
           c.font=`600 ${Math.max(10,v.th*.42)}px system-ui`;c.textAlign='center';c.fillStyle='#f6efdb';c.fillText(`${o.name}${empty?' (empty)':locked?' (locked)':''}`,p.x,p.y-v.th*1.1);continue;}
+        // The way out of camp (release 14): a waymarker, its board pointing on, and where it leads.
+        if(o.kind==='exit'){c.fillStyle='#5a4632';c.fillRect(p.x-v.tw*.04,p.y-v.th*1.5,v.tw*.08,v.th*1.5);
+          c.fillStyle='#c49a4f';c.beginPath();c.moveTo(p.x-v.tw*.22,p.y-v.th*1.42);c.lineTo(p.x+v.tw*.14,p.y-v.th*1.42);c.lineTo(p.x+v.tw*.26,p.y-v.th*1.22);
+          c.lineTo(p.x+v.tw*.14,p.y-v.th*1.02);c.lineTo(p.x-v.tw*.22,p.y-v.th*1.02);c.closePath();c.fill();c.fillStyle='#a8322b';c.fillRect(p.x-v.tw*.04,p.y-v.th*1.5,-v.tw*.14,v.th*.2);
+          c.font=`600 ${Math.max(10,v.th*.42)}px system-ui`;c.textAlign='center';c.fillStyle='#f6efdb';c.fillText(o.name,p.x,p.y-v.th*1.7);continue;}
         c.fillStyle=o.done&&!o.toggle?'#6b6050':o.state==='burning'?'#e07a2c':'#c49a4f';c.fillRect(p.x-v.tw*.12,p.y-v.th*1.1,v.tw*.24,v.th*1.1);
         // A lit brazier's smoke, and its reach.
         if(o.state==='burning'){ellipse(p,2.5*unit*.7,null,{fill:'#9b928355'});ellipse(p,3*unit*.7,'#e07a2c',{dash:[4,4],width:1.5});}

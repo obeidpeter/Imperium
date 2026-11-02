@@ -458,10 +458,30 @@ function goToErrand(id){
 function campCallbacks(){
   return {
     lesson:lessonFor('camp'),onTalk:id=>{const a=field?.runtime?.world.actors.find(x=>x.id===id);if(a?.talk)showConversation(a.talk.tree);},
-    // A chest opens its contents (release 11); other objects their conversation.
-    onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.container){showSoldierPanel('container',o.container);return;}if(o?.talk)showConversation(o.talk);},
+    // A chest opens its contents (release 11), the way out leaves camp (release 14); other objects their conversation.
+    onObject:id=>{const o=field?.runtime?.world.objects.find(x=>x.id===id);if(o?.container){showSoldierPanel('container',o.container);return;}
+      if(o?.kind==='exit'){void leaveCamp(o);return;}if(o?.talk)showConversation(o.talk);},
     onMenu:menuOrClose,onPanel:name=>openPanel(name),onHud:world=>{noteVisit(world);refreshMissionPanel();},onQuickSave:()=>quickSave()
   };
+}
+// Release 14: the way out to the next encounter (camp-world.js campExitFor) leaves through the same departure as
+// the gate's March out. While a save runs it waits; whatever is still missing, the sentry says, and nothing
+// changes; once the column has marched, a short card names where it is going while that place is built.
+async function leaveCamp(o){
+  if(sessionGate.busy){toast('Saving… use the way out again in a moment.');return;}
+  const problem=Game.departureCheck(state);
+  if(problem){toast(`The gate sentry: “${problem}”`,{problem:true});return;}
+  await startCampaignEncounter();
+  if(state?.phase==='encounter'&&state.encounter?.id===o.exit?.to)showAreaCard({way:o.name,area:o.exit.area});
+}
+// The card between areas: presentation only, over the page while the next world is built, then gone.
+let areaCard=null;
+function showAreaCard({way,area}){
+  areaCard?.remove();areaCard=null;if(!area)return;
+  const card=document.createElement('div');card.className='area-card';card.setAttribute('role','status');
+  card.innerHTML=`<p class="area-card-way">${esc(way??'')}</p><p class="area-card-title">${esc(area)}</p>`;
+  document.body.append(card);areaCard=card;
+  setTimeout(()=>{card.classList.add('is-leaving');setTimeout(()=>{card.remove();if(areaCard===card)areaCard=null;},settings.reducedMotion?0:450);},settings.reducedMotion?1100:1700);
 }
 function noteVisit(world){
   const place=Game.campPlaceAt(world);if(!place||!state.soldier||Game.campVisited(state).includes(place)||sessionGate.busy)return;
@@ -661,6 +681,12 @@ function saveField(world,{announced=false}={}){
     if(announced)toast(result?.ok?'Saved. The fight continues from here after a reload.':saveProblem);
   }).catch(error=>{if(error.code!=='SESSION_BUSY')console.error(error);});
 }
+// A fight's end is handed to the chronicle once a save in progress is done (release 14): refused while the session
+// was busy, the result used to wait for a reload. The field is ended and frozen meanwhile; a newer fight replaces it.
+function recordFieldEnd(world,waited=0){
+  if(sessionGate.busy){if(waited<1200&&field?.runtime?.world===world)setTimeout(()=>recordFieldEnd(world,waited+1),50);return;}
+  return change(()=>{const r=Game.resolveRealtime(state,world);if(field)field.source=fieldSource();return r;});
+}
 function fieldCallbacks(){
   return {
     onHud:world=>soundscape.update(state,screen,world),
@@ -668,7 +694,7 @@ function fieldCallbacks(){
     // Play resumed: the resume point is discarded on this first tick, so it is never used twice.
     onResume:()=>{if(Game.clearResume(state).ok){if(field)field.source=fieldSource();if(!sessionGate.busy&&!saveConflict)sessionGate.run(()=>persist()).catch(()=>{});}},
     onQuickSave:()=>quickSave(),
-    onEnd:world=>change(()=>{const r=Game.resolveRealtime(state,world);if(field)field.source=fieldSource();return r;}),
+    onEnd:world=>recordFieldEnd(world),
     onMenu:menuOrClose,
     onPanel:name=>fieldPanel(name),
     onTalk:id=>fieldTalk(id),

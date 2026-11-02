@@ -37,8 +37,10 @@ export function campExitFor(state){
 // never rebuilds the camp's scenery.
 const interactionOf=(state,o,point)=>({id:o.id,kind:o.kind,name:o.name,...point(o.place,o.at),...(o.container?{container:o.container,box:containerById(o.container)?.kind??'chest'}:{})});
 // The camp's objects and, at its place, the way out to the next encounter (the scenery draws it: release 14).
-const interactionsOf=(state,camp,point)=>{const exit=campExitFor(state);
-  return [...camp.objects.map(o=>interactionOf(state,o,point)),...(exit?[{id:exit.id,kind:'exit',name:exit.name,way:exit.to,...point(exit.place,exit.at)}]:[])];};
+// Its board points the way, out from its place's centre.
+const interactionsOf=(state,camp,point)=>{const exit=campExitFor(state),[dx,dz]=exit?.at??[0,0],d=Math.hypot(dx,dz)||1;
+  return [...camp.objects.map(o=>interactionOf(state,o,point)),
+    ...(exit?[{id:exit.id,kind:'exit',name:exit.name,way:exit.to,...point(exit.place,exit.at),face:[+(dx/d).toFixed(3),+(dz/d).toFixed(3)]}]:[])];};
 // The armourer's forge stands behind him, away from the place's centre the soldier comes from,
 // turned a little to one side if the place's objects or people stand there.
 function smithyOf(camp,point){
