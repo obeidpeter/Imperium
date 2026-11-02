@@ -707,7 +707,19 @@ async function fieldAftermath(){
   await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await closedBy(page,()=>page.click('[data-cmd="confirm-import"]'));
   await page.waitForSelector('.rt-result [data-cmd="walk-field"].primary',{timeout:120000}).catch(()=>assert.fail('The won station offers to walk the field, first'));
   const issue=command=>page.evaluate(c=>window.__realtime.issue(c),command);
-  const running=async()=>{if(await page.evaluate(()=>window.__realtime.paused())){await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');}};
+  // A closed window gives the world back on its own; P resumes it only if it stays paused, once that is clear, so the
+  // two never cross (a P pressed just as the window's pause lifts would pause it again).
+  const running=async()=>{
+    for(let tries=0;tries<3;tries++){
+      if(await page.waitForFunction(()=>!window.__realtime.paused(),null,{timeout:4000}).then(()=>true,()=>false))return;
+      await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');
+    }
+    assert.fail('The walked field runs again');
+  };
+  // What the page shows when a walk takes too long: its message, the clock and how far the soldier is from where he goes.
+  const stateOf=target=>page.evaluate(id=>{const w=window.__realtime.world(),h=w?.actors.find(a=>a.id==='hero'),o=w?.objects.find(x=>x.id===id);
+    return `announcement "${document.querySelector('#announcement')?.textContent??''}", phase ${document.documentElement.dataset.phase}, paused ${window.__realtime.paused()}, `+
+      `${h&&o?`${Math.hypot(h.x-o.x,h.z-o.z).toFixed(1)} m from ${id}`:'no field'}, tick ${w?.tick}`;},target);
   const closeWindow=async()=>{await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('#modal')?.open);};
   await page.click('.rt-result [data-cmd="walk-field"]');
   await page.waitForFunction(()=>window.__realtime.world()?.aftermath===true&&!!document.querySelector('.rt-aftermath'),null,{timeout:60000})
@@ -721,14 +733,14 @@ async function fieldAftermath(){
   // The road at once: it names what is still on the field, and nothing is recorded or saved.
   await saveIdle(page);const before=await savedRecord(page);await running();
   assert.equal((await issue({actorId:'hero',kind:'interact',payload:{objectId:'exit'}})).ok,true,'The soldier walks to the road');
-  await page.waitForFunction(()=>/^Still on the field: /.test(document.querySelector('#announcement')?.textContent??''),null,{timeout:120000})
-    .catch(async()=>assert.fail(`The road names what is left: ${await text(page,'#announcement')}`));
+  await page.waitForFunction(()=>/^Still on the field: /.test(document.querySelector('#announcement')?.textContent??''),null,{timeout:300000})
+    .catch(async()=>assert.fail(`The road names what is left: ${await stateOf('exit')}`));
   assert.match(await text(page,'#announcement'),/Gothic archer \(fallen\), The station strongbox/);
   assert.equal(await page.evaluate(()=>document.documentElement.dataset.phase),'encounter','Nothing is recorded yet');
   assert.equal(await savedRecord(page),before,'The warning changes nothing');
   // The fallen archer: walked to and searched; what he carried is staged with the result in the saved chronicle.
   await running();await issue({actorId:'hero',kind:'loot',payload:{targetId:'enemy0'}});
-  await page.waitForSelector('#modal[open] [data-cmd="rt-take"][data-item="*"]',{timeout:120000}).catch(()=>assert.fail('The archer’s belongings open'));
+  await page.waitForSelector('#modal[open] [data-cmd="rt-take"][data-item="*"]',{timeout:300000}).catch(async()=>assert.fail(`The archer’s belongings open: ${await stateOf('exit')}`));
   await page.click('#modal [data-cmd="rt-take"][data-item="*"]');
   await page.waitForFunction(()=>window.__realtime.world().actors.find(a=>a.id==='enemy0')?.loot?.length===0,null,{timeout:60000})
     .catch(()=>assert.fail('The walked field follows the take'));
@@ -736,7 +748,8 @@ async function fieldAftermath(){
   await closeWindow();
   // The strongbox: no key was taken here, so the strong soldier forces it, then takes all it holds.
   await running();await issue({actorId:'hero',kind:'interact',payload:{objectId:'station-strongbox'}});
-  await page.waitForSelector('#modal[open] [data-cmd="rt-open-box"][data-method="force"]:not([disabled])',{timeout:120000}).catch(()=>assert.fail('The locked strongbox offers force'));
+  await page.waitForSelector('#modal[open] [data-cmd="rt-open-box"][data-method="force"]:not([disabled])',{timeout:300000})
+    .catch(async()=>assert.fail(`The locked strongbox offers force: ${await stateOf('station-strongbox')}`));
   assert.equal(await page.locator('#modal [data-cmd="rt-open-box"][data-method="key"]').isDisabled(),true,'Its key is not on the field');
   await page.click('#modal [data-cmd="rt-open-box"][data-method="force"]');
   await page.waitForSelector('#modal[open] [data-cmd="rt-take-from"][data-item="*"]',{timeout:60000}).catch(()=>assert.fail('Forced open, it shows what it holds'));
@@ -744,10 +757,11 @@ async function fieldAftermath(){
   await page.waitForFunction(()=>window.__realtime.world().objects.find(o=>o.id==='station-strongbox')?.contents?.length===0,null,{timeout:60000})
     .catch(()=>assert.fail('The strongbox is emptied'));
   await closeWindow();
-  // The road again: nothing is left, so it records the result once and the column comes back to camp.
+  // The road again: nothing is left, so it records the result once and the column comes back to camp. Software rendering
+  // slows the walk (about 20 m, 8 s of game time) to a minute or more.
   await saveIdle(page);await running();
   assert.equal((await issue({actorId:'hero',kind:'interact',payload:{objectId:'exit'}})).ok,true);
-  await page.waitForSelector('.area-card',{timeout:120000}).catch(()=>assert.fail('A card names the camp'));
+  await page.waitForSelector('.area-card',{timeout:300000}).catch(async()=>assert.fail(`A card names the camp: ${await stateOf('exit')}`));
   assert.match(await text(page,'.area-card'),/The road to camp/);
   await page.waitForFunction(()=>document.documentElement.dataset.phase==='camp',null,{timeout:60000});await saveIdle(page);
   const recorded=await savedChronicle(page);
