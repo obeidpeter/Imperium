@@ -635,6 +635,9 @@ async function campGateDeparture(){
 // Every chamber command is recorded through the page's save transaction: wait for it before the next.
 const chamberIdle=page=>page.waitForFunction(()=>window.__chamber.pending()===0,null,{timeout:60000});
 const chamberHour=page=>page.evaluate(()=>window.__chamber.hour());
+// What the chamber page showed when a step did not happen: the Menu, the view, the conversation and what was last said.
+const chamberSeen=page=>page.evaluate(()=>JSON.stringify({menu:!!document.querySelector('#modal')?.open,view:document.querySelector('#rt-board')?.dataset.drawn??null,
+  talking:window.__chamber.talking(),hour:window.__chamber.hour()?.hour??null,said:document.querySelector('#announcement')?.textContent??''}));
 // Chapter VII's council in 3D, by pointer and keys: a seat in the coalition strip opens the
 // conversation, asking his interest is free, Walk beside him and Persuade change his stance,
 // Y yields and the rivals' hour plays until Space skips it, U names the rivals' next walks, a
@@ -659,7 +662,9 @@ async function chamberCouncil(){
   assert.equal(await page.evaluate(()=>window.__chamber.unit('hero').acted),true,'Persuade spends his speech');
   assert.ok(await page.evaluate(id=>window.__chamber.unit(id).stance,member)>stance,'Persuade moves the member');
   await page.locator('#rt-board').focus();await page.keyboard.press('Escape');assert.equal(await page.isHidden('[data-role="conversation"]'),true,'Escape closes the conversation');
-  await page.keyboard.press('KeyY');await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Y yields and the rivals take their hour'));
+  assert.equal(await page.evaluate(()=>document.querySelector('#modal').open),false,`Escape closes the conversation, not the Menu: ${await chamberSeen(page)}`);
+  await page.keyboard.press('KeyY');await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000})
+    .catch(async()=>assert.fail(`Y yields and the rivals take their hour: ${await chamberSeen(page)}`));
   await page.keyboard.press('Space');await page.waitForSelector('[data-role="rivalsBand"]',{state:'hidden',timeout:30000}).catch(()=>assert.fail('Space skips the rivals’ hour'));
   // The HUD redraws on the next frame.
   assert.equal((await chamberHour(page)).hour,2);await page.waitForFunction(()=>/^Hour 2 of/.test(document.querySelector('[data-role="roundLabel"]')?.textContent??''),null,{timeout:30000})
@@ -685,6 +690,28 @@ async function chamberCouncil(){
   assert.match(await text(page,'.chamber-result'),/The motion (carries|is defeated)\./);
   await page.context().close();
   console.log('ok - chamber: Chapter VII’s council in 3D: a seat opens the conversation, asking is free, Walk beside him and Persuade move a member, Y and Space play and skip the rivals’ hour, U names their next walks, a click on a figure talks to him, and the vote ends in the division and its result');
+}
+// A chamber whose 3D view fails (its WebGL context lost for longer than the stage waits) is built again in 2D, as
+// the page does for any failed 3D view: the conversation that was open stays open, so Escape closes it rather than
+// opening the Menu, the failure's notice is the last thing said, and Y still yields the floor.
+async function chamberViewFallback(){
+  const page=await open();await restoreChamber(page,battleCampCode('ch7-council'));
+  await revealControl(page,'[data-role="coalition"] [data-person]');
+  await page.locator('[data-role="coalition"] [data-person]').first().click();await page.waitForSelector('[data-role="conversation"]:not([hidden])');
+  const member=await page.evaluate(()=>window.__chamber.talking());assert.ok(member,'A seat opens his conversation');
+  await page.evaluate(()=>{const c=document.querySelector('#rt-board');(c.getContext('webgl2')??c.getContext('webgl'))?.getExtension('WEBGL_lose_context')?.loseContext();});
+  await page.waitForSelector('#rt-board[data-drawn="2d"]',{timeout:30000}).catch(()=>assert.fail('A lost 3D view is built again in 2D'));
+  await page.waitForSelector('.rt-field[data-kind="chamber"] .rt-scene[data-ready="true"]');
+  assert.equal(await page.evaluate(()=>window.__chamber.talking()),member,`The conversation stays open in the 2D view: ${await chamberSeen(page)}`);
+  assert.equal(await page.isHidden('[data-role="conversation"]'),false,'The conversation is shown in the 2D view');
+  assert.match(await text(page,'#announcement'),/3D view unavailable/,'The failure’s notice is the last thing said');
+  await page.locator('#rt-board').focus();await page.keyboard.press('Escape');
+  assert.equal(await page.evaluate(()=>document.querySelector('#modal').open),false,`Escape closes the conversation, not the Menu: ${await chamberSeen(page)}`);
+  assert.equal(await page.isHidden('[data-role="conversation"]'),true,'Escape closes the conversation');
+  await page.keyboard.press('KeyY');await page.waitForSelector('[data-role="rivalsBand"]:not([hidden])',{timeout:30000})
+    .catch(async()=>assert.fail(`Y yields in the 2D view: ${await chamberSeen(page)}`));
+  await page.context().close();
+  console.log('ok - chamber 3D fallback: a lost 3D view is built again in 2D with the open conversation kept; Escape closes it and Y yields');
 }
 // Gates 3 and 4: every chamber Contest (VII, VIII, X, both of XI and XII) played through in full in the page, in
 // the 2D view: a winning legal rules log recorded from the same camp, replayed through the Command list's
@@ -772,7 +799,6 @@ async function realtimeFinale(){
   await page.waitForSelector('[data-role="advanceButton"]:not([hidden])',{timeout:30000}).catch(()=>assert.fail('Chapter XII opens in deployment'));
   await page.click('[data-role="advanceButton"]');
   await page.waitForSelector('[data-role="advanceButton"][data-confirm="true"]',{timeout:60000}).catch(async()=>{
-    await page.screenshot({path:'/tmp/claude-0/-home-user-Imperium/e09ac0a8-2386-5e16-9f83-c9d748d8d29c/scratchpad/finale/advance-fail.png'}).catch(()=>{});
     assert.fail(`One press asks to confirm the advance: ${await page.evaluate(()=>{const b=document.querySelector('[data-role="advanceButton"]');
       return JSON.stringify({hidden:b?.closest('[hidden]')?.dataset.role??null,text:b?.textContent,confirm:b?.dataset.confirm??null,tick:window.__realtime.world()?.tick,modal:document.querySelector('#modal')?.open,
         line:document.querySelector('[data-role="eventLine"]')?.textContent});})}`);});
@@ -957,7 +983,7 @@ let failed=false;
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 // Check departure races first, before the longer whole-campaign scenarios.
 for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,viewSwitch,realtimeDeployment,
-  chamberCouncil,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
+  chamberCouncil,chamberViewFallback,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}
