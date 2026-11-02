@@ -172,7 +172,7 @@ function targets(){return action?Game.getTargets(state,selected,action):[];}
 function command(){return selectedCommand({selected,action,target,formation,orderAction,orderDestination});}
 
 function battle(){
-  if(Game.isRealtime(state))return realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict,keymap});
+  if(Game.isRealtime(state))return realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict,keymap,walking:walkingNow()});
   if(chamberMode())return chamberEncounterView({state,saving,lastSaved,saveProblem,saveConflict,known:chamberKnown()});
   selected=selectedUnit().id;if(action&&!Game.getActions(state,selected).includes(action)){action=null;target=null;orderDestination=null;}
   const view=encounterView({view3D:uses3D(),can3D:chapterHas3D(state),fastMotion:Boolean(settings.fastMotion),confirmMoves:Boolean(settings.confirmMoves),
@@ -304,6 +304,13 @@ function mountPainting(){
 let field=null;
 // A field's world handed to the field built after it for another view (rebuildField).
 let keptField=null;
+// The field after a victory (release 14, core/realtime/aftermath.js): walked on the page, never saved. Null, or the
+// won encounter being walked and whether its road has already named what is left behind. A reload shows the result.
+let walking=null;
+const walkingNow=()=>!!walking&&state?.phase==='encounter'&&state.encounter?.id===walking.id&&state.encounter.status==='won'&&Game.isRealtime(state);
+// What the field's HUD says while it is walked: the encounter, with the walk's own objective.
+const fightBase=()=>!walkingNow()?state.encounter:{...state.encounter,objective:state.archiveReplay?'Look over the field, then take the road back.'
+  :'Search the fallen and the chests, then take the road to camp.'};
 // Release 12: a real-time battle or chamber fills the window; pageOverlay names a page-drawn section shown over
 // the world on request (the chamber's records), which Esc or its button closes.
 let pageOverlay='';
@@ -347,7 +354,7 @@ function mountField(target){
   if(field){
     if(field.runtime&&target.kind==='field'&&field.source!==fieldSource()){
       // A retry or a load brings another fight here: the same field plays it.
-      field.source=fieldSource();field.runtime.load(Game.realtimeWorld(state),state.encounter);
+      walking=null;field.source=fieldSource();field.runtime.load(Game.realtimeWorld(state),state.encounter);
     }else if(field.runtime&&target.kind==='chamber'){
       // A retry, a patron's re-run or a load brings another session of the chamber; otherwise the chamber follows the Contest.
       if(field.source!==fieldSource()){field.source=fieldSource();field.runtime.load(field.makeWorld(state),state.encounter);}else field.runtime.chamberSync();
@@ -368,8 +375,8 @@ function mountField(target){
     if(field?.ticket!==ticket||!element.isConnected)return;
     // A hearing's chamber has its presiding magistrate at the tribunal.
     const camp=target.kind==='camp',chamber=target.kind==='chamber';field.makeWorld=s=>createChamberWorld(s,{magistrate:Chamber.isHearing(s)});
-    const world=kept?.world??(camp?Game.createCampWorld(state):chamber?field.makeWorld(state):Game.realtimeWorld(state));
-    field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):state.encounter,options:settings,keymap,appearance:()=>state.soldier?.appearance,
+    const world=kept?.world??(camp?Game.createCampWorld(state):chamber?field.makeWorld(state):walkingNow()?Game.createAftermathWorld(state):Game.realtimeWorld(state));
+    field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):chamber?state.encounter:fightBase(),options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
     syncSessionControls();
     if(kept?.paused)field.runtime.keepPaused();
@@ -699,8 +706,14 @@ function fieldCallbacks(){
     onPanel:name=>fieldPanel(name),
     onTalk:id=>fieldTalk(id),
     onLoot:id=>fieldLoot(id),
-    // A chest or cache opened on the field (release 11): its window, like a fallen enemy's.
-    onObject:(id,actorId)=>{const world=field?.runtime?.world,o=world?.objects.find(x=>x.id===id);if(o?.kind==='container'&&actorId===world.controlled)showFieldContainer(o);}
+    // A chest or cache opened on the field (release 11): its window, like a fallen enemy's. After a victory (release
+    // 14) the chronicle records an unlocked one open as well (its lid lifts), unless a save is being written; the road
+    // out leaves the field.
+    onObject:(id,actorId)=>{const world=field?.runtime?.world,o=world?.objects.find(x=>x.id===id);if(!o||actorId!==world.controlled)return;
+      if(o.kind==='exit'&&world.aftermath){void leaveField(o);return;}
+      if(o.kind!=='container')return;
+      showFieldContainer(o);
+      if(world.aftermath&&!o.opened&&(!o.lock||o.unlocked)&&!sessionGate.busy)void walkChange(()=>Game.openFieldContainer(state,{objectId:o.id}),`box:${o.id}`,{silent:true});}
   };
 }
 // The panel keys (guide "Panels"), in the field and in camp.
@@ -833,7 +846,11 @@ function lootSide(arg){
   if(arg.startsWith('body:')){const body=world.actors.find(a=>a.id===arg.slice(5));if(!body)return null;
     return {kind:'loot',title:`Search ${body.name}`,id:body.id,left:[...(body.loot??[])],pending:[...pendingTake(world,body.id)],cmd:'rt-take',empty:'Nothing left worth taking.'};}
   if(arg.startsWith('box:')){const o=world.objects.find(x=>x.id===arg.slice(4));if(!o)return null;
-    return {kind:'loot',title:o.name,id:o.id,left:[...(o.contents??[])],pending:[...pendingTakeFrom(world,o.id)],cmd:'rt-take-from',empty:'It is empty.'};}
+    // After a victory (release 14) a chest still locked opens with its key, once taken here, or by force.
+    const hero=world.actors.find(a=>a.id===world.heroId),need=Object.entries(o.lock?.force??{});
+    const lock=world.aftermath&&o.lock&&!o.unlocked?{key:o.lock.key,force:o.lock.force??{},hasKey:world.spoils.some(x=>x.itemId===o.lock.key),
+      strong:need.length>0&&need.every(([k,v])=>(hero?.attributes?.[k]??0)>=v)}:null;
+    return {kind:'loot',title:o.name,id:o.id,left:[...(o.contents??[])],pending:[...pendingTakeFrom(world,o.id)],cmd:'rt-take-from',empty:'It is empty.',lock};}
   return null;
 }
 function showLoot(body){
@@ -842,6 +859,7 @@ function showLoot(body){
 }
 function takeLoot(bodyId,itemId){
   const runtime=field?.runtime,world=runtime?.world,body=world?.actors.find(a=>a.id===bodyId);if(!body)return;
+  if(world.aftermath){void walkChange(()=>Game.takeSpoils(state,{bodyId,items:itemId==='*'?[...(body.loot??[])]:[itemId]}),`body:${bodyId}`);return;}
   const pending=pendingTake(world,bodyId),left=[...body.loot];for(const id of pending)left.splice(left.indexOf(id),1);
   const items=itemId==='*'?[...pending,...left]:[...pending,itemId];
   if(!runtime.issue({actorId:world.controlled,kind:'take',payload:{targetId:bodyId,items}}).ok)return;
@@ -857,11 +875,51 @@ function showFieldContainer(o){
 }
 function takeFromField(objectId,itemId){
   const runtime=field?.runtime,world=runtime?.world,o=world?.objects.find(x=>x.id===objectId);if(!o)return;
+  if(world.aftermath){void walkChange(()=>Game.takeFromContainer(state,{objectId,items:itemId==='*'?[...(o.contents??[])]:[itemId]}),`box:${objectId}`);return;}
   const pending=pendingTakeFrom(world,objectId),left=[...o.contents];for(const id of pending)left.splice(left.indexOf(id),1);
   const items=itemId==='*'?[...pending,...left]:[...pending,itemId];
   if(!runtime.issue({actorId:world.controlled,kind:'takeFrom',payload:{objectId,items}}).ok)return;
   showFieldContainer(o);
   if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&soldierPanel?.name==='loot'&&soldierPanel.arg===`box:${objectId}`)showFieldContainer(o);}));
+}
+// Practice over: the chronicle as it was left.
+function exitArchive(){
+  if(!archivePrimaryState)return;
+  state=archivePrimaryState;archivePrimaryState=null;selected='hero';action=null;target=null;orderDestination=null;focusTile=null;render();
+  toast('Returned from the Archive to your active chronicle.');
+}
+// ——— The field after a victory (release 14, core/realtime/aftermath.js) ———
+// Walk the field: the same field plays the won fight's world again, peaceful, until the road is taken.
+function walkField(){
+  if(!field?.runtime||field.kind!=='field'){toast('The field is still opening. Try again in a moment.');return;}
+  const world=Game.createAftermathWorld(state);if(!world){toast('There is no won field to walk.');return;}
+  walking={id:state.encounter.id,warned:false};field.runtime.load(world,fightBase());render();
+  field.element.querySelector('canvas')?.focus({preventScroll:true});
+  announce(state.archiveReplay?'Practice: look over the field, then take the road back.':'The field is yours. Search the fallen and the chests, then take the road to camp.');
+}
+// Back to the result: the field shows the fight as it ended.
+function endWalk(){
+  walking=null;if(field?.runtime&&field.kind==='field'&&Game.isRealtime(state))field.runtime.load(Game.realtimeWorld(state),state.encounter);render();
+}
+// A search or a take on the walked field is the chronicle's (game.js): the walking field follows it, and the window
+// it came from (body:<id> or box:<id>) shows what is left while it is still the one open. A window closed, or another
+// opened, while the change was saving stays as the player left it: reopening it would pause the field again.
+function walkChange(run,panel,{silent=false}={}){
+  const showing=()=>modal.open&&soldierPanel?.name==='loot'&&soldierPanel.arg===panel;
+  return change(()=>{const r=run(),world=field?.runtime?.world;if(r.ok&&world?.aftermath)Game.syncAftermath(world,state);return r;},
+    {silent,afterRender:()=>{if(panel&&field?.runtime?.world?.aftermath&&showing())showSoldierPanel('loot',panel);}});
+}
+// The road out: the first time anything worth taking is still on the field it names what, and the next time it
+// records the result as Continue does (a second record is refused by the chronicle). In Practice it goes back.
+async function leaveField(o){
+  if(sessionGate.busy){toast('Saving… take the road again in a moment.');return;}
+  if(state.archiveReplay){walking=null;exitArchive();return;}
+  const left=Game.fieldUnsearched(state);
+  if(left.length&&walking&&!walking.warned){walking.warned=true;
+    toast(`Still on the field: ${left.slice(0,4).map(u=>u.kind==='body'?`${u.name} (fallen)`:u.name).join(', ')}${left.length>4?` and ${left.length-4} more`:''}. Take the road again to leave it.`,{problem:true});return;}
+  walking=null;const chapter=state.chapter;
+  await change(()=>Game.commitEncounter(state),{reset:true,tone:'promotion'});
+  if(state?.phase==='camp'&&state.chapter===chapter)showAreaCard({way:o.name,area:campFor(chapter)?.title});
 }
 function stopMotion(){
   battleStage.stop();const stop=cancelMotion,stopAmbient=cancelAmbient;cancelMotion=null;cancelAmbient=null;if(stop)stop();currentAnimation=null;
@@ -1250,7 +1308,10 @@ case 'soldier-party':{
   const party=[...modal.querySelectorAll('[data-cmd="soldier-party"]')].filter(x=>x.checked).map(x=>x.dataset.id);
   if(party.length>3){b.checked=false;toast('Up to three companions march with you.');break;}
   await soldierAct({kind:'party',party});break;}
-case 'rt-open-box':await change(()=>Game.openFieldContainer(state,{objectId:id,method:b.dataset.method}));break;
+case 'rt-open-box':if(field?.runtime?.world?.aftermath){await walkChange(()=>Game.openFieldContainer(state,{objectId:id,method:b.dataset.method}),`box:${id}`);break;}
+  await change(()=>Game.openFieldContainer(state,{objectId:id,method:b.dataset.method}));break;
+case 'walk-field':walkField();break;
+case 'walk-field-end':endWalk();break;
 case 'rt-box-take':await change(()=>{const o=state.encounter?.realtime?.world.objects.find(x=>x.id===id);return Game.takeFromContainer(state,{objectId:id,items:[...(o?.contents??[])]});});break;
 case 'rt-spoils':await change(()=>{const body=state.encounter?.realtime?.world.actors.find(a=>a.id===id);
   return Game.takeSpoils(state,{bodyId:id,items:b.dataset.item==='*'?[...(body?.loot??[])]:[b.dataset.item]});});break;
@@ -1419,11 +1480,7 @@ case 'archive-replay':{
   }else toast(res.message);
   break;
 }
-case 'exit-archive':if(archivePrimaryState){
-  state=archivePrimaryState;archivePrimaryState=null;selected='hero';action=null;target=null;orderDestination=null;focusTile=null;render();
-  toast('Returned from the Archive to your active chronicle.');
-}
-  break;
+case 'exit-archive':exitArchive();break;
 case 'invoke-precedent':if(chamberMode()){await chamberSpeech({kind:'precedent',id});break;}await change(()=>Game.invokePrecedent(state,id),{tone:'agreement'});break;
 case 'performance-check':await startPerformanceCheck();break;
 case 'performance-check-save':if(performanceReport)download(new Blob([JSON.stringify(performanceReport,null,2)+'\n'],{type:'application/json'}),

@@ -113,14 +113,19 @@ export function stageEncounter(encounter,world,{appearance}={}){
 }
 // The containers in sight (container-props.js), in the stage's centred metres, each
 // facing the middle of the board: closed, open with something left, or open and
-// emptied. A hidden cache stays off the stage until it is found.
+// emptied. A hidden cache stays off the stage until it is found. On a won field
+// walked again (release 14, aftermath.js) the road to camp is a waypost among them,
+// its board pointing away from the middle; a camp's way out is its scenery's.
 export function stageContainers(world){
   const hx=world.map.width*TILE/2,hz=world.map.height*TILE/2,camp=world.kind==='camp';
-  return (world.objects??[]).filter(o=>o.kind==='container'&&!o.hidden).map(o=>{
+  const boxes=(world.objects??[]).filter(o=>o.kind==='container'&&!o.hidden).map(o=>{
     const x=o.x-hx,z=o.z-hz,d=Math.hypot(x,z)||1,data=containerById(o.container),open=camp?!!o.opened:!!o.opened;
     return {id:o.id,box:data?.kind??'chest',x,z,face:[+(-x/d).toFixed(3),+(-z/d).toFixed(3)],open,
       empty:camp?!!o.empty:open&&!o.contents?.length,lockable:!!data?.lock,locked:camp?!!o.locked&&!!data?.lock:!!o.lock&&!o.unlocked};
   });
+  const ways=camp?[]:(world.objects??[]).filter(o=>o.kind==='exit').map(o=>{const x=o.x-hx,z=o.z-hz,d=Math.hypot(x,z)||1;
+    return {id:o.id,box:'waypost',x,z,face:[+(x/d).toFixed(3),+(z/d).toFixed(3)]};});
+  return [...boxes,...ways];
 }
 // The objective's markers as the board shows them (stage-readout.js missionReadouts): the goal, the
 // positions to secure and the next wave, on the stage's 2.5 m tiles. A camp or chamber has none.
