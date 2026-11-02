@@ -2,6 +2,10 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Fix: a chamber whose 3D view fails
+
+- **The conversation stays open.** When the 3D view fails in a chamber (its graphics context is lost), the page goes on in the 2D view as before, and the conversation you had open now stays open. **Escape** closes it, as it would have, instead of opening the Menu, where the chamber's keys do nothing. Found by a browser check in continuous integration; a new check (`chamberViewFallback`) loses the 3D context with a conversation open.
+
 ### Worlds and gameplay, release 13, first part: the inventory ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/inventory-release13-report.md))
 
 - **A full-screen inventory.** **Kit** (I) opens one screen over the world: your soldier in the middle with the fifteen places he wears kit beside him, two to a row so a place's layers sit together; your pack as the real 10 × 6 grid, each piece lying in its own shape; what you left here on the ground below it; and his character sheet beside them, with his attributes, training points, combat numbers and honours. In a Contest chapter the hearing's documents stand above the sheet.

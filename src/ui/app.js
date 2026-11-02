@@ -377,6 +377,9 @@ function mountField(target){
     // pause before attaching a renderer, and leave keyboard focus in the panel.
     if(modal.open&&modal.dataset.stagePause!=='false')field.runtime.pauseFor('panel');
     mountFieldStage();if(camp)refreshCampMarks();if(!modal.open&&(camp||state.encounter?.status==='active'))element.querySelector('canvas')?.focus({preventScroll:true});
+    // A chamber built again for another view (the 3D view failing) keeps the conversation that was open: Escape still
+    // closes it, rather than opening the Menu, and the failure's notice is the last thing said.
+    if(kept?.talking)field.runtime.chamber?.talk(kept.talking,{quiet:true});
   }).catch(error=>{console.error(error);toast(`The real-time field could not start: ${error.message}`);});
 }
 // ——— The chamber (from Chapter VII): its walks, speeches and yields are recorded in the
@@ -585,7 +588,7 @@ function watchWorldArea(element){
 // player chose stand where they were. Only the page's own state (lists, camera, selection) starts afresh.
 function rebuildField(){
   const old=field;if(!old?.runtime)return;
-  keptField={kind:old.kind,key:old.key,world:old.runtime.world,paused:old.runtime.pausedByPlayer};
+  keptField={kind:old.kind,key:old.key,world:old.runtime.world,paused:old.runtime.pausedByPlayer,talking:old.runtime.chamber?.talking??null};
   disposeField();const target=fieldTarget();if(target)mountField(target);else keptField=null;
 }
 // For the automated checks (browser smoke): a read-only view of the fight and the same commands a player gives.

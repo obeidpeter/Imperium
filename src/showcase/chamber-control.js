@@ -262,9 +262,10 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
   }
 
   // ——— The conversation: opens where the speaker stands; nothing in it moves anyone. ———
-  function openTalk(personId){
-    talking=personId;if(unit(personId))target=personId;renderTalk(true);
-    announce(personId===MOTION?'The motion, the precedents and the evidence.':personId===MAGISTRATE?'The presiding magistrate.':`Talking to ${unit(personId)?.name}.`);
+  // Quiet: the conversation comes back as it was (the field built again for another view), without taking the focus or speaking.
+  function openTalk(personId,{quiet=false}={}){
+    talking=personId;if(unit(personId))target=personId;renderTalk(!quiet);
+    if(!quiet)announce(personId===MOTION?'The motion, the precedents and the evidence.':personId===MAGISTRATE?'The presiding magistrate.':`Talking to ${unit(personId)?.name}.`);
   }
   function closeTalk(){const open=!!talking||!!dom.conversation&&!dom.conversation.hidden;talking=null;talkKey='';if(dom.conversation){dom.conversation.hidden=true;dom.conversation.classList?.remove('carrying');dom.conversation.replaceChildren();}return open;}
   const controlKey=el=>el?['speak','walk','deal','ask','close','present','inspect','policy','precedent'].map(k=>el.dataset?.[k]!==undefined?`${k}:${el.dataset[k]}:${el.dataset.terms??''}`:null).find(Boolean)??null:null;
@@ -489,8 +490,9 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
   reset();
   return {
     get busy(){return !!show;},get talking(){return talking;},get target(){return target;},get pending(){return inflight;},
-    // Talk to a member from the page (the members list, the coalition panel's seats).
-    talk(personId){if(show)skip();if(live()&&(unit(personId)||personId===MAGISTRATE&&magistrate()||personId===MOTION))openTalk(personId);},toggleMotion,
+    // Talk to a member from the page (the members list, the coalition panel's seats); quietly, the conversation a
+    // field built again for another view had open.
+    talk(personId,{quiet=false}={}){if(show)skip();if(live()&&(unit(personId)||personId===MAGISTRATE&&magistrate()||personId===MOTION))openTalk(personId,{quiet});},toggleMotion,
     hover:hoverAt,press,act,update,sync,reset,options,use,rivalArrows,canControl,skip,
     // A new presenter (the stage rebuilt): the reach and the forecast marks are drawn again.
     invalidate(){reachKey='';badgesKey='';hudKey='';barKey='';},
