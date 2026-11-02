@@ -13,7 +13,7 @@ import {isAbsolute} from 'node:path';
 import {createHash} from 'node:crypto';
 import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions,closePanel,verifyEnlargedSettingsGeometry} from './ui-smoke-navigation.mjs';
+import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions,closePanel,closedBy,verifyEnlargedSettingsGeometry} from './ui-smoke-navigation.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 
@@ -326,8 +326,7 @@ async function fieldControls(page,label){
   await page.locator('[data-role="menuButton"]').click();await page.locator('#modal [data-cmd="menu-section"][data-id="campaign"]').click();
   await page.locator('#modal [data-cmd="retry"]').click();
   assert.equal(await page.locator('#modal [data-cmd="retry-confirm"]').isVisible(),true,'An active encounter offers a confirmed restart');
-  const cancelled=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
-  await page.getByRole('button',{name:'Keep playing',exact:true}).click();await cancelled;
+  await closedBy(page,()=>page.getByRole('button',{name:'Keep playing',exact:true}).click());
   assert.equal(await tick(page),clock,'Cancelling a restart preserves the paused encounter');
   assert.equal(await paused(page),true);
   await page.locator('[data-role="menuButton"]').click();await page.locator('#modal [data-cmd="menu-section"][data-id="campaign"]').click();

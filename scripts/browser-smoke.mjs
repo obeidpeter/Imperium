@@ -25,7 +25,7 @@ import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
-import {closePanel,menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
+import {closePanel,closedBy,menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign,protectCoalition} from './command-autoplay.mjs';
@@ -517,8 +517,7 @@ async function restoreChamber(page,code,view='3d',{beforeStart=null}={}){
 }
 async function restoreCamp(page,code){
   await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');
-  const closed=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
-  await page.click('[data-cmd="confirm-import"]');await closed;
+  await closedBy(page,()=>page.click('[data-cmd="confirm-import"]'));
   await page.waitForSelector('.camp-page');
 }
 // Hold the real browser save lock, rather than changing campaign state, to
@@ -599,8 +598,7 @@ async function campRouteChoice(){
     assert.equal(await firstPosition.count(),1,'The first deployment position has its move-up control');
     assert.equal(await firstPosition.isDisabled(),true,'The first deployment position cannot move up');
     await menuButton(page,'settings');await page.waitForSelector('#modal[open] .settings-nav');
-    const closed=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
-    await page.click('#modal [data-cmd="close-modal"] >> nth=0');await closed;
+    await closedBy(page,()=>page.click('#modal [data-cmd="close-modal"] >> nth=0'));
     releaseModule();await page.waitForFunction(()=>window.__campRouteSaveDelay.held,null,{timeout:30000});
     assert.equal(await (await revealControl(page,route)).isDisabled(),true,'A route remains disabled throughout the initial camp save');
     assert.match(await text(page,'.save-status'),/Saving/);
