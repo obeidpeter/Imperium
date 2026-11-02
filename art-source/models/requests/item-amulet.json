@@ -1,0 +1,61 @@
+{
+  "id": "item-amulet",
+  "status": "accepted for the item atlas (release 13)",
+  "item": "amulet_mars",
+  "group": "Charms",
+  "use": "The inventory picture of `amulet_mars` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A small round bronze amulet pendant on a leather cord, of the kind third-century Roman soldiers wore for protection: a disc embossed with the helmeted head of Mars, worn and darkened. Lying flat, front view, the cord in a loose loop. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "3b637536-a52e-40b4-bd16-55a2cd10b344",
+    "requestedAt": "2026-11-02T06:32:22.266Z",
+    "balanceBefore": 11320,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A small round bronze amulet pendant on a leather cord, of the kind third-century Roman soldiers wore for protection: a disc embossed with the helmeted head of Mars, worn and darkened. Lying flat, front view, the cord in a loose loop. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T06:34:12.746Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-amulet.glb",
+    "rawBytes": 45373132,
+    "rawSha256": "73ab4f0dfa0d086c5861a52eb407b279679f38cb181e92853df58ad33acc5aed",
+    "tripoInput": {
+      "prompt": "A small round bronze amulet pendant on a leather cord, of the kind third-century Roman soldiers wore for protection: a disc embossed with the helmeted head of Mars, worn and darkened. Lying flat, front view, the cord in a loose loop. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-amulet-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 0,
+    "cells": "1x1",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}

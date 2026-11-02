@@ -1,0 +1,61 @@
+{
+  "id": "item-key",
+  "status": "accepted for the item atlas (release 13)",
+  "item": "key_c1",
+  "group": "Keys",
+  "use": "The inventory picture of `key_c1` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman iron key of the third century AD for a strongbox: a long iron shank with a ring handle and a flat toothed bit. Lying flat, top view. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "a05e3826-37c8-4274-8c5b-3cd9b6d06045",
+    "requestedAt": "2026-11-02T06:40:52.227Z",
+    "balanceBefore": 11040,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman iron key of the third century AD for a strongbox: a long iron shank with a ring handle and a flat toothed bit. Lying flat, top view. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T06:42:14.368Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-key.glb",
+    "rawBytes": 44042244,
+    "rawSha256": "c8d168cb0d41131aa97ce3d9d860ddc1dc70b90cee3b5661b068741803f05d6f",
+    "tripoInput": {
+      "prompt": "A Roman iron key of the third century AD for a strongbox: a long iron shank with a ring handle and a flat toothed bit. Lying flat, top view. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-key-tripo-render.webp"
+  },
+  "picture": {
+    "view": "long",
+    "turn": 0,
+    "cells": "1x1",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}

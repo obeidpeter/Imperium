@@ -102,9 +102,345 @@
       ],
       "startingBalance": 11480,
       "endingBalance": 11320
+    },
+    {
+      "batch": "the rest",
+      "date": "2026-11-02",
+      "approval": "Owner, 2026-11-02: the pilot's pictures approved, and about 560 more credits for the other 27 models and the mail shirt's redo",
+      "plannedCredits": 560,
+      "spentCredits": 560,
+      "items": [
+        "item-amulet",
+        "item-arming-cap",
+        "item-axe",
+        "item-bow",
+        "item-bracae",
+        "item-brooch",
+        "item-caligae",
+        "item-cingulum",
+        "item-dart-belt",
+        "item-galea",
+        "item-gladius",
+        "item-hamata-b",
+        "item-hasta",
+        "item-jar",
+        "item-key",
+        "item-lamellar",
+        "item-manica",
+        "item-ocreae",
+        "item-parma",
+        "item-pugio",
+        "item-quiver",
+        "item-sack",
+        "item-sagum",
+        "item-sling",
+        "item-spangenhelm",
+        "item-subarmalis",
+        "item-tablet",
+        "item-torc"
+      ],
+      "tasks": [
+        {
+          "id": "item-amulet",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "3b637536-a52e-40b4-bd16-55a2cd10b344",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-arming-cap",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "292bfd40-ad6d-4889-9cb7-b6c65ef544ae",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-axe",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "00cd607c-ce25-4744-b762-8608003de258",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-bow",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "906f336b-1d5b-4b5c-b140-7f9a0d4d3f81",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-bracae",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7717745f-340f-4d24-8f70-952015934a1a",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-brooch",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "2f232aff-9446-4683-893f-da68920925be",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-caligae",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5e30c8d9-62b5-451d-8823-6f8ed3e963c4",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-cingulum",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "6e9cc24f-667a-4b3f-ba0f-817e42cbe8eb",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-dart-belt",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "26086051-e07e-4029-ad62-0dea24c2a250",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-galea",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c84e4a9c-d2dc-4d1e-90f8-ae80303b9e2e",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-gladius",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "79355df7-36c3-4896-9f91-272ac20699fe",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-hamata-b",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "48989c9f-766d-4bf7-b2bc-f121660a6f68",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-hasta",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c4005a4b-8bb2-4e3e-b7b4-b3921a031ba2",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-jar",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "eb41bfab-6b31-4ea8-a266-5347fddbba06",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-key",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "a05e3826-37c8-4274-8c5b-3cd9b6d06045",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-lamellar",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "f00644c3-4efa-4b6a-848e-2ab5f93f08a3",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-manica",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "a3992d21-8671-4e6f-a749-494a30434dbe",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-ocreae",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "b22867dd-2eb7-4e13-b41f-d7baf696c1ee",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-parma",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "32d35c1f-4fa4-495b-8404-4a8c4ee32841",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-pugio",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "679b20f5-d5cc-4b5d-ab45-8d6e4f5b1a85",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-quiver",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c0f36c17-6a29-4b14-9e40-3509634d38b4",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-sack",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "2b75df1f-c4bd-42c1-bb4f-fc0eaf1f6c9b",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-sagum",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "fd271848-bcdc-4ef2-a3cf-be17a66f8dc6",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-sling",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "04e88855-8f11-4770-a462-714513c0aae4",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-spangenhelm",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7018086f-c3e2-4485-8e5b-2e1086bb24b4",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-subarmalis",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "cbe5f614-f631-49fc-9d1e-d3bbdfe06855",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-tablet",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7eb8cb39-e1ce-4c9e-abdd-e912d2dc9610",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-torc",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "b16da4bf-383c-4155-b050-5d69d71b3ef6",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        }
+      ],
+      "startingBalance": 11320,
+      "endingBalance": 10760
+    },
+    {
+      "batch": "remakes",
+      "date": "2026-11-02",
+      "approval": "Owner, 2026-11-02: 60 credits from the reserve for three remakes (the mail shirt, the gladius and the spear)",
+      "plannedCredits": 60,
+      "spentCredits": 60,
+      "items": [
+        "item-hamata-c",
+        "item-gladius-b",
+        "item-hasta-b"
+      ],
+      "tasks": [
+        {
+          "id": "item-hamata-c",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c8bdef38-cb68-4bb0-8728-3afa4d810938",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-gladius-b",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "b3c6a9cf-be3f-4af4-a68c-f058267c4de3",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-hasta-b",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "a4d7d846-57d5-4f9b-a83e-9691db4a319e",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        }
+      ],
+      "startingBalance": 10760,
+      "endingBalance": 10700
     }
   ],
-  "spentCredits": 160,
-  "remainingAuthorization": 840,
-  "note": "The models are rendered into the item atlas and never ship; the drawn icons remain the fallback."
+  "spentCredits": 780,
+  "remainingAuthorization": 220,
+  "note": "The models are rendered into the item atlas and never ship; the drawn silhouettes remain for the items without a picture. Four models were rejected at review and made again: the mail shirt twice (item-hamata, item-hamata-b), the gladius (item-gladius) and the spear (item-hasta); their credits are spent."
 }

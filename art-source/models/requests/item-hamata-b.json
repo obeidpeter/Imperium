@@ -1,0 +1,62 @@
+{
+  "id": "item-hamata-b",
+  "status": "rejected at review: rings on the body, but plate shoulder guards like a segmented cuirass's; made again as item-hamata-c",
+  "item": "hamata",
+  "group": "Body armour",
+  "use": "The inventory picture of `hamata` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "note": "A second attempt at the mail shirt: the pilot's model (item-hamata) has plate shoulder pieces and reads as plate armour.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single Roman mail shirt (lorica hamata) of the third century AD made only of small interlinked riveted iron rings that drape like heavy cloth: hip length, short sleeves, a plain round neck opening and a straight hem. Dark oiled iron with a soft sheen. Shown upright, hanging as if from invisible shoulders, front view, hollow and complete. Mail rings only: no plates of any kind, no shoulder plates or pauldrons, no segmented or scale armour, no leather straps. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "48989c9f-766d-4bf7-b2bc-f121660a6f68",
+    "requestedAt": "2026-11-02T06:38:26.802Z",
+    "balanceBefore": 11100,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single Roman mail shirt (lorica hamata) of the third century AD made only of small interlinked riveted iron rings that drape like heavy cloth: hip length, short sleeves, a plain round neck opening and a straight hem. Dark oiled iron with a soft sheen. Shown upright, hanging as if from invisible shoulders, front view, hollow and complete. Mail rings only: no plates of any kind, no shoulder plates or pauldrons, no segmented or scale armour, no leather straps. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T06:41:18.830Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-hamata-b.glb",
+    "rawBytes": 46959652,
+    "rawSha256": "d9120ede731e60ca454141d88649ddd2336b6064234fe69cd52b78bc6d0fa53f",
+    "tripoInput": {
+      "prompt": "A single Roman mail shirt (lorica hamata) of the third century AD made only of small interlinked riveted iron rings that drape like heavy cloth: hip length, short sleeves, a plain round neck opening and a straight hem. Dark oiled iron with a soft sheen. Shown upright, hanging as if from invisible shoulders, front view, hollow and complete. Mail rings only: no plates of any kind, no shoulder plates or pauldrons, no segmented or scale armour, no leather straps. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-hamata-b-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 0,
+    "cells": "2x3",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}

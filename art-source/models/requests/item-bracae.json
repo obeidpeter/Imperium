@@ -1,0 +1,61 @@
+{
+  "id": "item-bracae",
+  "status": "accepted for the item atlas (release 13)",
+  "item": "bracae",
+  "group": "Leg wear",
+  "use": "The inventory picture of `bracae` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A pair of Roman soldier's woollen trousers (bracae) of the third century AD: close-fitting, ankle length, plain undyed brown wool with a drawstring waist. Laid flat, front view, both legs visible. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "7717745f-340f-4d24-8f70-952015934a1a",
+    "requestedAt": "2026-11-02T06:34:14.840Z",
+    "balanceBefore": 11240,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A pair of Roman soldier's woollen trousers (bracae) of the third century AD: close-fitting, ankle length, plain undyed brown wool with a drawstring waist. Laid flat, front view, both legs visible. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T06:36:07.855Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-bracae.glb",
+    "rawBytes": 43522276,
+    "rawSha256": "ea3d8902d241b9aaf41babb9460216b75e6042cb2b908b7d735f796339e68909",
+    "tripoInput": {
+      "prompt": "A pair of Roman soldier's woollen trousers (bracae) of the third century AD: close-fitting, ankle length, plain undyed brown wool with a drawstring waist. Laid flat, front view, both legs visible. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-bracae-tripo-render.webp"
+  },
+  "picture": {
+    "view": "long",
+    "turn": 0,
+    "cells": "2x1",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}

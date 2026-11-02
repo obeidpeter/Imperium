@@ -1,0 +1,61 @@
+{
+  "id": "item-ocreae",
+  "status": "accepted for the item atlas (release 13)",
+  "item": "ocreae",
+  "group": "Leg wear",
+  "use": "The inventory picture of `ocreae` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A pair of Roman iron greaves (ocreae): shaped shin guards with a raised knee cap and a central ridge, edged with bronze trim, with leather straps at the back. Shown upright as a pair side by side, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "b22867dd-2eb7-4e13-b41f-d7baf696c1ee",
+    "requestedAt": "2026-11-02T06:42:36.217Z",
+    "balanceBefore": 10980,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A pair of Roman iron greaves (ocreae): shaped shin guards with a raised knee cap and a central ridge, edged with bronze trim, with leather straps at the back. Shown upright as a pair side by side, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T06:44:31.368Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-ocreae.glb",
+    "rawBytes": 45668436,
+    "rawSha256": "61d14f211e46fca7b005a2a801a6d7fc581bae15785bf10f09b9c8f5dde7aa7c",
+    "tripoInput": {
+      "prompt": "A pair of Roman iron greaves (ocreae): shaped shin guards with a raised knee cap and a central ridge, edged with bronze trim, with leather straps at the back. Shown upright as a pair side by side, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-ocreae-tripo-render.webp"
+  },
+  "picture": {
+    "view": "long",
+    "turn": 0,
+    "cells": "2x1",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}

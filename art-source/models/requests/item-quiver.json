@@ -1,0 +1,61 @@
+{
+  "id": "item-quiver",
+  "status": "accepted for the item atlas (release 13)",
+  "item": "quiver",
+  "group": "Belts",
+  "use": "The inventory picture of `quiver` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman auxiliary archer's quiver of the third century AD: a cylindrical brown leather quiver with bronze fittings and a carrying strap, holding a dozen arrows with feather flights. Shown upright, three-quarter view. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "c0f36c17-6a29-4b14-9e40-3509634d38b4",
+    "requestedAt": "2026-11-02T06:44:33.614Z",
+    "balanceBefore": 10920,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman auxiliary archer's quiver of the third century AD: a cylindrical brown leather quiver with bronze fittings and a carrying strap, holding a dozen arrows with feather flights. Shown upright, three-quarter view. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T06:46:12.930Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-quiver.glb",
+    "rawBytes": 45549296,
+    "rawSha256": "39e888335c394fddd92fc87181237b619950594391b9df0a1f992e9d71c2a351",
+    "tripoInput": {
+      "prompt": "A Roman auxiliary archer's quiver of the third century AD: a cylindrical brown leather quiver with bronze fittings and a carrying strap, holding a dozen arrows with feather flights. Shown upright, three-quarter view. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-quiver-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 0,
+    "cells": "1x2",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}
