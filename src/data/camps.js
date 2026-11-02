@@ -347,6 +347,8 @@ export const CAMPS=freeze({
   // The loyal legions' camp before the final march: the standards stand in a paved court at
   // its heart, with the decree table above it and the envoys kept to the tents by the wall.
   12:camp({id:'ch12-camp',chapter:12,title:'The loyal standards court',scale:2,ground:'stone',entry:'gate',
+    // The Curia's door (release 14), clear of the court's water.
+    exits:{'ch12-legitimacy':[1.5,-3]},
     map:['WWWWWWWWWW',
          'WCCCSSSCCW',
          'WCC.SSS.CW',

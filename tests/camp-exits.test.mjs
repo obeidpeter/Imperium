@@ -34,7 +34,9 @@ test('each way out is walked to from where the soldier stands, clear of the camp
     for(const o of w.objects.filter(o=>o!==x))assert.ok(Math.hypot(o.x-x.x,o.z-x.z)>=2.4,`${e.id}: ${Math.hypot(o.x-x.x,o.z-x.z).toFixed(2)} m from ${o.id}`);
     for(const a of w.actors.filter(a=>a.id!=='hero'))assert.ok(Math.hypot(a.x-x.x,a.z-x.z)>=1.6,`${e.id}: clear of ${a.id}`);
     const hero=w.actors.find(a=>a.id==='hero');assert.ok(Math.hypot(hero.x-x.x,hero.z-x.z)>=2.4,`${e.id}: the soldier does not start on it`);
-    for(const pad of w.campPresentation.sceneryPads??[])assert.ok(!pad.cells.some(({x:cx,y:cy})=>Math.floor(x.x/2.5)===cx&&Math.floor(x.z/2.5)===cy),`${e.id}: outside ${pad.id}`);
+    // As the camp's other interactions (world-hubs): 3.2 m clear of a scenery pad's 5 m footprint.
+    for(const pad of w.campPresentation.sceneryPads??[]){const cx=pad.x+w.map.width*1.25,cz=pad.z+w.map.height*1.25;
+      assert.ok(Math.hypot(Math.max(0,Math.abs(x.x-cx)-pad.width/2),Math.max(0,Math.abs(x.z-cz)-pad.depth/2))>=3.2,`${e.id}: clear of ${pad.id}`);}
   });
 });
 
