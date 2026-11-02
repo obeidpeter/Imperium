@@ -102,7 +102,7 @@ export const ITEM_PICTURES=Object.freeze({
   "subarmalis":Object.freeze([162, 564, 160, 160]),
   "subarmalis_thick":Object.freeze([162, 564, 160, 160]),
   "sword_sasanian":Object.freeze([0, 322, 80, 240]),
-  "training_shield":Object.freeze([568, 322, 160, 160]),
+  "training_shield":Object.freeze([0, 0, 160, 320]),
   "tunic":Object.freeze([324, 564, 160, 160]),
   "tunic_clavi":Object.freeze([324, 564, 160, 160]),
   "tunic_winter":Object.freeze([324, 564, 160, 160]),

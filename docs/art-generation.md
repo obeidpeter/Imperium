@@ -1330,13 +1330,13 @@ Each prompt, request body, Tripo task, raw digest and the parameters Tripo repor
 | manica | `item-manica` | 2 | `a3992d21-8671-4e6f-a749-494a30434dbe` | 1x2 | long | yes | Manica; Scale manica |
 | niederbieber | `item-niederbieber` | pilot | `b1e36df3-5270-49e3-8b69-9cf913dbdb7b` | 2x2 | upright, turned 180° | yes | Niederbieber helmet; Engraved Niederbieber helmet |
 | ocreae | `item-ocreae` | 2 | `b22867dd-2eb7-4e13-b41f-d7baf696c1ee` | 2x1 | long | yes | Ocreae; Fine greaves |
-| parma | `item-parma` | 2 | `32d35c1f-4fa4-495b-8404-4a8c4ee32841` | 2x2 | upright, turned 180° | yes | Parma; Bossed parma; Round shield; Oval training shield |
+| parma | `item-parma` | 2 | `32d35c1f-4fa4-495b-8404-4a8c4ee32841` | 2x2 | upright, turned 180° | yes | Parma; Bossed parma; Round shield |
 | pugio | `item-pugio` | 2 | `679b20f5-d5cc-4b5d-ab45-8d6e4f5b1a85` | 1x2 | long, across x | yes | Knife; Persian dagger |
 | quiver | `item-quiver` | 2 | `c0f36c17-6a29-4b14-9e40-3509634d38b4` | 1x2 | upright | yes | Quiver |
 | ring-belt | `item-ring-belt` | pilot | `d4f6fd84-16f2-4e68-903f-8fa73700aba3` | 2x1 | flat | yes | Ring-buckle belt |
 | sack | `item-sack` | 2 | `2b75df1f-c4bd-42c1-bb4f-fc0eaf1f6c9b` | 1x1 | upright | yes | Smoked fish; Dates; Leather thongs; Seed grain; Coin purse; Wine skin |
 | sagum | `item-sagum` | 2 | `fd271848-bcdc-4ef2-a3cf-be17a66f8dc6` | 2x2 | upright, turned 180° | yes | Sagum |
-| scutum | `item-scutum` | pilot | `6bade030-2d8a-4a70-ba8f-5c2152de1c03` | 2x4 | upright, turned 180° | yes | Scutum; Iron-rimmed scutum; Painted oval shield; The Victory shield; Cavalry shield |
+| scutum | `item-scutum` | pilot | `6bade030-2d8a-4a70-ba8f-5c2152de1c03` | 2x4 | upright, turned 180° | yes | Scutum; Iron-rimmed scutum; Painted oval shield; The Victory shield; Cavalry shield; Oval training shield |
 | sling | `item-sling` | 2 | `04e88855-8f11-4770-a462-714513c0aae4` | 1x1 | flat | yes | Sling |
 | spangenhelm | `item-spangenhelm` | 2 | `7018086f-c3e2-4485-8e5b-2e1086bb24b4` | 2x2 | upright, stand removed | yes | Conical helmet; Gothic cap helmet |
 | spatha | `item-spatha` | pilot | `c6544ec3-90e2-4b09-9a7b-3f3ff970798a` | 1x3 | long | yes | Spatha; Fine spatha; Ring-pommel sword; Pattern-welded spatha; Sasanian long sword |

@@ -188,8 +188,7 @@
       "items": [
         "parma",
         "parma_bossed",
-        "round_shield",
-        "training_shield"
+        "round_shield"
       ]
     },
     "pugio": {
@@ -241,7 +240,8 @@
         "scutum_rim",
         "scutum_light",
         "scutum_victory",
-        "cavalry_oval"
+        "cavalry_oval",
+        "training_shield"
       ]
     },
     "sling": {
