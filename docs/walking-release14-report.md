@@ -128,5 +128,15 @@ How each kind of check was made:
 
 ## The browser checks (second part)
 
-The second part's browser checks are running; their results are recorded here when they finish.
+In headless Chromium with software rendering (SwiftShader), on the production build:
+
+- **The new `fieldAftermath`** passed in 318 seconds, with no page or console errors. It ran on a build made before the last change, which opens a walked chest's window at once and records it open in the background.
+  - The won station's result offers **Walk the field** first.
+  - Walked, the strip stands in for the result and the living raiders have gone. Drawing a weapon is refused in the field's own words.
+  - The road, taken at once, names the fallen archer and the strongbox, and the saved chronicle stays as it was.
+  - The archer's belongings are taken through his window and staged with the result in the saved chronicle.
+  - The strongbox's key left with the living leader, so **Use the key** is disabled. **Force the lock** opens the box and **Take all** empties it.
+  - The road, taken again, shows the camp's card. The saved chronicle records the station once, and the strongbox's sword is with the soldier.
+- **`npm run verify`** on the final code: 1,604 tests passed, as did the autoplay harnesses, the production build, the asset manifest's digests and every download budget.
+- **CI runs every browser check** on the pull request, `fieldAftermath` in the second smoke half.
 
