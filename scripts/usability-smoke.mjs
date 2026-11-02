@@ -137,6 +137,29 @@ async function setup(viewport,{touch=false}={}){
   await page.waitForFunction(()=>!document.querySelector('#modal[open]')&&window.__realtime?.world()?.tick>0);
   return page;
 }
+// The owner's request after Gate 4: the camp's offline and artwork notices sit on the strip's own line, beside the save,
+// never as bands under it that take the world's room when they come. An injected layout check: the two notices are
+// hidden, then given their longest texts as the page's offline worker and art loader give them, and put back as they
+// were. The world and the strip keep their heights; nothing in the chronicle changes.
+async function campNoticeLine(page,label){
+  const before=await exported(page);
+  const measured=await page.evaluate(async()=>{
+    const frame=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const board=document.querySelector('#rt-board'),bar=document.querySelector('main > .world-camp-bar');
+    const nodes=['offline-status','art-loading-status'].map(id=>document.getElementById(id)),kept=nodes.map(n=>({text:n.textContent,hidden:n.hidden}));
+    const read=()=>({world:+board.getBoundingClientRect().height.toFixed(1),strip:+bar.getBoundingClientRect().height.toFixed(1)});
+    nodes.forEach(n=>{n.hidden=true;});await frame();const quiet=read();
+    nodes[0].textContent='Downloading all twelve chapters · 64%';nodes[1].textContent='Some artwork is unavailable. Readable tactical symbols remain available.';
+    nodes.forEach(n=>{n.hidden=false;});await frame();const speaking=read();
+    const onLine=nodes.every(n=>bar.contains(n)&&n.getBoundingClientRect().bottom<=bar.getBoundingClientRect().bottom+1);
+    nodes.forEach((n,i)=>{n.textContent=kept[i].text;n.hidden=kept[i].hidden;});await frame();
+    return {quiet,speaking,onLine};
+  });
+  assert.equal(measured.onLine,true,`${label}: the offline and artwork notices sit on the camp strip's line`);
+  assert.deepEqual(measured.speaking,measured.quiet,`${label}: the world and the strip keep their heights when the notices speak`);
+  assert.equal(await exported(page),before,`${label}: the notices change nothing in the chronicle`);
+  record(`${label}: the camp's offline and artwork notices take no room from the world (injected notice text)`,measured);
+}
 async function menuAndSettings(page,label){
   const original=await exported(page);
   assert.equal(JSON.parse(original).soldier.flags['visited:5:gate'],true,'The normal camp arrival is recorded before the settings baseline');
@@ -499,7 +522,7 @@ try{
   if(!only)await campTransitions();
   for(const viewport of [{width:390,height:844},{width:1280,height:900}].filter(v=>only!=='onboarding'&&(!only||v.width===(only==='phone-settings'?390:1280)))){
     const label=viewport.width<600?'phone':'desktop',page=await setup(viewport);
-    await menuAndSettings(page,label);
+    await campNoticeLine(page,label);await menuAndSettings(page,label);
     if(only!=='phone-settings'){await helpAndSoldier(page,label);if(label==='desktop')await inventoryKeyboardAndMouse(page,label);
       await saveConfirmation(page,label);await fieldControls(page,label);}
     await page.context().close();

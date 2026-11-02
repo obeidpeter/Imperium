@@ -26,7 +26,7 @@ import * as Chamber from '../core/chamber.js';
 import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
 import {createSoldier} from '../core/soldier.js';
 import {campFor,CAMP_PLACES,campPlaceName,campPlaceHint} from '../data/camps.js';
-import {campRuntimeKey} from './camp-runtime.js';
+import {campRuntimeKey,campWayOut} from './camp-runtime.js';
 import {createErrandTracker,errandDestinationAction} from './errand-guidance.js';
 import {practicePanel} from './command-edition-views.js';
 import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
@@ -363,7 +363,7 @@ function mountField(target){
       const was=field.runtime.world.actors.find(a=>a.id==='hero'),next=Game.createCampWorld(state),hero=next.actors.find(a=>a.id==='hero');
       if(was&&field.chapter===state.chapter)Object.assign(hero,{x:was.x,z:was.z,px:was.x,pz:was.z,fx:was.fx,fz:was.fz});
       field.key=target.key;field.chapter=state.chapter;field.runtime.load(next,campBase(next));refreshCampMarks();
-    }
+    }else if(field.runtime&&target.kind==='camp')refreshCampMarks();
     mountFieldStage();return;
   }
   host.insertAdjacentHTML('beforeend',fieldMarkup({state,keymap,kind:target.kind}));
@@ -495,10 +495,17 @@ function noteVisit(world){
   change(()=>Game.campVisit(state,place),{tone:null,silent:true});
 }
 // A speech mark over everyone whose conversation offers something new: an errand, a decision, the oath or a reward.
+let wayOutSeen={at:null,ready:false};
 function refreshCampMarks(){
   const world=field?.runtime?.world;if(!world||field.kind!=='camp')return;const marks={};
   for(const a of world.actors.filter(x=>x.talk))if(Game.campHasNews(state,a.talk.tree))marks[a.id]={text:'“',color:'#f1d38a'};
   field.runtime.setMarks(marks);
+  // The way out, marked once nothing keeps the column in camp; said once when it becomes so while the camp is open.
+  const wayOut=campWayOut(state,world),at=`${state.chapter}:${state.encounterIndex}`;
+  if(wayOutSeen.at!==at)wayOutSeen={at,ready:!!wayOut};
+  else if(wayOut&&!wayOutSeen.ready){wayOutSeen.ready=true;announce(`Ready to march: ${wayOut.label} is marked.`);}
+  else if(!wayOut)wayOutSeen.ready=false;
+  field.runtime.setWayOut?.(wayOut);
 }
 let conversation=null;
 function showConversation(treeId,nodeId=null){
@@ -954,7 +961,9 @@ function updateLoadingStatus(){
       node=document.createElement('div');node.id=id;node.className='offline-banner';node.setAttribute('role','status');
       document.querySelector('.topbar')?.after(node);
     }
-    if(node){node.textContent=text;node.hidden=!text;}
+    if(node){node.textContent=text;node.hidden=!text;
+      // On the camp strip's line (campaign-views.js worldCampBar) a long notice ends in an ellipsis: its tooltip is the whole.
+      if(node.classList.contains('world-line-status')){if(text)node.title=text;else node.removeAttribute('title');}}
   }
   const progress=document.querySelector('#settings-offline-status');
   if(progress)progress.textContent=offline?'All twelve chapters are available offline.':offlineProgress||(currentChapterOffline&&state?`Chapter ${roman(state.chapter)} `+

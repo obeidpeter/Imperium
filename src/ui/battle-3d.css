@@ -40,6 +40,16 @@ body:not(.labels-full) .world-labels[data-dense=true] .world-unit:not(.selected)
 .world-objective{position:absolute;inset:0 auto auto 0;padding:.12rem .35rem;border:1px solid #ac965983;border-radius:3px;background:#29281deb;color:#e8d7a6;font-size:.6rem;line-height:1.3;text-align:center;white-space:nowrap;pointer-events:none}
 .world-objective[data-tone=warning]{border-color:#a46f53;color:#efc5ad}
 .world-objective[data-tone=secured]{border-color:#819f6a;color:#cbdcb0}
+/* A marked place out of sight (the camp's way out) waits at the view's edge with the way it lies. */
+.world-objective[data-edge]{font-size:.7rem;font-weight:650;border-color:#c8ad62}
+.world-objective[data-edge=right]::before{content:"→\00a0"}
+.world-objective[data-edge=down-right]::before{content:"↘\00a0"}
+.world-objective[data-edge=down]::before{content:"↓\00a0"}
+.world-objective[data-edge=down-left]::before{content:"↙\00a0"}
+.world-objective[data-edge=left]::before{content:"←\00a0"}
+.world-objective[data-edge=up-left]::before{content:"↖\00a0"}
+.world-objective[data-edge=up]::before{content:"↑\00a0"}
+.world-objective[data-edge=up-right]::before{content:"↗\00a0"}
 /* Projected badges use priority placement; full information remains in the dock. */
 .world-labels{contain:layout style paint}
 .world-unit{min-inline-size:2rem;gap:.15rem;max-inline-size:10rem}

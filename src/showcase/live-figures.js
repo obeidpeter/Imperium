@@ -105,11 +105,17 @@ function stageTerrain(world){
 }
 // The stage's encounter: the campaign map with the world's actors, and no turn-based markers.
 // A campaign battle's world walks an upsampled map (2.5 m tiles); the stage builds that one.
-export function stageEncounter(encounter,world,{appearance}={}){
+export function stageEncounter(encounter,world,{appearance,wayOut=null}={}){
   const fine=world.map.width!==encounter.width||world.map.height!==encounter.height?{width:world.map.width,height:world.map.height,terrain:stageTerrain(world)}:{};
   const squads=(world.squads??[]).filter(q=>q.members.some(id=>{const m=actorById(world,id);return m&&(!m.hidden||m.side!=='enemy');})).map(q=>squadUnit(world,q));
   return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(a=>stageUnit(a,{appearance,campActivity:campActivityFor(world,a.id)})),...squads],...stageMission(world),
-    field:stageField(world),containers:stageContainers(world),fortifications:world.fortifications??null,elevations:world.map.elevations??[],operation:null,reinforcements:[],status:'active',turn:1,log:[]};
+    field:stageField(world),containers:stageContainers(world),fortifications:world.fortifications??null,elevations:world.map.elevations??[],operation:null,reinforcements:[],status:'active',turn:1,log:[],
+    ...stageWayOut(world,wayOut)};
+}
+// A camp's way out, marked once the page says the column can march (app.js campWayOut): on the stage's tiles.
+function stageWayOut(world,wayOut){
+  const exit=wayOut&&world.kind==='camp'?(world.objects??[]).find(o=>o.kind==='exit'):null;
+  return exit?{wayOut:{...stageTile(exit.x,exit.z),label:wayOut.label??exit.name}}:{};
 }
 // The containers in sight (container-props.js), in the stage's centred metres, each
 // facing the middle of the board: closed, open with something left, or open and

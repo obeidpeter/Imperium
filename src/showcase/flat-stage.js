@@ -6,9 +6,12 @@
 // Presentation only: the world is read, never written.
 import {BLOC_STYLE} from '../ui/bloc-style.js';
 import {FIELD_YAW,boundedOffset} from './camera-bearing.js';
+import {edgeToward} from './stage-label-layout.js';
 
 const TILE=2.5,FALL_TICKS=16,FLOAT_MS=1300;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t;
+// The way a marked place out of sight lies (stage-label-layout.js edgeToward), as the 3D labels show it.
+export const EDGE_ARROWS={right:'→','down-right':'↘',down:'↓','down-left':'↙',left:'←','up-left':'↖',up:'↑','up-right':'↗'};
 const GROUND={grass:'#6d7b48',road:'#a08a68',marsh:'#56685b',sand:'#c3ab79',rock:'#77736a',ford:'#6a8b8b',river:'#466a79',high:'#8b8a5c',wall:'#5f5446',
   stone:'#b8b09d',camp:'#8d7f5f',floor:'#a99b81',bench:'#8a6e4d',chamber:'#a99b81',rubble:'#8a7963',ditch:'#4c4a37'};
 const RAISED={wall:1.1,rock:.8,high:.45};
@@ -164,6 +167,15 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         c.beginPath();q.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fillStyle='#9fd3d022';c.fill();c.setLineDash([8,6]);c.lineWidth=2;c.strokeStyle='#9fd3d0';c.stroke();c.setLineDash([]);}
       // Objectives and objects.
       if(w.mission?.goal&&markers())ellipse(flat.screen(v,w.mission.goal.x,w.mission.goal.z),(w.mission.radius??2.5)*unit*.7,'#f1d38a',{dash:[6,4]});
+      // A camp's way out once the column can march (the stage's encounter.wayOut, as the 3D view marks it): a ring at
+      // it, and, while it is out of sight, its name at the view's edge with the way it lies.
+      const wayOut=markers()&&w.kind==='camp'?flat.encounter?.wayOut:null,exit=wayOut?(w.objects??[]).find(o=>o.kind==='exit'):null;
+      if(exit){const p=flat.screen(v,exit.x,exit.z),box=flat.canvas.getBoundingClientRect();ellipse(p,2.2*unit*.7,'#f1d38a',{dash:[6,4],width:2.5});
+        if(p.x<0||p.y<0||p.x>box.width||p.y>box.height){
+          const text=`${EDGE_ARROWS[edgeToward(p.x,p.y,box.width,box.height)]} ${wayOut.label}`;c.font='650 13px system-ui';
+          const tw=c.measureText(text).width+16,th=24,x=clamp(p.x-tw/2,8,box.width-8-tw),y=clamp(p.y-th/2,8,box.height-8-th);
+          c.fillStyle='#29281deb';c.fillRect(x,y,tw,th);c.strokeStyle='#ac9659';c.lineWidth=1;c.strokeRect(x+.5,y+.5,tw-1,th-1);
+          c.fillStyle='#e8d7a6';c.textAlign='center';c.fillText(text,x+tw/2,y+16.5);}}
       // The armourer's forge (release 11): an anvil on its block, behind him.
       const forge=w.campPresentation?.smithy;
       if(forge){const p=flat.screen(v,forge.x+w.map.width*TILE/2,forge.z+w.map.height*TILE/2);c.fillStyle='#5a4632';c.fillRect(p.x-v.tw*.08,p.y-v.th*.35,v.tw*.16,v.th*.35);

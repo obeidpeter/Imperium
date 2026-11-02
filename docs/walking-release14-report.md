@@ -156,3 +156,82 @@ In headless Chromium with software rendering (SwiftShader), on the production bu
   The first 3D screen of the walked field, taken with the clock paused straight after **Walk the field**, was black for 2.5 seconds. Taken again with the clock running, it was drawn within 3 seconds. Software rendering is slow, and no device was used to check this.
 - **CI runs every browser check** on the pull request, `fieldAftermath` in the second smoke half.
 
+
+## After Gate 4
+
+Two of the owner-approved polish items after the play-through touch release 14's camps and fields.
+
+### The way out is marked once the column can march
+
+- **What you see:**
+  - Once nothing keeps the column in camp, the way out is marked like a battle's objective: a ring at the waymarker and its name. Nothing keeps it there once the departure check the way out itself runs passes: the chapter's decision is made and every needed preparation is in hand.
+  - The soldier often arrives with the way out behind him, out of sight. Its name then waits at the edge of the view, with an arrow showing the way it lies, in 3D and 2D.
+  - A line says so when the way out becomes ready while the camp is open.
+  - **Settings → Display → Objective markers** turns it off with the battle's markers.
+- **How:**
+  - `campWayOut` (`src/ui/camp-runtime.js`) decides from the departure check.
+  - The field's runtime hands the way out to the stage's encounter (`stageEncounter`), where `missionReadouts` makes it a pinned objective.
+  - `layoutStageLabels` keeps a pinned label at the nearest edge with the way it lies, instead of hiding it. The 2D view draws the same ring and edge label on its canvas.
+- **Checks:**
+  - `camp-way-out` (3 tests):
+    - the mark comes exactly when the departure check passes, in every camp, and deciding it changes nothing;
+    - it sits on the way out, by name;
+    - a pinned label out of sight waits at the edge, pointing to it, while others still give up their place.
+  - Of the 25 camp states, 16 are ready to march once their decision is made (its first option taken); the other nine still wait on a preparation: the oath, the legion's preparation, the crossing terms, a stratagem or the convoys.
+  - Where the way out lies on arrival: in 14 of the 25 camp states the soldier starts with the road out 7.4 m behind him, as in Chapter II's camp, where the screens below show it at the lower-left edge of the view. In eight it is 10 to 38 m away, and in three within 3 m. This is the camps' geometry; only Chapter II's screens were taken.
+  - Screens of Chapter II's camp (a legal-command checkpoint), taken again on the final build of this pull request, in 3D at 1,280 by 800 and 390 by 844 and in 2D at 1,280 by 800:
+    - at 390 pixels wide, on arrival the name waits at the lower left with ↙, out of sight;
+    - at 1,280 by 800 the road out is just in view at the lower left, its name over the ring. On the first build it was out of sight there too: the world has since grown 34.4 pixels taller, with the offline notice off its own line and the event line's room kept (both below);
+    - nearer, it stands over the ring;
+    - in 2D the ring is drawn at the waymarker.
+
+### The 3D view no longer goes blank after a pause
+
+- **Found while taking those screens:** a 3D camp went blank, with only its labels, after a walk and a pause. It happened on the build from main as well: in both runs, the first screen after the pause read 46 for brightness against 71.
+- **The cause:** setting a canvas's size clears it until it is drawn again, and two things set the 3D view's size:
+  - **The bar.** Pausing writes "Paused." on the bar's event line, which takes no room while it is empty. At 1,280 by 800 the bar grows while the line shows, so the world shrinks from 580.8 to 574.2 pixels tall, and grows back when the line clears: two resizes for each message. The stage's ResizeObserver makes them after the frame has been drawn, so the cleared canvas is what is shown next.
+  - **The page.** The stage controller's `mount` runs on every update of the page, and it called the stage's `resize()`. That sets the size even when it is the same, and remakes the compositor's render targets.
+  - Under software rendering a frame of this camp takes 2 to 3 seconds, so the view stayed blank that long. On a device it would be at most a frame, which no device has checked.
+- **How it was found:** a first fix of the page's resizes alone left the blank in one of two runs. An instrumented run then logged every write to the canvas's size, every renderer resize, every attribute change on the canvas and its scene, every move of the canvas and every frame drawn after the pause. It showed the two resizes by the ResizeObserver, 2.2 and 4.9 seconds after P, and nothing else that could clear the view.
+- **The fix:**
+  - After a resize the stage draws the scene again at once, in the same task (`redraw()`), so a cleared canvas is never shown. It draws the scene as it stands, with no world step, motion or animation advanced. It does not draw a stage still being prepared, disposed or with its context lost.
+  - The controller's `mount` calls the stage's new `fit()`, which resizes only when the canvas's size or pixel ratio changed. `resize()` itself still runs for its other callers: a quality or pixel-ratio change, construction, a restored context and the ResizeObserver.
+- **Checks:**
+  - Stage tests:
+    - a resize draws right after the size is set, at the new shape, through the compositor when there is one, and not while the stage is being prepared, is disposed or has lost its context;
+    - an unchanged canvas is neither resized nor drawn, five times running; a new height or pixel ratio is fitted.
+  - A probe of Chapter II's camp in 3D (Performance, 1,280 by 800): the soldier walked part of the way out, then P pressed eight times, pause and resume, with a screen after each press, run on the build from main and then on the fixed build (before the event line kept its room, so the resizes still came):
+    - from main, 7 of the 8 screens were blank, at 46 for brightness against 71;
+    - fixed, none were: 70.7 to 70.9.
+- **The bar's resizes themselves** are gone too: at the owner's request the event line now keeps its room (below).
+- **The earlier note** about the walked field's first 3D screen (above) was most likely this.
+- **Measured as well:** the walked field in Balanced, about 700,000 triangles, paints a frame every 2 to 5 seconds under software rendering, paused or running. That slowness is the renderer's, and the field keeps drawing while paused.
+
+### The world keeps its size when a message comes or goes
+
+At the owner's request, after reading the finding above.
+
+- **Before:** the bar's event line, where "Paused.", a blow or a refusal is said, took no room while it was empty. Each message made the bar a line taller and the world that much shorter until it cleared, and a long message on a phone took two lines. In a fight the line fills and empties with nearly every blow.
+- **Now:**
+  - The line keeps one line of room, empty or not (`block-size: 1lh`), and says what it says on that line.
+  - A message too long for it ends in an ellipsis. The whole of it stays in the line, which screen readers read, and in its tooltip.
+- **Measured** in Chapter II's camp: the world's height with the line empty, with "Paused." and with a 74-character message, at six sizes, with **Compact interface** on and off.
+
+  | Window | Compact interface on (the default) | Compact interface off |
+  | --- | --- | --- |
+  | 1,280 × 800, 1,280 × 720 and 1,440 × 900 | It shifted 6.6 px with every message. Now it is always 6.6 px shorter and never shifts. | It never shifted, and costs nothing: the bar was already taller than its lines. |
+  | 580 × 800, 390 × 844 and 360 × 640 | It shifted 19.8 px, or 39.6 for a long message on a phone. Now it is always 19.8 px shorter and never shifts. | The same. |
+
+- **A check:** `smoke:polish` pauses and reads the world's height while "Paused." shows, then again after the line has cleared, still paused. The two must be equal, the line's tooltip must be its message, and an empty line has none.
+
+### The camp's offline and artwork notices sit on the strip
+
+Also at the owner's request, after the measurements above found it.
+
+- **Before:** "This chapter is ready offline", the download's progress and the artwork notice were bands under the camp's strip. The offline band came a few seconds after a camp opened, once the chapter's pack was cached, and stayed. It took 41 pixels from the world, once per chapter. (The battle and chamber pages have no such bands: these notices appear only in camp.)
+- **Now:**
+  - Both notices sit on the strip's one line, beside **Chronicle saved** (`worldCampBar`, `src/ui/campaign-views.js`), still as status messages. The page updates them there (`updateLoadingStatus`).
+  - On a short line they give way first, ending in an ellipsis, with the whole of it in their tooltip.
+- **Checks:**
+  - `immersive-interface`, all twelve camps: both notices sit on the strip's line with their text as their tooltip; there is no band under the strip; with nothing to say they wait on the line, hidden.
+  - `smoke:usability`, at the phone and desktop widths, an injected layout check: the two notices are hidden, then given their longest texts and shown. The world and the strip keep their heights, and the chronicle is unchanged.

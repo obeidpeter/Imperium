@@ -153,10 +153,14 @@ function worldCampBar(state,ch,next){
   const {saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}=context();
   const ready=offline?'All chapters available offline':currentChapterOffline?'This chapter is ready offline':'',offlineText=[ready,offlineProgress].filter(Boolean).join(' · ');
   const problem=Game.departureCheck(state);
+  // The offline and artwork notices say their piece on the strip's own line, beside the save, rather than as bands under
+  // it that take the world's room when they come (the owner's request after Gate 4). The page updates them in place
+  // (app.js updateLoadingStatus); a notice too long for the line ends in an ellipsis, with the whole of it its tooltip.
+  const notice=(id,text)=>`<span id="${id}" class="world-line-status" role="status"${text?` title="${esc(text)}"`:' hidden'}>${esc(text||'')}</span>`;
   return `<div class="rt-chronicle-bar world-camp-bar"><span class="eyebrow">Chapter ${roman(ch.id)} · ${esc(state.rank)} · Next: ${esc(next?.title||ch.title)}</span>`+
-    `${problem?`<span class="world-camp-problem">${esc(problem)}</span>`:''}<span class="save-status game-status" role="status">${saving?'Saving…':lastSaved?'Chronicle saved':''}</span></div>`+
-    `${saveProblem?`<div class="notice system-notice" role="alert">${esc(saveProblem)} <button data-cmd="export">Export a save code</button> ${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div>`:''}`+
-    `<div id="offline-status" class="offline-banner" role="status" ${offlineText?'':'hidden'}>${esc(offlineText)}</div><p id="art-loading-status" class="art-loading-status" role="status" ${artProgress?'':'hidden'}>${esc(artProgress||'')}</p>`;
+    `${problem?`<span class="world-camp-problem">${esc(problem)}</span>`:''}${notice('offline-status',offlineText)}${notice('art-loading-status',artProgress)}`+
+    `<span class="save-status game-status" role="status">${saving?'Saving…':lastSaved?'Chronicle saved':''}</span></div>`+
+    `${saveProblem?`<div class="notice system-notice" role="alert">${esc(saveProblem)} <button data-cmd="export">Export a save code</button> ${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div>`:''}`;
 }
 // walks up to people and things, beside the list path to every one of them
 // (talk, the commander's table, the gate, the places), so nothing needs the scene.

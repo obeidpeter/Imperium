@@ -2,6 +2,9 @@
 // stance badges readable without moving figures or changing legal targets.
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 export const labelsOverlap=(a,b,gap=3)=>a.x<b.x+b.width+gap&&a.x+a.width+gap>b.x&&a.y<b.y+b.height+gap&&a.y+a.height+gap>b.y;
+// Which way a point out of sight lies from the view's middle, in eight steps (screen y grows downward).
+const EDGES=['right','down-right','down','down-left','left','up-left','up','up-right'];
+export const edgeToward=(x,y,width,height)=>EDGES[(Math.round(Math.atan2(y-height/2,x-width/2)/(Math.PI/4))+8)%8];
 
 export function layoutStageLabels(items,{width,height,margin=8,top=margin,bottom=margin,obstacles=[]}={}){
   const placed=[],result=new Map();
@@ -10,6 +13,12 @@ export function layoutStageLabels(items,{width,height,margin=8,top=margin,bottom
   const bodies=obstacles.filter(r=>r&&[r.x,r.y,r.width,r.height].every(Number.isFinite)&&r.width>0&&r.height>0&&r.x+r.width>margin&&r.x<width-margin&&r.y+r.height>top&&r.y<height-bottom).slice(0,8);
   const ordered=[...items].sort((a,b)=>(b.priority??0)-(a.priority??0)||String(a.id).localeCompare(String(b.id)));
   for(const item of ordered){
+    // A pinned label out of sight (the camp's way out, once the column can march) waits at the nearest edge,
+    // with the way it lies; anything else out of sight gives up its place.
+    if(item.pin&&item.visible&&Number.isFinite(item.x+item.y+item.width+item.height)&&(item.x<0||item.x>width||item.y<0||item.y>height)){
+      const w=item.width,h=item.height,r={id:item.id,x:Math.round(clamp(item.x-w/2,margin,width-margin-w)),y:Math.round(clamp(item.y-h/2,top,height-bottom-h)),width:w,height:h};
+      placed.push(r);result.set(item.id,{...r,visible:true,reason:'edge',edge:edgeToward(item.x,item.y,width,height),anchorX:item.x,anchorY:item.y});continue;
+    }
     if(!item.visible||!Number.isFinite(item.x+item.y+item.width+item.height)||item.x<0||item.x>width||item.y<0||item.y>height){result.set(item.id,{visible:false,reason:'offscreen'});continue;}
     const w=item.width,h=item.height,maxX=width-margin-w,maxY=height-bottom-h;
     if(maxX<margin||maxY<top){result.set(item.id,{visible:false,reason:'occluded'});continue;}
