@@ -569,6 +569,12 @@ html[data-world="full"][data-hud="full"] .realtime-frame>.rt-chronicle-bar,html[
 html[data-world="full"] .realtime-frame>.rt-chronicle-bar,html[data-world="full"] main.realtime-camp>.rt-chronicle-bar{display:flex;flex-wrap:nowrap;align-items:center;gap:.6rem;line-height:1.3}
 html[data-world="full"] .rt-chronicle-bar>.eyebrow{flex:1 1 auto;min-inline-size:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
 html[data-world="full"] .rt-chronicle-bar>.save-status{flex:none;white-space:nowrap}
+/* The camp's offline and artwork notices on the strip's line, beside the save (the owner's request after Gate 4): never
+   a band of their own that takes the world's room when it comes. They give way first when the line is short, ending in
+   an ellipsis, with the whole of it in their tooltip. */
+html[data-world="full"] .rt-chronicle-bar>.world-line-status:not([hidden]){flex:0 100 auto;min-inline-size:1.6em;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;color:#3f513c}
+html[data-contrast="high"] .rt-chronicle-bar>.world-line-status{color:var(--ink)}
 html[data-world="full"] .rt-field>.rt-status-strip{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem .8rem}
 html[data-world="full"] .rt-field>.rt-status-strip>.rt-mission-summary{order:0;flex:0 1 auto;min-inline-size:0}
 html[data-world="full"] .rt-field>.rt-status-strip>.rt-mission-summary .rt-objective{flex:0 1 auto}
@@ -592,8 +598,12 @@ html[data-world="full"] .rt-chamber-strip>.rt-coalition-details>summary{min-bloc
 html[data-world="full"] .rt-chamber-strip>.rt-records{order:2;flex:none;min-block-size:2rem;padding:.15rem .6rem}
 html[data-world="full"] .realtime-frame:not([data-outcome="active"]) .rt-chamber-strip{display:none}
 html[data-world="full"]:not([data-hud="full"]) .rt-unit-dock>.rt-selection-label{display:none}
-/* An event line with nothing to say takes no room in the bar. */
-html[data-world="full"] .rt-hud .rt-message-lines>.rt-event:empty{display:none}
+/* The event line keeps its one line of room while it has nothing to say, and says what it says on that line: a
+   message coming or going never changes the bar's height, so the world above it never shifts (the owner's request
+   after Gate 4). A message too long for the line ends in an ellipsis; the whole of it stays in the line for screen
+   readers, and in its tooltip. */
+html[data-world="full"] .rt-hud .rt-message-lines>.rt-event,html[data-world="full"] .rt-hud .rt-message-lines>.rt-event:empty{
+  display:block;block-size:1.35em;block-size:1lh;min-block-size:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @container (min-width:761px){
   html[data-world="full"] .rt-hud>.rt-ability-area{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .4rem}
   html[data-world="full"] .rt-hud>.rt-ability-area>.rt-ability-bar{flex:0 1 auto;flex-basis:auto}

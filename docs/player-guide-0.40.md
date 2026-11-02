@@ -112,6 +112,11 @@ and XII). Click it, or choose it under **All actions**. If something is still
 missing, the gate sentry says what and nothing happens; once all is ready, a
 short card names where you are going while it is built. Talking to the gate
 or the sentry, and **March out** in **Menu → Camp**, leave the same way.
+Once nothing keeps you in camp, the way out is marked like an objective: a
+ring at the waymarker and its name above it. When it is out of sight, often
+behind you as you arrive, its name waits at the edge of the view with an
+arrow pointing to it. **Settings → Display → Objective markers** turns the
+mark off with the battle's markers.
 
 Optional exercises appear when deployment, squad orders, engineering or
 political commitments become available. Open the **Tip** to follow a short
@@ -644,7 +649,11 @@ over it.
 
 - **Bottom centre:** the message line, the battle clock and, from
   Chapter IV, your Command points; below them the current ability and
-  the ability bar (or a squad's command card).
+  the ability bar (or a squad's command card). Under the message line a
+  second line says what just happened: a blow, a pause, a refusal. It
+  keeps its room when it has nothing to say, so the world never changes
+  size; a message too long for it ends in an ellipsis, and pointing at
+  it shows the whole.
 
 - **Bottom right:** a button for each panel: **Kit**, **Character**,
   **Journal**, **Orders**, **Chronicle**, **Map**, **Company**,
@@ -1828,7 +1837,8 @@ well.
 
 - Each chapter's artwork and 3D files download as you reach the chapter;
   suitable connections also fetch the next chapter ahead of time. **This
-  chapter is ready offline** does not mean later chapters are.
+  chapter is ready offline** does not mean later chapters are. In a camp
+  these notices sit on the strip at the top, beside **Chronicle saved**.
 
 - To take the whole campaign offline, choose **Menu → Settings → Saves &
   offline → Download all chapters** and wait for **All chapters available

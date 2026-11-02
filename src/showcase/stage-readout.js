@@ -47,6 +47,8 @@ export function missionReadouts(encounter) {
   if (wave) entries.push({id:'wave',x:wave.x,y:wave.y,label:`Reinforcements · ${mission.rounds?'round':'turn'} ${wave.turn}`,tone:'warning'});
   // A real-time footbridge is drawn in sections; only its middle one is named.
   for(const o of encounter.field?.objects??[])if(!o.section&&['available','closed','damaged','burning'].includes(o.state))entries.push({id:`field-${o.id}`,x:o.x,y:o.y,label:`${o.label} · ${o.state}`,tone:o.state==='burning'?'warning':'goal'});
+  // A camp's way out once nothing keeps the column in camp: marked, and kept at the view's edge while out of sight.
+  if(encounter.wayOut)entries.push({id:'way-out',x:encounter.wayOut.x,y:encounter.wayOut.y,label:encounter.wayOut.label,tone:'goal',pin:true});
   return entries;
 }
 

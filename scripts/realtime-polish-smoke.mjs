@@ -141,6 +141,16 @@ try{
   assert.equal(await road.evaluate(()=>document.activeElement?.textContent),'Use');
   await road.keyboard.press('KeyP');await road.waitForFunction(()=>window.__realtime.paused());
   const stopped=await tick(road);await road.waitForTimeout(400);assert.equal(await tick(road),stopped,'P from a Use button stops every simulation tick');
+  // The owner's request after Gate 4: the bar's event line keeps its room, so a message coming or going never changes
+  // the world's size. "Paused." is said, then clears while the world stays paused (nothing else is said meanwhile).
+  const worldHeight=()=>road.evaluate(()=>document.querySelector('#rt-board').getBoundingClientRect().height);
+  await road.waitForFunction(()=>document.querySelector('[data-role="eventLine"]')?.textContent==='Paused.');
+  const saying=await worldHeight();
+  assert.equal(await road.locator('[data-role="eventLine"]').getAttribute('title'),'Paused.','The event line shows its whole message on hover');
+  await road.waitForFunction(()=>document.querySelector('[data-role="eventLine"]')?.textContent==='',null,{timeout:15000});
+  assert.equal(await worldHeight(),saying,'The world keeps its size when the event line empties');
+  assert.equal(await road.locator('[data-role="eventLine"]').getAttribute('title'),null,'An empty event line has no tooltip');
+  evidence.checks.push({name:'The event line keeps its room: the world keeps its size as a message comes and goes',pass:true,worldHeight:saying});
   await road.keyboard.press('KeyP');await road.waitForFunction(t=>window.__realtime.world().tick>t,stopped);
   await pause(road);await road.click('[data-role="listButton"]');
   evidence.checks.push({name:'Pause and resume from a focused command-list Use button',pass:true});

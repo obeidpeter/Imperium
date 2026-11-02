@@ -69,7 +69,7 @@ export const stageLabels={
     for(const [id,marker]of this.missionMarkers){
       const key=`objective:${id}`,point=this.screenPoint.copy(marker.mesh.position);point.y+=.2;point.project(this.camera);
       if(this.labelSizeDirty||!marker.width){marker.width=marker.label.offsetWidth;marker.height=marker.label.offsetHeight;}
-      items.push({id:key,x:(point.x*.5+.5)*width,y:(-point.y*.5+.5)*height,width:marker.width,height:marker.height,priority:60,visible:Math.abs(point.z)<=1});
+      items.push({id:key,x:(point.x*.5+.5)*width,y:(-point.y*.5+.5)*height,width:marker.width,height:marker.height,priority:60,visible:Math.abs(point.z)<=1,pin:!!marker.pin});
       elements.set(key,{label:marker.label});
     }
     const obstacles=[],body=this.actors.get(this.selected);
@@ -85,9 +85,10 @@ export const stageLabels={
       }
     }
     const layout=layoutStageLabels(items,{width,height,top:!this.live&&this.canvas.parentElement.classList.contains('world-stage')?92:8,obstacles}),
-      counts={visible:0,occluded:0,offscreen:0,overlaps:0};
+      counts={visible:0,occluded:0,offscreen:0,overlaps:0,edge:0};
     for(const [id,r]of layout){
       const {label,leader}=elements.get(id);label.dataset.layout=r.reason;counts[r.reason]++;label.style.visibility=r.visible?'visible':'hidden';
+      if(r.edge)label.dataset.edge=r.edge;else delete label.dataset.edge;
       if(!r.visible)continue;label.style.transform=`translate(${r.x}px,${r.y}px)`;
       if(leader){
         const dx=r.anchorX-(r.x+r.width/2),dy=r.anchorY-(r.y+r.height),length=Math.hypot(dx,dy);leader.style.width=`${length}px`;

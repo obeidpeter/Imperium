@@ -83,6 +83,35 @@ test('Resize widens overview framing for portrait, preserves intentional focus, 
   const matrix=stage.camera.projectionMatrix.toArray(),count=calls.length;rect={width:0,height:0};stage.resize();assert.equal(calls.length,count);assert.deepEqual(stage.camera.projectionMatrix.toArray(),matrix);
 });
 
+test('The page’s update fits the canvas only when its size or pixel ratio changed, keeping what it shows',()=>{
+  // Setting a canvas's size, even to the same one, clears its drawing until the next frame: the page mounts the
+  // stage on every update (battle-stage-controller.js), so an unchanged canvas is left as it is.
+  const stage=cameraStage(createShowcaseSession().encounter,1440,600);stage.home();const calls=[];let rect={width:1280,height:580},ratio=1;
+  stage.canvas={getBoundingClientRect:()=>rect};stage.pixelRatio=()=>ratio;
+  let applied=1;stage.renderer={setSize:(...args)=>calls.push(args),getPixelRatio:()=>applied,setPixelRatio(r){applied=r;}};
+  assert.equal(stage.fit(),true,'a new stage is fitted');assert.deepEqual(calls.at(-1),[1280,580,false]);
+  const count=calls.length;for(let i=0;i<5;i++)assert.equal(stage.fit(),false,'an unchanged canvas is not touched');assert.equal(calls.length,count);
+  rect={width:1280,height:540};assert.equal(stage.fit(),true,'a new height is fitted');assert.deepEqual(calls.at(-1),[1280,540,false]);
+  ratio=1.5;assert.equal(stage.fit(),true,'a new pixel ratio is fitted');assert.equal(applied,1.5);assert.equal(stage.fit(),false);
+  rect={width:0,height:0};assert.equal(stage.fit(),false,'a collapsed layout is left alone');
+});
+
+test('A resize draws the scene again at once, so a cleared canvas is never shown, and only a ready stage draws',()=>{
+  // Pausing writes the bar's event line, the bar grows and the world shrinks a few pixels: the ResizeObserver's resize
+  // comes after that frame was drawn, and setting the canvas's size clears it.
+  const stage=cameraStage(createShowcaseSession().encounter,1440,600);stage.home();const calls=[];let rect={width:1280,height:580};
+  stage.canvas={getBoundingClientRect:()=>rect};stage.pixelRatio=()=>1;stage.scene={id:'scene'};
+  stage.renderer={setSize:(...args)=>calls.push(['setSize',...args]),getPixelRatio:()=>1,setPixelRatio(){},render:(scene,camera)=>calls.push(['render',scene.id,camera.aspect])};
+  stage.resize();assert.deepEqual(calls.map(c=>c[0]),['setSize'],'a stage still being prepared is not drawn');
+  stage.isReady=true;rect={width:1280,height:574};calls.length=0;stage.resize();
+  assert.deepEqual(calls,[['setSize',1280,574,false],['render','scene',1280/574]],'drawn right after its size is set, at the new shape');
+  stage.compositor={resize:()=>calls.push(['compositor.resize']),render:scene=>calls.push(['compositor.render',scene.id])};rect={width:1280,height:580};calls.length=0;stage.resize();
+  assert.deepEqual(calls.map(c=>c[0]),['setSize','compositor.resize','compositor.render'],'through the compositor when there is one, after its targets');
+  for(const flag of ['contextLost','disposed']){stage[flag]=true;calls.length=0;rect={width:1280,height:rect.height===580?574:580};stage.resize();
+    assert.deepEqual(calls.map(c=>c[0]),['setSize','compositor.resize'],`not drawn when ${flag}`);stage[flag]=false;}
+  rect={width:1280,height:574};assert.equal(stage.fit(),true);calls.length=0;assert.equal(stage.fit(),false);assert.deepEqual(calls,[],'an unchanged canvas is neither resized nor drawn');
+});
+
 // Release 12: the world fills the window, so each quality draws at most the pixels of a 1,920 x 800 view at its own
 // resolution; a smaller canvas keeps the quality's resolution, and a resize applies the ratio.
 test('The canvas never draws more pixels than its quality allows, however large the window',()=>{

@@ -192,7 +192,7 @@ export class BattleStage{
     this.renderer.toneMappingExposure=this.profile.exposure??1.05;
     this.renderer.shadowMap.enabled=true;this.renderer.shadowMap.type=T.PCFShadowMap;this.renderer.shadowMap.autoUpdate=false;this.shadowDirty=true;
     this.shadowUpdates=0;this.lastShadow=-Infinity;this.renderCounts=[];
-    this.labelRefs=new Map();this.labelStats={visible:0,occluded:0,offscreen:0,overlaps:0};this.poseReset=new Set();this.visibleUnits=[];
+    this.labelRefs=new Map();this.labelStats={visible:0,occluded:0,offscreen:0,overlaps:0,edge:0};this.poseReset=new Set();this.visibleUnits=[];
     this.labelSizeDirty=true;this.screenPoint=new T.Vector3();this.matrix=new T.Matrix4();
     this.scene=new T.Scene();this.scene.background=new T.Color(this.profile.sky);this.scene.fog=new T.Fog(this.profile.fog,40,200);this.groundMist=installGroundMist(this.profile);
     this.camera=new T.PerspectiveCamera(40,1,.1,800);this.orbit={yaw:-.55,pitch:.64,distance:27,target:new T.Vector3(0,0,0)};
@@ -322,7 +322,7 @@ export class BattleStage{
       const marker=this.missionMarkers.get(mark.id);marker.mesh.position.copy(this.world(mark));marker.mesh.position.y+=.07;
       marker.mesh.scale.setScalar(['high','hill'].includes(terrainAt(encounter,mark.x,mark.y))?.85:1);
       marker.mesh.material.color.set(mark.tone==='warning'?'#df9d85':mark.tone==='secured'?'#b0d0a1':'#edcf7c');marker.label.textContent=mark.label;
-      marker.label.dataset.tone=mark.tone;
+      marker.label.dataset.tone=mark.tone;marker.pin=!!mark.pin;
     }
     this.updateChamberStandards(encounter);
     this.updateFieldworks(encounter);
@@ -476,6 +476,13 @@ export class BattleStage{
   setReducedMotion(value){
     if(this.reducedMotion!==value){this.shadowDirty=true;this.poseReset=new Set(this.actors.keys());}this.reducedMotion=value;if(value)this.finishMotion();
   }
+  // The page mounts the stage again on every update (battle-stage-controller.js): it is fitted only when its size or
+  // pixel ratio changed. Setting a canvas's size, even to the same one, clears it and remakes the compositor's targets.
+  fit(){
+    const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return false;
+    if(r.width===this.viewportWidth&&r.height===this.viewportHeight&&Math.abs(this.pixelRatio()-this.renderer.getPixelRatio())<=.01)return false;
+    this.resize();return true;
+  }
   resize(){
     const r=this.canvas.getBoundingClientRect();if(!r.width||!r.height)return;this.viewportWidth=r.width;this.viewportHeight=r.height;this.labelSizeDirty=true;
     // A larger window can meet the quality's pixel cap: the ratio follows the canvas's size.
@@ -485,6 +492,15 @@ export class BattleStage{
     if(Math.abs(previous-this.camera.aspect)>.01&&this.live&&this.cameraView==='horizon')this.orbit.distance=this.liveHorizonDistance();
     if(Math.abs(previous-this.camera.aspect)>.01&&!this.focusMode&&!this.ceremony)this.orbit.distance=Math.max(this.cameraView==='horizon'?28:0,
       this.overviewDistance());
+    this.redraw();
+  }
+  // Setting the canvas's size clears what it shows until it is drawn again, and a resize comes after the frame's own
+  // drawing (a ResizeObserver runs after the animation frame): the scene is drawn again at once, in the same task, so a
+  // cleared canvas is never shown (a flash on a device; seconds of blank under software rendering, where a frame is
+  // slow). Presentation only: the scene as it stands, with no world step, motion or animation advanced.
+  redraw(){
+    if(this.disposed||this.contextLost||!this.isReady||globalThis.document?.hidden)return;
+    try{if(this.compositor)this.compositor.render(this.scene);else this.renderer.render(this.scene,this.camera);}catch{}
   }
   bind(){this.events=[];const on=(target,type,fn,opts)=>{target.addEventListener(type,fn,opts);this.events.push(()=>target.removeEventListener(type,fn,opts));};
     if(this.inputEnabled)this.bindInput(on);

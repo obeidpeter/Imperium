@@ -35,7 +35,7 @@ export function createBattleStageController({load=()=>import('../showcase/stage.
         if(canvas!==stage.canvas)canvas.replaceWith(stage.canvas);
         if(stage.labelLayer.parentElement!==stage.canvas.parentElement)stage.canvas.parentElement.append(stage.labelLayer);
         if(stage.revealed)stage.canvas.parentElement.dataset.ready='true';
-        stage.resize();update();return stage;
+        stage.fit();update();return stage;
       }
       const ticket=++version;
       load().then(async({BattleStage,preloadBattleFigures})=>{

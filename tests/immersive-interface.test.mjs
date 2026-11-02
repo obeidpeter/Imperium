@@ -37,6 +37,26 @@ test('all twelve camps fill the window (release 12): the strip, the world, and t
   }
 });
 
+test('the camp strip carries the offline and artwork notices on its own line, never as bands that take the world\'s room',()=>{
+  // The owner's request after Gate 4: the "available offline" band came a few seconds after a camp opened and took the
+  // world's top 41 pixels. The notices now sit on the strip, beside the save, and the page updates them there.
+  for(let chapter=1;chapter<=12;chapter++){
+    const state=camp(chapter),art='Preparing chapter artwork · 3/9';
+    const doc=documentFor(createCampaignViews(()=>({state,screen:'game',settings:{},lastSaved:'saved',currentChapterOffline:true,artProgress:art})).realtimeCamp());
+    const bar=doc.querySelector('main > .world-camp-bar');
+    for(const [id,text] of [['offline-status','This chapter is ready offline'],['art-loading-status',art]]){
+      const node=doc.getElementById(id);assert.ok(node&&bar.contains(node),`Chapter ${chapter}: ${id} sits on the strip's line`);
+      assert.equal(node.textContent,text);assert.equal(node.getAttribute('title'),text,'its whole text is its tooltip');assert.equal(node.hasAttribute('hidden'),false);
+      assert.equal(node.getAttribute('role'),'status','it is still announced');
+    }
+    assert.equal(doc.querySelector('main > .offline-banner'),null,'no band under the strip');assert.equal(doc.querySelector('main > .art-loading-status'),null);
+    const quiet=documentFor(createCampaignViews(()=>({state,screen:'game',settings:{},lastSaved:'saved'})).realtimeCamp());
+    for(const id of ['offline-status','art-loading-status']){const node=quiet.getElementById(id);
+      assert.ok(quiet.querySelector('main > .world-camp-bar').contains(node),'with nothing to say it waits on the line, for the page to fill');
+      assert.equal(node.hasAttribute('hidden'),true);assert.equal(node.getAttribute('title'),null);}
+  }
+});
+
 test('camp, battle and chamber have one fixed camera: no View choice in the strip, and the world first (release 12)',()=>{
   const state=Game.deserialize(JSON.stringify(fixtures.scenes.find(s=>s.id==='board-ch5-mine').state));
   for(const kind of ['camp','field','chamber']){

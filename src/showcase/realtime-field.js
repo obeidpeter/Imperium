@@ -71,7 +71,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const clock=createClock({speed:SPEEDS.includes(Number(options.gameSpeed))?Number(options.gameSpeed):1});
   let ability='strike',keyTarget=null,hoverPoint=null,hoverDirty=false,pressMove=false,force=false,armed=null,ranges=false,arrows=new Set();
   let logShown=0,eventMessage=null,lastNow=0,hudKey='',partyKey='',barKey='',pausedFor=null,interrupted=false,ended=world.status!=='active',shown=shownKey(world);
-  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},edge=null,lessonKey=null,glancing=false,seeThroughOn=false;
+  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},marksKey='{}',edge=null,lessonKey=null,glancing=false,seeThroughOn=false;
   let readoutAt=-Infinity,targetState='',missionWarningKey='';
   let noticeUntil=0;
   const warnedAt=new Map();
@@ -81,9 +81,14 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const canvas=dom.canvas;
   const hudRoot=canvas.closest('.rt-field'),unbindDisclosures=bindHudDisclosures(canvas.closest('.realtime-frame')??hudRoot);let coalitionSummaryKey='';
   const me=()=>actorById(world,world.controlled);
-  const sceneEncounter=()=>stageEncounter(base,world,{appearance:appearance()});
+  // The camp's way out, marked once the column can march (the page's, setWayOut).
+  let wayOut=null,wayOutKey='null';
+  const sceneEncounter=()=>stageEncounter(base,world,{appearance:appearance(),wayOut});
+  // The bar's event line keeps one line of room (realtime.css): a message too long for it ends in an ellipsis, and the
+  // whole of it is the line's tooltip.
+  const showEvent=text=>{const line=dom.eventLine;if(!line)return;line.textContent=text;if(text)line.title=text;else line.removeAttribute('title');};
   const say=(text,{warning=false,announce=false}={})=>{
-    eventMessage={text,until:performance.now()+2600,warning};if(dom.eventLine){dom.eventLine.textContent=text;dom.eventLine.classList.toggle('warning',warning);}
+    eventMessage={text,until:performance.now()+2600,warning};if(dom.eventLine){showEvent(text);dom.eventLine.classList.toggle('warning',warning);}
     if(announce&&dom.announcer)dom.announcer.textContent=text;
   };
   const message=(text,warning=false)=>{const line=dom.messageLine;if(!line)return;if(line.textContent!==text)line.textContent=text;line.classList.toggle('warning',warning);};
@@ -323,7 +328,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(dom.notice&&now>noticeUntil)dom.notice.hidden=true;
     if(chamber){
       // The chamber's HUD is its own (the hour, the speakers, the speeches and the coalition); Pause still stops its walks.
-      const paused=clock.paused&&!stepping(clock);if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
+      const paused=clock.paused&&!stepping(clock);if(eventMessage&&now>eventMessage.until){eventMessage=null;showEvent('');}
       chamber.update(now);
       const chamberState=callbacks.chamber.state(),coalitionKey=chamberReadoutKey(chamberState,dom.coalition?.innerHTML??'');
       if(coalitionKey!==coalitionSummaryKey){coalitionSummaryKey=coalitionKey;const c=compactChamberReadout(chamberState);
@@ -340,7 +345,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const oath=world.controlled===world.heroId?oathForecast(world):null;
     const key=[team,world.controlled,h?.walkMode,h?.ammo?.pilum,h?.bandages,paused,clock.slow,clock.speed,round,Math.floor(progress*50),world.status,ability,
       armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4,oath?`${oath.heard}:${oath.squadId}:${oath.distance}`:''].join('|');
-    if(eventMessage&&now>eventMessage.until){eventMessage=null;if(dom.eventLine)dom.eventLine.textContent='';}
+    if(eventMessage&&now>eventMessage.until){eventMessage=null;showEvent('');}
     if(listOpen&&metrics.frames%10===0)renderList();
     squads?.update();showThreat();
     if(key===hudKey)return;hudKey=key;callbacks.onHud?.(world);if(listOpen)renderList();
@@ -771,9 +776,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     load(next,nextBase=base){
       world=next;base=nextBase;ended=world.status!=='active';shown=shownKey(world);logShown=0;hudKey='';partyKey='';barKey='';keyTarget=null;armed=null;force=false;noticeUntil=0;if(dom.notice)dom.notice.hidden=true;
       eventMessage=null;hoverPoint=null;hoverDirty=false;hoverEnemy=null;pressMove=false;edge=null;arrows.clear();ability='strike';targetState='';readoutAt=-Infinity;missionWarningKey='';warnedAt.clear();
-      pausedFor=null;resumePending=false;lastNow=0;lessonKey=null;listKey='';listActor=null;threatKey='';intentionsShown=false;marks={};seen.paused=false;seen.slowed=false;
+      pausedFor=null;resumePending=false;lastNow=0;lessonKey=null;listKey='';listActor=null;threatKey='';intentionsShown=false;marks={};marksKey='{}';wayOut=null;wayOutKey='null';seen.paused=false;seen.slowed=false;
       Object.assign(clock,createClock({speed:clock.speed}));orderReview.close({focus:false});toggleList(false);
       for(const role of ['eventLine','messageLine','targetLine','announcer','missionWarning','deadlineLine','orderStatus']){write(dom[role],'');dom[role]?.classList.remove('warning');}
+      showEvent('');
       canvas.dataset.cursor='walk';applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();chamber?.reset();disarmAdvance();showDeployment();rescueBriefing();
       if(stage){stage.sync(sceneEncounter());stage.rebuildRemains?.();resetPresenter();firstView();}updateHud(performance.now());resumeResult();
     },
@@ -793,7 +799,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     issue,act,say,follow,takeControl,toggleList,
     // The page changed a chamber's Contest (a panel's speech): its world and HUD follow, and an hour's end plays out.
     chamberSync:outcome=>{if(!chamber)return;chamber.sync(outcome);stage?.sync(sceneEncounter());},get chamber(){return chamber;},
-    setMarks(next){marks=next??{};presenter?.setMarks(marks);},
+    // The page refreshes a camp's marks on every update: only a change reaches the stage (and wakes it).
+    setMarks(next){const key=JSON.stringify(next??{});if(key===marksKey)return;marksKey=key;marks=next??{};presenter?.setMarks(marks);},
+    setWayOut(next){const key=JSON.stringify(next??null);if(key===wayOutKey)return;wayOutKey=key;wayOut=next??null;stage?.sync(sceneEncounter());stage?.wake?.();},
     snapshot:()=>snapshotWorld(world),
     dispose(){
       unbindDisclosures();orderReview.dispose();
