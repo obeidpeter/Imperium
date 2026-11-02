@@ -47,7 +47,9 @@
 .inv-pack-head{display:flex;align-items:baseline;gap:12px;inline-size:calc(var(--cell) * 10 + 4px)}
 .inv-pack-head .inv-heading{margin:0}.inv-purse{margin-inline-start:auto;font-size:var(--font-label);font-variant-numeric:tabular-nums}
 .inv-pack-head button{min-block-size:2.2rem;padding:.2rem .7rem}
-.inventory .pack-grid{position:relative;display:grid;grid-template-columns:repeat(var(--cols),var(--cell));grid-template-rows:repeat(var(--rows),var(--cell));gap:0;padding:0;margin:8px 0 10px;
+.inventory .inv-status{min-block-size:1.3em;margin:4px 0 0;inline-size:var(--pack-w);max-inline-size:100%;font-size:var(--font-label);color:var(--olive,#485b45)}
+.inventory .inv-status.is-problem{color:var(--danger,#8a292c);font-weight:600}
+.inventory .pack-grid{position:relative;display:grid;grid-template-columns:repeat(var(--cols),var(--cell));grid-template-rows:repeat(var(--rows),var(--cell));gap:0;padding:0;margin:4px 0 10px;
   inline-size:max-content;background-color:var(--pack-bg);background-image:linear-gradient(to right,var(--pack-line) 1px,transparent 1px),linear-gradient(to bottom,var(--pack-line) 1px,transparent 1px);
   background-size:var(--cell) var(--cell);border:2px solid #6b5a43;border-radius:4px;box-shadow:inset 0 2px 10px #000a}
 .inventory .pack-item{position:relative;display:block;inline-size:auto;min-block-size:0;min-inline-size:0;margin:2px;padding:0;overflow:hidden;border-radius:3px;
@@ -63,7 +65,13 @@
 .inventory .pack-item.is-selected,.inventory .pack-item[aria-pressed="true"]{outline:3px solid var(--gold,#c7ad79);outline-offset:-1px;background:linear-gradient(#fff6dc,#ecd9a8)}
 .inventory .pack-item.is-dimmed{background:linear-gradient(#d9cfbd,#c7baa0);color:#7d6d55}.inventory .pack-item.is-dimmed .kit-art{opacity:.5}
 .inventory .pack-item.is-dimmed::after{content:'';position:absolute;inset-block-start:3px;inset-inline-end:3px;inline-size:.5rem;block-size:.5rem;border-radius:50%;background:var(--danger,#8a292c)}
+/* A piece he cannot use yet says what it needs where its name would be. */
+.inventory .pack-item.is-dimmed:not([data-w="1"]) .pack-item-name{display:none}
+.inventory .pack-item.is-dimmed:not([data-w="1"]) .pack-item-need{display:block;position:absolute;inset-inline:3px;inset-block-end:2px;font-size:calc(.6rem * var(--text-scale,1));
+  line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--danger,#8a292c);font-weight:600}
 .inventory .pack-item:focus-visible{outline:3px solid var(--selection,#23646c);outline-offset:-1px}
+.inventory [data-piece]{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.inventory .pack-grid:focus{outline:none}.inventory .pack-grid:focus-visible{outline:3px solid var(--selection,#23646c);outline-offset:2px}
 .pack-ghost{position:relative;z-index:2;pointer-events:none;border:2px dashed #b9e3bd;background:#5c9b6655;border-radius:3px;margin:1px}
 .pack-ghost.is-blocked{border-color:#ffb1a8;background:#b3443c55}
 .pack-ghost[hidden]{display:none}
@@ -123,7 +131,7 @@ span.goods-item{cursor:default}
 .inventory .is-drop-ok{outline:3px solid #7cc387;outline-offset:2px}.inventory .is-drop-bad{outline:3px solid #d1574e;outline-offset:2px}
 .inventory .is-lifted{opacity:.35}
 .inventory-drag{position:fixed;z-index:1000;pointer-events:none;display:grid;place-items:center;border-radius:4px;background:#f6eedbdd;border:1px solid var(--tile-edge,#9c845a);
-  box-shadow:0 8px 22px #0007;color:#6f5228;transform:translate(-50%,-50%)}
+  box-shadow:0 8px 22px #0007;color:#6f5228}
 .inventory-drag .kit-art{inline-size:80%;block-size:80%}
 
 /* Medium windows: the pack beside the figure, the other side below; trading puts it beside the pack. */
@@ -161,6 +169,7 @@ span.goods-item{cursor:default}
   .inventory .pack-item .pack-item-need{display:block;font-size:calc(.75rem * var(--text-scale,1));color:var(--danger,#8a292c);margin-inline-start:auto}
   .inventory .pack-ghost{display:none}
   .inv-pack-head,.inv-details{inline-size:auto}
+  .inventory [data-piece]{touch-action:pan-y;cursor:pointer}
 }
 html[data-text-scale="2"] .inventory{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;gap:10px}
 html[data-text-scale="2"] .inventory>.inventory-tabs{display:flex;position:sticky;inset-block-start:0;z-index:3;background:var(--paper)}
@@ -182,7 +191,7 @@ html[data-text-scale="2"] .inventory .pack-item .pack-item-name,html[data-text-s
 html[data-text-scale="2"] .inventory .pack-item[data-h="1"]:not([data-w="1"]) .pack-item-name{position:static;display:block;white-space:normal;line-height:1.3;font-size:var(--font-label)}
 html[data-text-scale="2"] .inventory .pack-item[data-h="1"]:not([data-w="1"]) .item-picture{position:static;block-size:2.25rem}
 html[data-text-scale="2"] .inventory .pack-item .pack-item-need{display:block;font-size:calc(.75rem * var(--text-scale,1));color:var(--danger,#8a292c);margin-inline-start:auto}
-html[data-text-scale="2"] .inventory .pack-ghost{display:none}
+html[data-text-scale="2"] .inventory .pack-ghost{display:none}html[data-text-scale="2"] .inventory [data-piece]{touch-action:pan-y;cursor:pointer}
 html[data-text-scale="2"] .inv-pack-head,html[data-text-scale="2"] .inv-details{inline-size:auto}
 .inventory-tabs{gap:4px;padding-block:4px;border-block-end:1px solid var(--line)}
 .inventory-tabs [role="tab"]{flex:1;min-block-size:2.75rem;padding:.3rem .4rem;border:1px solid var(--line);border-radius:3px 3px 0 0;background:var(--plaster);color:var(--ink);font-size:var(--font-label)}

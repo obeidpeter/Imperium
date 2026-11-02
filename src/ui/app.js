@@ -35,7 +35,8 @@ import {warCouncilAdvisories} from './campaign-upgrade-views.js';
 import {actionFor} from './action-map.js';
 import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,trainerPanel,trainerName,
   adoptPanel,missionOrdersPanel,trackedErrandPanel,chroniclePanel} from './soldier-views.js';
-import {INVENTORY_PANELS,SHOPS,otherFor} from './inventory-views.js';
+import {INVENTORY_PANELS,SHOPS,otherFor,dropCommand} from './inventory-views.js';
+import {bindInventory} from './inventory-input.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -57,6 +58,21 @@ import {helpSearchResults} from './guide-help-view.js';
 import {GUIDE_HELP} from '../data/guide-help.js';
 
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
+// The inventory's drag and drop and keyboard carry (release 13, inventory-input.js). A drop is the same soldier
+// command as its button; one the rules would refuse is explained and nothing is sent.
+const inventoryInput=bindInventory(modal,{
+  preview:(piece,to)=>state?dropCommand(state,piece,to):null,
+  drop:(piece,to)=>{
+    if(!state)return;const r=dropCommand(state,piece,to);if(!r)return;
+    if(r.refusal){toast(r.refusal,{problem:true});return;}
+    if(['wear','drop','sell','takeOff','pickUp','takeFrom'].includes(r.command.kind))kitSelected=null;
+    void soldierAct(r.command);
+  },
+  select:id=>{
+    kitSelected=id;showSoldierPanel(soldierPanel?.name??'kit',soldierPanel?.arg??null);
+    modal.querySelector('[data-key="inv-details"]')?.scrollIntoView({block:'nearest'});
+  },
+  announce});
 // Tracking is a local display preference, separate from the campaign save.
 const trackedErrandKey=SETTINGS_KEY+'.tracked-errand';
 const errandTracker=createErrandTracker({load:()=>JSON.parse(localStorage.getItem(trackedErrandKey)||'null'),
@@ -127,7 +143,10 @@ const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,sho
     screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap,
     worldCamp:screen!=='title'&&!!state&&campMode()}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
-function toast(text){
+function toast(text,{problem=false}={}){
+  // The inventory says what happened in its own status line (a live region) under the pack's heading (release 13).
+  const line=modal.open&&modal.dataset.inventory==='true'?modal.querySelector('[data-inventory-status]'):null;
+  if(line){line.textContent=text;line.classList.toggle('is-problem',problem);return;}
   announce(text);
   if(modal.open){
     let note=modal.querySelector('.modal-feedback');
@@ -746,7 +765,8 @@ function showSoldierPanel(name,arg=null){
     updatePage(modal.querySelector('.modal-body'),isInventory?nav+body:body);
     for(const id of openDetails){const el=modal.querySelector(`#${CSS.escape(id)}`);if(el)el.open=true;}
     modal.scrollTop=scroll;
-    if(isInventory){soldierPreview?.setSoldier?.(state.soldier);if(active&&!active.isConnected)modal.querySelector('[data-key="inv-details"] button:not([disabled]),.pack-grid .pack-item,#panel-title')?.focus({preventScroll:true});}
+    if(isInventory){soldierPreview?.setSoldier?.(state.soldier);inventoryInput.refresh();
+      if(active&&!active.isConnected)modal.querySelector('[data-key="inv-details"] button:not([disabled]),.pack-grid .pack-item,#panel-title')?.focus({preventScroll:true});}
     return;
   }
   const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
@@ -939,7 +959,7 @@ async function change(fn,{reset=false,tone='click',turn=false,silent=false,comma
     replay.stop();
     try{
       const before=snapshotEncounter(state.encounter),commandSnapshot=issuedCommand?structuredClone(issuedCommand):null,result=fn();
-      if(result?.ok===false){render();afterRender?.();toast(result.message);return;}
+      if(result?.ok===false){render();afterRender?.();toast(result.message,{problem:true});return;}
       if(reset){pendingMotion=null;feedback='';selected='hero';action=null;target=null;orderDestination=null;focusTile=null;}
       else{
         const after=snapshotEncounter(state.encounter);pendingMotion={before,after,command:commandSnapshot};
@@ -984,7 +1004,7 @@ function showModal(title,body,{menu=false,back='menu',pause=false}={}){
   const openDetails=samePanel?[...modal.querySelectorAll('details[id][open]')].map(el=>el.id):[];
   // Replacing a dialog ends its local interaction. A Menu exit must not keep a
   // hidden conversation's save restriction or a mission panel's refresh hook.
-  if(!samePanel){conversation=null;soldierPanel=null;delete modal.dataset.conversation;delete modal.dataset.soldier;delete modal.dataset.inventory;}
+  if(!samePanel){conversation=null;soldierPanel=null;delete modal.dataset.conversation;delete modal.dataset.soldier;delete modal.dataset.inventory;inventoryInput.cancel();}
   disposeSoldierPreview();
   // The Menu, a conversation and the chronicle always pause the world (release 12); other panels follow
   // Pause in panels. A live 3D world advances with its renderer, so both must follow this choice.
@@ -1055,7 +1075,7 @@ modal.addEventListener('close',()=>{
   // the camp's list); the event comes later, by when the player may have moved on, so it leaves the focus alone.
   const placed=modalFocusPlaced;modalFocusPlaced=false;
   if(modal.open)return;
-  disposeSoldierPreview();
+  disposeSoldierPreview();inventoryInput.cancel();
   rebinding=null;const prior=modalReturn;modalReturn=null;
   const el=placed?null:prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
@@ -1182,6 +1202,7 @@ case 'soldier-panel':showSoldierPanel(id,b.dataset.arg??null);break;
 case 'adopt-soldier':{const choice=recruitChoice();soldierPanel={name:'character'};await soldierAct({kind:'adopt',...choice});break;}
 case 'kit-select':kitSelected=kitSelected===id?null:id;showSoldierPanel(soldierPanel?.name??'kit',soldierPanel?.arg??null);break;
 case 'inventory-tab':inventoryTab=id;showSoldierPanel(soldierPanel?.name??'kit',soldierPanel?.arg??null);break;
+case 'inventory-carry':if(!inventoryInput.carry(id))toast('Choose a piece in the pack to move it.');break;
 case 'orders-save':{
   const slots=[0,1,2,3].map(i=>[modal.querySelector(`#orders-action-${i}`)?.value,modal.querySelector(`#orders-target-${i}`)?.value]).filter(([a])=>a)
     .map(([a,t])=>[a,['follow_close','follow_far','stay_hidden','withdraw'].includes(a)?'hero':t]);

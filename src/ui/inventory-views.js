@@ -292,10 +292,10 @@ export function inventoryScreen(state,{selected=null,spoils=[],documents=[],othe
       `Weapon <strong>${esc(values.weapon.name??'')}</strong></p></section>
     <div class="inv-middle"><section class="inv-pack" id="inv-pack" data-section="pack" aria-labelledby="kit-pack"><div class="inv-pack-head"><h3 id="kit-pack" class="inv-heading">Pack <small>${PACK.cols} × ${PACK.rows}</small></h3>`+
       `<span class="inv-purse">${s.denarii} denarii</span>${camp?button('sort','Sort',{},{key:'sort'}):''}</div>
+      <p class="inv-status" data-inventory-status data-key="inv-status" role="status" aria-live="polite"></p>
       ${packGrid(state,{selected,camp})}</section>
     <div id="inv-ground" class="inv-ground-wrap" data-section="ground">${groundStrip(state,{selected,camp,spoils})}</div></div>
     <div class="inv-details-wrap" data-section="details">${itemDetails(state,sel,{camp,other})}</div>
     <div id="inv-other" class="inv-other-wrap" data-section="other">${otherPane(state,other,{selected,documents})}</div>
-    <p class="sr-only" data-inventory-status aria-live="polite"></p>
   </div>`;
 }
