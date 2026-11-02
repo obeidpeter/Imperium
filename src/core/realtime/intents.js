@@ -1,5 +1,5 @@
 import {ABILITIES,FIELD_BAR,FIELD_ORDER,REASONS} from '../../data/realtime-rules.js';
-import {actorById,distanceBetween,forecast,hostile,liftable,validate,campCareAbility} from './abilities.js';
+import {actorById,distanceBetween,forecast,hostile,liftable,validate,campCareAbility,peacefulReason} from './abilities.js';
 import {commandProblem,commandable,routePreview} from './simulation.js';
 import {objectById} from './motion.js';
 import {fieldHint,fieldProblem,fieldVerb} from './field-objects.js';
@@ -31,6 +31,8 @@ function containerIntent(world,actor,o,shift){
   const none={cursor:'blocked',message:'',command:null,reason:null},open={actorId:actor.id,kind:'interact',payload:{objectId:o.id}};
   if(actor.drawn)return {...none,reason:'NEEDS_SHEATHED',message:`Open ${o.name}: ${REASONS.NEEDS_SHEATHED}`};
   if(world.kind==='camp')return {cursor:'use',reason:null,message:`Open: ${o.name}${o.locked?' (locked)':o.empty?' (empty)':''}.`,command:open};
+  // After a victory (aftermath.js) its key or force is chosen in its window, through the chronicle.
+  if(world.aftermath===true)return {cursor:'use',reason:null,message:`Open: ${o.name}${o.lock&&!o.unlocked?' (locked)':o.opened&&!o.contents?.length?' (empty)':''}.`,command:open};
   if(o.lock&&!o.unlocked){
     const need=Object.entries(o.lock.force??{}).map(([k,v])=>`${ATTRIBUTE_NAMES[k]??k} ${v}`).join(', ');
     if(shift){const problem=containerProblem(world,actor,o,{force:true});
@@ -63,6 +65,7 @@ export function pointerIntent(world,{actorId=world.controlled,pick={},button='le
   if(object&&button==='left'){
     // A chest or cache (release 11): open it; on a battlefield a lock wants its key, or Shift+click to force it.
     if(isContainer(object))return containerIntent(world,actor,object,shift);
+    if(world.aftermath===true&&object.kind!=='exit')return {...none,cursor:'blocked',reason:'BATTLE_OVER',message:`${object.name}: ${REASONS.BATTLE_OVER}`};
     if(object.done&&!object.toggle)return {...none,cursor:'blocked',message:`${object.name}: done.`};
     // A field object says what the work does, or why it cannot be done now (field-objects.js).
     const problem=fieldProblem(world,object,{force:false});if(problem)return {...none,cursor:'blocked',reason:problem,message:`${object.name}: ${REASONS[problem]}`};
@@ -116,6 +119,9 @@ export function pointerIntent(world,{actorId=world.controlled,pick={},button='le
     command:route.points.length?{actorId:actor.id,kind:'move',payload:{x:pick.x,z:pick.z}}:null};
 }
 
+// An object the soldier can still use: not done (or used again and again) and not hidden. After a victory
+// (aftermath.js) only the chests and caches and the road to camp are left to use.
+const usable=(world,o)=>(!o.done||o.toggle)&&!o.hidden&&(world.aftermath!==true||isContainer(o)||o.kind==='exit');
 // T: the next target in one fixed order, visible enemies nearest first.
 // Shift+T: the next friend. Returns an actor id or null.
 export function nextTarget(world,{actorId=world.controlled,current=null,friends=false}={}){
@@ -124,14 +130,14 @@ export function nextTarget(world,{actorId=world.controlled,current=null,friends=
   const list=friends?world.actors.filter(o=>o.alive&&o!==actor&&!hostile(actor,o)).sort(near)
     :[...world.actors.filter(o=>o.alive&&!o.down&&!o.hidden&&hostile(actor,o)).sort(near),
       ...world.actors.filter(o=>o.alive&&o!==actor&&!hostile(actor,o)&&(o.talk||liftable(o))).sort(near),
-      ...(world.objects??[]).filter(o=>(!o.done||o.toggle)&&!o.hidden).sort(near),
+      ...(world.objects??[]).filter(o=>usable(world,o)).sort(near),
       ...world.actors.filter(o=>!o.alive&&o.loot?.length).sort(near)];
   if(!list.length)return null;const at=list.findIndex(o=>o.id===current);return list[(at+1)%list.length].id;
 }
 // E: the nearest thing within 3 m to talk to, use, search or lift, as a pointer intent.
 export function nearestUse(world,{actorId=world.controlled}={}){
   const actor=actorById(world,actorId);if(!actor)return null;
-  const things=[...(world.objects??[]).filter(o=>(!o.done||o.toggle)&&!o.hidden).map(o=>({d:distanceBetween(actor,o),pick:{objectId:o.id}})),
+  const things=[...(world.objects??[]).filter(o=>usable(world,o)).map(o=>({d:distanceBetween(actor,o),pick:{objectId:o.id}})),
     ...world.actors.filter(o=>o!==actor&&(o.alive&&!hostile(actor,o)&&(o.talk||liftable(o))||!o.alive&&o.loot?.length)).map(o=>({d:distanceBetween(actor,o),pick:{actorId:o.id}}))]
     .filter(t=>t.d<=3).sort((a,b)=>a.d-b.d);
   return things.length?pointerIntent(world,{actorId,pick:things[0].pick,button:'left'}):null;
@@ -144,7 +150,7 @@ export function nearestUse(world,{actorId=world.controlled}={}){
 // action the scene's pointer and keys reach, and works while paused. Pure.
 export function commandOptions(world,{actorId=world.controlled}={}){
   const actor=actorById(world,actorId),out=[];if(!actor||!commandable(world,actor))return out;
-  const peaceful=world.kind==='camp'&&world.peaceful===true;
+  const peaceful=world.peaceful===true;
   const known=FIELD_ORDER.filter(id=>(actor.abilities??FIELD_BAR).includes(id)&&!ABILITIES[id].enemyOnly&&(!peaceful||campCareAbility(id)));
   const add=(group,label,command,{detail='',subject=null}={})=>{
     const reason=commandProblem(world,command);
@@ -180,11 +186,11 @@ export function commandOptions(world,{actorId=world.controlled}={}){
   }
   // Objects, the fallen and places.
   // A repaired fortified bridge offers only its forced work: demolition.
-  for(const o of (world.objects??[]).filter(o=>(!o.done||o.toggle)&&!o.hidden).sort(near)){
+  for(const o of (world.objects??[]).filter(o=>usable(world,o)).sort(near)){
     // A chest or cache: open it, and force a battlefield lock as a second entry (containers.js).
     if(isContainer(o)){
       add('Objects',`Open: ${o.name}`,order('interact',{objectId:o.id}),{subject:o.id,detail:`${m(distanceBetween(actor,o))}.${o.locked||o.lock&&!o.unlocked?' Locked.':''}`});
-      if(world.kind!=='camp'&&o.lock&&!o.unlocked&&o.lock.force)add('Objects',`Force the lock: ${o.name}`,order('interact',{objectId:o.id,force:true}),
+      if(world.kind!=='camp'&&world.aftermath!==true&&o.lock&&!o.unlocked&&o.lock.force)add('Objects',`Force the lock: ${o.name}`,order('interact',{objectId:o.id,force:true}),
         {subject:o.id,detail:`${m(distanceBetween(actor,o))}. Needs ${Object.entries(o.lock.force).map(([k,v])=>`${ATTRIBUTE_NAMES[k]??k} ${v}`).join(', ')}.`});
       continue;
     }
@@ -208,7 +214,7 @@ export function commandOptions(world,{actorId=world.controlled}={}){
 // the Command to give (or null) and what to tell the player. Pure.
 export function abilityKey(world,{actorId=world.controlled,abilityId,current='strike',keyTarget=null,pointer=null,quickCast=false}={}){
   const ability=ABILITIES[abilityId];if(!ability)return {current,command:null,message:'No ability in that place.',warning:false};
-  if(world.kind==='camp'&&world.peaceful===true&&!campCareAbility(abilityId))return {current,command:null,message:REASONS.PEACEFUL_CAMP,warning:true};
+  if(world.peaceful===true&&!campCareAbility(abilityId))return {current,command:null,message:REASONS[peacefulReason(world)],warning:true};
   if(quickCast&&pointer&&abilityId!=='strike'){
     const it=pointerIntent(world,{actorId,pick:pointer,button:'right',abilityId});
     return {current:abilityId,command:it.command,message:it.command?`${ability.name}.`:it.message||REASONS.NO_TARGET,warning:!it.command};
@@ -229,7 +235,8 @@ export function abilityKey(world,{actorId=world.controlled,abilityId,current='st
 // down, a new objective, an order that cannot be carried out, and (if chosen)
 // every round. A drill partner's glance never pauses. Pure.
 export function autoPauseReason(world,e,options={}){
-  if(world.kind==='camp')return null;
+  // Nothing in a camp or on the field after a victory (aftermath.js) is worth stopping the world for.
+  if(world.kind==='camp'||world.aftermath===true)return null;
   const party=new Set([world.heroId,...world.party]),mine=world.controlled,name=id=>actorById(world,id)?.name??'Someone';
   if(e.kind==='round'&&options.roundPause)return `Round ${e.round} begins.`;
   if(e.kind==='notice'&&options.pauseSighted&&party.has(e.targetId)&&!actorById(world,e.actorId)?.practice)

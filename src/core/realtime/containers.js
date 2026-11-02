@@ -26,16 +26,21 @@ export function revealContainers(world){
   }
 }
 // What stops opening it, before the work starts: hidden, or (on a battlefield)
-// locked with neither the key in the spoils nor, when forced, the strength.
+// locked with neither the key in the spoils nor, when forced, the strength. In
+// camp and on the field after a victory (release 14, aftermath.js) the
+// chronicle opens it: the world only walks the soldier there.
+const chronicleOpens=world=>world.kind==='camp'||world.aftermath===true;
 export function containerProblem(world,actor,o,{force=false}={}){
   if(o.hidden)return 'NO_TARGET';
-  if(world.kind==='camp')return null;
+  if(chronicleOpens(world))return null;
   if(!o.lock||o.unlocked)return force?'NOT_LOCKED':null;
   if(force){const need=Object.entries(o.lock.force??{});return need.length&&need.every(([k,v])=>(actor.attributes?.[k]??0)>=v)?null:'TOO_WEAK';}
   return world.spoils.some(s=>s.itemId===o.lock.key)?null:'LOCKED';
 }
 // The work is done: a lock opens (its key is used up), then the container stands open.
 export function openContainer(world,actor,o,{force=false}={}){
+  // After a victory its lock and its lid are the chronicle's (game.js openFieldContainer): the page opens it there.
+  if(world.aftermath===true){emit(world,{kind:'used-object',actorId:actor.id,objectId:o.id,what:'container'});return;}
   if(world.kind!=='camp'&&o.lock&&!o.unlocked){
     const problem=containerProblem(world,actor,o,{force});
     if(problem){emit(world,{kind:'rejected',actorId:actor.id,reason:problem});return;}
@@ -45,8 +50,9 @@ export function openContainer(world,actor,o,{force=false}={}){
   o.opened=true;emit(world,{kind:'used-object',actorId:actor.id,objectId:o.id,what:'container'});
 }
 // Taking from an open battlefield container: the reason it is refused, if any.
+// In camp and after a victory, what is taken is the chronicle's to give.
 export function takeProblem(world,actor,o,items){
-  if(!isContainer(o)||world.kind==='camp'||o.hidden||!o.opened||!Array.isArray(items)||!items.length||items.length>12)return 'NO_TARGET';
+  if(!isContainer(o)||chronicleOpens(world)||o.hidden||!o.opened||!Array.isArray(items)||!items.length||items.length>12)return 'NO_TARGET';
   const left=[...o.contents];for(const id of items){const i=left.indexOf(id);if(i<0)return 'NO_TARGET';left.splice(i,1);}
   if(world.spoils.length+items.length>60)return 'NO_TARGET';
   return distanceBetween(actor,o)>MOVEMENT.talkRange+.5?'OUT_OF_RANGE':null;

@@ -31,6 +31,7 @@ import {ITEMS as REALTIME_ITEMS} from '../data/items.js';
 import {dialogueNode,reply as dialogueReply,errandList,hasNews} from './dialogue.js';
 import {campFor,CAMP_PLACES} from '../data/camps.js';
 import {createCampWorld,placeAt as campPlaceAt,campPresentationFor} from './realtime/camp-world.js';
+import {createAftermathWorld,syncAftermath,fieldUnsearched,aftermathExitFor} from './realtime/aftermath.js';
 import {commitOperationResult} from './progression-operations.js';
 import {commitFieldReport,finaleCareerSupport} from './campaign-consequences.js';
 export {campaignDispatches,careerEvidence,finaleCareerSupport} from './campaign-consequences.js';
@@ -144,6 +145,8 @@ export function codeState(state){
 }
 // ——— The walkable camp (build brief §3.12) ———
 export {errandList,createCampWorld,campPlaceAt,campPresentationFor};
+// ——— The field after a victory (release 14): walked, searched through the chronicle, left by the road to camp ———
+export {createAftermathWorld,syncAftermath,fieldUnsearched,aftermathExitFor};
 export const campHasNews=(state,treeId)=>treeId==='table'?!state.decisions[getChapter(state).decision.id]:treeId==='gate'?false:hasNews(state,treeId);
 // Why the column cannot march out now, or null (the 0.38 departure rules, unchanged).
 export function departureCheck(state){

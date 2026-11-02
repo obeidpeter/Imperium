@@ -2,7 +2,7 @@ import {ABILITIES,ITEMS,MISSILES,MOVEMENT,REASONS,TIME,capabilityTasks} from '..
 import {splitStreams} from './rng-streams.js';
 import {cellCentre,clampToMap,findRoute,navGrid,nearestWalkable} from './navigation.js';
 import {weaponOf} from './combat.js';
-import {actorById,distanceBetween,hostile,liftable,staggered,validate} from './abilities.js';
+import {actorById,distanceBetween,hostile,liftable,peacefulReason,staggered,validate} from './abilities.js';
 import {decideEnemy,decidesThisTick,perceive} from './ai.js';
 import {decideFriend,slotProblem} from './party.js';
 import {engaged,moveActors,objectById,reachOf,setDown,setRoute,walksOnly} from './motion.js';
@@ -92,7 +92,7 @@ export function commandProblem(world,command){
   if(!commandable(world,actor))return 'NO_TARGET';
   if(!actor.alive||actor.down)return 'ACTOR_DOWN';
   if(actor.carriedBy)return 'ACTOR_DOWN';
-  if(world.kind==='camp'&&world.peaceful===true&&['attack','warCry','order'].includes(command.kind))return 'PEACEFUL_CAMP';
+  if(world.peaceful===true&&['attack','warCry','order'].includes(command.kind))return peacefulReason(world);
   switch(command.kind){
     case 'move':return Number.isFinite(p.x)&&Number.isFinite(p.z)?null:'NO_TARGET';
     case 'attack':return actor.carrying?'CARRYING':validate(world,actor.id,'strike',{actorId:p.targetId,forced:!!p.forced});
@@ -101,27 +101,30 @@ export function commandProblem(world,command){
     case 'interact':{const o=objectById(world,p.objectId);if(!o)return 'NO_TARGET';
       // A chest or cache (containers.js): found, and on a battlefield its lock answering to a key or to force; weapon sheathed.
       if(isContainer(o))return containerProblem(world,actor,o,{force:!!p.force})??(actor.carrying?'CARRYING':actor.drawn?'NEEDS_SHEATHED':null);
+      // After a victory (aftermath.js) the fight's works stay as they were left: only the road to camp is used.
+      if(world.aftermath===true&&o.kind!=='exit')return 'BATTLE_OVER';
       return o.done&&!o.toggle?'ALREADY_DONE':fieldProblem(world,o,{force:!!p.force})??(actor.carrying?'CARRYING':null);}
     // Taking from an open battlefield container the soldier stands by; the spoils are staged with the fight.
     case 'takeFrom':return takeProblem(world,actor,objectById(world,p.objectId),p.items);
     case 'talk':{const o=actorById(world,p.targetId);return o?.alive&&!hostile(actor,o)&&o.talk?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
     case 'loot':{const o=actorById(world,p.targetId);return o&&!o.alive&&o.loot?.length?actor.drawn?'NEEDS_SHEATHED':null:'NO_TARGET';}
     // Taking from a body the soldier stands by: the items chosen so far (one queued take carries them all).
+    // After a victory what the fallen carried is taken through the chronicle (game.js takeSpoils), not the world.
     case 'take':{
-      const o=actorById(world,p.targetId);if(!o||o.alive||!Array.isArray(p.items)||!p.items.length||p.items.length>12)return 'NO_TARGET';
+      const o=actorById(world,p.targetId);if(world.aftermath===true||!o||o.alive||!Array.isArray(p.items)||!p.items.length||p.items.length>12)return 'NO_TARGET';
       const left=[...(o.loot??[])];for(const id of p.items){const i=left.indexOf(id);if(i<0)return 'NO_TARGET';left.splice(i,1);}
       return distanceBetween(actor,o)>MOVEMENT.talkRange+.5?'OUT_OF_RANGE':null;
     }
     case 'control':return actor.id===world.controlled?'ALREADY_CONTROLLED':null;
     case 'setStanding':return Array.isArray(p.slots)&&p.slots.length<=4&&p.slots.every(s=>!slotProblem(s))?null:'NO_TARGET';
     // Only the standalone arena changes kit in the world: a campaign's kit is the chronicle's (soldier.js).
-    case 'setKit':return !world.mission&&world.kind==='field'&&Array.isArray(p.kit)&&p.kit.length<=16&&p.kit.every(id=>ITEMS[id])?null:'NO_TARGET';
+    case 'setKit':return !world.mission&&!world.aftermath&&world.kind==='field'&&Array.isArray(p.kit)&&p.kit.length<=16&&p.kit.every(id=>ITEMS[id])?null:'NO_TARGET';
     // Camps only: the map's travel to a place already walked to (no fight, no clock).
     case 'travel':return world.kind==='camp'&&Number.isFinite(p.x)&&Number.isFinite(p.z)?null:'NO_TARGET';
     // Orders to squads (command.js): the soldier gives them while he stands.
     case 'order':return actor.id===world.heroId?orderProblem(world,p):'NO_TARGET';
     case 'cancelOrder':return actor.id===world.heroId?cancelOrderProblem(world,p):'NO_TARGET';
-    case 'setDrawn':return world.kind==='camp'&&world.peaceful===true&&p.drawn?'PEACEFUL_CAMP':null;
+    case 'setDrawn':return world.peaceful===true&&p.drawn?peacefulReason(world):null;
     case 'stop':case 'setWalk':case 'warCry':return null;
     case 'setOptions':return null;
     default:return 'NO_TARGET';
@@ -366,28 +369,30 @@ export function step(world){
   const due=world.queue.filter(c=>c.tick<=world.tick).sort((a,b)=>a.seq-b.seq);world.queue=world.queue.filter(c=>c.tick>world.tick);
   for(const command of due)applyCommand(world,command);
   if(world.squads)orderEffects(world,{carryOut});
+  // The field after a victory (release 14, aftermath.js) is calm: no enemy, squad, band or field system runs, and it never ends.
+  const calm=world.aftermath===true;
   if(world.status==='active'){
     // System 2: decisions at 4 Hz, staggered by actor: the party's standing orders, then enemy AI; squads decide for their men.
     world.actors.forEach((a,i)=>{
       if(!decidesThisTick(world,i))return;
-      if(a.ai)decideEnemy(world,a);else if(a.standing&&a.id!==world.controlled)decideFriend(world,a);
+      if(a.ai&&!calm)decideEnemy(world,a);else if(a.standing&&a.id!==world.controlled)decideFriend(world,a);
     });
-    squadsOf(world).forEach((s,i)=>{if(decidesThisTick(world,i+1))decideSquad(world,s);});
-    if(world.squads)moveSquads(world);
+    if(!calm){squadsOf(world).forEach((s,i)=>{if(decidesThisTick(world,i+1))decideSquad(world,s);});if(world.squads)moveSquads(world);}
     moveActors(world);const hero=actorById(world,world.heroId);if(hero?.moving)used(world,hero,'move');
-    act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);if(world.squads)exchangeSquads(world,{wound:exchangeWound});
-    settleLocks(world);regenerate(world);perceive(world);if(world.squads)squadSight(world);if(world.band)bandTick(world);
-    revealContainers(world);
+    act(world);arrivals(world);flyProjectiles(world);resolveBlows(world);if(world.squads&&!calm)exchangeSquads(world,{wound:exchangeWound});
+    settleLocks(world);regenerate(world);perceive(world);if(world.squads&&!calm)squadSight(world);if(world.band&&!calm)bandTick(world);
+    // Caches never found in the fight stay hidden after it (game.js openFieldContainer).
+    if(!calm)revealContainers(world);
     world.reveals=world.reveals.filter(r=>r.until>world.tick);
-    // A camp has no objective and never ends.
-    if(world.mission)missionTick(world);else if(world.kind!=='camp'&&world.kind!=='chamber')checkObjectives(world);
+    // A camp has no objective and never ends, nor does the field after a victory.
+    if(world.mission)missionTick(world);else if(world.kind!=='camp'&&world.kind!=='chamber'&&!calm)checkObjectives(world);
   }else world.projectiles=[];
   // System 8, the round boundary: Command refills, squads recover and regroup, the enemy replans.
   if((world.tick+1)%TIME.roundTicks===0){
     // The pitch fire burns and burns down, and the opportunities close at the end of round 7 (field-objects.js).
-    if(world.field&&world.status==='active')fieldRound(world);
-    if(world.band&&world.status==='active')bandRound(world);
-    if(world.squads&&world.status==='active'){specialistStanding(world,{plan:specialistTarget});refillCommand(world);squadsRound(world);planDoctrine(world);}
+    if(world.field&&world.status==='active'&&!calm)fieldRound(world);
+    if(world.band&&world.status==='active'&&!calm)bandRound(world);
+    if(world.squads&&world.status==='active'&&!calm){specialistStanding(world,{plan:specialistTarget});refillCommand(world);squadsRound(world);planDoctrine(world);}
     emit(world,{kind:'round',round:(world.tick+1)/TIME.roundTicks+1});
   }
   writeLog(world);world.tick++;

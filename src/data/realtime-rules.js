@@ -150,6 +150,8 @@ export const REASONS=Object.freeze({
   DEPLOYING:'Deployment: place your company, then Sound the advance.',NOT_DEPLOYING:'The battle has begun.',
   CANNOT_SAVE_HERE:'You cannot save here.',
   PEACEFUL_CAMP:'Weapons stay sheathed in camp. Speak to a person or use a service.',
+  // Release 14: the field after a victory.
+  PEACEFUL_FIELD:'The fight is over: weapons stay sheathed. Search the fallen, or take the road to camp.',
   NO_SHIELD:'Brace needs a shield.',STAGGERED:'Staggered: wait a moment.',NO_TARGET:'Choose a target.',TARGET_DOWN:'He has already fallen.',
   NOT_HOSTILE:'Not an enemy. Shift+click forces an attack.',FRIENDLY:'He is on your side.',ACTOR_DOWN:'He has fallen.',BATTLE_OVER:'The fight is over.',
   NOT_LEARNT:'Not learnt yet.',CARRYING:'You are carrying a comrade: set him down first.',NOT_FRIENDLY:'Choose a comrade.',

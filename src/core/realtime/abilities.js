@@ -32,6 +32,8 @@ const recovering=(world,actor,id)=>(actor.cooldowns?.[id]??0)>world.tick;
 // A comrade who can be lifted: down, or a wounded man who cannot walk.
 export const liftable=o=>o.alive&&!o.carriedBy&&(o.down||o.escort?.wounded&&!o.escort.escorted);
 export const campCareAbility=id=>id==='bind_wounds'||id==='carry';
+// A peaceful world's refusal: a camp's, or the field's after a victory (release 14, aftermath.js).
+export const peacefulReason=world=>world.kind==='camp'?'PEACEFUL_CAMP':'PEACEFUL_FIELD';
 
 export function validate(world,actorId,abilityId,target={}){
   const ability=ABILITIES[abilityId],actor=actorById(world,actorId);
@@ -42,7 +44,7 @@ export function validate(world,actorId,abilityId,target={}){
   // person target before costs or RNG are used. Even a self/ally technique
   // must not reach applyCommand's neutral-target provocation through a
   // forged target payload (for example Brace with forced: true).
-  if(world.kind==='camp'&&world.peaceful===true&&(!campCareAbility(abilityId)||target.forced&&target.actorId))return 'PEACEFUL_CAMP';
+  if(world.peaceful===true&&(!campCareAbility(abilityId)||target.forced&&target.actorId))return peacefulReason(world);
   if(staggered(world,actor))return 'STAGGERED';
   if(actor.abilities&&!actor.abilities.includes(abilityId))return 'NOT_LEARNT';
   const other=target.actorId?actorById(world,target.actorId):null;
