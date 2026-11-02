@@ -1,8 +1,10 @@
 # Gate 4: the owner's play-through
 
-**Status: prepared, not played.** This is a checklist for the owner's play-through, release 10 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md). Nothing in it has been done by a person yet. The bot's sweeps and the browser checks do not count as a play-through.
+**Status: ready to play, not played.** This is a checklist for the owner's play-through, release 10 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md). Releases 11–14 are merged, so everything it covers is in the game. Nothing in it has been done by a person yet. The bot's sweeps and the browser checks do not count as a play-through.
 
 Updated on 1 November for [#44](https://github.com/obeidpeter/Imperium/pull/44): its order review, errand tracking and battle debriefs have rows below, and the Performance check now asks for its tab to stay in front.
+
+Updated on 2 November for releases 11–14 ([#46](https://github.com/obeidpeter/Imperium/pull/46) to [#54](https://github.com/obeidpeter/Imperium/pull/54)): chests, the armourer, champions, the full-screen world, the camera, the inventory, leaving camp on foot and the field after a victory have rows under [Practice, the skirmish and the settings](#practice-the-skirmish-and-the-settings), and the text-size and phone rows include the world that never scrolls and the bar's **Panels** button.
 
 Gate 4 decides three things:
 
@@ -14,8 +16,8 @@ The [playtest kit](playtest-kit.md) is for a first-time player watched by an obs
 
 ## Before you start
 
-1. Use the live site, or build and serve it yourself: `npm run build`, then `npm run preview`. To play on a phone on the same network, use `HOST=0.0.0.0 npm run preview` and open the address it prints.
-2. Write down the build: the commit you built (`git log -1 --format=%h`) or the date you opened the live site. Use `a011365` (31 October) or later, which has #44's changes.
+1. Use the live site, or build and serve it yourself: `npm run build`, then `npm run preview`. The live site is published by hand ([Replit static deployment](../README.md#replit-static-deployment)), so republish it from `main` first. To play on a phone on the same network, use `HOST=0.0.0.0 npm run preview` and open the address it prints.
+2. Write down the build: the commit you built (`git log -1 --format=%h`) or the date you opened the live site. Use `28fe9bf` (2 November) or later, which has releases 11–14.
 3. Begin a **New Game** with **Real-time with pause**:
    - the first time on **Standard**;
    - the second time on **Story**, ideally played by someone less experienced, as the 0.40 brief asks.
