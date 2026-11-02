@@ -131,7 +131,10 @@ How each kind of check was made:
 
 In headless Chromium with software rendering (SwiftShader), on the production build:
 
-- **The new `fieldAftermath`** passed in 318 seconds, with no page or console errors. It ran on a build made before the last change, which opens a walked chest's window at once and records it open in the background.
+- **The new `fieldAftermath`** passed in 311 seconds on the final build, with no page or console errors.
+  - CI's first run of it failed at its last step: no camp card came within 120 seconds of the second use of the road.
+  - Reproduced here, the step works but is slow. Under software rendering, the walk back from the strongbox (about 20 m, 8 seconds of game time) took 83 seconds before the result was recorded.
+  - The check now waits for the world to run again after a window closes, and presses P only if it stays paused. Each walk gets five minutes, and a timeout says where the soldier stood.
   - The won station's result offers **Walk the field** first.
   - Walked, the strip stands in for the result and the living raiders have gone. Drawing a weapon is refused in the field's own words.
   - The road, taken at once, names the fallen archer and the strongbox, and the saved chronicle stays as it was.
