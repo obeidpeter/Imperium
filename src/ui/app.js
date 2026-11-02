@@ -24,7 +24,6 @@ import {tpAuditTotal} from '../core/tp-audit.js';
 import {chamberEncounterView,documentPreview} from './chamber-view.js';
 import * as Chamber from '../core/chamber.js';
 import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
-import {ITEMS} from '../data/items.js';
 import {createSoldier} from '../core/soldier.js';
 import {campFor,CAMP_PLACES,campPlaceName,campPlaceHint} from '../data/camps.js';
 import {campRuntimeKey} from './camp-runtime.js';
@@ -60,10 +59,15 @@ import {GUIDE_HELP} from '../data/guide-help.js';
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
 // The inventory's drag and drop and keyboard carry (release 13, inventory-input.js). A drop is the same soldier
 // command as its button; one the rules would refuse is explained and nothing is sent.
+// In a fight, a fallen man's belongings and a field's cache are taken with the world's own take (release 11's loot).
+const lootDrop=(piece,to)=>to.to==='pack'||to.to==='ground'?{take:true}:{refusal:'Drag it into your pack to take it.'};
 const inventoryInput=bindInventory(modal,{
-  preview:(piece,to)=>state?dropCommand(state,piece,to):null,
+  preview:(piece,to)=>!state?null:piece.from==='loot'?(lootDrop(piece,to).take?{command:{kind:'take'}}:lootDrop(piece,to)):dropCommand(state,piece,to),
   drop:(piece,to)=>{
-    if(!state)return;const r=dropCommand(state,piece,to);if(!r)return;
+    if(!state)return;
+    if(piece.from==='loot'){const r=lootDrop(piece,to);if(r.refusal){toast(r.refusal,{problem:true});return;}
+      if(piece.take==='rt-take')takeLoot(piece.source,piece.id);else takeFromField(piece.source,piece.id);return;}
+    const r=dropCommand(state,piece,to);if(!r)return;
     if(r.refusal){toast(r.refusal,{problem:true});return;}
     if(['wear','drop','sell','takeOff','pickUp','takeFrom'].includes(r.command.kind))kitSelected=null;
     void soldierAct(r.command);
@@ -742,14 +746,16 @@ function showSoldierPanel(name,arg=null){
   const samePanel=modal.open&&modal.dataset.soldier===name&&(soldierPanel?.arg??null)===(arg??null),openDetails=samePanel?[...modal.querySelectorAll('details[id][open]')].map(el=>el.id):[],scroll=samePanel?modal.scrollTop:0;
   const world=field&&field.kind!=='chamber'?field.runtime?.world??null:null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
   if(!samePanel){kitSelected=null;inventoryTab=null;}
-  // Release 13: the kit, the traders and a camp chest open the one inventory, with what they bring beside the pack.
-  const inventory=title=>()=>[title,kitPanel(state,{selected:kitSelected,spoils,other:otherFor(name,arg),tab:inventoryTab,previewStatus:soldierPreviewStatus,
+  // Release 13: the kit, the traders, a camp chest, the fallen and a field's cache open the one inventory, with what
+  // they bring beside the pack.
+  const loot=name==='loot'?lootSide(arg):null;
+  const inventory=title=>()=>[title,kitPanel(state,{selected:kitSelected,spoils,other:loot??otherFor(name,arg),tab:inventoryTab,previewStatus:soldierPreviewStatus,
     documents:name==='kit'&&chamberMode()?Chamber.hearingDocuments(state):[]})];
   const panels={kit:inventory('Equipment'),character:()=>['Training',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
     orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],
     quartermaster:inventory(SHOPS.quartermaster.title),trader:inventory(SHOPS.trader.title),smith:inventory(SHOPS.smith.title),
-    container:inventory(Game.campContainerView(state,arg)?.container.name??'Container'),
+    container:inventory(Game.campContainerView(state,arg)?.container.name??'Container'),loot:inventory(loot?.title??'Search'),
     trainer:()=>[trainerName(state,arg),trainerPanel(state,arg)],
     adopt:()=>['Your soldier’s training',adoptPanel(state,{grants:Object.fromEntries(['legionary','explorator','librarius'].map(p=>[p,tpAuditTotal(Math.max(0,...(state.completed??[])),p)]))})],
     mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements(),trackedErrand:errandTracker.read(state)?.id})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
@@ -789,17 +795,21 @@ function fieldLoot(id){
   const world=field?.runtime?.world,body=world?.actors.find(a=>a.id===id);if(!body)return;
   showLoot(body);
 }
-const itemName=id=>ITEMS[id]?.name??id;
 // The items already chosen from this body in the take waiting for the next tick (while paused, the window's choices wait there).
 function pendingTake(world,bodyId){return [...world.queue].reverse().find(c=>c.kind==='take'&&c.actorId===world.controlled&&c.payload.targetId===bodyId)?.payload.items??[];}
+// What a fallen man or a field's cache still holds, beside what this fight's take waits to carry off (arg "body:<id>"
+// or "box:<id>"), for the inventory's other side; null once the world or the thing is gone.
+function lootSide(arg){
+  const world=field?.runtime?.world;if(!world||typeof arg!=='string')return null;
+  if(arg.startsWith('body:')){const body=world.actors.find(a=>a.id===arg.slice(5));if(!body)return null;
+    return {kind:'loot',title:`Search ${body.name}`,id:body.id,left:[...(body.loot??[])],pending:[...pendingTake(world,body.id)],cmd:'rt-take',empty:'Nothing left worth taking.'};}
+  if(arg.startsWith('box:')){const o=world.objects.find(x=>x.id===arg.slice(4));if(!o)return null;
+    return {kind:'loot',title:o.name,id:o.id,left:[...(o.contents??[])],pending:[...pendingTakeFrom(world,o.id)],cmd:'rt-take-from',empty:'It is empty.'};}
+  return null;
+}
 function showLoot(body){
-  const world=field?.runtime?.world;if(!world)return;
-  const left=[...(body.loot??[])],pending=[...pendingTake(world,body.id)];
-  const rows=left.map((item,i)=>{const at=pending.indexOf(item),taken=at>=0;if(taken)pending.splice(at,1);
-    return `<li><span>${esc(itemName(item))}</span>${taken?'<span class="status-pill">Taken</span>':`<button data-cmd="rt-take" data-id="${esc(body.id)}" data-item="${esc(item)}" data-key="take:${i}">Take</button>`}</li>`;});
-  showModal(`Search ${body.name}`,left.length?`<ul class="rt-loot">${rows.join('')}</ul>`+
-    `<div class="panel-actions"><button class="primary" data-cmd="rt-take" data-id="${esc(body.id)}" data-item="*">Take all</button></div>`+
-    `<p class="panel-note">What you take goes to your pack when the result is recorded.</p>`:'<p>Nothing left worth taking.</p>');
+  if(!field?.runtime?.world)return;
+  showSoldierPanel('loot',`body:${body.id}`);
 }
 function takeLoot(bodyId,itemId){
   const runtime=field?.runtime,world=runtime?.world,body=world?.actors.find(a=>a.id===bodyId);if(!body)return;
@@ -808,18 +818,13 @@ function takeLoot(bodyId,itemId){
   if(!runtime.issue({actorId:world.controlled,kind:'take',payload:{targetId:bodyId,items}}).ok)return;
   showLoot(body);
   // Running, the take happens on the next tick: show what is left once it has.
-  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&modal.dataset.panel?.startsWith('search'))showLoot(body);}));
+  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&soldierPanel?.name==='loot'&&soldierPanel.arg===`body:${bodyId}`)showLoot(body);}));
 }
 // A battlefield chest or cache (release 11): what is left inside beside the take waiting for the next tick.
 function pendingTakeFrom(world,objectId){return [...world.queue].reverse().find(c=>c.kind==='takeFrom'&&c.actorId===world.controlled&&c.payload.objectId===objectId)?.payload.items??[];}
 function showFieldContainer(o){
-  const world=field?.runtime?.world;if(!world)return;
-  const left=[...(o.contents??[])],pending=[...pendingTakeFrom(world,o.id)];
-  const rows=left.map((item,i)=>{const at=pending.indexOf(item),taken=at>=0;if(taken)pending.splice(at,1);
-    return `<li><span>${esc(itemName(item))}</span>${taken?'<span class="status-pill">Taken</span>':`<button data-cmd="rt-take-from" data-id="${esc(o.id)}" data-item="${esc(item)}" data-key="take-from:${i}">Take</button>`}</li>`;});
-  showModal(o.name,left.length?`<ul class="rt-loot">${rows.join('')}</ul>`+
-    `<div class="panel-actions"><button class="primary" data-cmd="rt-take-from" data-id="${esc(o.id)}" data-item="*">Take all</button></div>`+
-    `<p class="panel-note">What you take goes to your pack when the result is recorded.</p>`:'<p>It is empty.</p>');
+  if(!field?.runtime?.world)return;
+  showSoldierPanel('loot',`box:${o.id}`);
 }
 function takeFromField(objectId,itemId){
   const runtime=field?.runtime,world=runtime?.world,o=world?.objects.find(x=>x.id===objectId);if(!o)return;
@@ -827,7 +832,7 @@ function takeFromField(objectId,itemId){
   const items=itemId==='*'?[...pending,...left]:[...pending,itemId];
   if(!runtime.issue({actorId:world.controlled,kind:'takeFrom',payload:{objectId,items}}).ok)return;
   showFieldContainer(o);
-  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open)showFieldContainer(o);}));
+  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&soldierPanel?.name==='loot'&&soldierPanel.arg===`box:${objectId}`)showFieldContainer(o);}));
 }
 function stopMotion(){
   battleStage.stop();const stop=cancelMotion,stopAmbient=cancelAmbient;cancelMotion=null;cancelAmbient=null;if(stop)stop();currentAnimation=null;

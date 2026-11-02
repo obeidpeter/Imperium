@@ -28,7 +28,7 @@ export function pieceOf(el){
     case 'ground':return {...base,from:'ground',uid:d.uid};
     case 'container':return {...base,from:'container',container:d.container,index:Number(d.index)};
     case 'shop':return {...base,from:'shop',shop:d.shop};
-    case 'loot':return {...base,from:'loot',body:d.body,index:Number(d.index)};
+    case 'loot':return {...base,from:'loot',source:d.source,take:d.take};
     default:return null;
   }
 }

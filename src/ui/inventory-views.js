@@ -24,7 +24,7 @@ export const SHOPS=Object.freeze({
   smith:Object.freeze({title:'The armourer',heading:'The armourer’s rack',stock:state=>smithStock(state.chapter)}),
   trader:Object.freeze({title:'The sutler',heading:'The sutler’s goods',stock:state=>TRADER_STOCK[state.chapter]??[]})});
 // The panels that open the inventory, and the other side each brings.
-export const INVENTORY_PANELS=Object.freeze(['kit','quartermaster','smith','trader','container']);
+export const INVENTORY_PANELS=Object.freeze(['kit','quartermaster','smith','trader','container','loot']);
 export const otherFor=(name,arg)=>SHOPS[name]?{kind:'shop',shop:name}:name==='container'?{kind:'container',id:arg}:null;
 
 // The worn places beside the figure, head to foot, two to a row so a place's layers sit together: clothing and
@@ -255,12 +255,13 @@ function containerPane(state,id,{selected}){
 // rt-take-from); what is taken waits in "Taken in this fight" until the result is recorded.
 function lootPane(other){
   const {title,id,left,pending,cmd,empty}=other,waiting=[...pending];
-  const rows=left.map((item,i)=>{const at=waiting.indexOf(item),taken=at>=0;if(taken)waiting.splice(at,1);
-    return `<li><span class="goods-item">${itemPicture(item)}<span><strong>${esc(ITEMS[item]?.name??item)}</strong></span></span>`+
+  const rows=left.map((item,i)=>{const at=waiting.indexOf(item),taken=at>=0,def=ITEMS[item];if(taken)waiting.splice(at,1);
+    return `<li><span class="goods-item${taken?' is-taken':''}"${taken?'':pieceData('loot',{source:id,take:cmd,item,w:def?.shape.w??1,h:def?.shape.h??1})}>`+
+      `${itemPicture(item)}<span><strong>${esc(def?.name??item)}</strong>${def?.grade?` <small class="item-grade">${gradeName(def)}</small>`:''}</span></span>`+
       `${taken?'<span class="status-pill">Taken</span>':`<button data-cmd="${cmd}" data-id="${esc(id)}" data-item="${esc(item)}" data-key="${cmd}:${i}">Take</button>`}</li>`;}).join('');
   return `<h3 id="inv-other-title" class="inv-heading">${esc(title)}</h3>`+(left.length?`<ul class="inv-goods">${rows}</ul>`+
     `<div class="panel-actions"><button class="primary" data-cmd="${cmd}" data-id="${esc(id)}" data-item="*" data-key="${cmd}:all">Take all</button></div>`+
-    '<p class="panel-note">What you take goes to your pack when the result is recorded.</p>':`<p class="inv-empty">${esc(empty)}</p>`);
+    '<p class="inv-drop-hint">Drag a piece into your pack, or Take it. What you take is yours when the result is recorded.</p>':`<p class="inv-empty">${esc(empty)}</p>`);
 }
 
 function otherPane(state,other,{selected,documents}){
