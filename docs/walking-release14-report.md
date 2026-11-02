@@ -59,6 +59,9 @@ All in headless Chromium with software rendering (SwiftShader), on the productio
 - **`npm run smoke`:** all 24 scenarios passed, with no page or console errors, in about 32 minutes. The new `campExitDeparture` took 168 seconds:
   - In a new chronicle's first camp, the way out is **The drill yard**. Using it brings the gate sentry's line naming the decision still to make, the page stays in camp, and the saved chronicle is unchanged.
   - In Chapter II's camp, **The road out** shows a card naming the way and **The broken causeway**, the field opens on that encounter, and the card goes. This was checked in 2D and 3D.
+  - **Later, on main, CI failed it once** (after #53, on 2 November): the sentry's line did not come within the 60 seconds the check allowed.
+    - Measured here, the walk is slow but sound. Software rendering slows a 3D camp's clock to a tenth of real time or so: the first camp's 17 m to the drill yard took 45 seconds (7 seconds of game time), and Chapter II's 7 m to the road out about 33 seconds. A slower runner goes over 60.
+    - The check now gives each walk five minutes, as the walked field's check does, and a timeout says where the soldier stood, the clock and whether it was paused.
 - **`npm run smoke:usability`:** all 13 flows passed at the phone and desktop widths, including the inventory by keyboard, mouse and touch.
 - **`npm run smoke:world`:** all 21 checks passed:
   - each of the twelve camps' regional models and its three cameras;
