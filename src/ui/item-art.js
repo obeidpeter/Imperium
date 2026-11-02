@@ -1,4 +1,5 @@
 import {ITEMS} from '../data/items.js';
+import {ITEM_ATLAS,ITEM_PICTURES} from '../data/item-pictures.js';
 
 // Original vector kit silhouettes. Shared by pack and equipped lists; no
 // external image, image request, or per-item SVG identifier is required.
@@ -23,9 +24,14 @@ export function itemArt(item={}){
 export const slotArt=slot=>itemArt({slot});
 
 // An item's picture in the inventory (release 13): its rendered picture where
-// one exists, else the drawn silhouette above. Decorative: the item's name is
-// always given beside it or on its control.
+// one exists, else the drawn silhouette above. The picture is the item atlas
+// cropped to the item's place by the SVG's viewBox, so it fits any box without
+// stretching, like the silhouettes. A fine piece shares its model's picture in
+// its own finish (inventory.css). Decorative: the item's name is always given
+// beside it or on its control.
 export function itemPicture(id){
-  const item=ITEMS[id]??{};
-  return `<span class="item-picture" data-slot="${item.slot??'other'}"${item.grade?` data-grade="${item.grade}"`:''}>${itemArt(item)}</span>`;
+  const item=ITEMS[id]??{},place=ITEM_PICTURES[id],finish=item.visuals?.finish??(item.visuals?.trim?`${item.visuals.trim}-trim`:null);
+  const art=place?`<svg class="kit-art kit-picture" viewBox="${place.join(' ')}" aria-hidden="true" focusable="false">`+
+    `<image href="${ITEM_ATLAS.src}" width="${ITEM_ATLAS.width}" height="${ITEM_ATLAS.height}"/></svg>`:itemArt(item);
+  return `<span class="item-picture" data-slot="${item.slot??'other'}"${item.grade?` data-grade="${item.grade}"`:''}${place&&finish?` data-finish="${finish}"`:''}>${art}</span>`;
 }

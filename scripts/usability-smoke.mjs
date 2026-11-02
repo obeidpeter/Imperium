@@ -16,6 +16,7 @@ import {serveRequest} from './serve.mjs';
 import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions,closePanel,closedBy,verifyEnlargedSettingsGeometry} from './ui-smoke-navigation.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import * as Game from '../src/core/game.js';
+import {ITEM_ATLAS,ITEM_PICTURES} from '../src/data/item-pictures.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url)),output=fileURLToPath(new URL('../tests/visual-results/usability/',import.meta.url));
 const only=process.env.USABILITY_ONLY;
@@ -271,6 +272,12 @@ async function inventoryKeyboardAndMouse(page,label){
   fits(await metrics(page,'#modal'),`${label} inventory`);
   assert.equal(await page.locator('.inventory .worn-socket').count(),15,'Every place he wears kit stands beside his figure');
   assert.equal(await page.locator('.pack-grid .pack-item').count(),before.soldier.pack.length,'Every piece lies in the pack');
+  // Release 13: every piece with a picture shows it, cut from the one item atlas, and the page loads the atlas.
+  const pictures=await page.evaluate(async()=>{const shown=[...document.querySelectorAll('.pack-grid .pack-item')].map(b=>({item:b.dataset.item,picture:b.querySelector('.kit-picture image')?.getAttribute('href')??null}));
+    const src=shown.find(p=>p.picture)?.picture;const width=src?await new Promise(done=>{const image=new Image();image.onload=()=>done(image.naturalWidth);image.onerror=()=>done(0);image.src=src;}):0;return {shown,width};});
+  for(const {item,picture}of pictures.shown)assert.equal(picture,ITEM_PICTURES[item]?ITEM_ATLAS.src:null,`${item}: ${ITEM_PICTURES[item]?'its picture':'its drawn outline'}`);
+  assert.ok(pictures.shown.some(p=>p.picture),'The pack holds pieces with pictures');
+  assert.equal(pictures.width,ITEM_ATLAS.width,'The item atlas loads');
   // Keyboard only: the arrows move between pieces, Enter chooses one, Move in pack carries it, the arrows and Enter put it down.
   const first=page.locator('.pack-grid .pack-item').first();await first.focus();
   const start=await page.evaluate(()=>document.activeElement.dataset.uid);
@@ -325,8 +332,8 @@ async function inventoryKeyboardAndMouse(page,label){
   await drag(`.pack-item[data-item="${item}"]`,`.worn-socket[data-place="${wrong}"]`);
   await page.locator('[data-inventory-status].is-problem').filter({hasText:/is worn as/}).waitFor();
   assert.equal(JSON.stringify(await savedState(page)),saved,'A drop on the wrong place says why and changes nothing');
-  record(`${label}: the inventory by keyboard (arrows, carry, Escape, Enter) and mouse (wear by dragging, take off into a chosen cell, a refused drop)`,
-    {keyboardMove:entry,wornByDrag:item,takenOffTo:fitsAt,refusedPlace:wrong});
+  record(`${label}: the inventory by keyboard (arrows, carry, Escape, Enter) and mouse (wear by dragging, take off into a chosen cell, a refused drop), with each piece's picture`,
+    {keyboardMove:entry,wornByDrag:item,takenOffTo:fitsAt,refusedPlace:wrong,pictured:pictures.shown.filter(p=>p.picture).length,atlasWidth:pictures.width});
 }
 // A phone held in the hand: the inventory's list mode, by touch.
 async function inventoryTouch(){
