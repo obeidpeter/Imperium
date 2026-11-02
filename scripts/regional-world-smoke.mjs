@@ -5,7 +5,12 @@
 // Build first. --output DIR --dist DIR --headed; --checkpoints-only earns and
 // exports review saves without starting Chromium. --chapters 1,2,8,11 is a
 // partial camera/asset diagnostic only, never full release acceptance.
-// No wall-clock FPS assertion.
+// --half a (Chapters I-VII) and --half b (VII-XII) are the two halves CI runs in
+// parallel: each crosses its regions in one context and returns to its first
+// chapter, and Chapter VII is in both, so every move from one camp to the next is
+// checked in one context. Together they are the full acceptance; Performance
+// quality is checked on Chapter XII and the failed downloads on Chapter I, as in
+// the full run. No wall-clock FPS assertion.
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -22,8 +27,11 @@ import {CONFIG} from '../src/config.js';
 
 const arg=(name,fallback)=>{const prefix=`--${name}=`,same=process.argv.find(a=>a.startsWith(prefix)),index=process.argv.indexOf(`--${name}`);return same?same.slice(prefix.length):index>=0?process.argv[index+1]:fallback;};
 const dist=resolve(arg('dist',fileURLToPath(new URL('../dist/',import.meta.url))));
-const output=resolve(arg('output',fileURLToPath(new URL('../tests/visual-results/regional-world/',import.meta.url))));
+const output=resolve(arg('output',fileURLToPath(new URL(`../tests/visual-results/regional-world/${process.argv.some(a=>a==='--half'||a.startsWith('--half='))?`half-${arg('half','')}/`:''}`,import.meta.url))));
 const chapterFilter=arg('chapters',null),partial=chapterFilter!==null;
+const HALVES={a:{chapters:[1,2,3,4,5,6,7],fallback:true},b:{chapters:[7,8,9,10,11,12],fallback:false}};
+const half=arg('half',null);
+assert.ok(half===null||HALVES[half],'--half must be a or b');assert.ok(!(half&&partial),'--half and --chapters do not go together');
 const requestedChapters=partial?chapterFilter.split(',').map(value=>Number(value.trim())):null;
 if(partial)assert.ok(requestedChapters.length>0&&requestedChapters.every(chapter=>Number.isInteger(chapter)&&chapter>=1&&chapter<=12)&&new Set(requestedChapters).size===requestedChapters.length,
   '--chapters must be a comma-separated list of distinct chapter numbers from 1 to 12');
@@ -57,7 +65,9 @@ for(const [chapter,state]of checkpoints){
   assert.ok(placements.length>0&&sceneryUrls.length>0,`Chapter ${chapter} has authored regional scenery`);
   chapters.push({chapter,code,expectedModels:placements.length,urls,sceneryUrls,sha256:createHash('sha256').update(code).digest('hex')});
 }
-const tour=partial?requestedChapters.map(chapter=>chapters.find(checkpoint=>checkpoint.chapter===chapter)):chapters;
+const tour=partial?requestedChapters.map(chapter=>chapters.find(checkpoint=>checkpoint.chapter===chapter))
+  :half?HALVES[half].chapters.map(chapter=>chapters.find(checkpoint=>checkpoint.chapter===chapter)):chapters;
+const span=`Chapters ${tour[0].chapter}–${tour.at(-1).chapter}`;
 await mkdir(output,{recursive:true});
 const checkpointReceipt={seed:275,method:'New Game and public legal commands only; won encounters cloned, committed and advanced through the public campaign API',
   priorEncounters:earned.encounters.map(e=>({id:e.id,status:e.status})),chapters:chapters.map(c=>({chapter:c.chapter,sha256:c.sha256}))};
@@ -79,8 +89,9 @@ const context=await browser.newContext({viewport:{width:1270,height:720},service
 page.setDefaultTimeout(120000);
 const report={method:'Production Chromium, one context, UI Restore of legal-command campaign saves, visible cameras/settings/services, read-only world and render diagnostics',
   build:build.revision,browser:browser.version(),physicalDeviceTest:false,softwareRendering:true,
-  scope:partial?'partial camera and asset diagnostic; not full release acceptance':'full twelve-chapter acceptance',
-  fullAcceptance:!partial,selectedChapters:tour.map(checkpoint=>checkpoint.chapter),
+  scope:partial?'partial camera and asset diagnostic; not full release acceptance'
+    :half?`half ${half} of the twelve-chapter acceptance (${span}); with the other half it is the full acceptance`:'full twelve-chapter acceptance',
+  fullAcceptance:!partial&&!half,half,selectedChapters:tour.map(checkpoint=>checkpoint.chapter),
   checkpoint:checkpointReceipt,
   checks:[],captures:[],cameraEvidence:[],residency:[],errors:[],expectedUnavailableResponses:[],expectedUnavailableConsole:[]};
 page.on('pageerror',error=>report.errors.push(error.message));
@@ -235,23 +246,29 @@ try{
   if(!partial){
   // Performance removes generated masters, preserving the procedural camp;
   // returning to Balanced reacquires only the present chapter's working set.
-  const last=chapters.at(-1);
+  // A half returns to its own first chapter; the failed downloads are Chapter I's.
+  const last=tour.at(-1),first=tour[0];
+  if(last.chapter===12){
   await menuCommand(page,'settings');await (await revealControl(page,'#graphics-quality')).selectOption('performance');await closePanel(page);
   await ready(last,'performance');await screenshot('chapter-12-performance.png');
   record('Performance quality releases every generated scenery master while retaining the playable camp');
   await menuCommand(page,'settings');await (await revealControl(page,'#graphics-quality')).selectOption('balanced');await closePanel(page);
-  await ready(last,'balanced',{kits:false});await restore(chapters[0]);await pause();await camera('horizon','KeyH');
-  await screenshot('chapter-01-return.png');await glanceEnd();
-  assert.deepEqual(report.residency.at(-1).cache,report.residency[0].cache,'Returning to Chapter I retains only its original working set');
-  record('Returning across all regions restores Chapter I without accumulating scenery masters');
+  await ready(last,'balanced',{kits:false});
+  }
+  await restore(first);await pause();await camera('horizon','KeyH');
+  await screenshot(`chapter-${String(first.chapter).padStart(2,'0')}-return.png`);await glanceEnd();
+  assert.deepEqual(report.residency.at(-1).cache,report.residency[0].cache,`Returning to Chapter ${first.chapter} retains only its original working set`);
+  record(half?`Returning across ${span} restores Chapter ${first.chapter} without accumulating scenery masters`
+    :'Returning across all regions restores Chapter I without accumulating scenery masters');
+  if(!half||HALVES[half].fallback){
   // A real HTTP failure with an empty module cache tests the shipped fallback
   // path, including generated bodies. No scene/state/debug hook is replaced.
   simulatingUnavailable=true;
   await page.route('**/*.glb',route=>route.fulfill({status:503,contentType:'text/plain',body:'Unavailable model, deliberately simulated by regional-world acceptance'}));
   await page.reload();await page.locator('[data-cmd="continue"]:visible').first().click();
-  await ready(chapters[0],'balanced',{unavailable:true});await pause(false);
+  await ready(first,'balanced',{unavailable:true});await pause(false);
   assert.ok(report.expectedUnavailableResponses.length>0,'The fallback check exercised actual failed model requests');
-  for(const url of chapters[0].urls)assert.ok(report.expectedUnavailableResponses.includes(new URL(url,base).pathname),`${url} was unavailable in the fallback check`);
+  for(const url of first.urls)assert.ok(report.expectedUnavailableResponses.includes(new URL(url,base).pathname),`${url} was unavailable in the fallback check`);
   const fallbackStats=await stats();assert.ok(fallbackStats.calls>0&&fallbackStats.geometries>0,'The procedural scene still paints');
   const beforeMove=await page.evaluate(()=>{const world=window.__realtime.world(),hero=world.actors.find(a=>a.id===world.controlled);return {tick:world.tick,x:hero.x,z:hero.z};});
   await page.locator('#rt-board').focus();await page.keyboard.down('ArrowRight');
@@ -263,6 +280,7 @@ try{
   record('With every model request unavailable, the procedural camp still renders, moves and opens its direct services',
     {failedRequests:report.expectedUnavailableResponses.length,cache:fallbackStats.sceneryResidency});
   }
+  }
   assert.deepEqual(report.errors,[],'No browser console or runtime errors');report.pass=true;
 }catch(error){
   report.pass=false;report.failure=error.stack??String(error);process.exitCode=1;console.error(report.failure);
@@ -271,4 +289,4 @@ try{
   await writeFile(join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
   await browser.close();await new Promise(resolve=>server.close(resolve));
 }
-console.log(`${partial?'PARTIAL DIAGNOSTIC (not full release acceptance)':'Regional world acceptance'} report: ${join(output,'report.json')}`);
+console.log(`${partial?'PARTIAL DIAGNOSTIC (not full release acceptance)':half?`Regional world acceptance, half ${half} (${span})`:'Regional world acceptance'} report: ${join(output,'report.json')}`);
