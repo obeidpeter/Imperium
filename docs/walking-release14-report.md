@@ -54,4 +54,16 @@ How each kind of check was made:
 
 All in headless Chromium with software rendering (SwiftShader), on the production build:
 
-RESULTS
+- **`npm run smoke`:** all 24 scenarios passed, with no page or console errors, in about 32 minutes. The new `campExitDeparture` took 168 seconds:
+  - In a new chronicle's first camp, the way out is **The drill yard**. Using it brings the gate sentry's line naming the decision still to make, the page stays in camp, and the saved chronicle is unchanged.
+  - In Chapter II's camp, **The road out** shows a card naming the way and **The broken causeway**, the field opens on that encounter, and the card goes. This was checked in 2D and 3D.
+- **`npm run smoke:usability`:** all 13 flows passed at the phone and desktop widths, including the inventory by keyboard, mouse and touch.
+- **`npm run smoke:world`:** all 21 checks passed:
+  - each of the twelve camps' regional models and its three cameras;
+  - the direct services and peaceful controls, and the narrow layouts;
+  - scenery released between chapters and on Performance;
+  - a camp that still works when every model download fails.
+- **`npm run smoke:ch5-pilot -- --river-gate`:** all 9 checks passed, from checkpoints earned by legal commands. They include the courtyard's scenery, March out to the cracked tower with an exact Retry, and the departure for the red river gate.
+- **`npm run verify`:** 1,587 tests passed, as did the autoplay harnesses, the production build and the asset checks.
+
+The orders, polish, cavalry, errands, immersive and siege browser checks, the stage benchmark and the twelve-chapter benchmark were not run locally. CI runs them on the pull request.
