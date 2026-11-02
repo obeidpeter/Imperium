@@ -131,10 +131,13 @@ How each kind of check was made:
 
 In headless Chromium with software rendering (SwiftShader), on the production build:
 
-- **The new `fieldAftermath`** passed in 311 seconds on the final build, with no page or console errors.
-  - CI's first run of it failed at its last step: no camp card came within 120 seconds of the second use of the road.
-  - Reproduced here, the step works but is slow. Under software rendering, the walk back from the strongbox (about 20 m, 8 seconds of game time) took 83 seconds before the result was recorded.
-  - The check now waits for the world to run again after a window closes, and presses P only if it stays paused. Each walk gets five minutes, and a timeout says where the soldier stood.
+- **The new `fieldAftermath`** passed in 451 seconds on the final build, run beside the unit tests, with no page or console errors.
+  - **CI failed it twice, both times on the walked field standing still.** In the first run no camp card came within 120 seconds of the road's second use; in the second, three presses of P left the field paused.
+  - **The cause was in the page.** A window closed while its take was still saving opened again once the save was done. That paused the field, and the window kept the keyboard, so P never reached the field. CI saves more slowly than this machine does, so only CI met it.
+  - **Reproduced here** by slowing each save by 2.5 seconds. The strongbox's window, closed while **Take all** was saving, came back and the field stayed paused.
+  - **Fixed:** after a save, the window shows what is left only if it is still the one open. With the same slowed save it stays closed and the field runs.
+  - **The check now asserts** that a window closed during its save stays closed. It waits for the field again after each press of P, and a timeout names any open window.
+  - Walks are slow under software rendering (the 20 m back from the strongbox took 83 seconds here), so each gets five minutes, and a timeout says where the soldier stood.
   - The won station's result offers **Walk the field** first.
   - Walked, the strip stands in for the result and the living raiders have gone. Drawing a weapon is refused in the field's own words.
   - The road, taken at once, names the fallen archer and the strongbox, and the saved chronicle stays as it was.

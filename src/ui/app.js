@@ -902,10 +902,12 @@ function endWalk(){
   walking=null;if(field?.runtime&&field.kind==='field'&&Game.isRealtime(state))field.runtime.load(Game.realtimeWorld(state),state.encounter);render();
 }
 // A search or a take on the walked field is the chronicle's (game.js): the walking field follows it, and the window
-// it came from (body:<id> or box:<id>) shows what is left.
+// it came from (body:<id> or box:<id>) shows what is left while it is still the one open. A window closed, or another
+// opened, while the change was saving stays as the player left it: reopening it would pause the field again.
 function walkChange(run,panel,{silent=false}={}){
+  const showing=()=>modal.open&&soldierPanel?.name==='loot'&&soldierPanel.arg===panel;
   return change(()=>{const r=run(),world=field?.runtime?.world;if(r.ok&&world?.aftermath)Game.syncAftermath(world,state);return r;},
-    {silent,afterRender:()=>{if(panel&&field?.runtime?.world?.aftermath)showSoldierPanel('loot',panel);}});
+    {silent,afterRender:()=>{if(panel&&field?.runtime?.world?.aftermath&&showing())showSoldierPanel('loot',panel);}});
 }
 // The road out: the first time anything worth taking is still on the field it names what, and the next time it
 // records the result as Continue does (a second record is refused by the chronicle). In Practice it goes back.

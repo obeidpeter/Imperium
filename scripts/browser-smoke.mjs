@@ -707,19 +707,22 @@ async function fieldAftermath(){
   await page.fill('#restore-code',code);await page.click('[data-cmd="import-code"]');await closedBy(page,()=>page.click('[data-cmd="confirm-import"]'));
   await page.waitForSelector('.rt-result [data-cmd="walk-field"].primary',{timeout:120000}).catch(()=>assert.fail('The won station offers to walk the field, first'));
   const issue=command=>page.evaluate(c=>window.__realtime.issue(c),command);
+  // What the page shows when a step takes too long: its message, any open window, the clock and how far the soldier
+  // is from where he goes.
+  const stateOf=target=>page.evaluate(id=>{const w=window.__realtime.world(),h=w?.actors.find(a=>a.id==='hero'),o=w?.objects.find(x=>x.id===id),m=document.querySelector('#modal');
+    return `announcement "${document.querySelector('#announcement')?.textContent??''}", phase ${document.documentElement.dataset.phase}, `+
+      `window ${m?.open?m.dataset.soldier??'open':'closed'}, paused ${window.__realtime.paused()}, `+
+      `${h&&o?`${Math.hypot(h.x-o.x,h.z-o.z).toFixed(1)} m from ${id}`:'no field'}, tick ${w?.tick}`;},target);
   // A closed window gives the world back on its own; P resumes it only if it stays paused, once that is clear, so the
-  // two never cross (a P pressed just as the window's pause lifts would pause it again).
+  // two never cross (a P pressed just as the window's pause lifts would pause it again). After the third press the
+  // field gets one more look before the check gives up.
   const running=async()=>{
-    for(let tries=0;tries<3;tries++){
+    for(let tries=0;;tries++){
       if(await page.waitForFunction(()=>!window.__realtime.paused(),null,{timeout:4000}).then(()=>true,()=>false))return;
+      if(tries===3)assert.fail(`The walked field runs again: ${await stateOf('exit')}`);
       await page.locator('#rt-board').focus();await page.keyboard.press('KeyP');
     }
-    assert.fail('The walked field runs again');
   };
-  // What the page shows when a walk takes too long: its message, the clock and how far the soldier is from where he goes.
-  const stateOf=target=>page.evaluate(id=>{const w=window.__realtime.world(),h=w?.actors.find(a=>a.id==='hero'),o=w?.objects.find(x=>x.id===id);
-    return `announcement "${document.querySelector('#announcement')?.textContent??''}", phase ${document.documentElement.dataset.phase}, paused ${window.__realtime.paused()}, `+
-      `${h&&o?`${Math.hypot(h.x-o.x,h.z-o.z).toFixed(1)} m from ${id}`:'no field'}, tick ${w?.tick}`;},target);
   const closeWindow=async()=>{await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('#modal')?.open);};
   await page.click('.rt-result [data-cmd="walk-field"]');
   await page.waitForFunction(()=>window.__realtime.world()?.aftermath===true&&!!document.querySelector('.rt-aftermath'),null,{timeout:60000})
@@ -756,7 +759,10 @@ async function fieldAftermath(){
   await page.click('#modal [data-cmd="rt-take-from"][data-item="*"]');
   await page.waitForFunction(()=>window.__realtime.world().objects.find(o=>o.id==='station-strongbox')?.contents?.length===0,null,{timeout:60000})
     .catch(()=>assert.fail('The strongbox is emptied'));
-  await closeWindow();
+  // Closed at once, while the take may still be saving: once it is saved the window stays closed (on a slower machine
+  // it used to open again, pausing the field).
+  await closeWindow();await saveIdle(page);
+  assert.equal(await page.evaluate(()=>!!document.querySelector('#modal')?.open),false,'A window closed while its take saves stays closed');
   // The road again: nothing is left, so it records the result once and the column comes back to camp. Software rendering
   // slows the walk (about 20 m, 8 s of game time) to a minute or more.
   await saveIdle(page);await running();
