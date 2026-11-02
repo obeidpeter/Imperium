@@ -154,18 +154,18 @@ export function bindInventory(modal,{preview,drop,select,announce,timers=globalT
   // The keyboard: arrows between pieces in the pack; a carried piece moves a place at a time.
   function packPieces(){return [...modal.querySelectorAll('.pack-grid .pack-item')].map(el=>({el,x:Number(el.dataset.x??el.style.gridColumnStart-1),
     y:Number(el.dataset.y??el.style.gridRowStart-1),w:Number(el.dataset.w)||1,h:Number(el.dataset.h)||1}));}
-  function carryAnnounce(){
+  function carryAnnounce(lead=''){
     const r=preview(carry.piece,{to:'pack',x:carry.at.x,y:carry.at.y}),ok=!!r?.command||r===null;
     showGhost(carry.at,carry.piece,ok);
-    status(`Column ${carry.at.x+1}, row ${carry.at.y+1}: ${r===null?'where it lies':ok?'it fits':'it does not fit'}.`);
+    status(`${lead}Column ${carry.at.x+1}, row ${carry.at.y+1}: ${r===null?'where it lies':ok?'it fits':'it does not fit'}.`);
   }
   function startCarry(uid){
     const el=modal.querySelector(`.pack-grid .pack-item[data-uid="${CSS.escape(uid)}"]`),piece=pieceOf(el);
     if(!piece||listMode())return false;
     carry={piece,at:{x:piece.x,y:piece.y},uid};const g=grid();g.tabIndex=-1;g.focus({preventScroll:true});
     el.classList.add('is-lifted');inventory()?.classList.add('is-dragging');
-    status(`Moving the ${el.querySelector('.pack-item-name')?.textContent??'piece'}: the arrow keys move it, Enter puts it down, Escape puts it back.`);
-    carryAnnounce();return true;
+    // One announcement: what is carried and how, then where it is.
+    carryAnnounce(`Moving the ${el.querySelector('.pack-item-name')?.textContent??'piece'}: the arrow keys move it, Enter puts it down, Escape puts it back. `);return true;
   }
   function endCarry({focus=true}={}){
     if(!carry)return;const uid=carry.uid;carry=null;clearHighlights();

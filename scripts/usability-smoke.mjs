@@ -112,8 +112,8 @@ async function exported(page){
   const [prefix,body]=raw.trim().split('.'),bytes=Buffer.from(body,'base64'),data=JSON.parse((prefix==='SAC1'?gunzipSync(bytes):bytes).toString('utf8'));
   return Game.serialize(Game.deserialize(data.format===1?data.payload:JSON.stringify(data)));
 }
-async function setup(viewport){
-  const context=await browser.newContext({viewport}),page=await context.newPage();page.setDefaultTimeout(30000);
+async function setup(viewport,{touch=false}={}){
+  const context=await browser.newContext({viewport,...(touch?{hasTouch:true,isMobile:true}:{})}),page=await context.newPage();page.setDefaultTimeout(30000);
   observeNetwork(page);
   page.on('pageerror',e=>report.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
   await page.goto(base);await menuCommand(page,'settings');
@@ -259,6 +259,91 @@ async function helpAndSoldier(page,label){
   fits(await metrics(page,'#modal'),`${label} company details`);await close(page);
   assert.equal(await exported(page),original,'Help and soldier inspection spend no resources or progress');
   record(`${label}: searchable concise help, all fourteen guide chapters and soldier details`,{overview,resultTitle,helpTextScale:label==='phone'?2:1,saveUnchanged:true});
+}
+// Release 13: the inventory. Kit (I) opens it over the world; every change below is one of the soldier's own commands,
+// made through the screen as a player makes it, and read back from the exported save.
+const packEntry=(state,id)=>state.soldier.pack.find(e=>e.id===id);
+// The save as exported through Settings, with the inventory closed first (the page behind a dialog is inert).
+async function savedState(page){if(await page.locator('#modal[open]').count())await close(page);return JSON.parse(await exported(page));}
+async function inventoryKeyboardAndMouse(page,label){
+  const before=await savedState(page);
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyI');await page.waitForSelector('#modal[open] .inventory');
+  fits(await metrics(page,'#modal'),`${label} inventory`);
+  assert.equal(await page.locator('.inventory .worn-socket').count(),15,'Every place he wears kit stands beside his figure');
+  assert.equal(await page.locator('.pack-grid .pack-item').count(),before.soldier.pack.length,'Every piece lies in the pack');
+  // Keyboard only: the arrows move between pieces, Enter chooses one, Move in pack carries it, the arrows and Enter put it down.
+  const first=page.locator('.pack-grid .pack-item').first();await first.focus();
+  const start=await page.evaluate(()=>document.activeElement.dataset.uid);
+  for(const key of ['ArrowRight','ArrowDown','ArrowLeft','ArrowUp']){await page.keyboard.press(key);if(await page.evaluate(()=>document.activeElement.dataset.uid)!==start)break;}
+  const uid=await page.evaluate(()=>document.activeElement.dataset.uid);assert.ok(uid,'The arrow keys move between the pack’s pieces');
+  await page.keyboard.press('Enter');await page.waitForSelector(`.pack-grid .pack-item[data-uid="${uid}"][aria-pressed="true"]`);
+  const carry=page.locator('[data-cmd="inventory-carry"]');await carry.focus();await page.keyboard.press('Enter');
+  const status=page.locator('[data-inventory-status]');await status.filter({hasText:/arrow keys move it/}).waitFor();
+  let fitsHere=false;
+  for(const key of ['ArrowDown','ArrowDown','ArrowDown','ArrowRight','ArrowRight','ArrowRight','ArrowRight','ArrowRight']){
+    await page.keyboard.press(key);if(/it fits\./.test(await status.innerText())){fitsHere=true;break;}
+  }
+  assert.ok(fitsHere,'The carried piece finds a free place');
+  const target=await page.evaluate(()=>/Column (\d+), row (\d+)/.exec(document.querySelector('[data-inventory-status]').textContent).slice(1).map(Number));
+  await page.keyboard.press('Escape');assert.equal(await page.locator('#modal[open]').count(),1,'Escape puts the piece back and keeps the inventory open');
+  await status.filter({hasText:'Put back.'}).waitFor();
+  await carry.focus();await page.keyboard.press('Enter');for(let i=0;i<20&&!/it fits\./.test(await status.innerText());i++){
+    const now=await page.evaluate(()=>/Column (\d+), row (\d+)/.exec(document.querySelector('[data-inventory-status]').textContent).slice(1).map(Number));
+    await page.keyboard.press(now[1]<target[1]?'ArrowDown':now[0]<target[0]?'ArrowRight':'ArrowLeft');}
+  await page.keyboard.press('Enter');await page.waitForSelector(`.pack-grid .pack-item[data-uid="${uid}"][data-x="${target[0]-1}"][data-y="${target[1]-1}"]`);
+  const moved=await savedState(page),entry=moved.soldier.pack.find(e=>e.uid===uid);
+  assert.deepEqual([entry.x,entry.y],[target[0]-1,target[1]-1],'The keyboard move is saved where it was put down');
+  // The mouse: a piece dragged onto his figure is worn; a worn piece dragged into a cell lies there; a wrong place says why.
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyI');await page.waitForSelector('#modal[open] .inventory');
+  const wearable=await page.evaluate(()=>[...document.querySelectorAll('.pack-grid .pack-item:not(.is-dimmed)')].find(b=>['hamata','squamata','galea_crest','manica','ocreae'].includes(b.dataset.item))?.dataset.uid);
+  assert.ok(wearable,'The checkpoint carries a piece he can wear');
+  // Press on a piece, lift it, and let go over a place (a selector's middle, or a point).
+  const drag=async(from,to)=>{const a=await page.locator(from).boundingBox();
+    const b=typeof to==='string'?await page.locator(to).boundingBox().then(r=>({x:r.x+r.width/2,y:r.y+r.height/2})):to;
+    await page.mouse.move(a.x+a.width/2,a.y+a.height/2);await page.mouse.down();await page.mouse.move(a.x+a.width/2+12,a.y+a.height/2+12,{steps:3});
+    await page.mouse.move(b.x,b.y,{steps:8});await page.mouse.up();};
+  const item=await page.locator(`.pack-item[data-uid="${wearable}"]`).getAttribute('data-item');
+  await drag(`.pack-item[data-uid="${wearable}"]`,'.inventory .soldier-model');
+  await page.locator('[data-inventory-status]').filter({hasText:/You wear/}).waitFor();
+  const worn=await savedState(page);assert.ok(Object.values(worn.soldier.worn).includes(item),'Dragged onto his figure, the piece is worn and saved');
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyI');await page.waitForSelector('#modal[open] .inventory');
+  const place=Object.entries(worn.soldier.worn).find(([,id])=>id===item)[0];
+  const grid=await page.locator('.pack-grid').boundingBox(),cell=(grid.width-4)/10;
+  const shape=await page.evaluate(p=>{const b=document.querySelector(`.worn-socket[data-place="${p}"]`);return {w:Number(b.dataset.w),h:Number(b.dataset.h)};},place);
+  const fitsAt=await page.evaluate(({w,h})=>{const taken=new Set();for(const b of document.querySelectorAll('.pack-grid .pack-item')){const x=Number(b.dataset.x),y=Number(b.dataset.y);
+    for(let dy=0;dy<Number(b.dataset.h);dy++)for(let dx=0;dx<Number(b.dataset.w);dx++)taken.add(`${x+dx},${y+dy}`);}
+    for(let y=6-h;y>=0;y--)for(let x=10-w;x>=0;x--){let ok=true;for(let dy=0;dy<h&&ok;dy++)for(let dx=0;dx<w&&ok;dx++)ok=!taken.has(`${x+dx},${y+dy}`);if(ok)return {x,y};}return null;},shape);
+  assert.ok(fitsAt,'The pack has room for the worn piece');
+  // A worn piece is held by its middle: let go over the middle of the place it should take.
+  await drag(`.worn-socket[data-place="${place}"]`,{x:grid.x+2+(fitsAt.x+shape.w/2)*cell,y:grid.y+2+(fitsAt.y+shape.h/2)*cell});
+  await page.locator('[data-inventory-status]').filter({hasText:/goes to your pack/}).waitFor();
+  const off=await savedState(page),back=packEntry(off,item);
+  assert.ok(back&&back.x===fitsAt.x&&back.y===fitsAt.y,`Dragged out of its place, the piece lies in the cell it was dropped on (${JSON.stringify(back)} for ${JSON.stringify(fitsAt)})`);
+  assert.equal(off.soldier.worn[place],undefined);
+  const wrong=['feet:0','head:0','charm:0'].find(p=>!place.startsWith(p.split(':')[0]));const saved=JSON.stringify(off);
+  await page.locator('#rt-board').focus();await page.keyboard.press('KeyI');await page.waitForSelector('#modal[open] .inventory');
+  await drag(`.pack-item[data-item="${item}"]`,`.worn-socket[data-place="${wrong}"]`);
+  await page.locator('[data-inventory-status].is-problem').filter({hasText:/is worn as/}).waitFor();
+  assert.equal(JSON.stringify(await savedState(page)),saved,'A drop on the wrong place says why and changes nothing');
+  record(`${label}: the inventory by keyboard (arrows, carry, Escape, Enter) and mouse (wear by dragging, take off into a chosen cell, a refused drop)`,
+    {keyboardMove:entry,wornByDrag:item,takenOffTo:fitsAt,refusedPlace:wrong});
+}
+// A phone held in the hand: the inventory's list mode, by touch.
+async function inventoryTouch(){
+  const page=await setup({width:390,height:844},{touch:true});
+  const before=await savedState(page);
+  const kit=page.locator('.rt-panels [data-panel="kit"]').first();if(!await kit.isVisible())await page.locator('.rt-panels [data-role="panelsToggle"]').tap();await kit.tap();
+  await page.waitForSelector('#modal[open] .inventory');
+  assert.equal(await page.locator('.inventory-tabs [role="tab"]').count(),4,'On a phone the inventory shows one section at a time');
+  fits(await metrics(page,'#modal'),'phone inventory (touch)');
+  await page.locator('.inventory-tabs [data-id="pack"]').tap();
+  const piece=await page.evaluate(()=>[...document.querySelectorAll('.pack-grid .pack-item:not(.is-dimmed)')].find(b=>['hamata','squamata','galea_crest','manica','ocreae'].includes(b.dataset.item))?.dataset.uid);
+  assert.ok(piece);const id=before.soldier.pack.find(e=>e.uid===piece).id;
+  await page.locator(`.pack-item[data-uid="${piece}"]`).tap();await page.locator('[data-key="inv-details"] [data-kind="wear"]').tap();
+  await page.locator('[data-inventory-status]').filter({hasText:/You wear/}).waitFor();
+  const after=await savedState(page);assert.ok(Object.values(after.soldier.worn).includes(id),'Tapped and worn on a phone, the piece is saved');
+  record('phone (touch): the inventory’s list mode, a piece chosen by tap and worn',{item:id});
+  await page.context().close();
 }
 async function saveConfirmation(page,label){
   const original=await exported(page);
@@ -408,9 +493,11 @@ try{
   for(const viewport of [{width:390,height:844},{width:1280,height:900}].filter(v=>only!=='onboarding'&&(!only||v.width===(only==='phone-settings'?390:1280)))){
     const label=viewport.width<600?'phone':'desktop',page=await setup(viewport);
     await menuAndSettings(page,label);
-    if(only!=='phone-settings'){await helpAndSoldier(page,label);await saveConfirmation(page,label);await fieldControls(page,label);}
+    if(only!=='phone-settings'){await helpAndSoldier(page,label);if(label==='desktop')await inventoryKeyboardAndMouse(page,label);
+      await saveConfirmation(page,label);await fieldControls(page,label);}
     await page.context().close();
   }
+  if(!only||only==='desktop')await inventoryTouch();
   assert.deepEqual(report.errors,[],'No browser page or console errors');
   assert.equal(JSON.parse(await readFile(`${root}build-report.json`,'utf8')).revision,build.revision,'The tested build remains unchanged');report.passed=true;
   console.log(`PASS: ${report.checks.length} usability flows; evidence: ${output}report.json`);
