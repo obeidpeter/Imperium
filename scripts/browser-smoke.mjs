@@ -19,6 +19,7 @@
 //   npm run build && npm run smoke
 //   PLAYWRIGHT_MODULE=/path/to/playwright/index.js npm run smoke
 //   SMOKE_ONLY=chamberCouncil,legacyChronicle npm run smoke   # just those scenarios
+//   SMOKE_GROUP=a npm run smoke   # one half (a or b), as CI's two parallel smoke jobs run it
 import http from 'node:http';
 import assert from 'node:assert/strict';
 import {access} from 'node:fs/promises';
@@ -35,6 +36,9 @@ import {sceneryPlacements} from '../src/showcase/scenery-models.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url));
 if(!await access(`${root}index.html`).then(()=>true,()=>false)){console.error('No production build in dist/. Run npm run build first.');process.exit(2);}
+// SMOKE_GROUP=a or b runs one half of the scenarios (the halves are listed at the end of this file).
+const group=process.env.SMOKE_GROUP?.trim().toLowerCase()||null;
+if(group&&group!=='a'&&group!=='b'){console.error(`SMOKE_GROUP is a or b, not ${process.env.SMOKE_GROUP}.`);process.exit(2);}
 async function playwright(){
   for(const specifier of [process.env.PLAYWRIGHT_MODULE,'playwright'].filter(Boolean)){try{const module=await import(specifier);return module.chromium?module:module.default;}catch{}}
   console.error('Playwright is not installed. Install it separately (it is not a project dependency) or set PLAYWRIGHT_MODULE to its index.js path.');process.exit(2);
@@ -1030,8 +1034,16 @@ let failed=false;
 // SMOKE_ONLY=realtimeArena,phoneTouch runs just those scenarios (a development convenience).
 const only=process.env.SMOKE_ONLY?.split(',').map(name=>name.trim()).filter(Boolean);
 // Check departure races first, before the longer whole-campaign scenarios.
-for(const scenario of [campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,campExitDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,viewSwitch,realtimeDeployment,
-  chamberCouncil,chamberViewFallback,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle].filter(s=>!only?.length||only.includes(s.name))){
+const scenarios=[campStartupDeparture,campSaveDeparture,campRouteChoice,campGateDeparture,campExitDeparture,realtimeSquads,drillDesktop,expandedFieldReadouts,fieldApproach,phoneTouch,performanceCheck,realtimeArena,realtimeCampaign,realtimeFlat,viewSwitch,realtimeDeployment,
+  chamberCouncil,chamberViewFallback,chamberContests,chamberHearing,realtimeFinale,settingsAndHelp,realtimePractice,legacyChronicle];
+// CI's two smoke jobs: group a is the scenarios named here (about half the time in CI), group b every other one,
+// so a new scenario always runs in one of them.
+const groupA=['campStartupDeparture','campSaveDeparture','campRouteChoice','campGateDeparture','campExitDeparture','realtimeSquads','drillDesktop',
+  'expandedFieldReadouts','fieldApproach','phoneTouch','performanceCheck','realtimeArena'];
+const unknown=groupA.filter(name=>!scenarios.some(s=>s.name===name));
+if(unknown.length){console.error(`not ok - SMOKE_GROUP a names no such scenario: ${unknown.join(', ')}`);await browser.close();server.close();process.exit(2);}
+if(group)console.log(`# SMOKE_GROUP ${group}`);
+for(const scenario of scenarios.filter(s=>(!group||groupA.includes(s.name)===(group==='a'))&&(!only?.length||only.includes(s.name)))){
   // Each scenario's time is printed, so a slow one shows in CI's log.
   const started=Date.now();
   try{await scenario();}catch(error){failed=true;console.error(`not ok - ${scenario.name}: ${error.message}`);}

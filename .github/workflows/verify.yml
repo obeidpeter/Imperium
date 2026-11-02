@@ -2,14 +2,15 @@
 # expanded, command and production campaigns, production build, asset/offline
 # checks and character audits) on every pull request and on main: on Node 20,
 # the oldest version the project supports (package.json "engines"), and on
-# Node 22. There are no dependencies to install. Five more jobs drive the
-# production build in headless Chromium: paused-order checks first, then the
-# browser smoke test and real-time/cavalry controls, the twelve-chapter screenshot benchmark
+# Node 22. There are no dependencies to install. Seven more jobs drive the
+# production build in headless Chromium: the browser smoke test in two halves
+# that run side by side (SMOKE_GROUP a, after the paused-order checks, and b,
+# before the real-time and cavalry controls), the twelve-chapter screenshot benchmark
 # (scripts/benchmark-campaign.mjs), whose captures are uploaded as an artifact,
 # the usability and save-protection checks (scripts/usability-smoke.mjs), followed
 # by the Chapter V courtyard pilot acceptance (scripts/ch5-pilot-smoke.mjs)
 # and immersive layout/company-story checks (scripts/immersive-interface-smoke.mjs),
-# then real-time 3D siege and rain review, with Palmyra's generated walls on
+# the real-time 3D siege and rain review, with Palmyra's generated walls on
 # Balanced held to 50 shader programs (scripts/campaign-world-smoke.mjs),
 # the twelve camps' regional asset, service and cache checks
 # (scripts/regional-world-smoke.mjs), and the 3D stage benchmark
@@ -49,11 +50,17 @@ jobs:
       - run: npm run verify
 
   smoke:
-    name: browser smoke (Chromium)
+    name: browser smoke ${{ matrix.group }} (Chromium)
     runs-on: ubuntu-latest
-    # Usually about 12 minutes. A slow runner has taken 13 minutes to install
-    # Chromium and three times as long for each scenario (about 40 in all).
+    # The scenarios in two halves of about 18 minutes each in software
+    # rendering (scripts/browser-smoke.mjs names group a; b is every other).
+    # A slow runner has taken 13 minutes to install Chromium and three times
+    # as long for each scenario.
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [a, b]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -63,33 +70,37 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run build
       - name: Paused orders, cancellation and recorded debriefs
+        if: matrix.group == 'a'
         run: npm run smoke:orders
       - run: npm run smoke
+        env:
+          SMOKE_GROUP: ${{ matrix.group }}
       - name: Real-time controls and unobstructed layouts
+        if: matrix.group == 'b'
         run: node scripts/realtime-polish-smoke.mjs
       - name: Cavalry selection, command keys and remapping
+        if: matrix.group == 'b'
         run: npm run smoke:cavalry
       - uses: actions/upload-artifact@v7
-        if: always()
+        if: always() && matrix.group == 'a'
         with:
           name: order-review-smoke
           path: tests/visual-results/order-review/
           retention-days: 14
       - uses: actions/upload-artifact@v7
-        if: always()
+        if: always() && matrix.group == 'a'
         with:
           name: performance-check-report
           path: tests/visual-results/performance-check/
           retention-days: 14
       - uses: actions/upload-artifact@v7
-        if: always()
+        if: always() && matrix.group == 'b'
         with:
           name: realtime-polish-smoke
           path: tests/visual-results/realtime-polish/
           retention-days: 14
-
       - uses: actions/upload-artifact@v7
-        if: always()
+        if: always() && matrix.group == 'b'
         with:
           name: cavalry-controls-smoke
           path: tests/visual-results/cavalry-controls/
@@ -98,10 +109,9 @@ jobs:
   usability:
     name: usability and navigation (Chromium)
     runs-on: ubuntu-latest
-    # Usability, the Chapter V pilot and world-first/company-story checks, plus
-    # the real-time 3D siege/rain review and Palmyra on Balanced (10–18 minutes
-    # in software rendering).
-    # Leave room for browser installation and slow runners.
+    # Usability, errands, the Chapter V pilot and world-first/company-story
+    # checks (about 23 minutes in software rendering). Leave room for browser
+    # installation and slow runners.
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
@@ -125,8 +135,6 @@ jobs:
         run: npm run smoke:ch5-pilot -- --river-gate
       - name: World-first layouts, camera controls and company stories
         run: npm run smoke:immersive
-      - name: Real-time 3D siege, bridges, rainy crossing and Palmyra's generated walls
-        run: npm run smoke:siege
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -145,6 +153,24 @@ jobs:
           name: immersive-interface-smoke
           path: tests/visual-results/immersive-interface/
           retention-days: 14
+
+  siege:
+    name: 3D siege and rain (Chromium)
+    runs-on: ubuntu-latest
+    # The real-time 3D siege/rain review and Palmyra on Balanced (about 17
+    # minutes in software rendering); a job of its own so the usability job
+    # keeps its margin.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Real-time 3D siege, bridges, rainy crossing and Palmyra's generated walls
+        run: npm run smoke:siege
       - uses: actions/upload-artifact@v7
         if: always()
         with:
