@@ -32,16 +32,17 @@ export function practiceBanner(state,{chamber=false}={}){
     `${archiveMutators(state,{field:!chamber})}<button class="ghost small" data-cmd="exit-archive">Return to chronicle →</button></div>`;
 }
 
-export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict,keymap}){
-  const e=state.encounter,chapter=chapterOf(state);
-  return `<main id="main" class="encounter-frame realtime-frame world-first" data-outcome="${esc(e.status)}" data-key="rt-main:${esc(e.id)}">
+// While the page walks a won field (release 14, core/realtime/aftermath.js), the strip below stands in for the result.
+export function realtimeEncounterView({state,saving,lastSaved,saveProblem,saveConflict,keymap,walking=false}){
+  const e=state.encounter,chapter=chapterOf(state),walk=walking&&e.status==='won';
+  return `<main id="main" class="encounter-frame realtime-frame world-first" data-outcome="${walk?'walking':esc(e.status)}" data-key="rt-main:${esc(e.id)}">
     <h1 class="visually-hidden">${esc(e.title)} · Chapter ${roman(state.chapter)}${chapter?`, ${esc(chapter.title)}`:''}</h1>
-    <div class="rt-chronicle-bar"><span class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')} · Real time</span>
+    <div class="rt-chronicle-bar"><span class="eyebrow">Chapter ${roman(state.chapter)} · ${esc(chapter?.year??'')} · ${walk?'After the battle':'Real time'}</span>
       <span class="save-status" role="status">${state.archiveReplay?'Not saved':saving?'Saving…':lastSaved?'Saved':''}</span></div>
     ${saveProblem?`<div class="command-save-warning" role="alert"><p>${esc(saveProblem)}</p><div><button data-cmd="export">Export a save code</button>`+
       `${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div></div>`:''}
     ${practiceBanner(state)}
-    ${e.status==='active'?'':realtimeResult(state,{keymap})}
+    ${walk?aftermathStrip(state):e.status==='active'?'':realtimeResult(state,{keymap})}
     <div id="rt-host" class="rt-host" data-key="rt-host:${esc(e.id)}"></div>
   </main>`;
 }
@@ -187,6 +188,17 @@ export function fieldMarkup({state,keymap,kind='field'}){
 </section>`;
 }
 
+// The field after a victory (release 14): what to do there, and the result or Continue without walking on. The road
+// to camp records the result as Continue does; in Practice the road back returns to the chronicle.
+export function aftermathStrip(state){
+  const practice=!!state.archiveReplay;
+  return `<section class="rt-aftermath" aria-labelledby="rt-aftermath-title"><h2 id="rt-aftermath-title" class="visually-hidden">After the battle</h2>`+
+    `<p role="status">${practice?'Practice: look over the field, then take the road back to your chronicle. Nothing here is taken or recorded.'
+      :'The field is yours. Search the fallen and the chests, then take the road to camp: taking it records the result.'}</p>`+
+    `<div class="panel-actions"><button data-cmd="walk-field-end">Result</button>${practice?'<button data-cmd="exit-archive">Return to chronicle →</button>'
+      :'<button data-cmd="commit">Continue →</button>'}</div></section>`;
+}
+
 // The After-Action Chronicle of a resolved fight: what the soldier and his
 // party did, what the result will grant when recorded, and, after a defeat,
 // what went wrong and what might help (§3.11).
@@ -230,13 +242,15 @@ export function realtimeResult(state,{keymap}={}){
   const search=bodies.length||boxes.length?`<section class="rt-search" aria-labelledby="rt-search-title"><h3 id="rt-search-title">Search the field</h3><ul class="rt-loot">${bodies.map(b=>
     `<li><span><strong>${esc(b.name)}</strong>: ${esc(b.loot.map(id=>ITEMS[id]?.name??id).join(', '))}</span>`+
     `<button data-cmd="rt-spoils" data-id="${esc(b.id)}" data-item="*">Take all</button></li>`).join('')}${boxes.map(boxRow).join('')}</ul></section>`:'';
+  // A won battle's field can be walked (release 14), the drill yard's aside: first, when something on it is still worth taking.
+  const walkable=won&&e.kind==='battle'&&world.kind==='field'&&world.mission?.mode!=='training',walk=walkable?`<button${search&&!practice?' class="primary"':''} data-cmd="walk-field">Walk the field</button>`:'';
   return `<section class="result command-result rt-result ${won?'result-won':'result-lost'}" role="status" aria-labelledby="rt-result-title">
     <span class="eyebrow">${practice?'PRACTICE · ':''}BATTLE RESULT</span>
     <h2 id="rt-result-title" tabindex="-1">${won?'Objective complete':'Try this battle again'}</h2>
     ${won?`<p class="rt-victory-reason">${esc(victoryReason(world))}</p>`:''}
     ${rewards?`<p class="rt-reward-summary">Earned: <strong>${rewards.tp} training points</strong>${rewards.denarii?` · ${rewards.denarii} denarii`:''}${rewards.decorations.length?` · ${rewards.decorations.length} decorations`:''}. Collected equipment is kept when you continue.</p>`:''}
-    <div class="panel-actions rt-result-actions">${practice?`<button class="primary" data-cmd="retry">${won?'Practise again':'Retry battle'}</button><button data-cmd="exit-archive">Return to chronicle →</button>`
-      :won?'<button class="primary" data-cmd="commit">Continue →</button>':'<button class="primary" data-cmd="retry">Retry battle</button>'}</div>
+    <div class="panel-actions rt-result-actions">${practice?`<button class="primary" data-cmd="retry">${won?'Practise again':'Retry battle'}</button>${walk}<button data-cmd="exit-archive">Return to chronicle →</button>`
+      :won?`${walk}<button${search?'':' class="primary"'} data-cmd="commit">Continue →</button>`:'<button class="primary" data-cmd="retry">Retry battle</button>'}</div>
     ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p><details class="rt-retry-help"><summary>Advice for retrying</summary><p class="rt-defeat-help">${esc(debrief.advice)}</p><button type="button" data-close-disclosure>Close advice</button></details>`}
     ${debriefMarkup(debrief)}
     ${search?`<details class="rt-result-loot"><summary>Collect spoils · ${bodies.length} ${bodies.length===1?'body':'bodies'}</summary>${search}</details>`:''}
@@ -247,6 +261,6 @@ export function realtimeResult(state,{keymap}={}){
     </details>
     ${won?'':defeatPage(e)}
     <details class="rt-result-log"><summary>The last moments</summary><ol>${lines}</ol><button type="button" data-close-disclosure>Close log</button></details>
-    <p class="result-save-note">${practice?'Practice is not recorded: your chronicle is as you left it.':won?'Continue saves this result and its rewards.':'Retry restarts this battle. Your earlier progress is kept.'}</p>
+    <p class="result-save-note">${practice?'Practice is not recorded: your chronicle is as you left it.':won?`Continue saves this result and its rewards${walkable?', as taking the road to camp does':''}.`:'Retry restarts this battle. Your earlier progress is kept.'}</p>
   </section>`;
 }

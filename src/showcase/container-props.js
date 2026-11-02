@@ -23,7 +23,9 @@ const SHAPES=Object.freeze({
   locker:{size:[.62,1,.45],body:'wood',band:'dark',lid:'dark',door:true,bands:[]},
   satchel:{size:[.38,.24,.14],body:'dark',band:'bronze',lid:'dark',bands:[]},
   basket:{round:true,size:[.3,.42,.3],body:'rope',lid:'rope'},
-  sack:{bag:true},cache:{bundle:true},baggage:{pile:true}});
+  sack:{bag:true},cache:{bundle:true},baggage:{pile:true},
+  // Not a container: the road out of a won field (release 14), drawn with them in the same materials.
+  waypost:{post:true}});
 
 export const containerShape=kind=>SHAPES[kind]??SHAPES.chest;
 
@@ -32,6 +34,12 @@ export function buildContainer(parts,parent,c){
   const {m,mesh,plank,beam,group,cylinder,sphere,sack}=parts,shape=containerShape(c.box),g=group(parent,c.x,c.y,c.z);
   g.name=`container ${c.id}`;g.rotation.y=Math.atan2(c.face?.[0]??0,c.face?.[1]??1);
   const full=c.open&&!c.empty;
+  if(shape.post){
+    // A post, its board pointing on (+z) and a red pennant behind, as the camps' wayposts (environment-waypost.js).
+    plank(g,0,.9,0,.16,1.8,.16,m.dark);plank(g,0,1.46,.36,.06,.26,.62,m.wood);plank(g,0,1.46,.73,.06,.16,.14,m.wood);
+    plank(g,0,1.6,-.19,.03,.32,.28,m.cloth);
+    return g;
+  }
   if(shape.bag){
     mesh(g,sack,m.cloth,0,0,0,c.open?1.05:1,c.open?.86:1,c.open?1.05:1);
     if(!c.open)mesh(g,cylinder,m.rope,0,.5,0,.075,.045,.075);

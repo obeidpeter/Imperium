@@ -77,7 +77,8 @@ export function realtimeLesson({state,world,kind='field',seen={},keymap=DEFAULT_
     if(e.turn===2)return {step:'2 / 2',title:'The rivals answer each hour',body:`Hold ${k('show_usable')} to see rival plans. ${k('yield_floor')} ends the hour. Only the final vote counts.`};
     return null;
   }
-  if(kind!=='field'||world.status!=='active')return null;
+  // The field after a victory (release 14) has its own strip: the fight's lessons are over.
+  if(kind!=='field'||world.status!=='active'||world.aftermath===true)return null;
   // Rescue instruction follows the same live facts as the objective strip.
   // It remains useful after treatment: healing is not the extraction objective.
   if(world.mission?.mode==='extract'||world.mission?.rescue){

@@ -6,6 +6,7 @@
 // again. What is searched or taken goes through the chronicle (game.js takeSpoils, openFieldContainer,
 // takeFromContainer) and syncAftermath copies it back into the walking world; taking the road records the result
 // (game.js commitEncounter). Pure: no randomness is drawn.
+import {CHAPTERS} from '../../data/campaign.js';
 import {restoreWorld} from './simulation.js';
 import {tileCentre} from './campaign-encounter.js';
 
@@ -19,8 +20,10 @@ export function aftermathExitFor(state){
   if(!won(state))return null;
   const e=state.encounter,world=e.realtime.world,start=e.units.find(u=>u.id==='hero');if(!start||!world.layout)return null;
   const at=tileCentre(start,world.layout),practice=!!state.archiveReplay;
+  // After a chapter's last encounter the road leads on to its promotion (game.js commitEncounter).
+  const last=state.encounterIndex+1>=(CHAPTERS.find(c=>c.id===state.chapter)?.encounters.length??0);
   return {id:AFTERMATH_EXIT,kind:'exit',name:practice?'The road back':'The road to camp',verb:'Take',
-    hint:practice?'Back to your chronicle. Nothing here is recorded.':'Back to camp: taking it records the result.',
+    hint:practice?'Back to your chronicle. Nothing here is recorded.':`Back to camp${last?' and the chapter’s end':''}: taking it records the result.`,
     x:+at.x.toFixed(2),z:+at.z.toFixed(2),exit:{to:practice?'archive':'camp'}};
 }
 

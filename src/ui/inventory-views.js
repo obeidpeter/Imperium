@@ -252,9 +252,18 @@ function containerPane(state,id,{selected}){
 }
 
 // In a fight: a fallen man's belongings or a field's cache, taken with world commands (the page's rt-take and
-// rt-take-from); what is taken waits in "Taken in this fight" until the result is recorded.
+// rt-take-from); what is taken waits in "Taken in this fight" until the result is recorded. On the field after a
+// victory (release 14) the page takes through the chronicle instead, and a chest still locked shows its two ways
+// in: its key, once taken from the field, or force (`lock`: {key, hasKey, force, strong}).
+function lockedPane(title,id,lock){
+  const need=Object.entries(lock.force??{}),needs=need.map(([k,v])=>`${ATTRIBUTE_NAMES[k]??k} ${v}`).join(', '),missing='Its key is not among what you have taken here.';
+  return `<h3 id="inv-other-title" class="inv-heading">${esc(title)}</h3><p><strong>Locked.</strong> ${lock.hasKey?`You have taken the ${esc((ITEMS[lock.key]?.name??'key').toLowerCase())}.`:esc(missing)}</p>`+
+    `<div class="panel-actions"><button${lock.hasKey?' class="primary"':` disabled title="${esc(missing)}"`} data-cmd="rt-open-box" data-id="${esc(id)}" data-method="key" data-key="rt-open:key">Use the key</button>`+
+    `${need.length?`<button data-cmd="rt-open-box" data-id="${esc(id)}" data-method="force" data-key="rt-open:force"${lock.strong?'':` disabled title="Forcing it needs ${esc(needs)}."`}>Force the lock (${esc(needs)})</button>`:''}</div>`;
+}
 function lootPane(other){
-  const {title,id,left,pending,cmd,empty}=other,waiting=[...pending];
+  const {title,id,left,pending,cmd,empty,lock=null}=other,waiting=[...pending];
+  if(lock)return lockedPane(title,id,lock);
   const rows=left.map((item,i)=>{const at=waiting.indexOf(item),taken=at>=0,def=ITEMS[item];if(taken)waiting.splice(at,1);
     return `<li><span class="goods-item${taken?' is-taken':''}"${taken?'':pieceData('loot',{source:id,take:cmd,item,w:def?.shape.w??1,h:def?.shape.h??1})}>`+
       `${itemPicture(item)}<span><strong>${esc(def?.name??item)}</strong>${def?.grade?` <small class="item-grade">${gradeName(def)}</small>`:''}</span></span>`+

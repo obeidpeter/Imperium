@@ -55,6 +55,9 @@ test('the living enemy have gone, the fallen keep what they carried, and the roa
     assert.ok(Math.hypot(exit.x-start.x,exit.z-start.z)<.01,'at the soldier’s start');
     assert.deepEqual(Game.aftermathExitFor(s).x,exit.x);
   }
+  // After a chapter's last battle the road says it leads on to the chapter's end.
+  assert.match(Game.aftermathExitFor(road).hint,/the chapter’s end/,'Chapter I’s road is its last battle');
+  assert.doesNotMatch(Game.aftermathExitFor(station).hint,/the chapter’s end/);
   // In Practice the road leads back to the chronicle.
   const practice=copy(road);practice.archiveReplay=true;
   const exit=Game.createAftermathWorld(practice).objects.find(o=>o.id==='exit');
