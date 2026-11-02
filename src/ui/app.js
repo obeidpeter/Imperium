@@ -383,7 +383,7 @@ function mountField(target){
     // A panel may open while the runtime module is still loading. Inherit its
     // pause before attaching a renderer, and leave keyboard focus in the panel.
     if(modal.open&&modal.dataset.stagePause!=='false')field.runtime.pauseFor('panel');
-    mountFieldStage();if(camp)refreshCampMarks();if(!modal.open&&(camp||state.encounter?.status==='active'))element.querySelector('canvas')?.focus({preventScroll:true});
+    mountFieldStage();if(camp)refreshCampMarks();if(!modal.open&&(camp||state.encounter?.status==='active'||walkingNow()))element.querySelector('canvas')?.focus({preventScroll:true});
     // A chamber built again for another view (the 3D view failing) keeps the conversation that was open: Escape still
     // closes it, rather than opening the Menu, and the failure's notice is the last thing said.
     if(kept?.talking)field.runtime.chamber?.talk(kept.talking,{quiet:true});
@@ -889,12 +889,14 @@ function exitArchive(){
   toast('Returned from the Archive to your active chronicle.');
 }
 // ——— The field after a victory (release 14, core/realtime/aftermath.js) ———
-// Walk the field: the same field plays the won fight's world again, peaceful, until the road is taken.
+// Walk the field: the same field plays the won fight's world again, peaceful, until the road is taken. A field still
+// opening (its code loading) starts on the walked field instead, since mountField builds it from `walking`: a click
+// made as soon as the result shows is not lost.
 function walkField(){
-  if(!field?.runtime||field.kind!=='field'){toast('The field is still opening. Try again in a moment.');return;}
+  if(field&&field.kind!=='field'){toast('There is no field to walk here.');return;}
   const world=Game.createAftermathWorld(state);if(!world){toast('There is no won field to walk.');return;}
-  walking={id:state.encounter.id,warned:false};field.runtime.load(world,fightBase());render();
-  field.element.querySelector('canvas')?.focus({preventScroll:true});
+  walking={id:state.encounter.id,warned:false};if(field?.runtime)field.runtime.load(world,fightBase());render();
+  field?.element.querySelector('canvas')?.focus({preventScroll:true});
   announce(state.archiveReplay?'Practice: look over the field, then take the road back.':'The field is yours. Search the fallen and the chests, then take the road to camp.');
 }
 // Back to the result: the field shows the fight as it ended.
