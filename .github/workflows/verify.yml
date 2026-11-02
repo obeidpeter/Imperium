@@ -12,8 +12,8 @@
 # and immersive layout/company-story checks (scripts/immersive-interface-smoke.mjs),
 # the real-time 3D siege and rain review, with Palmyra's generated walls on
 # Balanced held to 50 shader programs (scripts/campaign-world-smoke.mjs),
-# the twelve camps' regional asset, service and cache checks
-# (scripts/regional-world-smoke.mjs), and the 3D stage benchmark
+# the twelve camps' regional asset, service and cache checks in two parallel
+# halves (scripts/regional-world-smoke.mjs --half a|b), and the 3D stage benchmark
 # (scripts/benchmark-stage.mjs), which fails on a shader compiled in the first
 # frame or in play, on more than 50 shader programs, or on draw calls, triangles
 # or shader programs above the ceilings recorded in scripts/stage-ceilings.json,
@@ -179,13 +179,21 @@ jobs:
           retention-days: 14
 
   world:
-    name: twelve camps (Chromium)
+    name: twelve camps ${{ matrix.half }} (Chromium)
     runs-on: ubuntu-latest
-    # Every regional camp, services and residency, with cameras now required to
-    # settle and render fresh frames. Windows software rendering takes about
-    # four minutes per camp; leave room for the extra service/fallback checks
-    # and browser installation. Individual action and resource limits stay fixed.
-    timeout-minutes: 75
+    # Every regional camp, services and residency, with cameras required to
+    # settle and render fresh frames, in two halves run in parallel: a is
+    # Chapters I-VII with Chapter I's services, the return and the failed
+    # downloads; b is VII-XII with VIII's and XII's services, Performance and
+    # the return to VII. Together they are the full acceptance. Software
+    # rendering takes two to four minutes per camp, about half an hour a half;
+    # leave room for a slow runner and browser installation. Individual action
+    # and resource limits stay fixed.
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        half: [a, b]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -194,12 +202,12 @@ jobs:
       - run: npm install --no-save --no-package-lock playwright@1.56.1
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - name: Twelve regional hubs, direct services and resource retirement
-        run: npm run smoke:world
+      - name: Twelve regional hubs, direct services and resource retirement (half ${{ matrix.half }})
+        run: npm run smoke:world -- --half ${{ matrix.half }}
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: regional-world-smoke
+          name: regional-world-smoke-${{ matrix.half }}
           path: tests/visual-results/regional-world/
           retention-days: 14
 
