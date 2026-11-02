@@ -183,9 +183,9 @@ jobs:
     runs-on: ubuntu-latest
     # Every regional camp, services and residency, with cameras required to
     # settle and render fresh frames, in two halves run in parallel: a is
-    # Chapters I-VIII with Chapter I's and VIII's services, the return and the
-    # failed downloads; b is VIII-XII with XII's services, Performance and the
-    # return to VIII. Together they are the full acceptance. Software
+    # Chapters I-VII with Chapter I's services, the return and the failed
+    # downloads; b is VII-XII with VIII's and XII's services, Performance and
+    # the return to VII. Together they are the full acceptance. Software
     # rendering takes two to four minutes per camp, about half an hour a half;
     # leave room for a slow runner and browser installation. Individual action
     # and resource limits stay fixed.

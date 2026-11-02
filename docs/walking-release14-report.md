@@ -400,7 +400,8 @@ The owner approved five more polish items. The first, bringing the README and th
 ### The twelve camps' halves rebalanced
 
 - **Before:** in the second round's CI, half b (Chapters VII–XII) took 27.5 minutes and half a (I–VII) 17. Half b's later camps are the slower, at about 2.6 minutes each against 1.6, and it also ran Chapter VIII's and Chapter XII's service and narrow-layout checks, about 4 minutes each.
-- **Now:** half a is Chapters I–VIII and half b VIII–XII, with Chapter VIII in both. Chapter VIII's service and narrow-layout checks run once, in half a; Chapter XII's, Performance and the return stay in half b, and the failed downloads stay in half a with Chapter I. The estimate is about 24 and 22 minutes; this pull request's CI run records the actual times.
+- **Now:** half a is Chapters I–VIII and half b VIII–XII, with Chapter VIII in both. Chapter VIII's service and narrow-layout checks run once, in half a; Chapter XII's, Performance and the return stay in half b, and the failed downloads stay in half a with Chapter I. The estimate was about 24 and 22 minutes.
+- **Measured:** half a took 35 minutes and half b 23.7 on this pull request's CI run, and 32.75 and 20 on main's run after the merge. The estimate was wrong, and the split went back (below).
 
 ### The browser checks (third round)
 
@@ -412,3 +413,35 @@ Run locally, one at a time, on the production build of this branch, in headless 
 - The probes: before on main's build, after on this branch, as given above. The window blur is injected.
 - The twelve camps' halves, and the rest of the browser checks, ran only in CI.
 - Not checked: no device, and no screen reader.
+
+## The twelve camps' split put back
+
+The third round's split at Chapter VIII made the twelve camps' slower half slower, so the halves are split at Chapter VII again, as #57 first set them.
+
+- **The measured times,** in minutes, for the camps' step of each half:
+
+  | Run | Split at | Half a | Half b |
+  | --- | --- | ---: | ---: |
+  | #57's pull request | VII | 28 | 27 |
+  | #59's pull request | VII | 17 | 27.5 |
+  | Main after #59 | VII | 22 | 27.3 |
+  | #60's pull request | VIII | 35 | 23.7 |
+  | Main after #60 | VIII | 32.75 | 20 |
+
+- **Why the split at VIII was slower:** the third round assumed half b's later camps were slower, from #59's run, in which half a's camps took about 1.6 minutes each and half b's about 2.6. In main's run after #60, the two halves' camps took about the same time each: 2.2 to 2.9 minutes in half a and 2.5 to 2.6 in half b. The difference had come from a fast runner for half a, not from the camps.
+- **The steps in main's run after #60:**
+
+  | Step | Minutes |
+  | --- | ---: |
+  | Earning the checkpoints and the first camp | 1.5 |
+  | Each further camp | 2.2–2.9 |
+  | Direct services and narrow layout: Chapter I | 3.2 |
+  | Direct services and narrow layout: Chapter VIII | 4.1 |
+  | Direct services and narrow layout: Chapter XII | 4.0 |
+  | The return | 1.9–2.5 |
+  | The failed downloads (half a) | 3.5 |
+  | Performance (half b) | 1.2 |
+
+  Moving Chapter VIII added a camp and its services, about 6.5 minutes, to half a.
+- **Estimate for the split at VII:** from the same step times, about 26 and 27 minutes. Runners still vary from run to run: half a has taken 17 to 28 minutes with the same split. This pull request's CI run records the actual times.
+- **Now:** half a is Chapters I–VII with Chapter I's services, the return and the failed downloads. Half b is VII–XII with VIII's and XII's services, Performance and the return to VII. The script names each half's service chapters (`HALVES` in `scripts/regional-world-smoke.mjs`), and every check runs as before.
