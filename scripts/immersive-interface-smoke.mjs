@@ -151,15 +151,23 @@ async function verifyActivity(page,chapter){
   if(!await page.evaluate(()=>window.__realtime.paused()))await page.locator('[data-role="pauseButton"]').click();
   return {chapter,clues,incorrectRefused:true,completed:true,reloaded:true,positionPreserved:true};
 }
+// A page that stops answering fails here, with its name and the diagnostics below, instead of holding the job until
+// CI stops it (release 13: one page held a CI job for half an hour). A page takes well under a minute.
+const PAGE_LIMIT_MS=5*60*1000;
+async function within(label,run){
+  let timer;
+  try{return await Promise.race([run(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(`${label}: no answer within ${PAGE_LIMIT_MS/60000} minutes`)),PAGE_LIMIT_MS);})]);}
+  finally{clearTimeout(timer);}
+}
 try{
   // Release 12's sizes: a 1,280 × 720 desktop, a 390-pixel phone (also at 200% text) and a small 360 × 640 phone.
   for(const [label,viewport,scale]of [['desktop',{width:1280,height:720},1],['phone',{width:390,height:844},1],['large-text',{width:390,height:844},2],['small-phone',{width:360,height:640},1]]){
-    for(const id of ['ch5-mine','ch8-parley','ch12-legitimacy']){
+    for(const id of ['ch5-mine','ch8-parley','ch12-legitimacy'])await within(`${id}-camp-${label}`,async()=>{
       const page=await prepare(viewport,id,{scale});await measure(page,`${id}-camp-${label}`,{camp:true,desktop:label==='desktop',scale});await page.context().close();
-    }
-    for(const id of ['ch5-mine','ch7-council']){
+    });
+    for(const id of ['ch5-mine','ch7-council'])await within(`${id}-${label}`,async()=>{
       const page=await prepare(viewport,id,{scale,encounter:true});await measure(page,`${id}-${label}`,{desktop:label==='desktop',scale});await page.context().close();
-    }
+    });
   }
   assert.deepEqual(report.errors,[]);report.passed=true;
   console.log(`PASS: ${report.checks.length} immersive interface checks.`);

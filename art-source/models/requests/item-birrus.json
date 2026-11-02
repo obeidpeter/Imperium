@@ -1,0 +1,61 @@
+{
+  "id": "item-birrus",
+  "status": "generated: awaiting review",
+  "item": "birrus",
+  "group": "Cloaks",
+  "use": "The inventory picture of `birrus` (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single Roman hooded wool cloak (birrus) of the third century AD: a heavy brown felted wool cloak that falls to the knees, with an attached pointed hood lying back on the shoulders, closed at the front by two small toggles. Soft heavy folds. Shown upright as if worn by an invisible body, front three-quarter view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "43bff0d1-06bc-4527-a5dc-7b9b88f66533",
+    "requestedAt": "2026-11-01T23:32:20.072Z",
+    "balanceBefore": 11360,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single Roman hooded wool cloak (birrus) of the third century AD: a heavy brown felted wool cloak that falls to the knees, with an attached pointed hood lying back on the shoulders, closed at the front by two small toggles. Soft heavy folds. Shown upright as if worn by an invisible body, front three-quarter view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-01T23:34:24.313Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-birrus.glb",
+    "rawBytes": 44810224,
+    "rawSha256": "8020c34a7c42a59f9ab25c1293f2ab9cf3c1e5b2586680bcb4c3fffe3c8890d0",
+    "tripoInput": {
+      "prompt": "A single Roman hooded wool cloak (birrus) of the third century AD: a heavy brown felted wool cloak that falls to the knees, with an attached pointed hood lying back on the shoulders, closed at the front by two small toggles. Soft heavy folds. Shown upright as if worn by an invisible body, front three-quarter view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-birrus-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 180,
+    "cells": "2x2",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
+  }
+}

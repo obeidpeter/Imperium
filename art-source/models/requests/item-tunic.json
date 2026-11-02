@@ -1,0 +1,61 @@
+{
+  "id": "item-tunic",
+  "status": "generated: awaiting review",
+  "item": "tunic",
+  "group": "Clothing",
+  "use": "The inventory picture of `tunic` (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single Roman soldier's long-sleeved woollen tunic of the third century AD: undyed off-white wool falling to the knee, with two narrow dark purple vertical stripes (clavi) running from the shoulders down the front, and small dark woven roundels on the shoulders and near the hem. Softly creased cloth. Shown upright as if worn by an invisible body, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "5bfca66e-7e5d-435f-934f-0f989eddf6f3",
+    "requestedAt": "2026-11-01T23:30:18.863Z",
+    "balanceBefore": 11380,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A single Roman soldier's long-sleeved woollen tunic of the third century AD: undyed off-white wool falling to the knee, with two narrow dark purple vertical stripes (clavi) running from the shoulders down the front, and small dark woven roundels on the shoulders and near the hem. Softly creased cloth. Shown upright as if worn by an invisible body, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-01T23:32:17.224Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-tunic.glb",
+    "rawBytes": 45383288,
+    "rawSha256": "30a976d8d37a2c4f89b074c9b91f888e193f7862d89e305123d55db7daeedff4",
+    "tripoInput": {
+      "prompt": "A single Roman soldier's long-sleeved woollen tunic of the third century AD: undyed off-white wool falling to the knee, with two narrow dark purple vertical stripes (clavi) running from the shoulders down the front, and small dark woven roundels on the shoulders and near the hem. Softly creased cloth. Shown upright as if worn by an invisible body, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-tunic-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 180,
+    "cells": "2x2",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
+  }
+}

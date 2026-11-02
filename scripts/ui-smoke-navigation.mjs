@@ -21,9 +21,16 @@ export async function menuCommand(page,command){
 
 // dialog.close() dispatches its close event asynchronously. Observe that event
 // before reading the resulting focus or pause state; never race its handler.
+// The listener is in place before `act` runs, and the wait ends with the page's
+// own time limit: a dialog that never closes fails the check instead of holding
+// it until CI stops the job (release 13: one held a job for half an hour).
+export async function closedBy(page,act){
+  await page.locator('#modal').evaluate(modal=>{window.__modalClosed=false;modal.addEventListener('close',()=>{window.__modalClosed=true;},{once:true});});
+  await act();
+  await page.waitForFunction(()=>window.__modalClosed===true);
+}
 export async function closePanel(page){
-  const closed=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
-  await page.locator('#modal .modal-close').click();await closed;
+  await closedBy(page,()=>page.locator('#modal .modal-close').click());
 }
 
 export async function settingsPage(page,id){

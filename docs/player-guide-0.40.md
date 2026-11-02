@@ -455,7 +455,8 @@ up, or keep the labels on in **Settings → Controls → Mouse & touch**.
   carried beside your pack (see **Your soldier**).
 
 - Click a **chest**, locker, strongbox or cache to open it, with your
-  weapon sheathed. Its contents show beside your pack, with **Take all**.
+  weapon sheathed. Its contents show in the inventory beside your pack,
+  with **Take all**.
   A locked one opens with its key, which lies elsewhere in the same camp
   or on the same field, or a strong enough soldier forces it: the lock
   says what it needs. On the field, forcing a lock takes five seconds and
@@ -908,17 +909,44 @@ and Rhetor Theon in those of VII, X and XI.
 
 ## Kit
 
-The kit panel (**I**) shows your equipped soldier, worn layers and pack.
-Drag the model or use its arrow buttons to turn it. It wears the
-generated body closest to his kit, as he looks in the field: your
-shield, weapons and cloak are drawn as worn, and your helmet or cap sits
-on the recruit's bare head, but an armoured body brings its own helmet
-and armour, whichever you wear. Select a packed
-piece to compare protection, Restriction and derived combat totals
-against the piece it would replace, then choose **Wear** in camp.
-The comparison spends nothing. **Give** and **Leave on the ground**
-are available beside the selected item. If 3D is unavailable the list
-and all equipment commands still work.
+The **inventory** (**I**) fills the screen over the world. Your soldier
+stands in the middle with the fifteen places he wears kit beside him,
+two to a row; your **pack** is the grid beside them, each piece lying in
+its own shape; what you left here lies **on the ground** below it; and
+his character sheet stands beside them, with his attributes, training
+points, combat numbers and honours. Drag the figure or use its arrow
+buttons to turn it. It wears the generated body closest to his kit, as
+he looks in the field: your shield, weapons and cloak are drawn as worn,
+and your helmet or cap sits on the recruit's bare head, but an armoured
+body brings its own helmet and armour, whichever you wear.
+
+- **Drag a piece** to use it: onto your soldier, or onto the place it is
+  worn, to wear it (the places it fits light up, the others dim); within
+  the pack to move it (where it would lie shows green, or red where it
+  does not fit); out of a worn place into the pack; onto the ground to
+  leave it there. A piece lands where its picture is. A drop that cannot
+  be done says why, for example **The Galea is worn as a helmet**, and
+  changes nothing.
+
+- **Choose a piece** (click it, or **Enter**) to see what it is and what
+  it would change against the piece it would replace: protection,
+  Restriction and combat totals. Its buttons are below: **Wear**, **Move
+  in pack**, and **Give** to a companion or **Leave on the ground**. The
+  right button, or a finger held still, shows a piece too. Comparing
+  spends nothing.
+
+- **By keyboard**, the arrow keys move between the pack's pieces. **Move
+  in pack** lifts the chosen piece: the arrow keys move it a place at a
+  time, each place is read out, **Enter** puts it down and **Escape**
+  puts it back.
+
+- **On a phone**, or at **200%** text, the inventory shows one section
+  at a time behind tabs (Worn, Pack, Ground, and your soldier or what you
+  are trading or taking) as lists: choose a piece and use its buttons.
+
+- Kit changes in camp. In a fight you can look at it, and search the
+  fallen and caches. If 3D is unavailable, the places, the pack and all
+  their commands still work.
 
 Armour is worn in **layers**, and each layer adds its protection: a
 tunic, then padding, then mail or scale; trousers under greaves; an
@@ -963,15 +991,17 @@ arming cap under the helmet; a cloak over everything.
   turns a share of their blows, and his shield turns more from the front.
   The character panel (**C**) shows both shares under **Against squads**.
 
-- The **pack** is a grid in which each item takes its own shape.
-  **Sort** arranges it, and dropping a new piece on a worn one swaps
-  them, sending the old piece to the pack, or to the **ground** strip
-  below it if the pack is full. Items left on the ground stay where you
+- The **pack** is a 10 × 6 grid in which each item takes its own shape.
+  **Sort** arranges it, largest first. Wearing a piece over a worn one
+  swaps them, sending the old piece to the pack, or to the **ground**
+  strip below it if the pack is full. Items left on the ground stay where you
   left them in that area.
 
-- The **loot window** shows a fallen enemy's or a chest's contents
-  beside your pack; **Take all** moves everything that fits. After a
-  victory, **Search the field** lists the fallen and the field's
+- **Chests, the fallen and traders** open the same screen with their
+  contents or goods beside your pack. Drag a piece into the pack to put
+  it where you want it, or use **Take**, **Take all** or **Buy**; drag a
+  piece of yours onto a trader to sell it, or choose it and **Sell**.
+  After a victory, **Search the field** lists the fallen and the field's
   containers that still hold something. What you take from a battlefield
   is kept when you continue, and **Retry** puts it back. Practice can look
   but not take.

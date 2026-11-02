@@ -24,7 +24,6 @@ import {tpAuditTotal} from '../core/tp-audit.js';
 import {chamberEncounterView,documentPreview} from './chamber-view.js';
 import * as Chamber from '../core/chamber.js';
 import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
-import {ITEMS} from '../data/items.js';
 import {createSoldier} from '../core/soldier.js';
 import {campFor,CAMP_PLACES,campPlaceName,campPlaceHint} from '../data/camps.js';
 import {campRuntimeKey} from './camp-runtime.js';
@@ -33,8 +32,10 @@ import {practicePanel} from './command-edition-views.js';
 import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
 import {warCouncilAdvisories} from './campaign-upgrade-views.js';
 import {actionFor} from './action-map.js';
-import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,quartermasterPanel,smithPanel,campContainerPanel,trainerPanel,trainerName,
-  adoptPanel,missionOrdersPanel,trackedErrandPanel,chroniclePanel,traderPanel} from './soldier-views.js';
+import {kitPanel,characterPanel as soldierCharacterPanel,decorationsPanel,companyPanel as soldierCompanyPanel,ordersEditor,squadOrdersEditor,trainerPanel,trainerName,
+  adoptPanel,missionOrdersPanel,trackedErrandPanel,chroniclePanel} from './soldier-views.js';
+import {INVENTORY_PANELS,SHOPS,otherFor,dropCommand} from './inventory-views.js';
+import {bindInventory} from './inventory-input.js';
 import * as Game from '../core/game.js';
 import {CHAPTERS} from '../data/campaign.js';
 import {CONFIG} from '../config.js';
@@ -56,6 +57,26 @@ import {helpSearchResults} from './guide-help-view.js';
 import {GUIDE_HELP} from '../data/guide-help.js';
 
 const app=document.querySelector('#app'),modal=document.querySelector('#modal');
+// The inventory's drag and drop and keyboard carry (release 13, inventory-input.js). A drop is the same soldier
+// command as its button; one the rules would refuse is explained and nothing is sent.
+// In a fight, a fallen man's belongings and a field's cache are taken with the world's own take (release 11's loot).
+const lootDrop=(piece,to)=>to.to==='pack'||to.to==='ground'?{take:true}:{refusal:'Drag it into your pack to take it.'};
+const inventoryInput=bindInventory(modal,{
+  preview:(piece,to)=>!state?null:piece.from==='loot'?(lootDrop(piece,to).take?{command:{kind:'take'}}:lootDrop(piece,to)):dropCommand(state,piece,to),
+  drop:(piece,to)=>{
+    if(!state)return;
+    if(piece.from==='loot'){const r=lootDrop(piece,to);if(r.refusal){toast(r.refusal,{problem:true});return;}
+      if(piece.take==='rt-take')takeLoot(piece.source,piece.id);else takeFromField(piece.source,piece.id);return;}
+    const r=dropCommand(state,piece,to);if(!r)return;
+    if(r.refusal){toast(r.refusal,{problem:true});return;}
+    if(['wear','drop','sell','takeOff','pickUp','takeFrom'].includes(r.command.kind))kitSelected=null;
+    void soldierAct(r.command);
+  },
+  select:id=>{
+    kitSelected=id;showSoldierPanel(soldierPanel?.name??'kit',soldierPanel?.arg??null);
+    modal.querySelector('[data-key="inv-details"]')?.scrollIntoView({block:'nearest'});
+  },
+  announce});
 // Tracking is a local display preference, separate from the campaign save.
 const trackedErrandKey=SETTINGS_KEY+'.tracked-errand';
 const errandTracker=createErrandTracker({load:()=>JSON.parse(localStorage.getItem(trackedErrandKey)||'null'),
@@ -126,7 +147,10 @@ const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,sho
     screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap,
     worldCamp:screen!=='title'&&!!state&&campMode()}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
-function toast(text){
+function toast(text,{problem=false}={}){
+  // The inventory says what happened in its own status line (a live region) under the pack's heading (release 13).
+  const line=modal.open&&modal.dataset.inventory==='true'?modal.querySelector('[data-inventory-status]'):null;
+  if(line){line.textContent=text;line.classList.toggle('is-problem',problem);return;}
   announce(text);
   if(modal.open){
     let note=modal.querySelector('.modal-feedback');
@@ -217,7 +241,7 @@ function render(){
   document.documentElement.dataset.hud=settings.compactHud===false?'full':'compact';
   // Release 12: a real-time battle or chamber fills the window (realtime.css), with what used to follow the world over it.
   const world=fullWorld();document.documentElement.dataset.world=world?'full':'';if(!world)pageOverlay='';
-  document.documentElement.style.setProperty('--text-scale',settings.textScale||1);
+  document.documentElement.style.setProperty('--text-scale',settings.textScale||1);document.documentElement.dataset.textScale=String(settings.textScale||1);
   const activeId=document.activeElement?.id;
   // A new screen starts afresh; within one, the page is updated in place, so the
   // board keeps its focus and listeners, the 3D view its canvas, and a field what was typed.
@@ -665,6 +689,8 @@ const fieldPanel=name=>openPanel(name);
 // The soldier's panels (soldier-views.js): each command goes to Game.soldierCommand,
 // and the panel is drawn again with the focus where it was.
 let kitSelected=null,soldierPanel=null;
+// The inventory's open section in its list mode (narrow windows and 200% text), and what its soldier's figure says.
+let inventoryTab=null,soldierPreviewStatus='Preparing the model…';
 // The mission orders panel's field intelligence follows the field while it is open (at most once a second).
 let missionPanelAt=0;
 function refreshMissionPanel(){
@@ -693,47 +719,66 @@ async function mountIdentityPreview(){
 }
 function disposeSoldierPreview(){soldierPreviewGeneration++;soldierPreview?.dispose();soldierPreview=null;}
 async function showSoldierPreview(){
-  const canvas=modal.querySelector('[data-soldier-preview]'),status=modal.querySelector('[data-preview-status]');
-  if(!canvas)return;const generation=soldierPreviewGeneration;
+  const canvas=modal.querySelector('[data-soldier-preview]');
+  // The inventory is patched in place: what the figure says is kept for its next render as well as shown.
+  const say=text=>{soldierPreviewStatus=text;const status=modal.querySelector('[data-preview-status]');if(status)status.textContent=text;};
+  soldierPreviewStatus='Preparing the model…';
+  if(!canvas)return;const generation=soldierPreviewGeneration,listed=modal.querySelector('.inventory')?'around him':'below';
   if(typeof canvas.getContext!=='function'||typeof globalThis.WebGLRenderingContext==='undefined'){
-    if(status)status.textContent='Your equipped items are listed below.';return;
+    say(`Your equipped items are listed ${listed}.`);return;
   }
   try{
     const {mountSoldierPreview}=await import('../showcase/soldier-preview.js');
     if(generation!==soldierPreviewGeneration||!modal.open||!canvas.isConnected)return;
     const recruit=!!modal.querySelector('[data-appearance]');
     const preview=soldierPreview=mountSoldierPreview(canvas,{soldier:recruit?createSoldier(recruitChoice()):state.soldier,name:recruit?'Your recruit':state.name,chapter:recruit?1:state.chapter,rank:recruit?'Tiro':state.rank,uncovered:recruit,cloaked:recruit,
-      reducedMotion:settings.reducedMotion,onError:text=>{if(status)status.textContent=text;}});
+      reducedMotion:settings.reducedMotion,onError:text=>{if(generation===soldierPreviewGeneration)say(text);}});
     for(const button of modal.querySelectorAll('[data-preview-turn]'))button.onclick=()=>preview.rotate(Number(button.dataset.previewTurn)*Math.PI/6);
     const reset=modal.querySelector('[data-preview-reset]');if(reset)reset.onclick=()=>preview.reset();
     const detail=modal.querySelector('[data-preview-detail]');if(detail)detail.onclick=()=>{preview.inspectFace?.();canvas.scrollIntoView({block:'start',behavior:'instant'});};
     await preview.ready;
-    if(generation===soldierPreviewGeneration&&canvas.dataset.preview!=='unavailable'&&status)status.textContent='Drag or use the arrows to inspect your equipped outfit.';
-  }catch{if(generation===soldierPreviewGeneration&&status)status.textContent='Model unavailable. Your equipped items are listed below.';}
+    if(generation===soldierPreviewGeneration&&canvas.dataset.preview!=='unavailable')say(listed==='around him'?'Drag or use the arrows to turn him.':'Drag or use the arrows to inspect your equipped outfit.');
+  }catch{if(generation===soldierPreviewGeneration)say(`Model unavailable. Your equipped items are listed ${listed}.`);}
 }
 function showSoldierPanel(name,arg=null){
   if(!state)return;
   // A chamber's world is its people, not a fight: the panels read the chronicle there.
-  const samePanel=modal.open&&modal.dataset.soldier===name,openDetails=samePanel?[...modal.querySelectorAll('details[id][open]')].map(el=>el.id):[],scroll=samePanel?modal.scrollTop:0;
+  const samePanel=modal.open&&modal.dataset.soldier===name&&(soldierPanel?.arg??null)===(arg??null),openDetails=samePanel?[...modal.querySelectorAll('details[id][open]')].map(el=>el.id):[],scroll=samePanel?modal.scrollTop:0;
   const world=field&&field.kind!=='chamber'?field.runtime?.world??null:null,spoils=world?world.spoils.map(x=>x.itemId):state.encounter?.staged?.spoils??[];
-  const panels={kit:()=>['Equipment',kitPanel(state,{selected:kitSelected,spoils,documents:chamberMode()?Chamber.hearingDocuments(state):[]})],character:()=>['Training',soldierCharacterPanel(state)],
+  if(!samePanel){kitSelected=null;inventoryTab=null;}
+  // Release 13: the kit, the traders, a camp chest, the fallen and a field's cache open the one inventory, with what
+  // they bring beside the pack.
+  const loot=name==='loot'?lootSide(arg):null;
+  const inventory=title=>()=>[title,kitPanel(state,{selected:kitSelected,spoils,other:loot??otherFor(name,arg),tab:inventoryTab,previewStatus:soldierPreviewStatus,
+    documents:name==='kit'&&chamberMode()?Chamber.hearingDocuments(state):[]})];
+  const panels={kit:inventory('Equipment'),character:()=>['Training',soldierCharacterPanel(state)],
     decorations:()=>['Decorations & titles',decorationsPanel(state)],company:()=>['Company & standing orders',soldierCompanyPanel(state,{world})],
-    orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],quartermaster:()=>['The quartermaster',quartermasterPanel(state)],trader:()=>['The sutler',traderPanel(state)],smith:()=>['The armourer',smithPanel(state)],container:()=>[Game.campContainerView(state,arg)?.container.name??'Container',campContainerPanel(state,arg)],
+    orders:()=>['Standing orders',ordersEditor(state,arg)],'squad-orders':()=>[`${(state.company?.find(v=>v.id===arg)?.name??'The').split(' ').at(-1)}’s squad: standing orders`,squadOrdersEditor(state,arg)],
+    quartermaster:inventory(SHOPS.quartermaster.title),trader:inventory(SHOPS.trader.title),smith:inventory(SHOPS.smith.title),
+    container:inventory(Game.campContainerView(state,arg)?.container.name??'Container'),loot:inventory(loot?.title??'Search'),
     trainer:()=>[trainerName(state,arg),trainerPanel(state,arg)],
     adopt:()=>['Your soldier’s training',adoptPanel(state,{grants:Object.fromEntries(['legionary','explorator','librarius'].map(p=>[p,tpAuditTotal(Math.max(0,...(state.completed??[])),p)]))})],
     mission:()=>['Mission orders',missionOrdersPanel(state,{world,requirements:requirements(),trackedErrand:errandTracker.read(state)?.id})],chronicle:()=>['The chronicle',chroniclePanel(state)]};
   const [title,body]=(panels[name]??panels.character)();
-  if(samePanel&&name==='mission'){
+  const tabs=['kit','character','company','decorations'],nav=tabs.includes(name)?`<nav class="soldier-sections" aria-label="Soldier sections">${[['kit','Equipment'],['character','Training'],['company','Company'],['decorations','Honours']].map(([id,label])=>`<button data-cmd="soldier-panel" data-id="${id}"${name===id?' aria-current="page"':''}>${label}</button>`).join('')}</nav>`:'';
+  const isInventory=INVENTORY_PANELS.includes(name)&&!!state.soldier;
+  if(samePanel&&(name==='mission'||isInventory)){
     // Live intelligence must not replace Back/Close underneath a click or
     // refocus the heading every second. Keep the dialog and patch its contents.
-    updatePage(modal.querySelector('.modal-body'),body);
+    // The inventory is patched too, so its soldier's figure keeps its canvas and
+    // the focused piece stays focused (release 13).
+    const active=document.activeElement;
+    updatePage(modal.querySelector('.modal-body'),isInventory?nav+body:body);
     for(const id of openDetails){const el=modal.querySelector(`#${CSS.escape(id)}`);if(el)el.open=true;}
-    modal.scrollTop=scroll;return;
+    modal.scrollTop=scroll;
+    if(isInventory){soldierPreview?.setSoldier?.(state.soldier);inventoryInput.refresh();
+      if(active&&!active.isConnected)modal.querySelector('[data-key="inv-details"] button:not([disabled]),.pack-grid .pack-item,#panel-title')?.focus({preventScroll:true});}
+    return;
   }
   const active=document.activeElement,keep=modal.open&&modal.contains(active)?['cmd','kind','uid','place','attribute','course','item','companion','preset','id']
     .map(k=>active.dataset?.[k]!==undefined?`[data-${k}="${CSS.escape(active.dataset[k])}"]`:'').join(''):'';
-  const tabs=['kit','character','company','decorations'],nav=tabs.includes(name)?`<nav class="soldier-sections" aria-label="Soldier sections">${[['kit','Equipment'],['character','Training'],['company','Company'],['decorations','Honours']].map(([id,label])=>`<button data-cmd="soldier-panel" data-id="${id}"${name===id?' aria-current="page"':''}>${label}</button>`).join('')}</nav>`:'';
   showModal(title,nav+body,{back:['orders','squad-orders'].includes(name)?'company':'menu',pause:name==='chronicle'});soldierPanel={name,arg};modal.dataset.soldier=name;
+  if(isInventory)modal.dataset.inventory='true';
   if(!modal.querySelector('[data-appearance]'))void showSoldierPreview();
   for(const id of openDetails){const el=document.getElementById(id);if(el)el.open=true;}
   if(samePanel)modal.scrollTop=scroll;
@@ -750,17 +795,21 @@ function fieldLoot(id){
   const world=field?.runtime?.world,body=world?.actors.find(a=>a.id===id);if(!body)return;
   showLoot(body);
 }
-const itemName=id=>ITEMS[id]?.name??id;
 // The items already chosen from this body in the take waiting for the next tick (while paused, the window's choices wait there).
 function pendingTake(world,bodyId){return [...world.queue].reverse().find(c=>c.kind==='take'&&c.actorId===world.controlled&&c.payload.targetId===bodyId)?.payload.items??[];}
+// What a fallen man or a field's cache still holds, beside what this fight's take waits to carry off (arg "body:<id>"
+// or "box:<id>"), for the inventory's other side; null once the world or the thing is gone.
+function lootSide(arg){
+  const world=field?.runtime?.world;if(!world||typeof arg!=='string')return null;
+  if(arg.startsWith('body:')){const body=world.actors.find(a=>a.id===arg.slice(5));if(!body)return null;
+    return {kind:'loot',title:`Search ${body.name}`,id:body.id,left:[...(body.loot??[])],pending:[...pendingTake(world,body.id)],cmd:'rt-take',empty:'Nothing left worth taking.'};}
+  if(arg.startsWith('box:')){const o=world.objects.find(x=>x.id===arg.slice(4));if(!o)return null;
+    return {kind:'loot',title:o.name,id:o.id,left:[...(o.contents??[])],pending:[...pendingTakeFrom(world,o.id)],cmd:'rt-take-from',empty:'It is empty.'};}
+  return null;
+}
 function showLoot(body){
-  const world=field?.runtime?.world;if(!world)return;
-  const left=[...(body.loot??[])],pending=[...pendingTake(world,body.id)];
-  const rows=left.map((item,i)=>{const at=pending.indexOf(item),taken=at>=0;if(taken)pending.splice(at,1);
-    return `<li><span>${esc(itemName(item))}</span>${taken?'<span class="status-pill">Taken</span>':`<button data-cmd="rt-take" data-id="${esc(body.id)}" data-item="${esc(item)}" data-key="take:${i}">Take</button>`}</li>`;});
-  showModal(`Search ${body.name}`,left.length?`<ul class="rt-loot">${rows.join('')}</ul>`+
-    `<div class="panel-actions"><button class="primary" data-cmd="rt-take" data-id="${esc(body.id)}" data-item="*">Take all</button></div>`+
-    `<p class="panel-note">What you take goes to your pack when the result is recorded.</p>`:'<p>Nothing left worth taking.</p>');
+  if(!field?.runtime?.world)return;
+  showSoldierPanel('loot',`body:${body.id}`);
 }
 function takeLoot(bodyId,itemId){
   const runtime=field?.runtime,world=runtime?.world,body=world?.actors.find(a=>a.id===bodyId);if(!body)return;
@@ -769,18 +818,13 @@ function takeLoot(bodyId,itemId){
   if(!runtime.issue({actorId:world.controlled,kind:'take',payload:{targetId:bodyId,items}}).ok)return;
   showLoot(body);
   // Running, the take happens on the next tick: show what is left once it has.
-  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&modal.dataset.panel?.startsWith('search'))showLoot(body);}));
+  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&soldierPanel?.name==='loot'&&soldierPanel.arg===`body:${bodyId}`)showLoot(body);}));
 }
 // A battlefield chest or cache (release 11): what is left inside beside the take waiting for the next tick.
 function pendingTakeFrom(world,objectId){return [...world.queue].reverse().find(c=>c.kind==='takeFrom'&&c.actorId===world.controlled&&c.payload.objectId===objectId)?.payload.items??[];}
 function showFieldContainer(o){
-  const world=field?.runtime?.world;if(!world)return;
-  const left=[...(o.contents??[])],pending=[...pendingTakeFrom(world,o.id)];
-  const rows=left.map((item,i)=>{const at=pending.indexOf(item),taken=at>=0;if(taken)pending.splice(at,1);
-    return `<li><span>${esc(itemName(item))}</span>${taken?'<span class="status-pill">Taken</span>':`<button data-cmd="rt-take-from" data-id="${esc(o.id)}" data-item="${esc(item)}" data-key="take-from:${i}">Take</button>`}</li>`;});
-  showModal(o.name,left.length?`<ul class="rt-loot">${rows.join('')}</ul>`+
-    `<div class="panel-actions"><button class="primary" data-cmd="rt-take-from" data-id="${esc(o.id)}" data-item="*">Take all</button></div>`+
-    `<p class="panel-note">What you take goes to your pack when the result is recorded.</p>`:'<p>It is empty.</p>');
+  if(!field?.runtime?.world)return;
+  showSoldierPanel('loot',`box:${o.id}`);
 }
 function takeFromField(objectId,itemId){
   const runtime=field?.runtime,world=runtime?.world,o=world?.objects.find(x=>x.id===objectId);if(!o)return;
@@ -788,7 +832,7 @@ function takeFromField(objectId,itemId){
   const items=itemId==='*'?[...pending,...left]:[...pending,itemId];
   if(!runtime.issue({actorId:world.controlled,kind:'takeFrom',payload:{objectId,items}}).ok)return;
   showFieldContainer(o);
-  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open)showFieldContainer(o);}));
+  if(!runtime.paused)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(modal.open&&soldierPanel?.name==='loot'&&soldierPanel.arg===`box:${objectId}`)showFieldContainer(o);}));
 }
 function stopMotion(){
   battleStage.stop();const stop=cancelMotion,stopAmbient=cancelAmbient;cancelMotion=null;cancelAmbient=null;if(stop)stop();currentAnimation=null;
@@ -920,7 +964,7 @@ async function change(fn,{reset=false,tone='click',turn=false,silent=false,comma
     replay.stop();
     try{
       const before=snapshotEncounter(state.encounter),commandSnapshot=issuedCommand?structuredClone(issuedCommand):null,result=fn();
-      if(result?.ok===false){render();afterRender?.();toast(result.message);return;}
+      if(result?.ok===false){render();afterRender?.();toast(result.message,{problem:true});return;}
       if(reset){pendingMotion=null;feedback='';selected='hero';action=null;target=null;orderDestination=null;focusTile=null;}
       else{
         const after=snapshotEncounter(state.encounter);pendingMotion={before,after,command:commandSnapshot};
@@ -965,7 +1009,7 @@ function showModal(title,body,{menu=false,back='menu',pause=false}={}){
   const openDetails=samePanel?[...modal.querySelectorAll('details[id][open]')].map(el=>el.id):[];
   // Replacing a dialog ends its local interaction. A Menu exit must not keep a
   // hidden conversation's save restriction or a mission panel's refresh hook.
-  if(!samePanel){conversation=null;soldierPanel=null;delete modal.dataset.conversation;delete modal.dataset.soldier;}
+  if(!samePanel){conversation=null;soldierPanel=null;delete modal.dataset.conversation;delete modal.dataset.soldier;delete modal.dataset.inventory;inventoryInput.cancel();}
   disposeSoldierPreview();
   // The Menu, a conversation and the chronicle always pause the world (release 12); other panels follow
   // Pause in panels. A live 3D world advances with its renderer, so both must follow this choice.
@@ -1036,7 +1080,7 @@ modal.addEventListener('close',()=>{
   // the camp's list); the event comes later, by when the player may have moved on, so it leaves the focus alone.
   const placed=modalFocusPlaced;modalFocusPlaced=false;
   if(modal.open)return;
-  disposeSoldierPreview();
+  disposeSoldierPreview();inventoryInput.cancel();
   rebinding=null;const prior=modalReturn;modalReturn=null;
   const el=placed?null:prior?.element?.isConnected?prior.element:prior?.id?document.getElementById(prior.id):prior?.cmd?document.querySelector(`[data-cmd="${CSS.escape(prior.cmd)}"]`):null;
   if(el?.isConnected)el.focus({preventScroll:true});
@@ -1155,13 +1199,15 @@ case 'end-iron':await change(()=>Game.endIronDiscipline(state));if(modal.open)sh
 case 'soldier':{const d=b.dataset;
   // The editors open; they change nothing until saved.
   if(d.kind==='orders-edit'||d.kind==='squad-orders-edit'){showSoldierPanel(d.kind==='orders-edit'?'orders':'squad-orders',d.companion);break;}
-  if(['wear','drop','give','sell'].includes(d.kind))kitSelected=null;
+  if(['wear','drop','give','sell','takeOff','pickUp','takeFrom'].includes(d.kind))kitSelected=null;
   await soldierAct({kind:d.kind,uid:d.uid,place:d.place,attribute:d.attribute,courseId:d.course,itemId:d.item,companionId:d.companion,preset:d.preset,path:d.path,from:d.from,
     containerId:d.container,method:d.method,indices:d.indices===undefined?undefined:d.indices.split(',').map(Number)});
   break;}
 case 'soldier-panel':showSoldierPanel(id,b.dataset.arg??null);break;
 case 'adopt-soldier':{const choice=recruitChoice();soldierPanel={name:'character'};await soldierAct({kind:'adopt',...choice});break;}
-case 'kit-select':kitSelected=kitSelected===id?null:id;showSoldierPanel('kit');break;
+case 'kit-select':kitSelected=kitSelected===id?null:id;showSoldierPanel(soldierPanel?.name??'kit',soldierPanel?.arg??null);break;
+case 'inventory-tab':inventoryTab=id;showSoldierPanel(soldierPanel?.name??'kit',soldierPanel?.arg??null);break;
+case 'inventory-carry':if(!inventoryInput.carry(id))toast('Choose a piece in the pack to move it.');break;
 case 'orders-save':{
   const slots=[0,1,2,3].map(i=>[modal.querySelector(`#orders-action-${i}`)?.value,modal.querySelector(`#orders-target-${i}`)?.value]).filter(([a])=>a)
     .map(([a,t])=>[a,['follow_close','follow_far','stay_hidden','withdraw'].includes(a)?'hero':t]);

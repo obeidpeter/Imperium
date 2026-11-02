@@ -139,6 +139,13 @@ export function packAdd(soldier,itemId,at=null){
   const spot=at&&packFits(soldier.pack,itemId,at.x,at.y)?at:packSpot(soldier.pack,itemId);if(!spot||soldier.pack.length>=PACK_LIMIT)return null;
   const entry={uid:`i${soldier.nextUid++}`,id:itemId,x:spot.x,y:spot.y};soldier.pack.push(entry);return entry;
 }
+// A place the player chose in the pack (release 13: a piece dragged or carried there): {x,y}, or null for
+// the first free place. A chosen place must take the piece whole; nothing falls back to another place.
+const chosenSpot=at=>at&&Number.isInteger(at.x)&&Number.isInteger(at.y)?{x:at.x,y:at.y}:null;
+function spotProblem(soldier,itemId,at){
+  if(!at)return null;if(soldier.pack.length>=PACK_LIMIT)return 'Your pack is full. Sort it, or drop something.';
+  return packFits(soldier.pack,itemId,at.x,at.y)?null:'It does not fit there.';
+}
 const TYPE_ORDER=['weapon','shield','body','head','arms','legs','feet','belt','charm',null];
 // Sort: first fit, largest area first, then by type (§3.13).
 export function sortPack(soldier){
@@ -157,16 +164,32 @@ function stow(soldier,itemId,area){
   if(packAdd(soldier,itemId))return 'pack';
   const strip=soldier.ground[area]??=[];if(strip.length>=GROUND_LIMIT)strip.shift();strip.push({uid:`i${soldier.nextUid++}`,id:itemId});return 'ground';
 }
-// Wear a piece from the pack; the piece it replaces goes to the pack or the ground.
-export function wear(state,uid,{area=areaOf(state)}={}){
-  const s=state.soldier,entry=s.pack.find(p=>p.uid===uid);if(!entry)return result(false,'Choose an item from your pack.');
+// Wear a piece from the pack, or from the ground here (release 13: dragged onto him); the piece it replaces
+// goes to the pack or the ground. A charm may name which of the two charm places it takes.
+export function wear(state,uid,{area=areaOf(state),place:chosen=null}={}){
+  const s=state.soldier,strip=s.ground[area]??[];let entry=s.pack.find(p=>p.uid===uid),fromGround=false;
+  if(!entry){entry=strip.find(g=>g.uid===uid);fromGround=!!entry;}
+  if(!entry)return result(false,'Choose an item from your pack.');
   const problem=wearProblem(state,entry.id);if(problem)return result(false,problem);
-  const place=placeFor(entry.id,s.worn),old=s.worn[place];s.pack=s.pack.filter(p=>p.uid!==uid);s.worn[place]=entry.id;
+  if(chosen!==null&&(typeof chosen!=='string'||!WORN_PLACES.includes(chosen)||!placeMatches(chosen,entry.id)))
+    return result(false,`The ${ITEMS[entry.id].name} is not worn there.`);
+  const place=chosen??placeFor(entry.id,s.worn),old=s.worn[place];
+  if(fromGround){s.ground[area]=strip.filter(g=>g.uid!==uid);if(!s.ground[area].length)delete s.ground[area];}else s.pack=s.pack.filter(p=>p.uid!==uid);
+  s.worn[place]=entry.id;
   if(old){const where=stow(s,old,area);return result(true,`You wear the ${ITEMS[entry.id].name}; the ${ITEMS[old].name} goes ${where==='pack'?'to your pack':'on the ground'}.`);}
   return result(true,`You wear the ${ITEMS[entry.id].name}.`);
 }
-export function takeOff(state,place,{area=areaOf(state)}={}){
+// Take a piece off: to the pack's first free place (or the ground when it is full), to a chosen place in
+// the pack, or straight onto the ground here.
+export function takeOff(state,place,{area=areaOf(state),at=null,ground=false}={}){
   const s=state.soldier,id=s.worn[place];if(!id)return result(false,'Nothing is worn there.');
+  const spot=chosenSpot(at);
+  if(ground){
+    if(ITEMS[id].keep)return result(false,`You keep the ${ITEMS[id].name}.`);
+    delete s.worn[place];const strip=s.ground[area]??=[];if(strip.length>=GROUND_LIMIT)strip.shift();strip.push({uid:`i${s.nextUid++}`,id});
+    return result(true,`You leave the ${ITEMS[id].name} on the ground here.`);
+  }
+  if(spot){const problem=spotProblem(s,id,spot);if(problem)return result(false,problem);delete s.worn[place];packAdd(s,id,spot);return result(true,`The ${ITEMS[id].name} goes to your pack.`);}
   delete s.worn[place];const where=stow(s,id,area);return result(true,`The ${ITEMS[id].name} goes ${where==='pack'?'to your pack':'on the ground'}.`);
 }
 export function drop(state,uid,{area=areaOf(state)}={}){
@@ -175,9 +198,10 @@ export function drop(state,uid,{area=areaOf(state)}={}){
   s.pack=s.pack.filter(p=>p.uid!==uid);const strip=s.ground[area]??=[];if(strip.length>=GROUND_LIMIT)strip.shift();strip.push({uid:entry.uid,id:entry.id});
   return result(true,`You leave the ${ITEMS[entry.id].name} on the ground here.`);
 }
-export function pickUp(state,uid,{area=areaOf(state)}={}){
+export function pickUp(state,uid,{area=areaOf(state),at=null}={}){
   const s=state.soldier,strip=s.ground[area]??[],entry=strip.find(g=>g.uid===uid);if(!entry)return result(false,'That item is not here.');
-  if(!packAdd(s,entry.id))return result(false,'Your pack is full. Sort it, or drop something.');
+  const spot=chosenSpot(at),problem=spotProblem(s,entry.id,spot);if(problem)return result(false,problem);
+  if(!packAdd(s,entry.id,spot))return result(false,'Your pack is full. Sort it, or drop something.');
   s.ground[area]=strip.filter(g=>g.uid!==uid);if(!s.ground[area].length)delete s.ground[area];return result(true,`You take the ${ITEMS[entry.id].name}.`);
 }
 // Take all: everything that fits moves to the pack; the rest stays.
@@ -213,11 +237,12 @@ export function priceOf(itemId,eloquence,{selling=false}={}){
   const value=ITEMS[itemId]?.value??0,d=Math.min(.2,Math.max(0,eloquence-10)/100);
   return selling?Math.floor(value*SELL_FACTOR*(1+d)):Math.ceil(value*(1-d));
 }
-export function buy(state,itemId,{stock=null}={}){
+export function buy(state,itemId,{stock=null,at=null}={}){
   const s=state.soldier,item=ITEMS[itemId];if(!item)return result(false,'Unknown item.');if(stock&&!stock.includes(itemId))return result(false,'Not for sale here.');
   const price=priceOf(itemId,soldierAttributes(s).elo);if(s.denarii<price)return result(false,`Needs ${price} denarii.`);
+  const spot=chosenSpot(at),problem=spotProblem(s,itemId,spot);if(problem)return result(false,problem);
   if(!packSpot(s.pack,itemId))return result(false,'Your pack is full. Sort it, or sell something.');
-  s.denarii-=price;packAdd(s,itemId);return result(true,`Bought the ${item.name} for ${price} denarii.`);
+  s.denarii-=price;packAdd(s,itemId,spot);return result(true,`Bought the ${item.name} for ${price} denarii.`);
 }
 export function sell(state,uid){
   const s=state.soldier,entry=s.pack.find(p=>p.uid===uid);if(!entry)return result(false,'Choose an item from your pack.');
@@ -290,14 +315,17 @@ export function unlockContainer(state,id,method){
   }
   return result(false,'Use its key, or force the lock.');
 }
-// Take from an open camp container: the chosen items (or all) that fit the pack; the rest stays.
-export function takeFromCampContainer(state,id,indices){
+// Take from an open camp container: the chosen items (or all) that fit the pack; the rest stays. One item
+// may go to a chosen place in the pack (release 13: dragged there), which must take it whole.
+export function takeFromCampContainer(state,id,indices,{at=null}={}){
   const s=state.soldier,view=state.phase==='camp'?campContainerView(state,id):null;if(!s||!view)return result(false,'There is no such container in this camp.');
   if(!view.unlocked)return result(false,`The ${view.container.name} is locked.`);
   const wanted=indices??view.remaining.map(e=>e.index);
   if(!Array.isArray(wanted)||!wanted.length||wanted.length>12||new Set(wanted).size!==wanted.length||wanted.some(i=>!view.remaining.some(e=>e.index===i)))
     return result(false,'That is not there to take.');
-  const trial=clone(s),taken=[];for(const i of wanted)if(packAdd(trial,view.container.contents[i]))taken.push(i);
+  const spot=chosenSpot(at);
+  if(spot){if(wanted.length!==1)return result(false,'Choose one item to place.');const problem=spotProblem(s,view.container.contents[wanted[0]],spot);if(problem)return result(false,problem);}
+  const trial=clone(s),taken=[];for(const i of wanted)if(packAdd(trial,view.container.contents[i],spot))taken.push(i);
   if(!taken.length)return result(false,'Your pack is full. Sort it, or leave something on the ground.');
   if(openedOf(s).length+taken.length>OPENED_LIMIT)return result(false,'The record of opened containers is full.');
   s.pack=trial.pack;s.nextUid=trial.nextUid;(s.opened??=[]).push(...taken.map(i=>`${id}:${i}`));
@@ -335,6 +363,10 @@ export function validateSoldier(state,fail){
     ||!slots.length||slots.length>4||slots.some(slot=>squadOrderProblem(slot)||typeof slot[1]==='string'&&slot[1].startsWith('squad:')&&!COMPANIONS[slot[1].slice(6)]))))
     fail('squad standing orders.');
 }
+// A command's chosen place in the pack: undefined when it names none, null when it names one badly
+// (both coordinates must be whole numbers), else {x,y}.
+const spotOf=command=>command.x===undefined&&command.y===undefined?undefined:Number.isInteger(command.x)&&Number.isInteger(command.y)?{x:command.x,y:command.y}:null;
+const PLACED=['takeOff','pickUp','buy','takeFrom'];
 // The soldier's own commands, from the kit, character, trainer and company
 // panels: one entry point, each refusal leaving the chronicle unchanged. Kit,
 // training and orders change in camp; an encounter keeps the soldier it began with.
@@ -343,13 +375,15 @@ export function soldierCommand(state,command={}){
   if(k==='adopt')return adoptSoldier(state,command);
   if(!state.soldier)return result(false,'Choose your soldier’s training first.');
   if(state.phase==='encounter')return result(false,'Change kit, training and standing orders in camp.');
+  const at=spotOf(command);if(at===null&&PLACED.includes(k))return result(false,'Choose a place in the pack.');
   switch(k){
     case 'raise':return raiseAttribute(state,command.attribute);
     case 'course':return takeCourse(state,command.courseId);
-    case 'wear':return wear(state,command.uid);
-    case 'takeOff':return typeof command.place==='string'&&state.soldier.worn[command.place]?takeOff(state,command.place):result(false,'Nothing is worn there.');
+    case 'wear':return wear(state,command.uid,{place:command.place??null});
+    case 'takeOff':return typeof command.place==='string'&&state.soldier.worn[command.place]?takeOff(state,command.place,{at,ground:command.ground===true})
+      :result(false,'Nothing is worn there.');
     case 'drop':return drop(state,command.uid);
-    case 'pickUp':return pickUp(state,command.uid);
+    case 'pickUp':return pickUp(state,command.uid,{at});
     case 'move':return Number.isInteger(command.x)&&Number.isInteger(command.y)?moveInPack(state,command.uid,command.x,command.y):result(false,'Choose a place in the pack.');
     case 'sort':{
       const trial=clone(state.soldier),left=sortPack(trial);
@@ -358,10 +392,10 @@ export function soldierCommand(state,command={}){
     }
     case 'give':return give(state,command.uid,command.companionId);
     case 'buy':return buy(state,command.itemId,{stock:command.from==='trader'?TRADER_STOCK[state.chapter]??[]:command.from==='smith'?smithStock(state.chapter):
-      quartermasterStock(state.chapter)});
+      quartermasterStock(state.chapter),at});
     case 'sell':return sell(state,command.uid);
     case 'unlock':return unlockContainer(state,command.containerId,command.method);
-    case 'takeFrom':return takeFromCampContainer(state,command.containerId,command.indices);
+    case 'takeFrom':return takeFromCampContainer(state,command.containerId,command.indices,{at});
     case 'pay':return collectPay(state);
     case 'orders':return setStandingOrders(state,command.companionId,command.preset?STANDING.presets[command.preset]:command.slots);
     case 'squad-orders':return setSquadOrders(state,command.companionId,command.preset==='battle'?null:command.preset?SQUAD_STANDING.presets[command.preset]??[]:command.slots);

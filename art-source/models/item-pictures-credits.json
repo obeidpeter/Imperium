@@ -1,0 +1,110 @@
+{
+  "scope": "Release 13 of the worlds and gameplay plan (docs/worlds-and-gameplay-plan.md): item pictures rendered offline from Tripo models",
+  "authorization": {
+    "credits": 1000,
+    "approvedBy": "Owner",
+    "source": "docs/worlds-and-gameplay-plan.md, art and credits: a cap of 1,000 credits for item pictures, the 160-credit pilot shown to the owner before the rest"
+  },
+  "pricing": {
+    "model": "v3.1-20260211",
+    "textWithStandardTextures": 20,
+    "source": "each task's reported consumed_credit"
+  },
+  "batches": [
+    {
+      "batch": "pilot",
+      "date": "2026-11-01",
+      "plannedCredits": 160,
+      "spentCredits": 160,
+      "items": [
+        "item-spatha",
+        "item-scutum",
+        "item-niederbieber",
+        "item-hamata",
+        "item-squamata",
+        "item-tunic",
+        "item-birrus",
+        "item-ring-belt"
+      ],
+      "tasks": [
+        {
+          "id": "item-birrus",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "43bff0d1-06bc-4527-a5dc-7b9b88f66533",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-hamata",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7ff7ffea-c9dd-40aa-9fec-9a3238a6c4f1",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-niederbieber",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "b1e36df3-5270-49e3-8b69-9cf913dbdb7b",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-ring-belt",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d4f6fd84-16f2-4e68-903f-8fa73700aba3",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-scutum",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "6bade030-2d8a-4a70-ba8f-5c2152de1c03",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-spatha",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c6544ec3-90e2-4b09-9a7b-3f3ff970798a",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-squamata",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "81941bfa-2c8e-4bca-a0d6-b9f533d5e453",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        },
+        {
+          "id": "item-tunic",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5bfca66e-7e5d-435f-934f-0f989eddf6f3",
+          "creditsReported": 20,
+          "creditSource": "task.consumed_credit",
+          "accountedCredits": 20
+        }
+      ],
+      "startingBalance": 11480,
+      "endingBalance": 11320
+    }
+  ],
+  "spentCredits": 160,
+  "remainingAuthorization": 840,
+  "note": "The models are rendered into the item atlas and never ship; the drawn icons remain the fallback."
+}

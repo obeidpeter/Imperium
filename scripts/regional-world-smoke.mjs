@@ -13,7 +13,7 @@ import {resolve,isAbsolute,join} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,settingsCommand,closePanel,openCampList,closeCampList} from './ui-smoke-navigation.mjs';
+import {menuCommand,revealControl,settingsCommand,closePanel,closedBy,openCampList,closeCampList} from './ui-smoke-navigation.mjs';
 import {runRealtimeCampaign} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 import {saveCode,restoreCode} from '../src/ui/storage.js';
@@ -122,8 +122,7 @@ async function restore(checkpoint){
   await settingsCommand(page,'restore');await page.locator('#restore-code').fill(checkpoint.code);
   await page.locator('[data-cmd="import-code"]').click();
   await page.locator('[data-cmd="confirm-import"]').waitFor({state:'visible'});
-  const closed=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
-  await page.locator('[data-cmd="confirm-import"]').click();await closed;await ready(checkpoint);
+  await closedBy(page,()=>page.locator('[data-cmd="confirm-import"]').click());await ready(checkpoint);
   await pause(false);
   await page.waitForFunction(({chapter,key})=>{
     try{return window.__realtime.world().tick>0&&JSON.parse(JSON.parse(localStorage.getItem(key)).payload).soldier.flags[`visited:${chapter}:gate`]===true;}catch{return false;}

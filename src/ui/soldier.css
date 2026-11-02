@@ -1,19 +1,8 @@
 /* The soldier's panels (0.40): kit, character, decorations, company, quartermaster, trainers, chronicle. */
-.kit-panel{display:grid;gap:1.2rem;grid-template-columns:minmax(14rem,1fr) minmax(18rem,1.4fr)}
-.kit-places{list-style:none;margin:0;padding:0;display:grid;gap:.25rem}
-.kit-place{display:grid;grid-template-columns:9.5rem 1fr auto;gap:.5rem;align-items:center;min-block-size:2.75rem;border-block-end:1px solid var(--line,#ccc)}
-.kit-place-name{font-size:.85rem;color:var(--muted,#666)}
-.kit-place button,.shop-list button,.kit-ground button{min-block-size:2.75rem;padding:.35rem .7rem}
+.shop-list button{min-block-size:2.75rem;padding:.35rem .7rem}
 .kit-protection{border-collapse:collapse;margin-block:.6rem;font-variant-numeric:tabular-nums}
 .kit-protection caption{text-align:start;font-weight:650;padding-block-end:.2rem}
 .kit-protection th,.kit-protection td{padding:.15rem .6rem;text-align:start;border-block-end:1px solid var(--line,#ddd)}
-.pack-grid{display:flex;flex-wrap:wrap;align-content:start;gap:.5rem;padding:.5rem;
-  background:repeating-linear-gradient(90deg,#00000010 0 1px,transparent 1px 100%),#e9e1cf;border:1px solid var(--line,#bbb);border-radius:.3rem;margin-block-end:.6rem}
-.pack-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;inline-size:7.2rem;min-block-size:7.4rem;min-inline-size:0;padding:.5rem;font-size:.8rem;line-height:1.25;overflow:hidden;border-radius:.25rem;background:#f8f2e2;
-  border:1px solid #b9a77f;text-align:center;overflow-wrap:anywhere}
-.pack-item.is-selected,.pack-item[aria-pressed="true"]{outline:3px solid var(--bronze,#b08a3c);background:#f1e2b8}
-.pack-item.is-dimmed{opacity:.6}
-.kit-art{inline-size:3rem;block-size:3rem;color:#79592b}.pack-item small{color:#665c4b}.pack-grid:empty::after{content:'Your pack is empty.';padding:1rem;color:#665c4b}
 .cinematic-page .soldier-model{margin:0;inline-size:100%}.cinematic-page .soldier-model canvas{block-size:340px}
 .ceremony-record>summary,.legacy-chapter>summary{cursor:pointer;min-block-size:2.75rem;padding:.7rem;font-weight:650;color:var(--bronze,#b08a3c)}
 .legacy-chapter{border-block-end:1px solid #b5a078;padding:1rem}.legacy-chapter p{max-inline-size:70ch;line-height:1.7}
@@ -33,8 +22,7 @@
 .chronicle-pages{display:grid;gap:1rem}.chronicle-page{display:grid;grid-template-columns:minmax(8rem,320px) 1fr;gap:1rem;align-items:start}
 .chronicle-page img{inline-size:100%;block-size:auto;border-radius:.3rem}
 .soldier-card kbd{font:600 .7rem system-ui;border:1px solid currentColor;border-radius:.2rem;padding:0 .25rem;opacity:.7}
-@media (max-width:760px){.kit-panel,.chronicle-page{grid-template-columns:1fr}.kit-place{grid-template-columns:1fr auto}.kit-place-name{grid-column:1/-1}
-  .pack-grid{grid-template-columns:repeat(var(--cols),minmax(1.9rem,1fr))}}
+@media (max-width:760px){.chronicle-page{grid-template-columns:1fr}}
 .chronicle-passage summary{cursor:pointer;font-weight:650;min-block-size:2.75rem;display:flex;align-items:center}
 .chronicle-voice{font-weight:700;margin-inline-end:.3rem}
 .save-slots{list-style:none;padding:0;margin:.6rem 0 0;display:grid;gap:.5rem}
@@ -50,7 +38,7 @@
 .kit-comparison{margin-block:1rem;padding:.75rem;border:1px solid var(--line);border-radius:.4rem;background:#c3a76d14}.kit-comparison h4{margin:0}.kit-comparison table{inline-size:100%;border-collapse:collapse}
 .kit-comparison th,.kit-comparison td{padding:.3rem;text-align:start;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.kit-comparison td:last-child{font-weight:700}
 .attribute-table{max-inline-size:none}.attribute-impact{max-inline-size:25rem}.attribute-impact small,.attribute-impact strong{display:block;font-size:.78rem;line-height:1.4}.attribute-impact small{font-weight:400;color:var(--muted)}
-@media(max-width:600px){.attribute-table thead{display:none}.attribute-table tr{display:grid;grid-template-columns:1fr auto;gap:.25rem;padding-block:.6rem;border-bottom:1px solid var(--line)}.attribute-table td,.attribute-table th{border:0}.attribute-table .attribute-impact{grid-column:1/-1;max-inline-size:none}.attribute-table td:last-child{grid-column:1/-1}.pack-grid{grid-template-columns:repeat(var(--cols),minmax(0,1fr))}.soldier-model canvas{block-size:300px}}
+@media(max-width:600px){.attribute-table thead{display:none}.attribute-table tr{display:grid;grid-template-columns:1fr auto;gap:.25rem;padding-block:.6rem;border-bottom:1px solid var(--line)}.attribute-table td,.attribute-table th{border:0}.attribute-table .attribute-impact{grid-column:1/-1;max-inline-size:none}.attribute-table td:last-child{grid-column:1/-1}.soldier-model canvas{block-size:300px}}
 @media (max-width:760px){.save-slot{grid-template-columns:1fr}.save-slot img,.save-slot-blank{inline-size:100%;block-size:auto;aspect-ratio:16/9}}
 
 /* Task controls stay visible; longer reference and secondary choices are disclosed on demand. */

@@ -9,7 +9,7 @@ import {resolve,isAbsolute,join} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {serveRequest} from './serve.mjs';
-import {closePanel,menuCommand,openCampList,revealControl,settingsCommand} from './ui-smoke-navigation.mjs';
+import {closePanel,closedBy,menuCommand,openCampList,revealControl,settingsCommand} from './ui-smoke-navigation.mjs';
 import {runRealtimeCampaign,playRealtime} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 import {saveCode,restoreCode} from '../src/ui/storage.js';
@@ -74,8 +74,7 @@ async function restore(value,{ready=true}={}){
   // Re-importing the same camp leaves its existing selector visible while
   // the replacement save is pending. Observe the confirmation closing after
   // publish, including its focus handler, before accepting scene readiness.
-  const restored=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
-  await page.locator('[data-cmd="confirm-import"]').click();await restored;
+  await closedBy(page,()=>page.locator('[data-cmd="confirm-import"]').click());
   await page.waitForSelector('.chapter-v-courtyard');if(ready)await courtyardReady();
 }
 async function exported(){
@@ -156,9 +155,8 @@ try{
   record('Visible keyboard controls cannot draw weapons or force an attack in the peaceful courtyard');
   const beforeConversation=await exported();
   await (await revealControl(page,'[data-cmd="conversation"][data-id="ch5:engineer"]')).click();
-  const preparationOpened=page.locator('#modal').evaluate(modal=>new Promise(resolve=>modal.addEventListener('close',()=>resolve(),{once:true})));
-  await page.locator('#modal [data-cmd="reply"]').filter({hasText:'Review battle preparation.'}).click();
-  await preparationOpened;await page.waitForSelector('#camp-preparation[open]');await page.waitForSelector('#modal',{state:'hidden'});
+  await closedBy(page,()=>page.locator('#modal [data-cmd="reply"]').filter({hasText:'Review battle preparation.'}).click());
+  await page.waitForSelector('#camp-preparation[open]');await page.waitForSelector('#modal',{state:'hidden'});
   assert.equal(await page.evaluate(()=>document.activeElement===document.querySelector('#camp-preparation > summary')),true);
   assert.equal(Game.serialize((await exported()).state),Game.serialize(beforeConversation.state),'reviewing preparation grants no reward and selects no plan');
   record('Engineer conversation opens existing preparation with keyboard focus and no free progress');
