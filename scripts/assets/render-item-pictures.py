@@ -29,6 +29,12 @@ parser.add_argument('--samples', type=int, default=48)
 parser.add_argument('--margin', type=float, default=1.08)
 # Degrees about the vertical, after an upright item's broad face is turned to the camera: 180 shows its other side.
 parser.add_argument('--turn', type=float, default=0.0)
+# A display stand the generator added: RADIUS,TOP,FLOOR in the model's own units (Tripo's are a unit box). Removed:
+# everything within RADIUS of the vertical axis through the bottom's centre and below TOP (the post), and everything
+# below FLOOR (the base). Check with a profile of the model first; the item itself must lie outside both.
+parser.add_argument('--drop-stand', default='')
+# For a long thing, the axis the camera looks along (default: the model's thinnest, which a wide guard can mislead).
+parser.add_argument('--across', choices=['auto', 'x', 'y', 'z'], default='auto')
 opts = parser.parse_args(argv)
 cells_w, cells_h = (int(n) for n in opts.cells.lower().split('x'))
 width, height = cells_w * opts.cell_size, cells_h * opts.cell_size
@@ -38,6 +44,24 @@ bpy.ops.import_scene.gltf(filepath=opts.input)
 meshes = [o for o in bpy.context.scene.objects if o.type == 'MESH']
 if not meshes:
     raise SystemExit(f'{opts.input}: no mesh to render')
+if opts.drop_stand:
+    import bmesh
+    radius, top, floor = (float(n) for n in opts.drop_stand.split(','))
+    every = [o.matrix_world @ v.co for o in meshes for v in o.data.vertices]
+    ground, crown = min(p.z for p in every), max(p.z for p in every)
+    base = [p for p in every if p.z < ground + 0.02 * (crown - ground)]
+    cx, cy = sum(p.x for p in base) / len(base), sum(p.y for p in base) / len(base)
+    dropped = 0
+    for o in meshes:
+        bm = bmesh.new()
+        bm.from_mesh(o.data)
+        doomed = [v for v in bm.verts for p in (o.matrix_world @ v.co,)
+                  if p.z < floor or (p.z < top and ((p.x - cx) ** 2 + (p.y - cy) ** 2) ** 0.5 < radius)]
+        dropped += len(doomed)
+        bmesh.ops.delete(bm, geom=doomed, context='VERTS')
+        bm.to_mesh(o.data)
+        bm.free()
+    print(f'stand: removed {dropped} of {len(every)} vertices')
 
 # Gather the model under one root, centred on the origin.
 root = bpy.data.objects.new('item', None)
@@ -130,7 +154,7 @@ if opts.view == 'flat':
     aim(math.radians(-20), math.radians(62 if cells_w <= cells_h else 30))
 elif opts.view == 'long':
     # Look across the thinnest dimension, so the blade's flat faces the camera.
-    thin = min(range(3), key=lambda i: size[i])
+    thin = min(range(3), key=lambda i: size[i]) if opts.across == 'auto' else 'xyz'.index(opts.across)
     if thin == 2:
         aim(0.0, math.radians(80))
     elif thin == 0:
