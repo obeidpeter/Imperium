@@ -48,10 +48,11 @@ test('the atlas ships as a WebP of its recorded size and dimensions, within its 
   for(let chapter=1;chapter<=12;chapter++)assert.ok(chapterAssets(chapter).includes(ITEM_ATLAS.src),`Chapter ${chapter} carries the atlas`);
 });
 
-test('a pictured item shows its place in the atlas; a drawn one keeps its silhouette; both are decorative',()=>{
+test('a pictured item shows its place in the atlas, clipped to it; a drawn one keeps its silhouette; both are decorative',()=>{
   const id=Object.keys(ITEM_PICTURES)[0],html=itemPicture(id),[x,y,w,h]=ITEM_PICTURES[id];
-  assert.match(html,new RegExp(`<svg class="kit-art kit-picture" viewBox="${x} ${y} ${w} ${h}" aria-hidden="true"`));
-  assert.match(html,new RegExp(`<image href="${ITEM_ATLAS.src.replace(/[.]/g,'\\.')}" width="${ITEM_ATLAS.width}" height="${ITEM_ATLAS.height}"/>`));
+  // The outer SVG fits the place's own size into the box; the inner one is exactly that size and shows only the place.
+  assert.match(html,new RegExp(`<svg class="kit-art kit-picture" viewBox="0 0 ${w} ${h}" aria-hidden="true" focusable="false">`+
+    `<svg width="${w}" height="${h}" viewBox="${x} ${y} ${w} ${h}"><image href="${ITEM_ATLAS.src.replace(/[.]/g,'\\.')}" width="${ITEM_ATLAS.width}" height="${ITEM_ATLAS.height}"/></svg></svg>`));
   const drawn=itemPicture(ITEM_DRAWN[0]);
   assert.doesNotMatch(drawn,/<image/);assert.match(drawn,/<svg class="kit-art" viewBox="0 0 64 64" aria-hidden="true"/);
   // A fine piece shares its kind's picture in its own finish.

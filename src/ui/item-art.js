@@ -25,13 +25,14 @@ export const slotArt=slot=>itemArt({slot});
 
 // An item's picture in the inventory (release 13): its rendered picture where
 // one exists, else the drawn silhouette above. The picture is the item atlas
-// cropped to the item's place by the SVG's viewBox, so it fits any box without
-// stretching, like the silhouettes. A fine piece shares its model's picture in
-// its own finish (inventory.css). Decorative: the item's name is always given
-// beside it or on its control.
+// cut to the item's place: the outer SVG fits the place into any box without
+// stretching, like the silhouettes, and the inner one clips the atlas to the
+// place, so a box of another shape never shows its neighbours. A fine piece
+// shares its model's picture in its own finish (inventory.css). Decorative:
+// the item's name is always given beside it or on its control.
 export function itemPicture(id){
   const item=ITEMS[id]??{},place=ITEM_PICTURES[id],finish=item.visuals?.finish??(item.visuals?.trim?`${item.visuals.trim}-trim`:null);
-  const art=place?`<svg class="kit-art kit-picture" viewBox="${place.join(' ')}" aria-hidden="true" focusable="false">`+
-    `<image href="${ITEM_ATLAS.src}" width="${ITEM_ATLAS.width}" height="${ITEM_ATLAS.height}"/></svg>`:itemArt(item);
+  const art=place?`<svg class="kit-art kit-picture" viewBox="0 0 ${place[2]} ${place[3]}" aria-hidden="true" focusable="false">`+
+    `<svg width="${place[2]}" height="${place[3]}" viewBox="${place.join(' ')}"><image href="${ITEM_ATLAS.src}" width="${ITEM_ATLAS.width}" height="${ITEM_ATLAS.height}"/></svg></svg>`:itemArt(item);
   return `<span class="item-picture" data-slot="${item.slot??'other'}"${item.grade?` data-grade="${item.grade}"`:''}${place&&finish?` data-finish="${finish}"`:''}>${art}</span>`;
 }
