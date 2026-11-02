@@ -2,6 +2,11 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### CI: the browser smoke test in two halves
+
+- **The browser smoke test runs in two halves side by side.** Its job took about 33 minutes and the usability job 40 of its 45, so a pull request waited about 40 minutes for CI. `SMOKE_GROUP=a` or `b` runs one half: `scripts/browser-smoke.mjs` names group a, and group b is every other scenario, so a new scenario always runs in one of them. Group a also runs the paused-order checks, and group b the real-time and cavalry controls. Each half should take about 18 minutes.
+- **The 3D siege and rain review has its own job,** so the usability job should take about 23 minutes of its 45. No check was removed or loosened.
+
 ### Worlds and gameplay, release 14, first part: leaving camp on foot ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/walking-release14-report.md))
 
 - **A way out of every camp.** Each camp now has a waymarker pointing where the next encounter lies: **The road out** beyond the gate to a battle, **The drill yard** for Chapter I's drill, **The river gate** for Chapter V's second battle, and **The principia door** to a Contest (**The Curia door** in Chapters XI and XII). Walk to it, click it, or choose it under **All actions** (*Take: The road out. On to the broken causeway.*).
