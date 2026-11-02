@@ -102,6 +102,7 @@ How each kind of check was made:
 | The road to camp | At the soldier's start; 3D and 2D | `aftermath.js` (`aftermathExitFor`), `showcase/container-props.js` (waypost), `live-figures.js`, `flat-stage.js` (unchanged: it draws every way out) | taking it is `Game.commitEncounter`, whose duplicate check refuses a second record |
 | The result's walk button and the strip | The result; above the walked field | `ui/realtime-view.js` (`aftermathStrip`), `ui/realtime.css` | presentation only |
 | The victory's music; no fight lessons | While walking | `ui/soundscape-data.js`, `ui/realtime-lessons.js` | presentation only |
+| Fix: the result's text in dark ink on its light panel | Every real-time battle's result | `ui/realtime.css` | presentation only |
 
 ## Against the plan
 
@@ -138,5 +139,10 @@ In headless Chromium with software rendering (SwiftShader), on the production bu
   - The strongbox's key left with the living leader, so **Use the key** is disabled. **Force the lock** opens the box and **Take all** empties it.
   - The road, taken again, shows the camp's card. The saved chronicle records the station once, and the strongbox's sword is with the soldier.
 - **`npm run verify`** on the final code: 1,604 tests passed, as did the autoplay harnesses, the production build, the asset manifest's digests and every download budget.
+- **Screens** of the result and the walked field were captured in 3D at 1,280 and 390 pixels wide, and in 2D at 1,280. They showed two faults, fixed here:
+  - the strip's **Continue →** broke within the word;
+  - the result's text, since 23 October, was pale on its light panel.
+
+  The first 3D screen of the walked field, taken with the clock paused straight after **Walk the field**, was black for 2.5 seconds. Taken again with the clock running, it was drawn within 3 seconds. Software rendering is slow, and no device was used to check this.
 - **CI runs every browser check** on the pull request, `fieldAftermath` in the second smoke half.
 
