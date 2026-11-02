@@ -2,6 +2,16 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 14, first part: leaving camp on foot ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/walking-release14-report.md))
+
+- **A way out of every camp.** Each camp now has a waymarker pointing where the next encounter lies: **The road out** beyond the gate to a battle, **The drill yard** for Chapter I's drill, **The river gate** for Chapter V's second battle, and **The principia door** to a Contest (**The Curia door** in Chapters XI and XII). Walk to it, click it, or choose it under **All actions** (*Take: The road out. On to the broken causeway.*).
+- **The sentry says what is missing.** If something is still needed before you can leave (the chapter's decision, a preparation, an approach you cannot afford), the gate sentry says so and nothing changes. While a save is being written, the way out asks you to use it again in a moment.
+- **A card names where you are going** while the next place is built. It takes no clicks or focus; with reduced motion it appears and goes without fading.
+- **The other ways still work.** Talking to the gate or the sentry, and **March out** in **Menu → Camp**, leave the same way, through the same departure rules.
+- **Drawn** in 3D as a post with a board pointing the way and a red pennant, from the scenery's own materials (no new shader program), and as a signpost in the 2D view.
+- **Fix: a fight's result kept through a save.** A battle that ended while the page was writing a save was not recorded until the page was reloaded; it is now recorded as soon as that save is done.
+- **For contributors.** `campExitFor` (`camp-world.js`) derives the way out from the chronicle; it is never saved, and a camp's `exits` data can place it. An object may name its own verb in the hover line and **All actions**. New checks: `tests/camp-exits.test.mjs` and the browser check `campExitDeparture`.
+
 ### Fix: a chamber whose 3D view fails
 
 - **The conversation stays open.** When the 3D view fails in a chamber (its graphics context is lost), the page goes on in the 2D view as before, and the conversation you had open now stays open. **Escape** closes it, as it would have, instead of opening the Menu, where the chamber's keys do nothing. Found by a browser check in continuous integration; a new check (`chamberViewFallback`) loses the 3D context with a conversation open.

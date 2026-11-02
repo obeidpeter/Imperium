@@ -36,6 +36,8 @@ test('Chapter V remains available in the full rollout, and every courtyard perso
       assert.ok(end&&Math.hypot(end.x-target.x,end.z-target.z)<=1.8,`${index}: ${target.id} can be approached`);
       // A chest opens its contents, not a conversation (release 11).
       if(target.container)assert.ok(Game.campContainerView(state,target.container),`${target.id} opens`);
+      // The way out leads to the next encounter (release 14), not to a conversation.
+      else if(target.kind==='exit')assert.equal(target.exit.to,['ch5-mine','ch5-wall'][index],`${target.id} leads to the next encounter`);
       else assert.ok(Game.campConversation(state,target.talk?.tree??target.talk),`${target.id} has a conversation`);
     }
     for(const place of CAMP_PLACES){assert.equal(world.places[place].name,campPlaceName(5,place));}

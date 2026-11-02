@@ -4,6 +4,7 @@ import {batchStaticEnvironment} from './environment-batching.js';
 import {smooth} from './environment-layout.js';
 import {CH5_FORTRESS_LAYOUT} from '../ui/world-layouts.js';
 import {addSmithy} from './environment-smithy.js';
+import {addWayPost} from './environment-waypost.js';
 
 /** Original Blender modular architecture, and a complete offline/Performance
  * fallback. Every solid footprint stays outside the full rules rectangle;
@@ -198,6 +199,9 @@ function addCourtyardServices({root,e,p,m,height,tileSize,geometries},parent){
   for(const target of data.interactions??[]){
     // A chest or locker is drawn by the live stage, open or shut (container-props.js).
     if(target.id==='gate'||target.kind==='container')continue;
+    // The way out to the next encounter (release 14): a waymarker pointing the way.
+    if(target.kind==='exit'){const g=addWayPost(p,m,parent,{x:target.x,z:target.z,y:height(target.x,target.z),face:target.face,name:`courtyard interaction ${target.id}`});
+      g.userData.campInteraction=target.id;interactions.push({id:target.id,x:target.x,z:target.z});continue;}
     const g=p.group(parent,target.x,height(target.x,target.z),target.z);g.name=`courtyard interaction ${target.id}`;g.userData.campInteraction=target.id;
     if(target.kind==='post'){
       p.plank(g,0,.66,0,.18,1.32,.18,m.darkWood);p.plank(g,0,1.12,0,.75,.12,.14,m.wood);

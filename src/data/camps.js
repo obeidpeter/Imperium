@@ -162,6 +162,8 @@ export const CAMPS=freeze({
   // A halt in a broken mudbrick enclosure: the western road enters by the west wall's gap,
   // the eagle's paved stand faces it, and the refuge shelters sit beside the road.
   6:camp({id:'ch6-camp',chapter:6,title:'The eagle’s retreat halt',scale:2,ground:'sand',entry:'gate',
+    // The way out to a battle (release 14): the western road, where it leaves by the wall.
+    exits:{'ch6-wells':[-2,-1],'ch6-eagle':[-2,-1]},
     map:['WWWW.WWWWW',
          'WCC.DDDSSW',
          'WCC.DDDSSW',
@@ -191,6 +193,8 @@ export const CAMPS=freeze({
   // A regular camp before Milan: tent streets either side of the via principalis, which runs
   // out of the east gate toward the city; the council's awning stands at its head.
   7:camp({id:'ch7-camp',chapter:7,title:'The council camp before Milan',scale:2,ground:'grass',entry:'gate',
+    // The Milan road (release 14): on the road by the gate, which stands at the map's edge.
+    exits:{'ch7-legion':[-1.5,-1]},
     map:['WWWWWWWWWW',
          'WCC.CC.SSW',
          'WCC.CC.SSW',
@@ -278,6 +282,8 @@ export const CAMPS=freeze({
   // The governor's paved courtyard in a provincial town: the hearing court and the granary on
   // either side of the north range, planted strips between the south rooms, the road out west.
   10:camp({id:'ch10-camp',chapter:10,title:'The governor’s relief courtyard',scale:2,ground:'stone',entry:'gate',
+    // The tribunal's door (release 14), clear of the court's chests.
+    exits:{'ch10-tribunal':[2,-3]},
     map:['WWWWWWWWWW',
          'WSSS.SSSSW',
          'WSSS.SSSSW',
@@ -341,6 +347,8 @@ export const CAMPS=freeze({
   // The loyal legions' camp before the final march: the standards stand in a paved court at
   // its heart, with the decree table above it and the envoys kept to the tents by the wall.
   12:camp({id:'ch12-camp',chapter:12,title:'The loyal standards court',scale:2,ground:'stone',entry:'gate',
+    // The Curia's door (release 14), clear of the court's water.
+    exits:{'ch12-legitimacy':[1.5,-3]},
     map:['WWWWWWWWWW',
          'WCCCSSSCCW',
          'WCC.SSS.CW',

@@ -75,7 +75,7 @@ export function pointerIntent(world,{actorId=world.controlled,pick={},button='le
     if(shift&&object.field&&['gate','barricade'].includes(object.kind))return {cursor:'attack',reason:null,
       message:`Break ${object.kind==='gate'?'open':'down'}: ${object.name}. Twice as long as using it; a blow stops the work.`,
       command:{actorId:actor.id,kind:'interact',payload:{objectId:object.id,force:true}}};
-    const verb=object.field?fieldVerb(object):'Use',hint=object.field?`${fieldHint(world,object)} A blow stops the work.`:object.hint??'Your soldier walks over and works for a few seconds; a blow stops him.';
+    const verb=object.field?fieldVerb(object):object.verb??'Use',hint=object.field?`${fieldHint(world,object)} A blow stops the work.`:object.hint??'Your soldier walks over and works for a few seconds; a blow stops him.';
     return {cursor:'use',reason:null,message:`${verb}: ${object.name}. ${hint}`,
       command:{actorId:actor.id,kind:'interact',payload:{objectId:object.id}}};
   }
@@ -189,7 +189,7 @@ export function commandOptions(world,{actorId=world.controlled}={}){
       continue;
     }
     const force=!!o.field&&!fieldVerb(o)&&!!fieldVerb(o,{force:true});if(o.field&&!force&&!fieldVerb(o))continue;
-    add('Objects',`${o.field?fieldVerb(o,{force}):'Use'}: ${o.name}`,order('interact',{objectId:o.id,...(force?{force:true}:{})}),
+    add('Objects',`${o.field?fieldVerb(o,{force}):o.verb??'Use'}: ${o.name}`,order('interact',{objectId:o.id,...(force?{force:true}:{})}),
       {subject:o.id,detail:`${m(distanceBetween(actor,o))}.${o.field?` ${fieldHint(world,o)}`:''}`});
   }
   for(const b of world.actors.filter(o=>!o.alive&&o.loot?.length).sort(near))add('The fallen',`Search ${b.name}`,order('loot',{targetId:b.id}),{subject:b.id,detail:m(distanceBetween(actor,b))});

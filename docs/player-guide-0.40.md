@@ -104,6 +104,15 @@ decision, battle preparation, people, places, the local report and
 **March out**. Choosing a person there walks you to them; **Esc** closes
 the list. **Pause/Resume** and the **Menu** stay in the strip.
 
+To leave camp, walk to its **way out**, a waymarker that points where the
+next encounter lies: **The road out** beyond the gate to a battle, **The drill
+yard** for Chapter I's drill, **The river gate** for Chapter V's second battle,
+and **The principia door** to a Contest (**The Curia door** in Chapters XI
+and XII). Click it, or choose it under **All actions**. If something is still
+missing, the gate sentry says what and nothing happens; once all is ready, a
+short card names where you are going while it is built. Talking to the gate
+or the sentry, and **March out** in **Menu → Camp**, leave the same way.
+
 Optional exercises appear when deployment, squad orders, engineering or
 political commitments become available. Open the **Tip** to follow a short
 task. Its steps advance only after the actual placement, delivered order,
@@ -241,8 +250,8 @@ Ctrl with a number.
     it falls due and what it is expected to cost.
 
 3.  Complete any preparation offered in camp, train, re-equip and choose
-    your companions, then march out through the camp gate to the next
-    encounter.
+    your companions, then walk out by the camp's way out (or **March out**
+    at the gate) to the next encounter.
 
 4.  Play the battle or Contest. Check the objective and the required
     capabilities: defeating enemies is not every mission's goal.
@@ -313,7 +322,7 @@ of this table.
 | **Valetudinarium** (hospital)                 | Heals you fully between encounters and shows when wounded companions return to duty. From Chapter II Capsarius Didius teaches his medical courses here.                                                                                   |
 | **Barracks**                                  | The **company roll**: choose up to three companions to march with you and set their standing orders.                                                                                                                                      |
 | **Canabae** (the settlement outside the gate) | A trader with the region's goods and news in every chapter, the local people, their errands and the consequences of your orders. Every camp's local report stands here.                                                                   |
-| **Camp gate**                                 | March out to the next encounter once its requirements are met (**March out** in **Menu → Camp** does the same).                                                                                                                         |
+| **Camp gate**                                 | March out to the next encounter once its requirements are met (**March out** in **Menu → Camp** does the same). The camp's way out, beyond the gate to a battle, leaves the same way.                                                                      |
 
 - **Camps are peaceful.** Weapons stay sheathed: drawing your weapon,
   attacking anyone, forcing an attack and the war cry are refused there,
@@ -1744,7 +1753,9 @@ In the real-time final battle, two clean reconnaissance operations intercept one
   camp's choices wait: the decision, preparations, replies and **March
   out** are unavailable for that moment. Menus, panels and walking still
   work. A reply at the gate that marches out waits for its save before
-  the encounter begins.
+  the encounter begins, and the way out asks you to use it again in a
+  moment. A fight that ends while a save is being written is recorded as
+  soon as that save is done.
 
 - It also keeps a **resume point** whenever you pause or leave the tab,
   so a phone browser that closes the page cannot lose a fight.

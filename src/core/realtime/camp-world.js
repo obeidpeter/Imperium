@@ -15,10 +15,32 @@ function containerState(state,o){
   const view=campContainerView(state,o.container);if(!view)return {container:o.container,locked:false,empty:true,hidden:false};
   return {container:o.container,locked:!view.unlocked,empty:view.empty,hidden:!!view.container.hidden&&!view.touched,opened:view.touched};
 }
+// Release 14: the way out of camp to the next encounter, used like any other object (the soldier walks to it
+// and uses it; nothing happens by passing it): the road beyond the gate for a battle, the drill yard for
+// Chapter I's drill, the river gate for Chapter V's second battle and a door for a Contest, the Curia's in the
+// Senate's chapters. Derived from the chronicle, never saved; the page leaves by it with the same departure
+// as the gate's March out, so its rules and refusals are the 0.38 departure's.
+const lead=title=>title.replace(/^The /,'the ');
+export function campExitFor(state){
+  const camp=state?.phase==='camp'?campFor(state.chapter):null,data=camp?CHAPTERS.find(c=>c.id===state.chapter)?.encounters[state.encounterIndex]:null;
+  if(!data)return null;
+  const way=(name,verb,hint,place,at)=>({id:'exit',kind:'exit',name,verb,hint,place,at:camp.exits?.[data.id]??at,to:data.id,area:data.title});
+  if(data.id==='ch1-training')return way('The drill yard','Go to','Varro’s drill begins there.','drill',[0,3]);
+  if(data.id==='ch5-wall')return way('The river gate','Go out by',`On to ${lead(data.title)}.`,'principia',[0,-3.5]);
+  if(data.kind==='contest')return way(state.chapter>=11?'The Curia door':'The principia door','Enter by',`The session: ${data.title}.`,'principia',[0,-3]);
+  // The road: 2.8 m beyond the gate, the way the gate stands from its place (a camp's `exits` may say otherwise).
+  const [gx,gz]=camp.objects.find(o=>o.id==='gate')?.at??[0,1.6],d=Math.hypot(gx,gz)||1,far=d+2.8;
+  return way('The road out','Take',`On to ${lead(data.title)}.`,'gate',[+(gx/d*far).toFixed(2),+(gz/d*far).toFixed(2)]);
+}
 // The scenery's view of an interaction is fixed for the camp: a chest's place and
 // kind, never whether it is open (the live stage draws that), so opening one
 // never rebuilds the camp's scenery.
 const interactionOf=(state,o,point)=>({id:o.id,kind:o.kind,name:o.name,...point(o.place,o.at),...(o.container?{container:o.container,box:containerById(o.container)?.kind??'chest'}:{})});
+// The camp's objects and, at its place, the way out to the next encounter (the scenery draws it: release 14).
+// Its board points the way, out from its place's centre.
+const interactionsOf=(state,camp,point)=>{const exit=campExitFor(state),[dx,dz]=exit?.at??[0,0],d=Math.hypot(dx,dz)||1;
+  return [...camp.objects.map(o=>interactionOf(state,o,point)),
+    ...(exit?[{id:exit.id,kind:'exit',name:exit.name,way:exit.to,...point(exit.place,exit.at),face:[+(dx/d).toFixed(3),+(dz/d).toFixed(3)]}]:[])];};
 // The armourer's forge stands behind him, away from the place's centre the soldier comes from,
 // turned a little to one side if the place's objects or people stand there.
 function smithyOf(camp,point){
@@ -66,7 +88,7 @@ function campPresentationBase(state){
     decision==='countermine'?'Stores are secured for the countermine; households wait under shelter.':'Households and the engineer await your decision.';
   return {decision,civilianOutcome,stores,waterDetail,engineeringRecovered,stage:state.encounterIndex>0?'river-gate':'tower',summary,
     places:CAMP_PLACES.map(id=>({id,name:campPlaceName(5,id),...point(id)})),
-    interactions:camp.objects.map(o=>interactionOf(state,o,point)),smithy:smithyOf(camp,point),
+    interactions:interactionsOf(state,camp,point),smithy:smithyOf(camp,point),
     sceneryPads:(camp.sceneryPads??[]).map(p=>{
       const xs=p.cells.map(c=>c[0]),ys=p.cells.map(c=>c[1]),minX=Math.min(...xs),maxX=Math.max(...xs)+1,minZ=Math.min(...ys),maxZ=Math.max(...ys)+1;
       return {id:p.id,kind:p.kind,cells:p.cells.map(([x,y])=>({x,y})),x:(minX+maxX)*FINE/2-hx,z:(minZ+maxZ)*FINE/2-hz,
@@ -110,7 +132,7 @@ function regionalCampPresentation(state){
   return {chapter:state.chapter,decision,summary,purpose:context.purpose,inspection:context.inspection,
     stage:chapter.encounters[state.encounterIndex]?.id??'complete',decisionDetails,outcomeDetails,committedRecords,
     places:CAMP_PLACES.map(id=>({id,name:campPlaceName(state.chapter,id),...point(id)})),
-    interactions:camp.objects.map(o=>interactionOf(state,o,point)),smithy:smithyOf(camp,point),
+    interactions:interactionsOf(state,camp,point),smithy:smithyOf(camp,point),
     sceneryPads:(camp.sceneryPads??[]).map(p=>{
       const xs=p.cells.map(c=>c[0]),ys=p.cells.map(c=>c[1]),minX=Math.min(...xs),maxX=Math.max(...xs)+1,minZ=Math.min(...ys),maxZ=Math.max(...ys)+1;
       return {id:p.id,kind:p.kind,cells:p.cells.map(([x,y])=>({x,y})),x:(minX+maxX)*FINE/2-hx,z:(minZ+maxZ)*FINE/2-hz,
@@ -132,6 +154,10 @@ export function createCampWorld(state){
   const objects=camp.objects.map(o=>{const at=place(o.place,o.at);
     return o.container?{id:o.id,kind:'container',name:o.name,x:at.x,z:at.z,work_s:.3,toggle:true,...containerState(state,o)}
       :{id:o.id,kind:o.kind,name:o.name,x:at.x,z:at.z,work_s:.3,toggle:true,talk:o.talk};});
+  // The way out (release 14): used, the page leaves camp by it as by the gate's March out.
+  const exit=campExitFor(state);
+  if(exit){const at=place(exit.place,exit.at);objects.push({id:exit.id,kind:'exit',name:exit.name,x:at.x,z:at.z,work_s:.3,toggle:true,
+    verb:exit.verb,hint:exit.hint,exit:{to:exit.to,area:exit.area}});}
   const world=createWorld({map:{id:camp.id,...fine},seed:1000+state.chapter,actors,controlled:'hero',objects,kind:'camp',mission:null});
   world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};world.title=camp.title;world.campId=camp.id;world.chapter=state.chapter;
   if(camp.peaceful===true)world.peaceful=true;
