@@ -1,0 +1,61 @@
+{
+  "id": "item-jar",
+  "status": "accepted for the item atlas (release 13)",
+  "item": "olive_oil",
+  "group": "Goods",
+  "use": "The inventory picture of `olive_oil` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A small Roman clay jar of the third century AD for oil, garum or honey: a round-bellied terracotta jar with a short neck, two small handles and a stopper sealed with wax, a little worn. Shown upright, three-quarter view. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "eb41bfab-6b31-4ea8-a266-5347fddbba06",
+    "requestedAt": "2026-11-02T06:40:28.797Z",
+    "balanceBefore": 11060,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A small Roman clay jar of the third century AD for oil, garum or honey: a round-bellied terracotta jar with a short neck, two small handles and a stopper sealed with wax, a little worn. Shown upright, three-quarter view. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T06:42:33.925Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-jar.glb",
+    "rawBytes": 45848108,
+    "rawSha256": "d2423216f8be861ca1b5d4587c8f67b6a22c2d26e22314af581df32b7a66b7ec",
+    "tripoInput": {
+      "prompt": "A small Roman clay jar of the third century AD for oil, garum or honey: a round-bellied terracotta jar with a short neck, two small handles and a stopper sealed with wax, a little worn. Shown upright, three-quarter view. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-jar-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 0,
+    "cells": "1x2",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}

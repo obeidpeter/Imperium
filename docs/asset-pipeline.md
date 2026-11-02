@@ -459,3 +459,26 @@ Release 8 gives the living camps' named people who had no body of their own thei
 The later camp/character follow-up includes Severianus in Chapter XII's offline pack and verifies the legally earned patron route. Aelia now has her own bounded expression/blink system. See [camp-character-followup.md](camp-character-followup.md) for those corrections to the original release description above.
 
 The 31 October local Blender pass refines sixteen existing bodies, without replacing their compressed textures or raising their budgets. [character-art-refinement.md](character-art-refinement.md) records the exact coverage, source/processed hashes, protected contact and UV data, pose metrics, visual review and remaining source-paint limitations. [command-camp-refinement.md](command-camp-refinement.md) records the accompanying camp composition and interface changes.
+
+## Item pictures · 2026-11-02
+
+Release 13 gives every piece in the inventory a picture rendered from a generated model (see [art-generation.md](art-generation.md#item-pictures--12-november-2026)). The models never ship, and nothing new is drawn in 3D: the game shows the pictures from one WebP atlas.
+
+1. **Generate** each model as any other (`npm run asset:tripo -- generate art-source/models/requests/item-<name>.json`). Its request's `provenance` names the program (`item-pictures`), the credit cap and the expected 20 credits. With `creditAccounting: "batch"` several can run at once, as each task reports its own charge.
+2. **Review** it against its Tripo render. Record the verdict in the request's `status` (`accepted …` or `rejected …`, with the reason), and how to render it in its `picture`:
+   - `view`: `upright` for a shirt, a helmet or a shield; `long` for a weapon; `flat` for a belt;
+   - `turn` in degrees, to show its other side;
+   - `cells`, its shape in the pack;
+   - `across` (`x`, `y` or `z`), when a long thing's guard misleads the camera;
+   - `dropStand` (`radius,top,floor` in the model's own units), when the model came on a display stand.
+3. **List** it in `art-source/items/item-pictures.json`: the picture's request, its cells and the items it serves. Every item in `src/data/items.js` has one picture or is listed under `drawn`. A model rejected at review goes under `rejected` with the reason, its render in `art-source/items/rejected/`; until another is made, its items go under `drawn`.
+4. **Render and pack:** `node scripts/assets/item-atlas.mjs --render <name>` renders that master from its raw model into `art-source/items/pictures/`; without names it renders them all. Without `--render`, it packs the masters:
+   - it checks the list against the items first;
+   - `build-item-atlas.py` scales each master to 80 pixels a cell, by area averaging in premultiplied alpha;
+   - it packs them into `assets/items/item-atlas.webp` (quality 78) and writes `src/data/item-pictures.js`, where each item's picture lies.
+5. **Record** the atlas's new bytes and digest in `docs/asset-manifest.json` and the batch in the ledger. `tests/item-pictures.test.mjs` checks:
+   - that every item has a picture or is drawn, and that the places lie inside the atlas without overlapping;
+   - that the atlas is the recorded size, within its 120 KB budget, and in every chapter's pack;
+   - that each picture's model was accepted and paid for from the ledger.
+
+`src/ui/item-art.js` draws a picture as two nested SVGs: the outer fits the item's place into any box without stretching (the pack's cells, the worn places, the details and the traders' goods), and the inner, the place's own size, clips the atlas to it, so a box of another shape never shows the neighbouring pictures. An item with no picture keeps its drawn silhouette.

@@ -1,6 +1,6 @@
 {
   "id": "item-hamata",
-  "status": "generated: awaiting review",
+  "status": "rejected at review: plates and bands, not rings; made again as item-hamata-b, then item-hamata-c",
   "item": "hamata",
   "group": "Body armour",
   "use": "The inventory picture of `hamata` (src/data/items.js), rendered from this model in Blender into the item atlas.",
@@ -56,6 +56,6 @@
     "view": "upright",
     "turn": 180,
     "cells": "2x3",
-    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
   }
 }

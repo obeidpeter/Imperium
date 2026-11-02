@@ -14707,6 +14707,206 @@
         "overviewTriangles": 2499
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "item-atlas",
+      "path": "assets/items/item-atlas.webp",
+      "subject": "The inventory's item pictures: 35 pictures for 105 items, rendered from generated models",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from text prompts only (no reference image or third-party model); each model rendered in Blender by scripts/assets/render-item-pictures.py into a master at 128 pixels a pack cell, and the masters packed by scripts/assets/item-atlas.mjs",
+        "generator": "Tripo",
+        "plan": "art-source/items/item-pictures.json",
+        "masters": "art-source/items/pictures/",
+        "credits": "art-source/models/item-pictures-credits.json",
+        "models": [
+          {
+            "picture": "amulet",
+            "request": "art-source/models/requests/item-amulet.json",
+            "taskId": "3b637536-a52e-40b4-bd16-55a2cd10b344"
+          },
+          {
+            "picture": "arming-cap",
+            "request": "art-source/models/requests/item-arming-cap.json",
+            "taskId": "292bfd40-ad6d-4889-9cb7-b6c65ef544ae"
+          },
+          {
+            "picture": "axe",
+            "request": "art-source/models/requests/item-axe.json",
+            "taskId": "00cd607c-ce25-4744-b762-8608003de258"
+          },
+          {
+            "picture": "birrus",
+            "request": "art-source/models/requests/item-birrus.json",
+            "taskId": "43bff0d1-06bc-4527-a5dc-7b9b88f66533"
+          },
+          {
+            "picture": "bow",
+            "request": "art-source/models/requests/item-bow.json",
+            "taskId": "906f336b-1d5b-4b5c-b140-7f9a0d4d3f81"
+          },
+          {
+            "picture": "bracae",
+            "request": "art-source/models/requests/item-bracae.json",
+            "taskId": "7717745f-340f-4d24-8f70-952015934a1a"
+          },
+          {
+            "picture": "brooch",
+            "request": "art-source/models/requests/item-brooch.json",
+            "taskId": "2f232aff-9446-4683-893f-da68920925be"
+          },
+          {
+            "picture": "caligae",
+            "request": "art-source/models/requests/item-caligae.json",
+            "taskId": "5e30c8d9-62b5-451d-8823-6f8ed3e963c4"
+          },
+          {
+            "picture": "cingulum",
+            "request": "art-source/models/requests/item-cingulum.json",
+            "taskId": "6e9cc24f-667a-4b3f-ba0f-817e42cbe8eb"
+          },
+          {
+            "picture": "dart-belt",
+            "request": "art-source/models/requests/item-dart-belt.json",
+            "taskId": "26086051-e07e-4029-ad62-0dea24c2a250"
+          },
+          {
+            "picture": "galea",
+            "request": "art-source/models/requests/item-galea.json",
+            "taskId": "c84e4a9c-d2dc-4d1e-90f8-ae80303b9e2e"
+          },
+          {
+            "picture": "gladius",
+            "request": "art-source/models/requests/item-gladius-b.json",
+            "taskId": "b3c6a9cf-be3f-4af4-a68c-f058267c4de3"
+          },
+          {
+            "picture": "hamata",
+            "request": "art-source/models/requests/item-hamata-c.json",
+            "taskId": "c8bdef38-cb68-4bb0-8728-3afa4d810938"
+          },
+          {
+            "picture": "hasta",
+            "request": "art-source/models/requests/item-hasta-b.json",
+            "taskId": "a4d7d846-57d5-4f9b-a83e-9691db4a319e"
+          },
+          {
+            "picture": "jar",
+            "request": "art-source/models/requests/item-jar.json",
+            "taskId": "eb41bfab-6b31-4ea8-a266-5347fddbba06"
+          },
+          {
+            "picture": "key",
+            "request": "art-source/models/requests/item-key.json",
+            "taskId": "a05e3826-37c8-4274-8c5b-3cd9b6d06045"
+          },
+          {
+            "picture": "lamellar",
+            "request": "art-source/models/requests/item-lamellar.json",
+            "taskId": "f00644c3-4efa-4b6a-848e-2ab5f93f08a3"
+          },
+          {
+            "picture": "manica",
+            "request": "art-source/models/requests/item-manica.json",
+            "taskId": "a3992d21-8671-4e6f-a749-494a30434dbe"
+          },
+          {
+            "picture": "niederbieber",
+            "request": "art-source/models/requests/item-niederbieber.json",
+            "taskId": "b1e36df3-5270-49e3-8b69-9cf913dbdb7b"
+          },
+          {
+            "picture": "ocreae",
+            "request": "art-source/models/requests/item-ocreae.json",
+            "taskId": "b22867dd-2eb7-4e13-b41f-d7baf696c1ee"
+          },
+          {
+            "picture": "parma",
+            "request": "art-source/models/requests/item-parma.json",
+            "taskId": "32d35c1f-4fa4-495b-8404-4a8c4ee32841"
+          },
+          {
+            "picture": "pugio",
+            "request": "art-source/models/requests/item-pugio.json",
+            "taskId": "679b20f5-d5cc-4b5d-ab45-8d6e4f5b1a85"
+          },
+          {
+            "picture": "quiver",
+            "request": "art-source/models/requests/item-quiver.json",
+            "taskId": "c0f36c17-6a29-4b14-9e40-3509634d38b4"
+          },
+          {
+            "picture": "ring-belt",
+            "request": "art-source/models/requests/item-ring-belt.json",
+            "taskId": "d4f6fd84-16f2-4e68-903f-8fa73700aba3"
+          },
+          {
+            "picture": "sack",
+            "request": "art-source/models/requests/item-sack.json",
+            "taskId": "2b75df1f-c4bd-42c1-bb4f-fc0eaf1f6c9b"
+          },
+          {
+            "picture": "sagum",
+            "request": "art-source/models/requests/item-sagum.json",
+            "taskId": "fd271848-bcdc-4ef2-a3cf-be17a66f8dc6"
+          },
+          {
+            "picture": "scutum",
+            "request": "art-source/models/requests/item-scutum.json",
+            "taskId": "6bade030-2d8a-4a70-ba8f-5c2152de1c03"
+          },
+          {
+            "picture": "sling",
+            "request": "art-source/models/requests/item-sling.json",
+            "taskId": "04e88855-8f11-4770-a462-714513c0aae4"
+          },
+          {
+            "picture": "spangenhelm",
+            "request": "art-source/models/requests/item-spangenhelm.json",
+            "taskId": "7018086f-c3e2-4485-8e5b-2e1086bb24b4"
+          },
+          {
+            "picture": "spatha",
+            "request": "art-source/models/requests/item-spatha.json",
+            "taskId": "c6544ec3-90e2-4b09-9a7b-3f3ff970798a"
+          },
+          {
+            "picture": "squamata",
+            "request": "art-source/models/requests/item-squamata.json",
+            "taskId": "81941bfa-2c8e-4bca-a0d6-b9f533d5e453"
+          },
+          {
+            "picture": "subarmalis",
+            "request": "art-source/models/requests/item-subarmalis.json",
+            "taskId": "cbe5f614-f631-49fc-9d1e-d3bbdfe06855"
+          },
+          {
+            "picture": "tablet",
+            "request": "art-source/models/requests/item-tablet.json",
+            "taskId": "7eb8cb39-e1ce-4c9e-abdd-e912d2dc9610"
+          },
+          {
+            "picture": "torc",
+            "request": "art-source/models/requests/item-torc.json",
+            "taskId": "b16da4bf-383c-4155-b050-5d69d71b3ef6"
+          },
+          {
+            "picture": "tunic",
+            "request": "art-source/models/requests/item-tunic.json",
+            "taskId": "5bfca66e-7e5d-435f-934f-0f989eddf6f3"
+          }
+        ]
+      },
+      "usage": "The inventory's pack, worn places and ground, and the chests', the fallen's and the traders' goods (src/ui/item-art.js): decorative, beside each piece's name.",
+      "loading": "In every chapter's offline pack (src/ui/art.js); drawn only by the inventory, never in 3D.",
+      "export": {
+        "format": "WebP with alpha, lossy at quality 78",
+        "bytes": 117928,
+        "sha256": "a20a707a09b9bdf1afbf1c7435e48344f47cfbd3c7beb3f90eedf80c036a7f27",
+        "width": 1024,
+        "height": 888,
+        "cell": 80
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -14774,7 +14974,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-10-31T14:04:09.270Z",
+  "updatedAt": "2026-11-02T08:54:36.095Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -14798,10 +14998,11 @@
     "audio": 14,
     "models": 129,
     "textures": 15,
-    "src": 1
+    "src": 1,
+    "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 56160209,
+  "totalBundledAssetBytes": 56278137,
   "totalModelBytes": 40974659,
   "derivedGeometryBytes": 47428
 }

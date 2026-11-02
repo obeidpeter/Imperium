@@ -1,0 +1,66 @@
+{
+  "id": "item-gladius-b",
+  "status": "accepted for the item atlas (release 13): the blade, the ribbed grip and the round pommel are a gladius's; its guard is a slim bar where a Roman one is a block",
+  "item": "gladius",
+  "group": "Weapons",
+  "use": "The inventory picture of `gladius` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "remakes": "item-gladius",
+  "why": "The second attempt at the gladius: the first (item-gladius) came out as a medieval cross-hilted sword.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman short sword (gladius) of the Pompeii type, carried by Roman soldiers into the third century AD: a straight iron blade about forty-five centimetres long with parallel edges and a short triangular point; a rounded wooden handguard shaped like a flattened oval block, not a crossguard; a ribbed bone grip with four finger ridges; and a large round wooden pommel. Unsheathed, lying flat, side view, complete. No scabbard. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "crossguard, cross-guard, quillons, medieval sword, knightly sword, longsword, curved blade, fantasy sword, ornate gold hilt, scabbard",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "b3c6a9cf-be3f-4af4-a68c-f058267c4de3",
+    "requestedAt": "2026-11-02T08:21:57.434Z",
+    "balanceBefore": 10760,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman short sword (gladius) of the Pompeii type, carried by Roman soldiers into the third century AD: a straight iron blade about forty-five centimetres long with parallel edges and a short triangular point; a rounded wooden handguard shaped like a flattened oval block, not a crossguard; a ribbed bone grip with four finger ridges; and a large round wooden pommel. Unsheathed, lying flat, side view, complete. No scabbard. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "crossguard, cross-guard, quillons, medieval sword, knightly sword, longsword, curved blade, fantasy sword, ornate gold hilt, scabbard",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T08:23:25.123Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-gladius-b.glb",
+    "rawBytes": 36030652,
+    "rawSha256": "d9f61a0054000b720b977dd33f5a76cf11cd8c0cce6676a59cb578ca34388488",
+    "tripoInput": {
+      "prompt": "A Roman short sword (gladius) of the Pompeii type, carried by Roman soldiers into the third century AD: a straight iron blade about forty-five centimetres long with parallel edges and a short triangular point; a rounded wooden handguard shaped like a flattened oval block, not a crossguard; a ribbed bone grip with four finger ridges; and a large round wooden pommel. Unsheathed, lying flat, side view, complete. No scabbard. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "negative_prompt": "crossguard, cross-guard, quillons, medieval sword, knightly sword, longsword, curved blade, fantasy sword, ornate gold hilt, scabbard",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-gladius-b-tripo-render.webp"
+  },
+  "picture": {
+    "view": "long",
+    "turn": 0,
+    "cells": "1x3",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}

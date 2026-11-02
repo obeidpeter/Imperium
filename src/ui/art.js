@@ -4,6 +4,7 @@ import {PRESENTATION_BUDGET} from './presentation-budget.js';
 import {animationAssets} from './sprite-frames.js';
 import {chapterBodies,actorBodyUrl,chapterHorses,horseBodyUrl} from './actor-body-catalog.js';
 import {chapterWorldFiles,worldFiles} from './world-catalog.js';
+import {ITEM_ATLAS} from '../data/item-pictures.js';
 // Presentation assets never infer or award campaign milestones.
 const artLoader=createAssetLoader({maxEntries:PRESENTATION_BUDGET.decodedEntries,maxBytes:PRESENTATION_BUDGET.decodedBytes});
 export function heroPortrait(rank='Tiro') {
@@ -53,6 +54,8 @@ export function chapterAssets(chapter=1) {
   files.push('./assets/tactical/environment-props.webp','./assets/world/ground-materials.webp','./assets/world/natural-props.webp','./assets/world/camp-props.webp');
   if(n!==11)files.push(...animationAssets(n,false));
   files.push(...animationAssets(n,true));
+  // The inventory's item pictures (release 13), in every chapter: the inventory opens in every camp and field.
+  files.push(ITEM_ATLAS.src);
   return [...new Set(files.filter(Boolean))];
 }
 // Offline resources include code and textures; chapterAssets above stays image-

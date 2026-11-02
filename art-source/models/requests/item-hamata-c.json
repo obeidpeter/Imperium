@@ -1,0 +1,66 @@
+{
+  "id": "item-hamata-c",
+  "status": "accepted for the item atlas (release 13)",
+  "item": "hamata",
+  "group": "Body armour",
+  "use": "The inventory picture of `hamata` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "remakes": "item-hamata-b",
+  "why": "The third attempt at the mail shirt: the pilot's (item-hamata) came out as plates and bands, and the second (item-hamata-b) had plate shoulder guards.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman mail shirt (lorica hamata) of the third century AD, made entirely of small interlinked riveted iron rings: a plain hip-length shirt of mail with short mail sleeves, a round neck opening and a straight hem. One even texture of tiny rings covers it everywhere, the shoulders included, which are the same mail with no separate pieces. Dark oiled iron with a soft sheen. Shown upright, as if hanging from invisible shoulders, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plates, shoulder plates, pauldrons, spaulders, segmented armour, lorica segmentata, scale armour, lamellar, leather straps, buckles, belt, breastplate, padded armour, medieval knight, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "c8bdef38-cb68-4bb0-8728-3afa4d810938",
+    "requestedAt": "2026-11-02T08:21:57.205Z",
+    "balanceBefore": 10760,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A Roman mail shirt (lorica hamata) of the third century AD, made entirely of small interlinked riveted iron rings: a plain hip-length shirt of mail with short mail sleeves, a round neck opening and a straight hem. One even texture of tiny rings covers it everywhere, the shoulders included, which are the same mail with no separate pieces. Dark oiled iron with a soft sheen. Shown upright, as if hanging from invisible shoulders, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plates, shoulder plates, pauldrons, spaulders, segmented armour, lorica segmentata, scale armour, lamellar, leather straps, buckles, belt, breastplate, padded armour, medieval knight, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T08:24:28.289Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-hamata-c.glb",
+    "rawBytes": 48043036,
+    "rawSha256": "7748b8b8b06582ccf31891465ee7b125af107331387daa00a8c3256df30283ff",
+    "tripoInput": {
+      "prompt": "A Roman mail shirt (lorica hamata) of the third century AD, made entirely of small interlinked riveted iron rings: a plain hip-length shirt of mail with short mail sleeves, a round neck opening and a straight hem. One even texture of tiny rings covers it everywhere, the shoulders included, which are the same mail with no separate pieces. Dark oiled iron with a soft sheen. Shown upright, as if hanging from invisible shoulders, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "negative_prompt": "plates, shoulder plates, pauldrons, spaulders, segmented armour, lorica segmentata, scale armour, lamellar, leather straps, buckles, belt, breastplate, padded armour, medieval knight, fantasy armour",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-hamata-c-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 0,
+    "cells": "2x3",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}

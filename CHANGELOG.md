@@ -2,6 +2,14 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Worlds and gameplay, release 13, second part: item pictures ([plan](docs/worlds-and-gameplay-plan.md), [report](docs/inventory-release13-report.md#second-part-the-item-pictures))
+
+- **Every piece has a picture.** The inventory shows a picture of each piece, rendered from a generated model in one look: in the pack at its shape, in the worn places, on the ground, and in chests, the fallen's belongings and the traders' goods. There are 35 pictures for 105 pieces, as finer pieces of one kind share their kind's picture.
+- **Fine pieces show their finish.** Tinned pieces are paler, gilded ones warmer and bright steel a little brighter.
+- **Three quest objects keep their drawn outline:** the medicine box, the gate brace and the bronze bowl.
+- **A small download.** The pictures are one image of about 115 KB, in every chapter's offline pack. Nothing new is drawn in 3D.
+- **For contributors.** `node scripts/assets/item-atlas.mjs` checks every item against `art-source/items/item-pictures.json`, packs the rendered masters into `assets/items/item-atlas.webp`, writes `src/data/item-pictures.js` and records the atlas in the asset manifest; `--render` renders masters from their models first. Each model's render settings live in its request. `render-item-pictures.py` gains `--across` and `--drop-stand`. The 39 models used 780 of the pictures' 1,000 credits ([ledger](art-source/models/item-pictures-credits.json)).
+
 ### CI: the browser smoke test in two halves
 
 - **The browser smoke test runs in two halves side by side.** Its job took about 33 minutes and the usability job 40 of its 45, so a pull request waited about 40 minutes for CI. `SMOKE_GROUP=a` or `b` runs one half: `scripts/browser-smoke.mjs` names group a, and group b is every other scenario, so a new scenario always runs in one of them. Group a also runs the paused-order checks, and group b the real-time and cavalry controls. Each half should take about 18 minutes.

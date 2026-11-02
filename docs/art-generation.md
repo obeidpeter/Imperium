@@ -1285,3 +1285,67 @@ armour, chainmail, helmet, weapon, toga, cloak, hood, laurel, wreath, crown, gol
 The existing character assets were refined locally in Blender 5.2.2 LTS without new Tripo tasks or credits. Sixteen shipped bodies cover the hero's recruit, legionary, officer and commander bodies and all twelve named cast members. Hero/Aelia near faces receive local subdivision and bounded relief fairing; the remaining own faces receive conservative fairing. Both detail levels receive shoulder-weight cleanup, and Aelia receives a central robe-weight correction. Original KTX2 texture payloads and original UV samples are retained; no texture quality was reduced. Original prompts above remain verbatim.
 
 The [character refinement record](character-art-refinement.md) documents exact coverage, tool commands, source/export hashes, pose measurements, protected identity/contact channels, visual review and remaining baked-face, painted-neck and overview-UV limitations. Asset-manifest entries link their individual `char-<id>-refinement.json` reports. Shared starts, stops, blocks and hit recovery remain original authored animation in `scripts/character-sources/performance-v034.json`, with authoritative contact/release times preserved.
+
+## Item pictures · 1–2 November 2026
+
+Release 13 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md): a picture of every piece in the inventory, rendered offline from generated models. [The asset pipeline](asset-pipeline.md#item-pictures--2026-11-02) has how they are made, and the [release 13 report](inventory-release13-report.md#second-part-the-item-pictures) how the game shows them.
+
+Thirty-nine models were generated with Tripo's text-to-model API (`v3.1-20260211`, textured PBR, standard geometry, 20 credits each) from text prompts only: no reference image or third-party model. The owner approved a cap of 1,000 credits, with a pilot of eight shown first. The pilot (160 credits, 1 November) was approved on 2 November, with about 560 more credits for the other 27 models and a second try at the mail shirt (28 tasks), and then 60 for three remakes after the review below (3 tasks). The balance read 11,480 credits before and 10,700 after: 780 spent and 220 of the cap left, reconciled task by task in [`item-pictures-credits.json`](../art-source/models/item-pictures-credits.json). The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.
+
+The models never ship. Each is rendered in Blender (Cycles on the CPU, AgX with medium-high contrast) by [`render-item-pictures.py`](../scripts/assets/render-item-pictures.py) into a master at 128 pixels a pack cell, with its request's picture settings: an orthographic three-quarter view on transparency, a warm key light from the upper left, a softbox, a cool fill and a rim light; long things across their flat, belts and small things from above. The masters are kept in `art-source/items/pictures/`. [`item-atlas.mjs`](../scripts/assets/item-atlas.mjs) packs one slot per picture, at 80 pixels a cell, into the one atlas the game draws, `assets/items/item-atlas.webp` (WebP at quality 78). The prompts follow [the historical notes](historical-research.md): third-century kit, mail with no segmented plate.
+
+### Reviewed before shipping
+
+Every model was compared with its Tripo render and then, rendered, with the others on one sheet. What it showed, and what was kept:
+
+- **Four were made again.** The pilot's mail shirt (`item-hamata`) came out as plates and bands, not rings, and its second try (`item-hamata-b`) had rings on the body but plate shoulder guards like a segmented cuirass's; the third (`item-hamata-c`) is mail throughout. The first gladius (`item-gladius`) came out as a medieval cross-hilted sword; the second (`item-gladius-b`) has a gladius's blade, ribbed grip and round pommel, though its guard is a slim bar where a Roman one is a block. The first spear's shaft (`item-hasta`) came out iron; the second's (`item-hasta-b`) is ash. The rejected renders are kept in `art-source/items/rejected/`, and the remakes' prompts also named what to leave out (`negative_prompt`).
+- **Fixed in the render, at no cost:** the round shield (`item-parma`) and the soldier's cloak (`item-sagum`) are turned to show their fronts; the amulet and the brooch are seen face on, and the dagger across its flat, where the first renders saw them edge on; the conical helmet (`item-spangenhelm`) came on a display stand, removed in Blender before rendering (`--drop-stand`: everything within 0.06 of the vertical axis below the bowl, and below the cheek guards).
+- **Kept as they came:** the cloak's hood shows over its shoulders, the brooch is a plain T-shaped pin, the axe carries a spike behind its blade, and the boots are closed boots, which the third century wore more than open *caligae*.
+
+Fine and named pieces share their kind's picture and show their finish: tinned pieces paler, gilded ones warmer, bright steel a little brighter (`src/ui/inventory.css`). Three quest objects have no model and keep their drawn silhouettes: the medicine box, the gate brace and the bronze bowl.
+
+### The pictures
+
+Each prompt, request body, Tripo task, raw digest and the parameters Tripo reported are in the picture's request file (`art-source/models/requests/`); the raw files stay outside the repository.
+
+| Picture | Request | Batch | Tripo task | Cells | Rendered | In the atlas | Items (or why not) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| amulet | `item-amulet` | 2 | `3b637536-a52e-40b4-bd16-55a2cd10b344` | 1x1 | upright | yes | Amulet of Mars; Eye amulet; Phylactery; Lead identity seal |
+| arming-cap | `item-arming-cap` | 2 | `292bfd40-ad6d-4889-9cb7-b6c65ef544ae` | 1x1 | upright | yes | Arming cap; Padded arming cap |
+| axe | `item-axe` | 2 | `00cd607c-ce25-4744-b762-8608003de258` | 1x3 | long | yes | Axe; Chieftain’s axe |
+| birrus | `item-birrus` | pilot | `43bff0d1-06bc-4527-a5dc-7b9b88f66533` | 2x2 | upright, turned 180° | yes | Birrus; Paenula |
+| bow | `item-bow` | 2 | `906f336b-1d5b-4b5c-b140-7f9a0d4d3f81` | 1x4 | long | yes | Composite bow |
+| bracae | `item-bracae` | 2 | `7717745f-340f-4d24-8f70-952015934a1a` | 2x1 | long | yes | Bracae; Thick wool trousers |
+| brooch | `item-brooch` | 2 | `2f232aff-9446-4683-893f-da68920925be` | 1x1 | upright | yes | Silver brooch |
+| caligae | `item-caligae` | 2 | `5e30c8d9-62b5-451d-8823-6f8ed3e963c4` | 2x1 | upright | yes | Caligae; Closed boots; Hobnailed boots |
+| cingulum | `item-cingulum` | 2 | `6e9cc24f-667a-4b3f-ba0f-817e42cbe8eb` | 2x1 | flat | yes | Cingulum |
+| dart-belt | `item-dart-belt` | 2 | `26086051-e07e-4029-ad62-0dea24c2a250` | 2x1 | long | yes | Belt with plumbatae; Belt with eight plumbatae |
+| galea | `item-galea` | 2 | `c84e4a9c-d2dc-4d1e-90f8-ae80303b9e2e` | 2x2 | upright | yes | Galea; Crested galea; Tinned galea |
+| gladius | `item-gladius-b` | remakes | `b3c6a9cf-be3f-4af4-a68c-f058267c4de3` | 1x3 | long | yes | Gladius; Fine gladius |
+| hamata | `item-hamata-c` | remakes | `c8bdef38-cb68-4bb0-8728-3afa4d810938` | 2x3 | upright | yes | Lorica hamata; Fine-ringed mail; Mail edged in bronze |
+| hasta | `item-hasta-b` | remakes | `a4d7d846-57d5-4f9b-a83e-9691db4a319e` | 1x4 | long | yes | Spear; Hasta; Fine hasta; Lancea; Marked javelin |
+| jar | `item-jar` | 2 | `eb41bfab-6b31-4ea8-a266-5347fddbba06` | 1x2 | upright | yes | Olive oil; Fish sauce; Honey; Incense; The Ulpii’s seed jar |
+| key | `item-key` | 2 | `a05e3826-37c8-4274-8c5b-3cd9b6d06045` | 1x1 | long | yes | Key to the old armoury chest; Key to the river strongbox; Key to the station’s iron chest; Key to the tower chest; Key to the garrison strongbox; Key to the officer’s trunk; Key to the courier’s strongbox; Key to the boat-shed chest; Key to the gilded coffer; Key to the armour chest; Key to the archive box; Key to the station strongbox; Key to the officer’s strongbox; Key to the merchant’s strongbox |
+| lamellar | `item-lamellar` | 2 | `f00644c3-4efa-4b6a-848e-2ab5f93f08a3` | 2x3 | upright | yes | Persian scale coat; Lamellar coat |
+| manica | `item-manica` | 2 | `a3992d21-8671-4e6f-a749-494a30434dbe` | 1x2 | long | yes | Manica; Scale manica |
+| niederbieber | `item-niederbieber` | pilot | `b1e36df3-5270-49e3-8b69-9cf913dbdb7b` | 2x2 | upright, turned 180° | yes | Niederbieber helmet; Engraved Niederbieber helmet |
+| ocreae | `item-ocreae` | 2 | `b22867dd-2eb7-4e13-b41f-d7baf696c1ee` | 2x1 | long | yes | Ocreae; Fine greaves |
+| parma | `item-parma` | 2 | `32d35c1f-4fa4-495b-8404-4a8c4ee32841` | 2x2 | upright, turned 180° | yes | Parma; Bossed parma; Round shield |
+| pugio | `item-pugio` | 2 | `679b20f5-d5cc-4b5d-ab45-8d6e4f5b1a85` | 1x2 | long, across x | yes | Knife; Persian dagger |
+| quiver | `item-quiver` | 2 | `c0f36c17-6a29-4b14-9e40-3509634d38b4` | 1x2 | upright | yes | Quiver |
+| ring-belt | `item-ring-belt` | pilot | `d4f6fd84-16f2-4e68-903f-8fa73700aba3` | 2x1 | flat | yes | Ring-buckle belt |
+| sack | `item-sack` | 2 | `2b75df1f-c4bd-42c1-bb4f-fc0eaf1f6c9b` | 1x1 | upright | yes | Smoked fish; Dates; Leather thongs; Seed grain; Coin purse; Wine skin |
+| sagum | `item-sagum` | 2 | `fd271848-bcdc-4ef2-a3cf-be17a66f8dc6` | 2x2 | upright, turned 180° | yes | Sagum |
+| scutum | `item-scutum` | pilot | `6bade030-2d8a-4a70-ba8f-5c2152de1c03` | 2x4 | upright, turned 180° | yes | Scutum; Iron-rimmed scutum; Painted oval shield; The Victory shield; Cavalry shield; Oval training shield |
+| sling | `item-sling` | 2 | `04e88855-8f11-4770-a462-714513c0aae4` | 1x1 | flat | yes | Sling |
+| spangenhelm | `item-spangenhelm` | 2 | `7018086f-c3e2-4485-8e5b-2e1086bb24b4` | 2x2 | upright, stand removed | yes | Conical helmet; Gothic cap helmet |
+| spatha | `item-spatha` | pilot | `c6544ec3-90e2-4b09-9a7b-3f3ff970798a` | 1x3 | long | yes | Spatha; Fine spatha; Ring-pommel sword; Pattern-welded spatha; Sasanian long sword |
+| squamata | `item-squamata` | pilot | `81941bfa-2c8e-4bca-a0d6-b9f533d5e453` | 2x3 | upright, turned 180° | yes | Lorica squamata; Tinned scale |
+| subarmalis | `item-subarmalis` | 2 | `cbe5f614-f631-49fc-9d1e-d3bbdfe06855` | 2x2 | upright | yes | Subarmalis; Thick subarmalis; Leather jerkin |
+| tablet | `item-tablet` | 2 | `7eb8cb39-e1ce-4c9e-abdd-e912d2dc9610` | 1x1 | flat | yes | Wax tablet; Papyrus roll; Letter of recommendation; Legion records; Letter home; Copy of the station report; Provincial accounts |
+| torc | `item-torc` | 2 | `b16da4bf-383c-4155-b050-5d69d71b3ef6` | 1x1 | flat | yes | Gothic torc |
+| tunic | `item-tunic` | pilot | `5bfca66e-7e5d-435f-934f-0f989eddf6f3` | 2x2 | upright, turned 180° | yes | Wool tunic; Linen tunic; Thick winter tunic; Tunic with clavi |
+| hamata | `item-hamata` | pilot | `7ff7ffea-c9dd-40aa-9fec-9a3238a6c4f1` | 2x3 | upright, turned 180° | rejected | plates and bands, not rings |
+| hamata | `item-hamata-b` | 2 | `48989c9f-766d-4bf7-b2bc-f121660a6f68` | 2x3 | upright | rejected | plate shoulder guards like a segmented cuirass's |
+| gladius | `item-gladius` | 2 | `79355df7-36c3-4896-9f91-272ac20699fe` | 1x3 | long | rejected | a medieval cross-hilted sword |
+| hasta | `item-hasta` | 2 | `c4005a4b-8bb2-4e3e-b7b4-b3921a031ba2` | 1x4 | long | rejected | an iron shaft |

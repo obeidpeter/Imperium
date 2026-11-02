@@ -1,6 +1,6 @@
 {
   "id": "item-scutum",
-  "status": "generated: awaiting review",
+  "status": "accepted for the item atlas (release 13)",
   "item": "scutum",
   "group": "Shields",
   "use": "The inventory picture of `scutum` (src/data/items.js), rendered from this model in Blender into the item atlas.",
@@ -56,6 +56,6 @@
     "view": "upright",
     "turn": 180,
     "cells": "2x4",
-    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
   }
 }

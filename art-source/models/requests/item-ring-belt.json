@@ -1,6 +1,6 @@
 {
   "id": "item-ring-belt",
-  "status": "generated: awaiting review",
+  "status": "accepted for the item atlas (release 13)",
   "item": "ring_belt",
   "group": "Belts",
   "use": "The inventory picture of `ring_belt` (src/data/items.js), rendered from this model in Blender into the item atlas.",
@@ -56,6 +56,6 @@
     "view": "flat",
     "turn": 0,
     "cells": "2x1",
-    "note": "scripts/assets/render-item-pictures.py settings; cells are the item's pack shape in src/data/items.js"
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
   }
 }

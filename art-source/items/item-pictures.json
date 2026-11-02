@@ -1,0 +1,348 @@
+{
+  "about": "Release 13: which generated model's picture each item shows in the inventory. Each picture's master is rendered from its request's model with that request's picture settings (scripts/assets/render-item-pictures.py, 128 px a pack cell) and kept in art-source/items/pictures/; scripts/assets/item-atlas.mjs packs them into the one atlas the game draws (assets/items/item-atlas.webp). Items that share a picture are finer pieces of one kind or things of one sort; a fine piece shows its finish (src/ui/inventory.css). Items listed under drawn keep their drawn silhouette. Models rejected at review are listed with the reason, their renders kept in art-source/items/rejected/.",
+  "masterCell": 128,
+  "pictures": {
+    "amulet": {
+      "request": "item-amulet",
+      "cells": "1x1",
+      "items": [
+        "amulet_mars",
+        "eye_amulet",
+        "phylactery",
+        "signaculum"
+      ]
+    },
+    "arming-cap": {
+      "request": "item-arming-cap",
+      "cells": "1x1",
+      "items": [
+        "arming_cap",
+        "arming_cap_padded"
+      ]
+    },
+    "axe": {
+      "request": "item-axe",
+      "cells": "1x3",
+      "items": [
+        "axe",
+        "axe_chieftain"
+      ]
+    },
+    "birrus": {
+      "request": "item-birrus",
+      "cells": "2x2",
+      "items": [
+        "birrus",
+        "paenula"
+      ]
+    },
+    "bow": {
+      "request": "item-bow",
+      "cells": "1x4",
+      "items": [
+        "bow"
+      ]
+    },
+    "bracae": {
+      "request": "item-bracae",
+      "cells": "2x1",
+      "items": [
+        "bracae",
+        "bracae_thick"
+      ]
+    },
+    "brooch": {
+      "request": "item-brooch",
+      "cells": "1x1",
+      "items": [
+        "silver_brooch"
+      ]
+    },
+    "caligae": {
+      "request": "item-caligae",
+      "cells": "2x1",
+      "items": [
+        "caligae",
+        "calcei",
+        "calcei_nailed"
+      ]
+    },
+    "cingulum": {
+      "request": "item-cingulum",
+      "cells": "2x1",
+      "items": [
+        "cingulum"
+      ]
+    },
+    "dart-belt": {
+      "request": "item-dart-belt",
+      "cells": "2x1",
+      "items": [
+        "dart_belt",
+        "dart_belt_full"
+      ]
+    },
+    "galea": {
+      "request": "item-galea",
+      "cells": "2x2",
+      "items": [
+        "galea",
+        "galea_crest",
+        "galea_tinned"
+      ]
+    },
+    "gladius": {
+      "request": "item-gladius-b",
+      "cells": "1x3",
+      "items": [
+        "gladius",
+        "gladius_fine"
+      ]
+    },
+    "hamata": {
+      "request": "item-hamata-c",
+      "cells": "2x3",
+      "items": [
+        "hamata",
+        "hamata_fine",
+        "hamata_bronze"
+      ]
+    },
+    "hasta": {
+      "request": "item-hasta-b",
+      "cells": "1x4",
+      "items": [
+        "spear",
+        "hasta",
+        "hasta_fine",
+        "lancea",
+        "lost_javelin"
+      ]
+    },
+    "jar": {
+      "request": "item-jar",
+      "cells": "1x2",
+      "items": [
+        "olive_oil",
+        "garum",
+        "honey_jar",
+        "incense",
+        "seed_jar"
+      ]
+    },
+    "key": {
+      "request": "item-key",
+      "cells": "1x1",
+      "items": [
+        "key_c1",
+        "key_c2",
+        "key_c3",
+        "key_c4",
+        "key_c5",
+        "key_c6",
+        "key_c7",
+        "key_c8",
+        "key_c9",
+        "key_c10",
+        "key_c11",
+        "key_f3",
+        "key_f4",
+        "key_f9"
+      ]
+    },
+    "lamellar": {
+      "request": "item-lamellar",
+      "cells": "2x3",
+      "items": [
+        "scale_eastern",
+        "lamellar_eastern"
+      ]
+    },
+    "manica": {
+      "request": "item-manica",
+      "cells": "1x2",
+      "items": [
+        "manica",
+        "manica_scale"
+      ]
+    },
+    "niederbieber": {
+      "request": "item-niederbieber",
+      "cells": "2x2",
+      "items": [
+        "niederbieber",
+        "niederbieber_engraved"
+      ]
+    },
+    "ocreae": {
+      "request": "item-ocreae",
+      "cells": "2x1",
+      "items": [
+        "ocreae",
+        "ocreae_fine"
+      ]
+    },
+    "parma": {
+      "request": "item-parma",
+      "cells": "2x2",
+      "items": [
+        "parma",
+        "parma_bossed",
+        "round_shield"
+      ]
+    },
+    "pugio": {
+      "request": "item-pugio",
+      "cells": "1x2",
+      "items": [
+        "knife",
+        "persian_dagger"
+      ]
+    },
+    "quiver": {
+      "request": "item-quiver",
+      "cells": "1x2",
+      "items": [
+        "quiver"
+      ]
+    },
+    "ring-belt": {
+      "request": "item-ring-belt",
+      "cells": "2x1",
+      "items": [
+        "ring_belt"
+      ]
+    },
+    "sack": {
+      "request": "item-sack",
+      "cells": "1x1",
+      "items": [
+        "smoked_fish",
+        "dates",
+        "leather_thongs",
+        "seed_grain",
+        "coin_purse",
+        "wine_skin"
+      ]
+    },
+    "sagum": {
+      "request": "item-sagum",
+      "cells": "2x2",
+      "items": [
+        "sagum"
+      ]
+    },
+    "scutum": {
+      "request": "item-scutum",
+      "cells": "2x4",
+      "items": [
+        "scutum",
+        "scutum_rim",
+        "scutum_light",
+        "scutum_victory",
+        "cavalry_oval",
+        "training_shield"
+      ]
+    },
+    "sling": {
+      "request": "item-sling",
+      "cells": "1x1",
+      "items": [
+        "sling"
+      ]
+    },
+    "spangenhelm": {
+      "request": "item-spangenhelm",
+      "cells": "2x2",
+      "items": [
+        "conical_helmet",
+        "segmented_helmet"
+      ]
+    },
+    "spatha": {
+      "request": "item-spatha",
+      "cells": "1x3",
+      "items": [
+        "spatha",
+        "spatha_fine",
+        "ring_sword",
+        "spatha_aquileia",
+        "sword_sasanian"
+      ]
+    },
+    "squamata": {
+      "request": "item-squamata",
+      "cells": "2x3",
+      "items": [
+        "squamata",
+        "squamata_tinned"
+      ]
+    },
+    "subarmalis": {
+      "request": "item-subarmalis",
+      "cells": "2x2",
+      "items": [
+        "subarmalis",
+        "subarmalis_thick",
+        "jerkin"
+      ]
+    },
+    "tablet": {
+      "request": "item-tablet",
+      "cells": "1x1",
+      "items": [
+        "wax_tablet",
+        "papyrus_roll",
+        "patron_letter",
+        "legion_records",
+        "company_letter",
+        "report_copy",
+        "accounts_copy"
+      ]
+    },
+    "torc": {
+      "request": "item-torc",
+      "cells": "1x1",
+      "items": [
+        "gothic_torc"
+      ]
+    },
+    "tunic": {
+      "request": "item-tunic",
+      "cells": "2x2",
+      "items": [
+        "tunic",
+        "linen_tunic",
+        "tunic_winter",
+        "tunic_clavi"
+      ]
+    }
+  },
+  "drawn": [
+    "bronze_bowl",
+    "gate_brace",
+    "medicine_box"
+  ],
+  "rejected": [
+    {
+      "request": "item-hamata",
+      "picture": "hamata",
+      "reason": "plates and bands, not rings"
+    },
+    {
+      "request": "item-hamata-b",
+      "picture": "hamata",
+      "reason": "plate shoulder guards like a segmented cuirass's"
+    },
+    {
+      "request": "item-gladius",
+      "picture": "gladius",
+      "reason": "a medieval cross-hilted sword"
+    },
+    {
+      "request": "item-hasta",
+      "picture": "hasta",
+      "reason": "an iron shaft"
+    }
+  ]
+}

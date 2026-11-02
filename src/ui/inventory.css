@@ -76,6 +76,11 @@
 .pack-ghost.is-blocked{border-color:#ffb1a8;background:#b3443c55}
 .pack-ghost[hidden]{display:none}
 [data-section="pack"] .item-picture[data-grade="fine"],[data-section="ground"] .item-picture[data-grade="fine"]{filter:drop-shadow(0 0 2px #fff6)}
+/* Release 13: a fine piece shares its kind's rendered picture in its own finish. */
+.item-picture[data-finish="tinned"] .kit-picture{filter:saturate(.35) brightness(1.12)}
+.item-picture[data-finish="bright"] .kit-picture{filter:brightness(1.08) contrast(1.06)}
+.item-picture[data-finish="gilded"] .kit-picture{filter:sepia(.35) saturate(1.35) brightness(1.04)}
+.item-picture[data-finish="bronze-trim"] .kit-picture{filter:sepia(.22) saturate(1.2)}
 
 /* The selected piece, in a strip under the figure and the pack: what it is beside what it would change. */
 .inv-details{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"head compare" "text compare" "actions compare";gap:0 18px;align-items:start;

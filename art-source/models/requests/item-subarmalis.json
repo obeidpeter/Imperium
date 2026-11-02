@@ -1,0 +1,61 @@
+{
+  "id": "item-subarmalis",
+  "status": "accepted for the item atlas (release 13)",
+  "item": "subarmalis",
+  "group": "Body armour",
+  "use": "The inventory picture of `subarmalis` and the pieces that share it (src/data/items.js), rendered from this model in Blender into the item atlas.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A padded linen arming jacket (subarmalis) worn under armour by a third-century Roman soldier: thick quilted off-white linen stitched in vertical channels, short sleeves, a round neck and hip length, with a row of short leather strips at the shoulders and the hem. Shown upright as if worn by an invisible body, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    }
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "item-pictures",
+    "creditCeiling": 1000,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "taskId": "cbe5f614-f631-49fc-9d1e-d3bbdfe06855",
+    "requestedAt": "2026-11-02T06:48:05.561Z",
+    "balanceBefore": 10820,
+    "requestBody": {
+      "type": "text_to_model",
+      "prompt": "A padded linen arming jacket (subarmalis) worn under armour by a third-century Roman soldier: thick quilted off-white linen stitched in vertical channels, short sleeves, a round neck and hip length, with a row of short leather strips at the shoulders and the hem. Shown upright as if worn by an invisible body, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard"
+    },
+    "status": "success",
+    "generatedAt": "2026-11-02T06:50:21.094Z",
+    "output": "pbr_model",
+    "raw": "art-source/models/raw/item-subarmalis.glb",
+    "rawBytes": 45577476,
+    "rawSha256": "6b6aef5c0c54b7964b7ad8eb864f0320986e83ebacd40a78db55f6435e9510f2",
+    "tripoInput": {
+      "prompt": "A padded linen arming jacket (subarmalis) worn under armour by a third-century Roman soldier: thick quilted off-white linen stitched in vertical channels, short sleeves, a round neck and hip length, with a row of short leather strips at the shoulders and the hem. Shown upright as if worn by an invisible body, front view, hollow and complete. Single isolated object for an inventory picture in a grounded painterly-realistic historical game set in the third-century Roman world. Physically based worn materials, believable hand-made construction, strong readable silhouette, restrained surface detail, complete geometry from every side. No stand, display plinth, mannequin, environment, hands, people, text or logos.",
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "texture_alignment": "geometry",
+      "export_uv": true,
+      "geometry_quality": "standard"
+    },
+    "modelVersion": "v3.1-20260211",
+    "creditsSpent": 20,
+    "creditSource": "task.consumed_credit",
+    "tripoRender": "art-source/models/raw/item-subarmalis-tripo-render.webp"
+  },
+  "picture": {
+    "view": "upright",
+    "turn": 0,
+    "cells": "2x2",
+    "note": "scripts/assets/render-item-pictures.py settings; cells are the picture's shape in pack cells (src/data/items.js)"
+  }
+}
