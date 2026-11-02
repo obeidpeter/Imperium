@@ -1,6 +1,10 @@
+import {ITEMS} from '../data/items.js';
+
 // Original vector kit silhouettes. Shared by pack and equipped lists; no
 // external image, image request, or per-item SVG identifier is required.
+// Takes an item or its id (release 13: an id once drew every piece as "other").
 export function itemArt(item={}){
+  if(typeof item==='string')item=ITEMS[item]??{};
   const paths={
     weapon:'M18 48 L43 6 L47 8 L25 51Z M14 44 L29 53 M13 54 L19 45',
     shield:'M13 9 Q32 3 51 9 L48 38 Q43 51 32 57 Q20 51 16 38Z M32 14 L32 48 M21 31 L43 31',
@@ -14,4 +18,14 @@ export function itemArt(item={}){
     other:'M15 15 L49 15 L53 52 L11 52Z M21 15 Q21 4 32 4 Q43 4 43 15 M15 27 L49 27'
   };
   return `<svg class="kit-art" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><path d="${paths[item.slot]??paths.other}" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+// The outline of an empty worn place: its slot's silhouette, faint.
+export const slotArt=slot=>itemArt({slot});
+
+// An item's picture in the inventory (release 13): its rendered picture where
+// one exists, else the drawn silhouette above. Decorative: the item's name is
+// always given beside it or on its control.
+export function itemPicture(id){
+  const item=ITEMS[id]??{};
+  return `<span class="item-picture" data-slot="${item.slot??'other'}"${item.grade?` data-grade="${item.grade}"`:''}>${itemArt(item)}</span>`;
 }

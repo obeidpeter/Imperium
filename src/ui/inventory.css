@@ -1,0 +1,193 @@
+/* The inventory (release 13): one full-screen view over the world for the soldier's kit, what he finds and
+   what he trades. His figure with the places he wears kit beside it, the real 10 x 6 pack, the ground here,
+   and his character sheet or the other side of the exchange. Below 600 pixels, or at 200% text, the same
+   sections show one at a time behind tabs. */
+#modal[data-inventory="true"]{width:calc(100vw - 16px);max-width:none;height:calc(100dvh - 16px);max-height:none}
+#modal[data-inventory="true"] .modal-head{padding-block:8px}
+#modal[data-inventory="true"] .modal-head>div{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 18px}
+#modal[data-inventory="true"] .modal-head h2{font-size:calc(1.45rem * var(--text-scale,1))}
+#modal[data-inventory="true"] .modal-back{white-space:nowrap;flex:none;min-inline-size:0}
+#modal[data-inventory="true"] .modal-body{padding:10px 20px 18px}
+#modal[data-inventory="true"] .soldier-sections{margin-block-end:10px}
+#modal[data-inventory="true"] .soldier-sections button{min-block-size:2.5rem;padding-block:.3rem}
+.inventory{--cell:clamp(2.2rem,min(3.1vw,6vh),4.2rem);--socket:clamp(3.3rem,7vh,4.6rem);--figure-w:clamp(10rem,14vw,17rem);
+  --pack-w:calc(var(--cell) * 10 + 4px);--doll-w:calc(var(--socket) * 4 + 12px + var(--figure-w) + 16px);--pack-bg:#3a3127;--pack-line:#ffffff1c;--tile:#efe5cf;--tile-edge:#9c845a;
+  display:grid;gap:12px 22px;align-items:start;justify-content:center;grid-template-columns:var(--doll-w) var(--pack-w) minmax(16rem,30rem);grid-template-rows:auto auto 1fr;
+  grid-template-areas:"tabs tabs tabs" "worn middle other" "details details other"}
+.inv-middle{grid-area:middle;display:flex;flex-direction:column;gap:12px;min-inline-size:0}
+.inventory>.inventory-tabs{grid-area:tabs;display:none}
+.inventory>[data-section="worn"]{grid-area:worn}.inventory>[data-section="other"]{grid-area:other;min-inline-size:0;align-self:stretch}
+.inventory>[data-section="details"]{grid-area:details;min-inline-size:0}
+.inventory .inv-heading{font-size:calc(.78rem * var(--text-scale,1));letter-spacing:.12em;text-transform:uppercase;color:var(--bronze-text,#705533);margin:0 0 8px}
+.inventory .inv-heading small{letter-spacing:0;text-transform:none;font-weight:400;color:var(--muted)}
+.inventory .inv-empty{color:var(--muted);font-size:var(--font-label);margin:.2rem 0}
+.inventory p{max-width:none}
+
+/* The figure and the places he wears kit, two to a row on each side. */
+.doll{display:grid;grid-template-columns:calc(var(--socket) * 2 + 6px) var(--figure-w) calc(var(--socket) * 2 + 6px);gap:8px;align-items:stretch}
+.doll-side{display:grid;grid-template-columns:repeat(2,var(--socket));grid-auto-rows:min-content;gap:6px;align-content:start}
+.worn-socket{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:2px;padding:0;min-block-size:0;background:none;border:0;color:var(--ink);cursor:pointer;text-align:center}
+.worn-socket .item-picture{display:grid;place-items:center;aspect-ratio:1;inline-size:100%;background:radial-gradient(circle at 50% 40%,#3b352b,#221f1a);
+  border:1px solid #8f7a52;border-radius:4px;box-shadow:inset 0 2px 6px #0008;color:#e8d8b0;padding:12%}
+.worn-socket .item-picture.is-empty{color:#e8d8b04d;border-style:dashed}
+.worn-socket .kit-art{inline-size:100%;block-size:100%;color:inherit}
+.worn-socket .socket-name{font-size:calc(.62rem * var(--text-scale,1));line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word;hyphens:auto}
+.worn-socket.is-empty .socket-name{color:var(--muted)}
+.worn-socket.is-selected .item-picture,.worn-socket:focus-visible .item-picture{outline:3px solid var(--gold,#c7ad79);outline-offset:1px}
+.worn-socket:focus-visible{outline:none}
+.inventory .soldier-model{margin:0;max-inline-size:none;display:flex;flex-direction:column;min-block-size:0}
+.inventory .soldier-model canvas{flex:1;inline-size:100%;block-size:auto;min-block-size:14rem;min-inline-size:0}
+.inventory .soldier-model{min-inline-size:0;overflow:hidden}
+.inventory .soldier-model figcaption{padding:.35rem .6rem;font-size:calc(.7rem * var(--text-scale,1))}
+.inventory .soldier-model-controls{padding:0 .4rem .5rem;gap:.3rem}.inventory .soldier-model-controls button{min-block-size:2.2rem;min-inline-size:2.4rem;padding:.2rem .45rem;font-size:calc(.75rem * var(--text-scale,1))}
+.inv-summary{font-size:var(--font-label);margin:8px 0 0}
+
+/* The pack: a dark leather ground ruled in its places, the pieces lying on it in their shapes. */
+.inv-pack{min-inline-size:0}
+.inv-pack-head{display:flex;align-items:baseline;gap:12px;inline-size:calc(var(--cell) * 10 + 4px)}
+.inv-pack-head .inv-heading{margin:0}.inv-purse{margin-inline-start:auto;font-size:var(--font-label);font-variant-numeric:tabular-nums}
+.inv-pack-head button{min-block-size:2.2rem;padding:.2rem .7rem}
+.inventory .pack-grid{position:relative;display:grid;grid-template-columns:repeat(var(--cols),var(--cell));grid-template-rows:repeat(var(--rows),var(--cell));gap:0;padding:0;margin:8px 0 10px;
+  inline-size:max-content;background-color:var(--pack-bg);background-image:linear-gradient(to right,var(--pack-line) 1px,transparent 1px),linear-gradient(to bottom,var(--pack-line) 1px,transparent 1px);
+  background-size:var(--cell) var(--cell);border:2px solid #6b5a43;border-radius:4px;box-shadow:inset 0 2px 10px #000a}
+.inventory .pack-item{position:relative;display:block;inline-size:auto;min-block-size:0;min-inline-size:0;margin:2px;padding:0;overflow:hidden;border-radius:3px;
+  background:linear-gradient(#f6eedb,#e3d5b6);border:1px solid var(--tile-edge);color:#5d4524;box-shadow:0 1px 2px #0006;cursor:grab;touch-action:none}
+.inventory .pack-item .item-picture{position:absolute;inset:6% 6% 1.05rem;display:grid;place-items:center}
+.inventory .pack-item[data-w="1"] .item-picture{inset:6%}
+.inventory .pack-item .kit-art{inline-size:100%;block-size:100%;max-inline-size:none;color:#6f5228}
+.inventory .pack-item .pack-item-name{position:absolute;inset-inline:3px;inset-block-end:2px;font-size:calc(.62rem * var(--text-scale,1));line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#3a2c18}
+.inventory .pack-item[data-w="1"] .pack-item-name,.inventory .pack-item .pack-item-need{display:none}
+/* A piece one place high lies on its side: its picture at the left, its name beside it. */
+.inventory .pack-item[data-h="1"]:not([data-w="1"]) .item-picture{inset:8% auto 8% 4%;aspect-ratio:1;block-size:84%}
+.inventory .pack-item[data-h="1"]:not([data-w="1"]) .pack-item-name{inset-inline-start:calc(var(--cell) * .9);inset-block:0;line-height:calc(var(--cell) - 6px)}
+.inventory .pack-item.is-selected,.inventory .pack-item[aria-pressed="true"]{outline:3px solid var(--gold,#c7ad79);outline-offset:-1px;background:linear-gradient(#fff6dc,#ecd9a8)}
+.inventory .pack-item.is-dimmed{background:linear-gradient(#d9cfbd,#c7baa0);color:#7d6d55}.inventory .pack-item.is-dimmed .kit-art{opacity:.5}
+.inventory .pack-item.is-dimmed::after{content:'';position:absolute;inset-block-start:3px;inset-inline-end:3px;inline-size:.5rem;block-size:.5rem;border-radius:50%;background:var(--danger,#8a292c)}
+.inventory .pack-item:focus-visible{outline:3px solid var(--selection,#23646c);outline-offset:-1px}
+.pack-ghost{position:relative;z-index:2;pointer-events:none;border:2px dashed #b9e3bd;background:#5c9b6655;border-radius:3px;margin:1px}
+.pack-ghost.is-blocked{border-color:#ffb1a8;background:#b3443c55}
+.pack-ghost[hidden]{display:none}
+[data-section="pack"] .item-picture[data-grade="fine"],[data-section="ground"] .item-picture[data-grade="fine"]{filter:drop-shadow(0 0 2px #fff6)}
+
+/* The selected piece, in a strip under the figure and the pack: what it is beside what it would change. */
+.inv-details{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"head compare" "text compare" "actions compare";gap:0 18px;align-items:start;
+  padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--pale,#fffaf0)}
+.inv-details>.inv-details-head{grid-area:head}.inv-details>p,.inv-details>.panel-note{grid-column:1}.inv-details>.kit-comparison{grid-area:compare;margin:0}
+.inv-details>.kit-actions{grid-column:1}
+.inv-details.is-empty,.inv-details:not(:has(.kit-comparison)){display:block}
+.inv-details.is-empty{color:var(--muted);font-size:var(--font-label)}.inv-details p{margin:.35rem 0;font-size:var(--font-label);line-height:1.5}
+.inv-details-head{display:flex;align-items:center;gap:10px}.inv-details-head h4{margin:0;font-size:calc(1rem * var(--text-scale,1))}
+.inv-details-head small{color:var(--muted);font-size:calc(.75rem * var(--text-scale,1))}
+.inv-details-head .item-picture{flex:none;display:grid;place-items:center;inline-size:3rem;block-size:3rem;padding:.3rem;border-radius:4px;background:var(--pack-bg);color:#e8d8b0}
+.inv-details-head .kit-art{inline-size:100%;block-size:100%;color:inherit}
+.inv-details .kit-comparison{margin:.5rem 0;padding:.5rem .6rem}.inv-details .kit-comparison p{margin:.15rem 0}
+.inv-details .kit-comparison table{font-size:var(--font-label)}.inv-details .kit-comparison th,.inv-details .kit-comparison td{padding:.15rem .3rem}
+.inv-details .kit-actions{margin-block:.4rem 0}.inv-details .kit-actions button{min-block-size:2.5rem}
+
+/* The ground here, and what this fight has given him. */
+.ground-strip{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.ground-item{display:flex;align-items:center;justify-content:flex-start;gap:6px;min-block-size:2.75rem;padding:4px 8px 4px 4px;border:1px solid var(--tile-edge);border-radius:3px;background:var(--tile);
+  font-size:var(--font-label);color:var(--ink);cursor:grab;touch-action:none}
+.ground-item .item-picture{display:grid;place-items:center;inline-size:2rem;block-size:2rem}.ground-item .kit-art{inline-size:100%;block-size:100%;color:#6f5228}
+.ground-item.is-selected,.ground-item[aria-pressed="true"]{outline:3px solid var(--gold,#c7ad79)}
+.ground-strip.is-spoils .ground-item{cursor:default;border-style:dashed}
+.inv-ground h4{margin:10px 0 6px;font-size:var(--font-label)}
+.inv-ground{padding:8px 10px;border:1px dashed var(--line);border-radius:4px;min-block-size:4.5rem}
+
+/* The other side: his character sheet, a trader's goods, a chest or the fallen. */
+.inv-other{padding:12px 14px;border:1px solid var(--line);border-radius:4px;background:var(--pale,#fffaf0)}
+.inv-attributes,.inv-combat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px;margin:.5rem 0}
+.inv-attributes div,.inventory .inv-combat div{display:flex;justify-content:space-between;align-items:baseline;gap:.4rem;border-block-end:1px solid var(--line-soft,#ded3bc);padding:2px 0}
+.inv-combat .is-wide{grid-column:1/-1}
+.inv-attributes dt,.inv-combat dt{font-size:var(--font-label);color:var(--muted);min-inline-size:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inv-attributes dd,.inv-combat dd{margin:0;font-weight:650;font-variant-numeric:tabular-nums;font-size:var(--font-label);text-align:end;white-space:nowrap}
+.inv-attributes dd small{font-weight:500;color:var(--olive,#485b45);margin-inline-start:.15rem}
+.inv-honours{font-size:var(--font-label)}.inv-links{margin-top:.6rem}.inv-links button{flex:1 1 8rem}
+.inv-goods{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.inv-goods li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 8px;padding:3px 0;border-block-end:1px solid var(--line-soft,#ded3bc)}
+.goods-item{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex:1 1 11rem;min-inline-size:0;min-block-size:2.75rem;padding:3px 6px 3px 3px;border:1px solid transparent;border-radius:3px;background:none;
+  text-align:start;color:var(--ink);cursor:grab;touch-action:none}
+.goods-item:hover{border-color:var(--line)}.goods-item.is-selected,.goods-item[aria-pressed="true"]{border-color:var(--gold,#c7ad79);background:#c7ad7922}
+span.goods-item{cursor:default}
+.goods-item .item-picture{flex:none;display:grid;place-items:center;inline-size:2.5rem;block-size:2.5rem;padding:.25rem;border-radius:3px;background:var(--pack-bg);color:#e8d8b0}
+.goods-item .kit-art{inline-size:100%;block-size:100%;color:inherit}
+.goods-item>span:last-child{min-inline-size:0;font-size:var(--font-label)}.goods-item small{display:block;color:var(--muted);font-size:calc(.75rem * var(--text-scale,1))}
+.inv-goods li>button:not(.goods-item){flex:none;min-block-size:2.5rem;margin-inline-start:auto}
+.inv-purse-line{font-size:var(--font-label)}.inv-drop-hint{font-size:calc(.78rem * var(--text-scale,1));color:var(--muted);border:1px dashed var(--line);border-radius:3px;padding:.4rem .6rem}
+.inv-other[data-other="shop"].is-drop-ok .inv-drop-hint{border-color:#5c9b66;background:#5c9b6622;color:var(--ink)}
+.inv-documents{margin-block-end:12px}
+
+/* Dragging (release 13): where a piece can go lights up. */
+.inventory.is-dragging .worn-socket[data-fits="true"] .item-picture{outline:3px solid #7cc387;outline-offset:1px}
+.inventory.is-dragging .worn-socket[data-fits="false"] .item-picture{opacity:.5}
+.inventory .is-drop-ok{outline:3px solid #7cc387;outline-offset:2px}.inventory .is-drop-bad{outline:3px solid #d1574e;outline-offset:2px}
+.inventory .is-lifted{opacity:.35}
+.inventory-drag{position:fixed;z-index:1000;pointer-events:none;display:grid;place-items:center;border-radius:4px;background:#f6eedbdd;border:1px solid var(--tile-edge,#9c845a);
+  box-shadow:0 8px 22px #0007;color:#6f5228;transform:translate(-50%,-50%)}
+.inventory-drag .kit-art{inline-size:80%;block-size:80%}
+
+/* Medium windows: the pack beside the figure, the other side below; trading puts it beside the pack. */
+/* Trading, a chest or the fallen in a narrower window: the pack and the other side together, the figure below. */
+@media (max-width:1499px){
+  .inventory:not([data-other="sheet"]){grid-template-columns:var(--pack-w) minmax(18rem,36rem);grid-template-rows:auto auto 1fr auto;grid-template-areas:"tabs tabs" "middle other" "details other" "worn worn"}
+}
+@media (max-width:1180px){
+  .inventory[data-other="sheet"]{grid-template-columns:var(--doll-w) minmax(var(--pack-w),1fr);grid-template-rows:auto;grid-template-areas:"tabs tabs" "worn middle" "details details" "other other"}
+}
+@media (max-width:860px){
+  .inventory,.inventory:not([data-other="sheet"]){grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-template-areas:"tabs" "worn" "middle" "details" "other";justify-content:stretch}
+  .inv-details{display:block}
+}
+
+/* Below 600 pixels, or at 200% text: one section at a time, as lists. */
+@media (max-width:599px){
+  .inventory{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;gap:10px}
+  .inventory>.inventory-tabs{display:flex;position:sticky;inset-block-start:0;z-index:3;background:var(--paper)}
+  .inventory>[data-section],.inventory>.inv-middle>[data-section]{display:none;grid-area:body}.inventory>.inv-middle{display:contents}
+  .inventory[data-tab="worn"]>[data-section="worn"],.inventory[data-tab="pack"]>.inv-middle>[data-section="pack"],.inventory[data-tab="ground"]>.inv-middle>[data-section="ground"],
+  .inventory[data-tab="other"]>[data-section="other"]{display:block}
+  .inventory>[data-section="details"]{display:block;grid-area:details}.inventory{grid-template-areas:"tabs" "body" "details"!important}.inv-details{display:block}
+  .inventory .doll{grid-template-columns:1fr}.inventory .doll .soldier-model{display:none}
+  .inventory .doll-side{grid-template-columns:1fr}
+  .inventory .worn-socket{flex-direction:row;align-items:center;gap:10px;text-align:start}.inventory .worn-socket .item-picture{inline-size:2.75rem;flex:none}
+  .inventory .worn-socket .socket-name{font-size:var(--font-label)}
+  .inventory .pack-grid{display:flex;flex-direction:column;flex-wrap:nowrap;inline-size:auto;background:none;border:0;box-shadow:none;gap:4px}
+  .inventory .pack-item{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px;margin:0;padding:4px 8px 4px 4px;min-block-size:2.75rem;cursor:pointer;text-align:start}
+  .inventory .hint-grid{display:none}
+  .inventory .pack-item .item-picture,.inventory .pack-item[data-w="1"] .item-picture{position:static;inline-size:2.25rem;block-size:2.25rem;flex:none}
+  .inventory .pack-item .pack-item-name,.inventory .pack-item[data-w="1"] .pack-item-name,.inventory .pack-item[data-h="1"]:not([data-w="1"]) .pack-item-name{position:static;display:block;
+    white-space:normal;line-height:1.3;font-size:var(--font-label)}
+  .inventory .pack-item[data-h="1"]:not([data-w="1"]) .item-picture{position:static;block-size:2.25rem}
+  .inventory .pack-item .pack-item-need{display:block;font-size:calc(.75rem * var(--text-scale,1));color:var(--danger,#8a292c);margin-inline-start:auto}
+  .inventory .pack-ghost{display:none}
+  .inv-pack-head,.inv-details{inline-size:auto}
+}
+html[data-text-scale="2"] .inventory{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto!important;gap:10px}
+html[data-text-scale="2"] .inventory>.inventory-tabs{display:flex;position:sticky;inset-block-start:0;z-index:3;background:var(--paper)}
+html[data-text-scale="2"] .inventory>[data-section],html[data-text-scale="2"] .inventory>.inv-middle>[data-section]{display:none;grid-area:body}
+html[data-text-scale="2"] .inventory>.inv-middle{display:contents}
+html[data-text-scale="2"] .inventory[data-tab="worn"]>[data-section="worn"],html[data-text-scale="2"] .inventory[data-tab="pack"]>.inv-middle>[data-section="pack"],
+html[data-text-scale="2"] .inventory[data-tab="ground"]>.inv-middle>[data-section="ground"],html[data-text-scale="2"] .inventory[data-tab="other"]>[data-section="other"]{display:block}
+html[data-text-scale="2"] .inventory>[data-section="details"]{display:block;grid-area:details}html[data-text-scale="2"] .inventory{grid-template-areas:"tabs" "body" "details"!important}
+html[data-text-scale="2"] .inv-details{display:block}
+html[data-text-scale="2"] .inventory .doll{grid-template-columns:1fr}html[data-text-scale="2"] .inventory .doll .soldier-model{display:none}
+html[data-text-scale="2"] .inventory .doll-side{grid-template-columns:1fr}
+html[data-text-scale="2"] .inventory .worn-socket{flex-direction:row;align-items:center;gap:10px;text-align:start}
+html[data-text-scale="2"] .inventory .worn-socket .item-picture{inline-size:2.75rem;flex:none}html[data-text-scale="2"] .inventory .worn-socket .socket-name{font-size:var(--font-label)}
+html[data-text-scale="2"] .inventory .pack-grid{display:flex;flex-direction:column;flex-wrap:nowrap;inline-size:auto;background:none;border:0;box-shadow:none;gap:4px}
+html[data-text-scale="2"] .inventory .pack-item{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px;margin:0;padding:4px 8px 4px 4px;min-block-size:2.75rem;cursor:pointer;text-align:start}
+html[data-text-scale="2"] .inventory .hint-grid{display:none}
+html[data-text-scale="2"] .inventory .pack-item .item-picture,html[data-text-scale="2"] .inventory .pack-item[data-w="1"] .item-picture{position:static;inline-size:2.25rem;block-size:2.25rem;flex:none}
+html[data-text-scale="2"] .inventory .pack-item .pack-item-name,html[data-text-scale="2"] .inventory .pack-item[data-w="1"] .pack-item-name,
+html[data-text-scale="2"] .inventory .pack-item[data-h="1"]:not([data-w="1"]) .pack-item-name{position:static;display:block;white-space:normal;line-height:1.3;font-size:var(--font-label)}
+html[data-text-scale="2"] .inventory .pack-item[data-h="1"]:not([data-w="1"]) .item-picture{position:static;block-size:2.25rem}
+html[data-text-scale="2"] .inventory .pack-item .pack-item-need{display:block;font-size:calc(.75rem * var(--text-scale,1));color:var(--danger,#8a292c);margin-inline-start:auto}
+html[data-text-scale="2"] .inventory .pack-ghost{display:none}
+html[data-text-scale="2"] .inv-pack-head,html[data-text-scale="2"] .inv-details{inline-size:auto}
+.inventory-tabs{gap:4px;padding-block:4px;border-block-end:1px solid var(--line)}
+.inventory-tabs [role="tab"]{flex:1;min-block-size:2.75rem;padding:.3rem .4rem;border:1px solid var(--line);border-radius:3px 3px 0 0;background:var(--plaster);color:var(--ink);font-size:var(--font-label)}
+.inventory-tabs [role="tab"][aria-selected="true"]{background:var(--dark);color:var(--pale);border-color:var(--dark)}
+
+html[data-contrast="high"] .inventory{--pack-line:#ffffff55;--tile-edge:#2b2112}
+html[data-contrast="high"] .worn-socket .item-picture{border-color:#f2d58f}
+html[data-reduced="true"] .inventory-drag{box-shadow:none}

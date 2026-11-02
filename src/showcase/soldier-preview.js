@@ -38,6 +38,14 @@ export function mountSoldierPreview(canvas,{soldier,name,chapter=1,rank,uncovere
   function rotate(delta){if(!Number.isFinite(delta)||disposed)return;yaw+=delta;invalidate();}
   function reset(){yaw=home;detail=false;invalidate();}
   function inspectFace(){detail=true;yaw=.15;invalidate();}
+  // The inventory keeps one preview open while kit changes (release 13): a new figure only when what he wears changes.
+  let unitKey=JSON.stringify([unit.equipment,unit.appearance]);
+  function setSoldier(next){
+    if(disposed||!renderer||!actor||!next)return;
+    const nextUnit=soldierPreviewUnit(next,{name,uncovered,cloaked}),key=JSON.stringify([nextUnit.equipment,nextUnit.appearance]);if(key===unitKey)return;
+    unitKey=key;scene.remove(actor.group);actor.dispose();actor=createActor(nextUnit,{quality:'balanced',chapter,rank});scene.add(actor.group);
+    actor.ready.then(()=>{if(!disposed)invalidate();}).catch(()=>{if(!disposed)invalidate();});invalidate();
+  }
   function on(type,handler,options){canvas.addEventListener(type,handler,options);events.push(()=>canvas.removeEventListener(type,handler,options));}
   function dispose(){if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer?.disconnect();for(const off of events)off();actor?.dispose();geometry.dispose();material.dispose();renderer?.dispose();scene.clear();}
   try{
@@ -53,6 +61,6 @@ export function mountSoldierPreview(canvas,{soldier,name,chapter=1,rank,uncovere
     on('webglcontextlost',event=>{event.preventDefault();canvas.dataset.preview='unavailable';onError('The 3D preview was interrupted. Your equipment list remains available.');dispose();});
     observer=new ResizeObserver(invalidate);observer.observe(canvas);invalidate();
     const ready=actor.ready.then(()=>{if(!disposed)invalidate();return !disposed;}).catch(()=>{if(!disposed)invalidate();return false;});
-    return {ready,rotate,reset,inspectFace,dispose};
-  }catch(error){canvas.dataset.preview='unavailable';onError('The 3D preview is unavailable. Your equipment list remains available.');dispose();return {ready:Promise.resolve(false),rotate(){},reset(){},dispose};}
+    return {ready,rotate,reset,inspectFace,setSoldier,dispose};
+  }catch(error){canvas.dataset.preview='unavailable';onError('The 3D preview is unavailable. Your equipment list remains available.');dispose();return {ready:Promise.resolve(false),rotate(){},reset(){},setSoldier(){},dispose};}
 }
