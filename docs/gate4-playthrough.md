@@ -17,7 +17,7 @@ The [playtest kit](playtest-kit.md) is for a first-time player watched by an obs
 ## Before you start
 
 1. Use the live site, or build and serve it yourself: `npm run build`, then `npm run preview`. The live site is published by hand ([Replit static deployment](../README.md#replit-static-deployment)), so republish it from `main` first. To play on a phone on the same network, use `HOST=0.0.0.0 npm run preview` and open the address it prints.
-2. Write down the build: the commit you built (`git log -1 --format=%h`) or the date you opened the live site. Use `28fe9bf` (2 November) or later, which has releases 11–14.
+2. Write down the build: the commit you built (`git log -1 --format=%h`) or the date you opened the live site. Use `41652bd` (2 November) or later, which has releases 11–14 and the two fixes their checks found after the merge.
 3. Begin a **New Game** with **Real-time with pause**:
    - the first time on **Standard**;
    - the second time on **Story**, ideally played by someone less experienced, as the 0.40 brief asks.

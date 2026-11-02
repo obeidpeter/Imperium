@@ -655,6 +655,12 @@ async function campExitDeparture(){
     await page.waitForSelector('.rt-field[data-kind="camp"] .rt-scene[data-ready="true"]');return page;
   };
   const useExit=page=>page.evaluate(()=>window.__realtime.issue({actorId:'hero',kind:'interact',payload:{objectId:'exit'}}));
+  // What the camp shows when a walk to the way out takes too long: its message, the clock and how far the soldier is
+  // from the way out. Software rendering slows a 3D camp's clock to a tenth of real time or so (the first camp's 17 m
+  // to the drill yard took 45 s on a local run, and more than 60 s on a slower CI runner), so each walk gets five minutes.
+  const where=page=>page.evaluate(()=>{const w=window.__realtime.world(),h=w?.actors.find(a=>a.id==='hero'),o=w?.objects.find(x=>x.kind==='exit');
+    return `announcement "${document.querySelector('#announcement')?.textContent??''}", paused ${window.__realtime.paused()}, `+
+      `${h&&o?`${Math.hypot(h.x-o.x,h.z-o.z).toFixed(1)} m from the way out`:'no way out in view'}, tick ${w?.tick}`;});
   const saved=savedRecord;
   {
     const page=await camp(Game.encodeSave(Game.newGame('Exit',275,{featureEdition:35,progression:true,path:'legionary'})),'3d');
@@ -662,15 +668,16 @@ async function campExitDeparture(){
     assert.equal(exit?.name,'The drill yard','The first camp’s way out leads to the drill');
     const used=()=>page.evaluate(()=>window.__realtime.world().objects.find(o=>o.kind==='exit').at??null);
     assert.equal((await useExit(page)).ok,true,'The soldier walks to the way out');
-    await page.waitForFunction(()=>/^The gate sentry: “/.test(document.querySelector('#announcement')?.textContent??''),null,{timeout:60000})
-      .catch(async()=>assert.fail(`The sentry says what is missing: ${await text(page,'#announcement')}`));
+    await page.waitForFunction(()=>/^The gate sentry: “/.test(document.querySelector('#announcement')?.textContent??''),null,{timeout:300000})
+      .catch(async()=>assert.fail(`The sentry says what is missing: ${await where(page)}`));
     assert.match(await text(page,'#announcement'),/decision/,'The departure check is the sentry’s line');
     // Walking there recorded his first visit to the drill field (a save of its own). From where he stands now, the way
     // out is used again: the refusal itself saves and changes nothing.
     await page.waitForFunction(()=>!/Saving/.test(document.querySelector('.save-status')?.textContent??''),null,{timeout:30000});
     const before=await saved(page),first=await used();assert.ok(before,'The chronicle is saved');
     assert.equal((await useExit(page)).ok,true,'He uses the way out again');
-    await page.waitForFunction(at=>(window.__realtime.world().objects.find(o=>o.kind==='exit').at??null)!==at,first,{timeout:60000});
+    await page.waitForFunction(at=>(window.__realtime.world().objects.find(o=>o.kind==='exit').at??null)!==at,first,{timeout:120000})
+      .catch(async()=>assert.fail(`The way out is used again: ${await where(page)}`));
     await page.waitForTimeout(500);
     assert.equal(await page.evaluate(()=>document.documentElement.dataset.phase),'camp','Nothing happens');assert.equal(await saved(page),before,'The refusal leaves the save as it was');
     await page.context().close();
@@ -679,7 +686,7 @@ async function campExitDeparture(){
   for(const view of ['2d','3d']){
     const page=await camp(code,view);
     assert.equal((await useExit(page)).ok,true,`${view}: the soldier walks to the road out`);
-    await page.waitForSelector('.area-card',{timeout:120000}).catch(()=>assert.fail(`${view}: a card names where the column goes`));
+    await page.waitForSelector('.area-card',{timeout:300000}).catch(async()=>assert.fail(`${view}: a card names where the column goes: ${await where(page)}`));
     assert.match(await text(page,'.area-card'),/The road out.*The broken causeway/,`${view}: the card names the way and the place`);
     await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:120000}).catch(()=>assert.fail(`${view}: the field opens`));
     assert.equal(await page.evaluate(()=>window.__realtime.world().encounterId),'ch2-marsh',`${view}: the next encounter`);
