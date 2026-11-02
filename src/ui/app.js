@@ -82,7 +82,7 @@ const trackedErrandKey=SETTINGS_KEY+'.tracked-errand';
 const errandTracker=createErrandTracker({load:()=>JSON.parse(localStorage.getItem(trackedErrandKey)||'null'),
   save:value=>value?localStorage.setItem(trackedErrandKey,JSON.stringify(value)):localStorage.removeItem(trackedErrandKey)});
 let state=null,screen='title',selected='hero',action=null,target=null,focusTile=null,formation='shield-wall',orderAction='advance',orderDestination=null,
-  offline=false,saving=false,lastSaved='',toastTimer,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',
+  offline=false,saving=false,lastSaved='',toastTimer,floatingNote=null,saveProblem='',saveConflict=false,pendingImport=null,shareFile=null,feedback='',offlineProgress='',
   pendingMotion=null,pendingReplay=null,pendingRecovery=null,pendingNew=null,pendingNewMode=null;
 const sessionControls=createSessionControls(document);
 const sessionGate=createSessionGate({onBusyChange:syncSessionControls});
@@ -171,6 +171,16 @@ function toast(text,{problem=false}={}){
     const topbar=document.querySelector('.topbar');if(topbar)topbar.after(note);else document.body.append(note);
   }
   note.textContent=text;note.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>note.hidden=true,6500);
+  // Floating over a full-screen page whose world is still opening: when it opens, the bar says it (handOverNote).
+  floatingNote=!note.previousElementSibling?.matches?.('.topbar')?{until:performance.now()+6500,problem}:null;
+}
+// A page message given while a full-screen page's world was still opening (such as "Chronicle restored" after a
+// restore) floats over the page. Once the world opens it moves onto the bar's event line for the rest of its time,
+// out of the world's way.
+function handOverNote(runtime){
+  const note=document.querySelector('body>.system-feedback'),left=floatingNote?floatingNote.until-performance.now():0;
+  if(!note||note.hidden||left<=250||!floatingNote){floatingNote=null;return;}
+  runtime.say(note.textContent,{warning:floatingNote.problem,ms:left});note.hidden=true;clearTimeout(toastTimer);floatingNote=null;
 }
 function selectedUnit(){return selectedActor(state,selected);}
 function targets(){return action?Game.getTargets(state,selected,action):[];}
@@ -383,7 +393,7 @@ function mountField(target){
     const world=kept?.world??(camp?Game.createCampWorld(state):chamber?field.makeWorld(state):walkingNow()?Game.createAftermathWorld(state):Game.realtimeWorld(state));
     field.runtime=createRealtimeField({dom:fieldDom(element),world,base:camp?campBase(world):chamber?state.encounter:fightBase(),options:settings,keymap,appearance:()=>state.soldier?.appearance,
       holdDelay:()=>settings.holdDelay??450,callbacks:camp?campCallbacks():chamber?chamberCallbacks():fieldCallbacks(),kind:target.kind});
-    syncSessionControls();
+    syncSessionControls();handOverNote(field.runtime);
     if(kept?.paused)field.runtime.keepPaused();
     // A panel may open while the runtime module is still loading. Inherit its
     // pause before attaching a renderer, and leave keyboard focus in the panel.

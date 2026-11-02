@@ -123,6 +123,13 @@ try{
   // Polish after Gate 4: the target's line takes the message line's place, and its details open over the world.
   assert.equal(await road.evaluate(()=>document.querySelector('#rt-board').getBoundingClientRect().height),untargeted,'Choosing a target by keyboard keeps the world’s size');
   evidence.checks.push({name:'Choosing a target by keyboard keeps the world’s size',pass:true,worldHeight:untargeted});
+  // Polish after Gate 4: Escape closes Target details first, keeping the target and the Menu shut.
+  await road.click('[data-role="targetDetails"] > summary');assert.equal(await road.evaluate(()=>document.querySelector('[data-role="targetDetails"]').open),true,'Target details open');
+  await road.keyboard.press('Escape');
+  assert.equal(await road.evaluate(()=>document.querySelector('[data-role="targetDetails"]').open),false,'Escape closes Target details');
+  assert.equal(await road.evaluate(()=>!document.querySelector('[data-role="targetLine"]').hidden&&!document.querySelector('#modal')?.open),true,'and keeps the target, with the Menu shut');
+  evidence.checks.push({name:'Escape closes Target details first, keeping the target',pass:true});
+  await road.locator('#rt-board').focus();
   const before=await text(road,'[data-role="targetLine"]'),initial=Number(before.match(/(\d+) m/)?.[1]);
   assert.ok(initial>5,`The selected enemy starts at a measurable distance: ${before}`);
   await road.keyboard.press('Enter');await pause(road,false);

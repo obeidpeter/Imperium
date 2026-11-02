@@ -604,6 +604,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function act(action){
     const h=me();
+    // Escape closes what is open on the bar first: a message opened whole (More), then Target details. Only then the
+    // chamber's conversation, a choice, the target, the list or the Menu.
+    if(action==='cancel_or_menu'&&eventOpen){openEvent(false);return true;}
+    if(action==='cancel_or_menu'&&dom.targetDetails?.open){dom.targetDetails.open=false;return true;}
     // A speaker stepping on the chamber's floor springs the view back to him, as the field's soldier does.
     if(chamber&&chamber.act(action)){if(ARROWS[action])stage?.springBack?.();return true;}
     if(action.startsWith('select_squad_')){if(squads)squads.select({index:Number(action.slice(13))-1});else say('No squads in this fight.');return true;}
@@ -713,6 +717,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(glancing&&(action==='camera_horizon'||keymap.camera_horizon?.some(binding=>binding.split('+').at(-1)===e.code)))glance(false);
   }
   function onBlur(){glance(false);if(arrows.size){arrows.clear();queueCommand(world,{actorId:world.controlled,kind:'stop'});}}
+  // The window losing the focus (another window, another tab) takes the keyups of held keys with it: U lets go, so its
+  // labels, a battle's intentions and the chamber's plans do not stay on until U is pressed again.
+  function onWindowBlur(){onBlur();if(!options.labelsAlways)document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}chamber?.hideRivals?.();}
   function onLeave(){edge=null;}
   function onHidden(){if(document.hidden){glance(false);if(!clock.paused){setPaused(clock,true);say('Paused while the page was hidden.');}saveResume('hide');}}
 
@@ -751,7 +758,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       const list=[...group.querySelectorAll('[data-ability],button.ability')],i=list.indexOf(document.activeElement);if(i<0)return;
       e.preventDefault();const next=list[(i+(e.key==='ArrowRight'?1:list.length-1))%list.length];list.forEach(b=>b.tabIndex=b===next?0:-1);next.focus();
     });
-    document.addEventListener('keydown',onKey);document.addEventListener('keyup',onKeyUp);canvas.addEventListener('blur',onBlur);
+    document.addEventListener('keydown',onKey);document.addEventListener('keyup',onKeyUp);canvas.addEventListener('blur',onBlur);window.addEventListener('blur',onWindowBlur);
     canvas.addEventListener('pointermove',onEdge);canvas.addEventListener('pointerleave',onLeave);
     // Labels always (a setting): every figure keeps its name, as while U is held.
     document.body.classList.toggle('labels-full',!!options.labelsAlways);
@@ -828,7 +835,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     dispose(){
       unbindDisclosures();orderReview.dispose();
       disposed=true;chamber?.dispose();input?.dispose();presenter?.dispose();stage?.setLive(null);
-      document.removeEventListener('keydown',onKey);document.removeEventListener('keyup',onKeyUp);canvas.removeEventListener('blur',onBlur);
+      document.removeEventListener('keydown',onKey);document.removeEventListener('keyup',onKeyUp);canvas.removeEventListener('blur',onBlur);window.removeEventListener('blur',onWindowBlur);
       canvas.removeEventListener('pointermove',onEdge);canvas.removeEventListener('pointerleave',onLeave);document.body.classList.remove('labels-full');
       document.removeEventListener('visibilitychange',onHidden);removeEventListener('pagehide',onHidden);
     }

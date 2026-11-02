@@ -5,12 +5,14 @@
 // Build first. --output DIR --dist DIR --headed; --checkpoints-only earns and
 // exports review saves without starting Chromium. --chapters 1,2,8,11 is a
 // partial camera/asset diagnostic only, never full release acceptance.
-// --half a (Chapters I-VII) and --half b (VII-XII) are the two halves CI runs in
+// --half a (Chapters I-VIII) and --half b (VIII-XII) are the two halves CI runs in
 // parallel: each crosses its regions in one context and returns to its first
-// chapter, and Chapter VII is in both, so every move from one camp to the next is
-// checked in one context. Together they are the full acceptance; Performance
-// quality is checked on Chapter XII and the failed downloads on Chapter I, as in
-// the full run. No wall-clock FPS assertion.
+// chapter, and Chapter VIII is in both, so every move from one camp to the next is
+// checked in one context. Together they are the full acceptance; the direct
+// services of Chapters I, VIII and XII are checked once each (VIII's in half a),
+// Performance quality on Chapter XII and the failed downloads on Chapter I, as in
+// the full run. The split balances the halves' time (half b's later camps are the
+// slower). No wall-clock FPS assertion.
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
@@ -29,7 +31,8 @@ const arg=(name,fallback)=>{const prefix=`--${name}=`,same=process.argv.find(a=>
 const dist=resolve(arg('dist',fileURLToPath(new URL('../dist/',import.meta.url))));
 const output=resolve(arg('output',fileURLToPath(new URL(`../tests/visual-results/regional-world/${process.argv.some(a=>a==='--half'||a.startsWith('--half='))?`half-${arg('half','')}/`:''}`,import.meta.url))));
 const chapterFilter=arg('chapters',null),partial=chapterFilter!==null;
-const HALVES={a:{chapters:[1,2,3,4,5,6,7],fallback:true},b:{chapters:[7,8,9,10,11,12],fallback:false}};
+const SERVICE_CHAPTERS=[1,8,12];
+const HALVES={a:{chapters:[1,2,3,4,5,6,7,8],fallback:true,services:[1,8]},b:{chapters:[8,9,10,11,12],fallback:false,services:[12]}};
 const half=arg('half',null);
 assert.ok(half===null||HALVES[half],'--half must be a or b');assert.ok(!(half&&partial),'--half and --chapters do not go together');
 const requestedChapters=partial?chapterFilter.split(',').map(value=>Number(value.trim())):null;
@@ -241,7 +244,7 @@ try{
       if(mode==='horizon'){await screenshot(`chapter-${String(checkpoint.chapter).padStart(2,'0')}-horizon.png`);await glanceEnd();}
     }
     record(`Chapter ${checkpoint.chapter}: every regional asset loads, all three cameras work and previous scenery retires`,{placements:checkpoint.expectedModels,uniqueAssets:checkpoint.urls.length,assets:checkpoint.urls});
-    if(!partial&&[1,8,12].includes(checkpoint.chapter)){await services(checkpoint);await narrow(checkpoint.chapter);}
+    if(!partial&&(half?HALVES[half].services:SERVICE_CHAPTERS).includes(checkpoint.chapter)){await services(checkpoint);await narrow(checkpoint.chapter);}
   }
   if(!partial){
   // Performance removes generated masters, preserving the procedural camp;

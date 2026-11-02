@@ -576,7 +576,7 @@ html[data-world="full"] .rt-chronicle-bar>.world-line-status:not([hidden]){flex:
   text-overflow:ellipsis;color:#3f513c}
 html[data-contrast="high"] .rt-chronicle-bar>.world-line-status{color:var(--ink)}
 /* A page message with no site header to sit under (a full-screen page before its world has opened) floats over it. */
-body>.system-feedback{position:fixed;z-index:60;inset-block-start:3.2rem;inset-inline:50% auto;translate:-50% 0;inline-size:max-content;
+body>.system-feedback{position:fixed;z-index:60;pointer-events:none;inset-block-start:3.2rem;inset-inline:50% auto;translate:-50% 0;inline-size:max-content;
   max-inline-size:min(34rem,calc(100% - 2rem));border:1px solid #b9c3ae;border-radius:.4rem;box-shadow:0 .4rem 1.2rem #0006}
 html[data-world="full"] .rt-field>.rt-status-strip{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem .8rem}
 html[data-world="full"] .rt-field>.rt-status-strip>.rt-mission-summary{order:0;flex:0 1 auto;min-inline-size:0}

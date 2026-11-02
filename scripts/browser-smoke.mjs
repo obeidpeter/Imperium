@@ -690,6 +690,14 @@ async function campExitDeparture(){
     assert.match(await text(page,'[data-role="eventFull"]'),/^The gate sentry: “.*”$/,'More opens the whole message');
     assert.equal(await page.locator('[data-role="eventMore"]').getAttribute('aria-expanded'),'true');
     await page.click('[data-role="eventMore"]');assert.equal(await page.locator('[data-role="eventFull"]').isHidden(),true,'A second press closes it');
+    // A click on the strip's text puts the focus on the page around the world: the keys are still the world's.
+    const strip=await page.evaluate(()=>{const bar=document.querySelector('.world-camp-bar'),r=bar.getBoundingClientRect();
+      for(let x=r.left+8;x<r.right-8;x+=12){const el=document.elementFromPoint(x,r.top+r.height/2);if(el&&!el.closest('button,a,input,select,summary,canvas')&&el.textContent.trim())return {x,y:r.top+r.height/2};}return null;});
+    assert.ok(strip,'The strip has text to click');await page.mouse.click(strip.x,strip.y);
+    assert.notEqual(await page.evaluate(()=>document.activeElement?.id),'rt-board','The click takes the focus from the world');
+    const wasPaused=await page.evaluate(()=>window.__realtime.paused());await page.keyboard.press('KeyP');
+    await page.waitForFunction(was=>window.__realtime.paused()!==was,wasPaused,{timeout:30000}).catch(()=>assert.fail('P pauses the camp with the focus on the page'));
+    await page.keyboard.press('KeyP');await page.waitForFunction(was=>window.__realtime.paused()===was,wasPaused,{timeout:30000});
     await page.waitForTimeout(500);
     assert.equal(await page.evaluate(()=>document.documentElement.dataset.phase),'camp','Nothing happens');assert.equal(await saved(page),before,'The refusal leaves the save as it was');
     await page.context().close();
@@ -713,7 +721,7 @@ async function campExitDeparture(){
     await page.waitForSelector('.area-card',{state:'detached',timeout:30000}).catch(()=>assert.fail(`${view}: the card goes`));
     await page.context().close();
   }
-  console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words, shown on the bar (whole with More on a phone), and changes nothing; Chapter II’s road out marches to the causeway with a card, in 2D (no names overlapping) and 3D');
+  console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words, shown on the bar (whole with More on a phone), and changes nothing; the keys still work after a click on the strip; Chapter II’s road out marches to the causeway with a card, in 2D (no names overlapping) and 3D');
 }
 // Release 14: the field after a victory. Chapter III's station, won from New Game by the legal-command bot and not yet
 // recorded (realtime-autoplay.mjs), restored through Import. The result offers to walk the field; walked, the fallen
@@ -841,7 +849,10 @@ async function chamberCouncil(){
   assert.equal((await chamberHour(page)).hour,2);await page.waitForFunction(()=>/^Hour 2 of/.test(document.querySelector('[data-role="roundLabel"]')?.textContent??''),null,{timeout:30000})
     .catch(async()=>assert.fail(`The hour reads ${await text(page,'[data-role="roundLabel"]')}`));
   await page.keyboard.down('KeyU');await page.waitForFunction(()=>/challenges|attacks|no plan/.test(document.querySelector('[data-role="messageLine"]').textContent),null,{timeout:10000})
-    .catch(()=>assert.fail('U names where each rival means to walk next'));await page.keyboard.up('KeyU');
+    .catch(async()=>assert.fail(`U names where each rival means to walk next: ${await page.evaluate(()=>{const a=document.activeElement;
+      return JSON.stringify({line:document.querySelector('[data-role="messageLine"]')?.textContent??null,focus:a===document.body?'body':`${a?.tagName}#${a?.id}`,
+        dialog:!!document.querySelector('dialog[open],[aria-modal="true"]'),labels:document.body.classList.contains('labels-full')});})} ${await chamberSeen(page)}`));
+  await page.keyboard.up('KeyU');
   // The pointer: a click on a member's figure opens his conversation.
   const figure=await page.evaluate(()=>{const s=window.__chamber.stage(),w=window.__realtime.world(),r=s.canvas.getBoundingClientRect();
     for(const a of w.actors.filter(x=>x.civic?.role==='voter')){const g=s.actors.get(a.id).group.position.clone();g.y+=1.1;g.project(s.camera);

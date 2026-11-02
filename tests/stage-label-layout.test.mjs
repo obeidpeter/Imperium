@@ -52,12 +52,12 @@ test('Missing, offscreen and invalid body bounds preserve the established label 
 test('The 2D view names a camp without overlaps, clear of the soldier, keeping a mark’s room',async()=>{
   const G=await import('../src/core/game.js'),{FlatStage,createFlatPresenter}=await import('../src/showcase/flat-stage.js');
   const camp=chapter=>{const s=G.newGame('T',275,{featureEdition:35,progression:true,path:'legionary'});s.chapter=chapter;s.encounterIndex=0;s.phase='camp';return G.createCampWorld(s);};
-  const frame=(world,width,height,marks={})=>{
+  const frame=(world,width,height,marks={},notes=[])=>{
     const stage={screen:FlatStage.prototype.screen},texts=[];
     const v=FlatStage.prototype.view.call({canvas:{getBoundingClientRect:()=>({width,height})},cameraView:'follow',zoomLevel:1,lookOffset:{x:0,z:0}},world);
     const c=new Proxy({},{get:(t,k)=>k==='measureText'?text=>({width:String(text).length*7}):k in t?t[k]:(...a)=>{if(k==='fillText')texts.push({text:a[0],x:a[1],y:a[2]});},
       set:(t,k,value)=>{t[k]=value;return true;}});
-    const presenter=createFlatPresenter({},{world:()=>world,alpha:()=>1});presenter.setMarks(marks);presenter.draw(c,v,stage,0);
+    const presenter=createFlatPresenter({},{world:()=>world,alpha:()=>1});presenter.setMarks(marks);for(const [id,text]of notes)presenter.note(id,text);presenter.draw(c,v,stage,0);
     return {boxes:stage.labelBoxes,texts,v};
   };
   for(let chapter=1;chapter<=12;chapter++)for(const [width,height]of [[1280,640],[390,560]]){
@@ -81,4 +81,10 @@ test('The 2D view names a camp without overlaps, clear of the soldier, keeping a
   assert.ok(plain&&box&&mark,'the marked name and its mark are drawn');
   assert.ok(box.height>plain.height,'its place is taller by the mark');
   assert.ok(mark.y>box.y&&mark.y<box.y+box.height,'the mark is drawn inside it');
+  // A passing number over every figure at once: each is placed after the names, clear of them, and no name moves.
+  const crowd=camp(2),names=frame(crowd,1280,640).boxes,busy=frame(crowd,1280,640,{},crowd.actors.filter(a=>a.alive).map(a=>[a.id,'−7']));
+  const floats=busy.boxes.filter(b=>b.id.startsWith('float:'));
+  assert.ok(floats.length>=3,'the numbers are drawn');
+  assert.deepEqual(busy.boxes.filter(b=>!b.id.startsWith('float:')),names,'no name moves for them');
+  for(const f of floats)assert.ok(busy.boxes.every(b=>b===f||!labelsOverlap(f,b)),`${f.id} crosses no name or number`);
 });
