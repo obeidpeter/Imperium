@@ -6,7 +6,7 @@
 // Presentation only: the world is read, never written.
 import {BLOC_STYLE} from '../ui/bloc-style.js';
 import {FIELD_YAW,boundedOffset} from './camera-bearing.js';
-import {edgeToward} from './stage-label-layout.js';
+import {layoutStageLabels} from './stage-label-layout.js';
 
 const TILE=2.5,FALL_TICKS=16,FLOAT_MS=1300;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),lerp=(a,b,t)=>a+(b-a)*t;
@@ -162,20 +162,26 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       const line=(points,color,{dash=null,width=2}={})=>{if(points.length<2)return;c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));
         c.setLineDash(dash??[]);c.lineWidth=width;c.strokeStyle=color;c.stroke();c.setLineDash([]);};
       const unit=v.tw/TILE;// pixels per metre along the board
+      // Names are gathered as the scene is drawn and placed at the end, as the 3D view places its labels
+      // (stage-label-layout.js): by priority and clear of one another, a name with no room giving way. Each name's
+      // first place is exactly where it was drawn before. A tag rides above its name: a lasting mark (an enemy's notice,
+      // a squad's low morale, the page's marks) has its room kept in the name's place, so no other name covers it; a
+      // passing number does not, so names do not jump while blows land.
+      const names=[];let heroBody=null;
+      const name=(id,text,x,baseline,{size,weight=600,color='#f6efdb',priority=50,pin=false,tag=null,reserve=false})=>{
+        const font=`${weight} ${size}px system-ui`,tagH=tag&&reserve?Math.ceil(tag.size*.8)+3:0;c.font=font;
+        const width=Math.ceil(c.measureText(pin?`↘ ${text}`:text).width)+(pin?16:8),height=Math.ceil(size)+(pin?10:6)+tagH;
+        names.push({id,text,font,size,color,priority,pin,tag,tagH,visible:true,width,height,x,y:baseline+size*.2+12});
+      };
       // The deployment zone, tinted until the advance sounds.
       if(zone){const q=[flat.screen(v,zone.x0,zone.z0),flat.screen(v,zone.x1,zone.z0),flat.screen(v,zone.x1,zone.z1),flat.screen(v,zone.x0,zone.z1)];
         c.beginPath();q.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fillStyle='#9fd3d022';c.fill();c.setLineDash([8,6]);c.lineWidth=2;c.strokeStyle='#9fd3d0';c.stroke();c.setLineDash([]);}
       // Objectives and objects.
       if(w.mission?.goal&&markers())ellipse(flat.screen(v,w.mission.goal.x,w.mission.goal.z),(w.mission.radius??2.5)*unit*.7,'#f1d38a',{dash:[6,4]});
       // A camp's way out once the column can march (the stage's encounter.wayOut, as the 3D view marks it): a ring at
-      // it, and, while it is out of sight, its name at the view's edge with the way it lies.
+      // it, and its name pinned, so that while it is out of sight the name waits at the view's edge with the way it lies.
       const wayOut=markers()&&w.kind==='camp'?flat.encounter?.wayOut:null,exit=wayOut?(w.objects??[]).find(o=>o.kind==='exit'):null;
-      if(exit){const p=flat.screen(v,exit.x,exit.z),box=flat.canvas.getBoundingClientRect();ellipse(p,2.2*unit*.7,'#f1d38a',{dash:[6,4],width:2.5});
-        if(p.x<0||p.y<0||p.x>box.width||p.y>box.height){
-          const text=`${EDGE_ARROWS[edgeToward(p.x,p.y,box.width,box.height)]} ${wayOut.label}`;c.font='650 13px system-ui';
-          const tw=c.measureText(text).width+16,th=24,x=clamp(p.x-tw/2,8,box.width-8-tw),y=clamp(p.y-th/2,8,box.height-8-th);
-          c.fillStyle='#29281deb';c.fillRect(x,y,tw,th);c.strokeStyle='#ac9659';c.lineWidth=1;c.strokeRect(x+.5,y+.5,tw-1,th-1);
-          c.fillStyle='#e8d7a6';c.textAlign='center';c.fillText(text,x+tw/2,y+16.5);}}
+      if(exit)ellipse(flat.screen(v,exit.x,exit.z),2.2*unit*.7,'#f1d38a',{dash:[6,4],width:2.5});
       // The armourer's forge (release 11): an anvil on its block, behind him.
       const forge=w.campPresentation?.smithy;
       if(forge){const p=flat.screen(v,forge.x+w.map.width*TILE/2,forge.z+w.map.height*TILE/2);c.fillStyle='#5a4632';c.fillRect(p.x-v.tw*.08,p.y-v.th*.35,v.tw*.16,v.th*.35);
@@ -186,17 +192,17 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
           c.fillStyle=empty?'#6b6050':o.opened?'#d9b25c':'#b0844a';c.fillRect(p.x-v.tw*.2,p.y-v.th*.5,v.tw*.4,v.th*.5);
           c.fillStyle=empty?'#57503f':'#7a5a2e';if(o.opened)c.fillRect(p.x-v.tw*.2,p.y-v.th*.95,v.tw*.4,v.th*.12);else c.fillRect(p.x-v.tw*.21,p.y-v.th*.58,v.tw*.42,v.th*.12);
           if(locked){c.fillStyle='#3b3f3a';c.beginPath();c.arc(p.x,p.y-v.th*.25,v.tw*.05,0,Math.PI*2);c.fill();}
-          c.font=`600 ${Math.max(10,v.th*.42)}px system-ui`;c.textAlign='center';c.fillStyle='#f6efdb';c.fillText(`${o.name}${empty?' (empty)':locked?' (locked)':''}`,p.x,p.y-v.th*1.1);continue;}
+          name(`object:${o.id}`,`${o.name}${empty?' (empty)':locked?' (locked)':''}`,p.x,p.y-v.th*1.1,{size:Math.max(10,v.th*.42),priority:60});continue;}
         // The way out of camp (release 14): a waymarker, its board pointing on, and its name below it (above, it
         // would meet the gate's).
         if(o.kind==='exit'){c.fillStyle='#5a4632';c.fillRect(p.x-v.tw*.04,p.y-v.th*1.5,v.tw*.08,v.th*1.5);
           c.fillStyle='#c49a4f';c.beginPath();c.moveTo(p.x-v.tw*.22,p.y-v.th*1.42);c.lineTo(p.x+v.tw*.14,p.y-v.th*1.42);c.lineTo(p.x+v.tw*.26,p.y-v.th*1.22);
           c.lineTo(p.x+v.tw*.14,p.y-v.th*1.02);c.lineTo(p.x-v.tw*.22,p.y-v.th*1.02);c.closePath();c.fill();c.fillStyle='#a8322b';c.fillRect(p.x-v.tw*.04,p.y-v.th*1.5,-v.tw*.14,v.th*.2);
-          c.font=`600 ${Math.max(10,v.th*.42)}px system-ui`;c.textAlign='center';c.fillStyle='#f6efdb';c.fillText(o.name,p.x,p.y+v.th*.6);continue;}
+          name(`object:${o.id}`,o.name,p.x,p.y+v.th*.6,{size:Math.max(10,v.th*.42),priority:72,pin:exit?.id===o.id});continue;}
         c.fillStyle=o.done&&!o.toggle?'#6b6050':o.state==='burning'?'#e07a2c':'#c49a4f';c.fillRect(p.x-v.tw*.12,p.y-v.th*1.1,v.tw*.24,v.th*1.1);
         // A lit brazier's smoke, and its reach.
         if(o.state==='burning'){ellipse(p,2.5*unit*.7,null,{fill:'#9b928355'});ellipse(p,3*unit*.7,'#e07a2c',{dash:[4,4],width:1.5});}
-        c.font=`600 ${Math.max(10,v.th*.42)}px system-ui`;c.textAlign='center';c.fillStyle='#f6efdb';c.fillText(o.field?`${o.name} (${o.state})`:o.name,p.x,p.y-v.th*1.3);}
+        name(`object:${o.id}`,o.field?`${o.name} (${o.state})`:o.name,p.x,p.y-v.th*1.3,{size:Math.max(10,v.th*.42),priority:65});}
       // The route a click would walk, and what the soldier will do on resume.
       if(route?.points?.length&&hero?.alive)line([at(hero),...route.points.map(p=>flat.screen(v,p.x,p.z))],'#f1dfa2',{dash:[8,5]});
       if(planned?.points?.length&&hero?.alive)line([at(hero),...planned.points.map(p=>flat.screen(v,p.x,p.z))],'#cfe7e488',{dash:[4,6]});
@@ -219,7 +225,10 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         const civic=a.civic,color=!a.alive?'#4a4038':a.down||civic?.withdrawn?'#857868':civic?.bloc?BLOC_STYLE[civic.bloc]?.color??BODY.neutral:BODY[side]??BODY.neutral;
         if(lying){c.beginPath();c.ellipse(p.x,p.y-v.th*.15,v.tw*.3,v.th*.22,0,0,Math.PI*2);c.fillStyle=color;c.fill();}
         else{
-          const hgt=v.th*2.6,body=v.tw*.14;c.fillStyle='#00000040';c.beginPath();c.ellipse(p.x,p.y,body*1.6,body*.7,0,0,Math.PI*2);c.fill();
+          const hgt=v.th*2.6,body=v.tw*.14;
+          // The soldier you control stays clear of names, as in the 3D view; his own name stands over him.
+          if(a.id===w.controlled)heroBody={id:`actor:${a.id}`,x:p.x-v.tw*.22,y:p.y-hgt,width:v.tw*.44,height:hgt+v.th*.3};
+          c.fillStyle='#00000040';c.beginPath();c.ellipse(p.x,p.y,body*1.6,body*.7,0,0,Math.PI*2);c.fill();
           c.fillStyle=color;c.beginPath();c.roundRect?.(p.x-body,p.y-hgt*.82,body*2,hgt*.72,body);if(!c.roundRect)c.rect(p.x-body,p.y-hgt*.82,body*2,hgt*.72);c.fill();
           c.beginPath();c.arc(p.x,p.y-hgt*.9,body*.85,0,Math.PI*2);c.fillStyle='#e0c4a4';c.fill();
           // His facing, and a drawn weapon on that side.
@@ -240,11 +249,13 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         }
         // Names: his own, the target's, and everyone's in camp.
         const named=a.id===w.controlled||a.id===hero?.lock||w.kind==='camp'||w.party?.includes(a.id)||civic?.role==='speaker';
-        const tag=(floating.get(a.id)?.until>now&&floating.get(a.id))||marks[a.id]||noticeMark(w,a);
+        const mark=marks[a.id]||noticeMark(w,a),tag=(floating.get(a.id)?.until>now&&floating.get(a.id))||mark;
         c.textAlign='center';
         // Close in (a chamber's few tiles fill the view) the names and marks stay text-sized.
-        if(named&&a.alive){c.font=`650 ${clamp(v.th*.4,10,16)}px system-ui`;c.fillStyle='#f6efdb';c.fillText(`${a.id===w.controlled?'★ ':''}${a.name}`,p.x,p.y-v.th*3.3);}
-        if(tag){c.font=`800 ${clamp(v.th*.6,12,22)}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,p.y-v.th*3.6);}
+        const tagSize=clamp(v.th*.6,12,22);
+        if(named&&a.alive)name(`actor:${a.id}`,`${a.id===w.controlled?'★ ':''}${a.name}`,p.x,p.y-v.th*3.3,{size:clamp(v.th*.4,10,16),weight:650,
+          priority:a.id===w.controlled?100:a.id===hero?.lock?90:w.party?.includes(a.id)||civic?.role==='speaker'?80:mark?75:70,tag:tag&&{...tag,size:tagSize},reserve:!!mark});
+        else if(tag){c.font=`800 ${tagSize}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,p.y-v.th*3.6);}
       }
       // Each squad's standard over its foremost man: its name, strength and morale (an amber
       // ring with a notch when shaken, a crimson ring split in two when broken).
@@ -254,9 +265,10 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
         c.beginPath();c.moveTo(p.x+v.tw*.18,p.y-hgt*.2);c.lineTo(p.x+v.tw*.18,top);c.lineWidth=2;c.strokeStyle='#3b2f22';c.stroke();
         c.fillStyle=mine?'#7a2a1f':'#5b3a2c';c.fillRect(p.x+v.tw*.18,top,v.tw*.34,v.th*.55);if(chosen.has(q.id)){c.lineWidth=2;c.strokeStyle='#f3d48d';c.strokeRect(p.x+v.tw*.18,top,v.tw*.34,v.th*.55);}
         const bw=v.tw*.6;c.fillStyle='#0d1715cc';c.fillRect(p.x-bw/2,top-7,bw,4);c.fillStyle=mine?'#abc89a':'#db9e81';c.fillRect(p.x-bw/2,top-7,bw*clamp(q.strength/q.maxStrength,0,1),4);
-        c.textAlign='center';if(mine||chosen.has(q.id)){c.font=`650 ${Math.max(10,v.th*.38)}px system-ui`;c.fillStyle='#f6efdb';c.fillText(q.name,p.x,top-10);}
-        const tag=(floating.get(q.id)?.until>now&&floating.get(q.id))||(q.morale<=40&&{text:'!',color:q.broken?'#ff8f8f':'#f1c27d'});
-        if(tag){c.font=`800 ${Math.max(12,v.th*.6)}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,top-10-Math.max(12,v.th*.5));}
+        const low=q.morale<=40&&{text:'!',color:q.broken?'#ff8f8f':'#f1c27d'},tag=(floating.get(q.id)?.until>now&&floating.get(q.id))||low,tagSize=Math.max(12,v.th*.6);
+        c.textAlign='center';
+        if(mine||chosen.has(q.id))name(`squad:${q.id}`,q.name,p.x,top-10,{size:Math.max(10,v.th*.38),weight:650,priority:chosen.has(q.id)?85:55,tag:tag&&{...tag,size:tagSize},reserve:!!low});
+        else if(tag){c.font=`800 ${tagSize}px system-ui`;c.fillStyle=tag.color;c.fillText(tag.text,p.x,top-10-Math.max(12,v.th*.5));}
       }
       // The keyboard's order marker, and where each selected squad is going (or whom it attacks).
       if(marker&&(chosen.size||zone)){const p=flat.screen(v,marker.x,marker.z);ellipse(p,v.tw*.34,'#f3d48d',{width:3});ellipse(p,v.tw*.07,null,{fill:'#f3d48d'});}
@@ -282,6 +294,21 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       if(ranges&&hero?.alive){ellipse(at(hero),1.85*unit,'#f1d38a88');ellipse(at(hero),25*unit,'#9fd3d088',{dash:[6,6]});}
       for(const m of w.projectiles){const k=clamp((r-m.start)/Math.max(1,m.arrive-m.start),0,1),x=lerp(m.fromX,m.toX,k),z=lerp(m.fromZ,m.toZ,k),q=flat.screen(v,x,z),
         b=flat.screen(v,lerp(m.fromX,m.toX,Math.max(0,k-.08)),lerp(m.fromZ,m.toZ,Math.max(0,k-.08)));line([{x:b.x,y:b.y-v.th*1.2},{x:q.x,y:q.y-v.th*1.2}],'#f5e4bc',{width:2});}
+      // The names, placed together, over everything else. A pinned name out of sight waits at the edge in a chip with
+      // the way it lies; a name moved from its place keeps a faint line to it.
+      const placed=layoutStageLabels(names,{width:v.w,height:v.h,obstacles:heroBody?[heroBody]:[]});
+      // What was placed, for the browser checks (presentation only).
+      flat.labelBoxes=[...placed.values()].filter(r=>r.visible).map(({id,x,y,width,height,reason})=>({id,x,y,width,height,reason}));
+      for(const n of names){
+        const r=placed.get(n.id);if(!r?.visible)continue;const cx=r.x+r.width/2,top=r.y+n.tagH;c.font=n.font;c.textAlign='center';
+        if(r.reason==='edge'){c.fillStyle='#29281deb';c.fillRect(r.x,r.y,r.width,r.height);c.strokeStyle='#ac9659';c.lineWidth=1;c.strokeRect(r.x+.5,r.y+.5,r.width-1,r.height-1);
+          c.fillStyle='#e8d7a6';c.fillText(`${EDGE_ARROWS[r.edge]} ${n.text}`,cx,r.y+r.height/2+n.size*.35);}
+        else{
+          if(Math.hypot(n.x-cx,n.y-9-(r.y+r.height))>15)line([{x:cx,y:r.y+r.height},{x:n.x,y:n.y-9}],'#f6efdb66',{width:1});
+          c.font=n.font;c.textAlign='center';c.fillStyle=n.color;c.fillText(n.text,cx,top+3+n.size*.8);
+        }
+        if(n.tag){c.font=`800 ${n.tag.size}px system-ui`;c.textAlign='center';c.fillStyle=n.tag.color;c.fillText(n.tag.text,cx,top-1);}
+      }
       for(const [id,f]of floating)if(now>f.until)floating.delete(id);
     }
   };

@@ -515,7 +515,10 @@ up, or keep the labels on in **Settings → Controls → Mouse & touch**.
 - Point at an enemy, or choose him with **T**, to read the **forecast**:
   your chance to hit, the damage to expect after his armour, and every
   modifier that applies, such as a flank, height or rain. Examining a
-  target spends nothing.
+  target spends nothing. A target chosen with **T** takes the message
+  line's place in the bar, with a word on what he is doing where there
+  is room; **Target details** beside it opens the whole forecast over
+  the world, led by that word.
 
 ## Abilities
 
@@ -652,8 +655,11 @@ over it.
   the ability bar (or a squad's command card). Under the message line a
   second line says what just happened: a blow, a pause, a refusal. It
   keeps its room when it has nothing to say, so the world never changes
-  size; a message too long for it ends in an ellipsis, and pointing at
-  it shows the whole.
+  size. A message too long for it ends in an ellipsis: **More** at its
+  end, or a tap on the line, opens the whole of it over the world until
+  you close it, and pointing at it shows it too. A message from the
+  game itself, such as the gate sentry's word or a save in progress,
+  is said on the same line.
 
 - **Bottom right:** a button for each panel: **Kit**, **Character**,
   **Journal**, **Orders**, **Chronicle**, **Map**, **Company**,

@@ -63,6 +63,19 @@ test('keyboard target range and forecast refresh after a legal walk and speech w
   assert.equal(c.spoken.length,announcements);c.control.dispose();
 });
 
+// Main's CI after #58: a page update (a save finishing, say) syncs the chamber, and its readouts refreshed over the line
+// U had just written. Held, U keeps the rivals' plans on the line; let go, the pointer's readout returns.
+test('held U keeps the rivals’ plans on the line through the page’s updates; let go, the pointer’s readout returns',()=>{
+  const s=council(),e=s.encounter,c=controller(s),person=e.units.find(u=>u.role==='voter');
+  c.control.hover({actorId:person.id});const readout=c.messages.at(-1);assert.match(readout,/^Click: talk to /);
+  c.control.rivalArrows();const plans=c.messages.at(-1);assert.match(plans,/challenges|attacks|no plan/);
+  c.control.sync();c.control.update();assert.equal(c.messages.at(-1),plans,'a page update does not replace the plans while U is held');
+  c.control.hover({actorId:person.id},{refresh:true});assert.equal(c.messages.at(-1),plans,'nor does a refresh of the pointer’s readout');
+  c.control.hideRivals();assert.equal(c.messages.at(-1),readout,'let go, the pointer’s readout returns');
+  c.control.sync();c.control.update();assert.equal(c.messages.at(-1),readout,'and the page’s updates refresh it again');
+  c.control.dispose();
+});
+
 test('retry reset closes stale conversation DOM even when its selected person is already cleared',()=>{
   const c=controller(council());assert.equal(c.conversation.hidden,true,'mount clears old DOM');
   c.conversation.hidden=false;c.conversation.children=['old defeat or dialogue'];c.control.reset();

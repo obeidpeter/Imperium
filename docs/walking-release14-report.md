@@ -235,3 +235,124 @@ Also at the owner's request, after the measurements above found it.
 - **Checks:**
   - `immersive-interface`, all twelve camps: both notices sit on the strip's line with their text as their tooltip; there is no band under the strip; with nothing to say they wait on the line, hidden.
   - `smoke:usability`, at the phone and desktop widths, an injected layout check: the two notices are hidden, then given their longest texts and shown. The world and the strip keep their heights, and the chronicle is unchanged.
+
+## After Gate 4, second round
+
+The owner asked for five more polish items after the first round, and main's CI after the first round's merge found a sixth fix: the chamber's held U, below. Each of the five was measured with the same probe on production builds of main and this branch: headless Chromium with software rendering, in 2D on Performance for speed. The bar and the page messages are the same in 3D; only the names are the 2D view's own.
+
+### The game's own messages show on the full-screen pages
+
+- **Before:**
+  - A message from the page itself was put under the site header. Examples: the gate sentry's refusal at a camp's way out, "Saving… use the way out again in a moment", an errand that cannot be tracked, or what is still to search on a walked field.
+  - The full-screen camp, field and chamber have had no site header since release 12. The note was made but never placed on the page, so with no window open only screen readers heard it.
+- **Now:**
+  - With a world open, the bar's event line says it (`toast`, `src/ui/app.js`), in the warning colour for a problem, for the 6.5 seconds the note used to stay. It is announced once, as before.
+  - Where no world is open yet, the note floats over the page where the header was, so nothing under it moves.
+- **Measured:** a new chronicle's first camp at 1,280 by 800, using the way out before the decision.
+  - On main's build, the refusal was in no visible element, and the note was not in the document.
+  - On this branch it shows on the bar's event line.
+- **Checks:** `smoke`, `campExitDeparture`: at 1,280 wide the sentry's words show on the event line, whole, with no **More**.
+
+### The 2D view's names no longer overlap
+
+- **Before:** each name was drawn at a fixed offset over its figure or object, wherever the others fell. In Chapter II's camp on main's build, one pair of names in view overlapped at each size:
+  - at 1,280 by 800, Aurelius Lucan's over Capsarius Didius's;
+  - at 390 by 844, two chests' names: "The broken shields" and "The century's spare basket".
+- **Now:** the 2D view gathers the names as it draws the scene and places them at the end with the 3D view's label layout: `src/showcase/flat-stage.js` now calls `layoutStageLabels`.
+  - **Priority**, highest first:
+    - the soldier you control, then his target;
+    - a chosen squad, then his party or the speaker;
+    - figures with a mark, then the way out, then other figures;
+    - field objects, then other objects;
+    - squads not chosen, last.
+  - **Clearance:** names stay clear of one another and of the soldier you control, whose own name stands over him.
+  - **Moved names:** a name keeps its first place, exactly where it was drawn before, unless that place is taken. A name moved from it keeps a faint line to it. When there is no room at all, the least important name gives way.
+  - **Marks:** a lasting mark over a name keeps its room with the name, so no other name covers it. Examples: a camp figure's news, an enemy's notice, a squad's low morale. A passing number does not keep room, so names do not jump while blows land; it may cross a neighbour's name for the second it shows.
+  - **The way out:** the camp's way out is one of these names. Pinned, it waits at the view's edge with its arrow while out of sight, as before.
+- **Measured:** the probe recorded every text the 2D view drew in its last frame of Chapter II's camp.
+  - Main's build drew 23 texts. 14 were in view at 1,280 wide and 15 at 390.
+  - This branch draws 14 and 15, the same numbers, all in view, and none overlap. So in this camp no name in view had to give way.
+- **Checks:**
+  - A new unit test covers all twelve camps at 1,280 by 640 and 390 by 560:
+    - no two names overlap, and all are inside the view;
+    - the soldier is named, and no other name is over him;
+    - the same frame places the same, and the world is unchanged;
+    - a mark makes its name's place taller and is drawn inside it.
+  - The unit test catches overlaps: with the layout's overlap check removed, it fails at Chapter I at 1,280 wide, on the practice post's name.
+  - `container-props`: its stand-in canvas now measures text, as the suite's others do. Its view is a little larger than the camp, so names have room.
+  - `smoke`, `campExitDeparture`: in Chapter II's 2D camp, at least five names are placed and none overlap.
+
+### One wording for the offline notice
+
+- **Before:**
+  - The camp's strip and the site header said "This chapter is ready offline" or "All chapters available offline" when they were drawn.
+  - The page's own update then replaced that with "✓ CHAPTER II AVAILABLE OFFLINE" or "✓ ALL CHAPTERS AVAILABLE OFFLINE". While a download was under way, the update showed only its progress.
+  - On main's build, Chapter II's camp showed "✓ CHAPTER II AVAILABLE OFFLINE".
+- **Now:**
+  - One function writes the notice wherever it shows (`offlineNotice`, `src/ui/view-helpers.js`): "✓ This chapter is ready offline" or "✓ All chapters available offline", then any download under way.
+  - On this branch the camp shows "✓ This chapter is ready offline" at both sizes.
+- **Checks:** `immersive-interface`, all twelve camps.
+
+### A message cut short can be read whole
+
+- **Before:** since the first round, the event line keeps one line. A longer message ended in an ellipsis and was whole only in its tooltip, which touch screens do not show, and to screen readers.
+- **Now:**
+  - **More** appears at the line's end when its message is cut. More, or a tap on the line, opens the whole message over the world.
+  - The message stays open until it is closed, with More again or a tap on it, or until another message comes. Once closed, it clears 1.5 seconds later at the earliest.
+  - More says whether the message is open (`aria-expanded`), and keeps the focus.
+- **Measured:** a new chronicle's first camp.
+  - At 390 by 844 the sentry's refusal is cut and More shows. More opens the message whole, the message is still open after 4 seconds, and More closes it.
+  - At 1,280 by 800 the refusal is whole on its line, with no More.
+  - The world's height does not change.
+- **Checks:** `smoke`, `campExitDeparture`: at 390 wide More appears and opens the whole of the sentry's words. It says it is expanded, and a second press closes it.
+
+### Choosing a target by keyboard no longer shifts the world
+
+- **Before:** **T** showed the target's summary, its cue and **Target details** as lines added to the bar. The world shrank while a target was chosen, and again when the details opened. Measured on main's build, on Chapter I's road:
+
+  | Window | With a target | With the details open |
+  | --- | --- | --- |
+  | 580 × 700 | 66.4 px shorter | 129.7 px shorter |
+  | 390 × 844 | 104.8 px shorter | 192.8 px shorter |
+  | 1,280 × 800 | 68.0 px shorter | 131.4 px shorter |
+
+- **Now:**
+  - The target's summary takes the message line's place. The message line stays beneath it, invisible, so the row keeps its height.
+  - Where the bar has room, the cue sits beside the summary, cut short with its whole text in its tooltip.
+  - **Target details** at the end of the line opens the whole forecast over the world, led by the cue.
+  - On a narrow bar (760 pixels or less):
+    - the summary has the line to itself;
+    - it takes up to two lines where the message line has two;
+    - the cue is read in the details.
+  - The text sizes match the message line's own at each width, so the row's height does not change.
+- **Measured:** on this branch, at all three sizes, the world's height is the same before **T**, with a target and with the details open: 404.4, 507.3 and 576.6 px.
+- **Checks:** `smoke:polish`, on the road at 580 wide: the world's height is the same before and after **T**.
+
+### Holding U in the chamber keeps the rivals' plans
+
+- **Found by main's CI after the first round's merge (#58):** browser smoke b failed in `chamberCouncil`, at "U names where each rival means to walk next". The check holds U and waits 10 seconds for the rivals' plans on the message line. It had passed on #58's own CI, and it passed locally.
+- **The cause:**
+  - Every update of the page syncs the open chamber, which resets the chamber's display.
+  - Its next update then refreshed the readout of the pointer, or of the member chosen by keyboard, over the line U had just written.
+  - A save finishing after the hour turns is such an update. On a slow runner it can land while U is held, so the plans were gone before the check read the line. A player holding U could lose them the same way.
+- **The fix:** while U is held, those readouts leave the line alone (`src/showcase/chamber-control.js`).
+  - If the hour turns during the hold, the line says the new hour's plans.
+  - When U is let go, the line again says what the pointer or the chosen member shows.
+- **Checks:**
+  - A new unit test (`curia-readability`), an injected sequence: with the pointer over a member, U's plans survive a sync of the page and a refresh of the pointer's readout. Let go, the pointer's readout returns, and later updates refresh it.
+  - On main's code the test fails at "a page update does not replace the plans while U is held"; on this branch it passes.
+  - `chamberCouncil` passed locally on this branch, in 143 seconds. The race itself was not reproduced in the browser.
+
+### The browser checks (second round)
+
+Run locally, one at a time, on the production build of this branch, in headless Chromium with software rendering:
+
+- `smoke`: `campExitDeparture` (152 seconds), `chamberCouncil` (143), `realtimeFlat`, `viewSwitch`, `chamberViewFallback`, `chamberContests` and `chamberHearing` passed, with no page or console errors.
+- `smoke:polish`: all 22 checks passed, including the new one for keyboard targeting.
+- `smoke:usability`: all 15 flows passed, at the phone and desktop widths.
+- The rest of the browser checks ran only in CI.
+
+### Not checked
+
+- No device was used.
+- Screen readers were not tested beyond the text of the announcement and of the line.

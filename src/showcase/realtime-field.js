@@ -84,11 +84,21 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   // The camp's way out, marked once the column can march (the page's, setWayOut).
   let wayOut=null,wayOutKey='null';
   const sceneEncounter=()=>stageEncounter(base,world,{appearance:appearance(),wayOut});
-  // The bar's event line keeps one line of room (realtime.css): a message too long for it ends in an ellipsis, and the
-  // whole of it is the line's tooltip.
-  const showEvent=text=>{const line=dom.eventLine;if(!line)return;line.textContent=text;if(text)line.title=text;else line.removeAttribute('title');};
-  const say=(text,{warning=false,announce=false}={})=>{
-    eventMessage={text,until:performance.now()+2600,warning};if(dom.eventLine){showEvent(text);dom.eventLine.classList.toggle('warning',warning);}
+  // The bar's event line keeps one line of room (realtime.css): a message too long for it ends in an ellipsis, the whole
+  // of it is the line's tooltip, and More (or a tap on the line) opens it whole over the world until it is closed.
+  let eventOpen=false;
+  const openEvent=open=>{
+    eventOpen=!!open&&!!dom.eventLine?.textContent;if(dom.eventFull){dom.eventFull.hidden=!eventOpen;dom.eventFull.textContent=eventOpen?dom.eventLine.textContent:'';}
+    dom.eventMore?.setAttribute('aria-expanded',String(eventOpen));
+    // Closed, a message held open gets a moment more before it clears.
+    if(!eventOpen&&eventMessage)eventMessage.until=Math.max(eventMessage.until,performance.now()+1500);
+  };
+  const showEvent=text=>{
+    const line=dom.eventLine;if(!line)return;line.textContent=text;if(text)line.title=text;else line.removeAttribute('title');openEvent(false);
+    const cut=!!text&&line.scrollWidth>line.clientWidth+1;line.toggleAttribute('data-cut',cut);if(dom.eventMore)dom.eventMore.hidden=!cut;
+  };
+  const say=(text,{warning=false,announce=false,ms=2600}={})=>{
+    eventMessage={text,until:performance.now()+ms,warning};if(dom.eventLine){showEvent(text);dom.eventLine.classList.toggle('warning',warning);}
     if(announce&&dom.announcer)dom.announcer.textContent=text;
   };
   const message=(text,warning=false)=>{const line=dom.messageLine;if(!line)return;if(line.textContent!==text)line.textContent=text;line.classList.toggle('warning',warning);};
@@ -96,10 +106,18 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function refreshReadouts(now,{announceTarget=false}={}){
     if(chamber||now-readoutAt<200&&!announceTarget)return;readoutAt=now;
     if(keyTarget){
-      const r=targetReadout(world,keyTarget,{abilityId:ability,keymap}),state=`${keyTarget}:${r.state}`;
+      const r=targetReadout(world,keyTarget,{abilityId:ability,keymap}),state=`${keyTarget}:${r.state}`,was=dom.targetLine?.hidden?null:dom.targetLine?.textContent;
       write(dom.targetLine,r.summary??r.text);if(dom.targetLine)dom.targetLine.hidden=false;
-      write(dom.targetCue,r.cue??'');if(dom.targetCue)dom.targetCue.hidden=!r.cue;
-      write(dom.targetForecast,r.text);if(dom.targetDetails)dom.targetDetails.hidden=!r.summary;
+      // The target's line takes the message line's place on the full-screen bar (realtime.css): it may use as many lines
+      // as the message line beneath it holds (two on a phone, often), and no more, so the bar keeps its height.
+      if(dom.targetLine&&dom.messageLine&&dom.targetLine.textContent!==was){
+        const lh=parseFloat(getComputedStyle(dom.messageLine).lineHeight)||20;
+        dom.targetLine.dataset.lines=String(Math.max(1,Math.min(2,Math.round(dom.messageLine.offsetHeight/lh))));
+      }
+      // On the full-screen bar the summary, cue and Target details share one line: a cue cut short is whole in its
+      // tooltip, and leads the details.
+      write(dom.targetCue,r.cue??'');if(dom.targetCue){dom.targetCue.hidden=!r.cue;dom.targetCue.title=r.cue??'';}
+      write(dom.targetForecast,r.cue?`${r.cue}. ${r.text}`:r.text);if(dom.targetDetails)dom.targetDetails.hidden=!r.summary;
       if(announceTarget||targetState&&state!==targetState){write(dom.announcer,r.text);}
       targetState=state;
       if(!r.valid){keyTarget=null;targetState='cleared';}
@@ -328,7 +346,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(dom.notice&&now>noticeUntil)dom.notice.hidden=true;
     if(chamber){
       // The chamber's HUD is its own (the hour, the speakers, the speeches and the coalition); Pause still stops its walks.
-      const paused=clock.paused&&!stepping(clock);if(eventMessage&&now>eventMessage.until){eventMessage=null;showEvent('');}
+      const paused=clock.paused&&!stepping(clock);if(eventMessage&&now>eventMessage.until&&!eventOpen){eventMessage=null;showEvent('');}
       chamber.update(now);
       const chamberState=callbacks.chamber.state(),coalitionKey=chamberReadoutKey(chamberState,dom.coalition?.innerHTML??'');
       if(coalitionKey!==coalitionSummaryKey){coalitionSummaryKey=coalitionKey;const c=compactChamberReadout(chamberState);
@@ -345,7 +363,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const oath=world.controlled===world.heroId?oathForecast(world):null;
     const key=[team,world.controlled,h?.walkMode,h?.ammo?.pilum,h?.bandages,paused,clock.slow,clock.speed,round,Math.floor(progress*50),world.status,ability,
       armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4,oath?`${oath.heard}:${oath.squadId}:${oath.distance}`:''].join('|');
-    if(eventMessage&&now>eventMessage.until){eventMessage=null;showEvent('');}
+    if(eventMessage&&now>eventMessage.until&&!eventOpen){eventMessage=null;showEvent('');}
     if(listOpen&&metrics.frames%10===0)renderList();
     squads?.update();showThreat();
     if(key===hudKey)return;hudKey=key;callbacks.onHud?.(world);if(listOpen)renderList();
@@ -690,7 +708,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // was held. Those modifiers must not strand a movement order.
     const move=Object.keys(ARROWS).find(a=>keymap[a]?.includes(e.code));
     if(move&&!chamber&&arrows.delete(move)){if(!arrows.size){queueCommand(world,{actorId:world.controlled,kind:'stop'});announceStop();}}
-    if(action==='show_usable'||keymap.show_usable?.some(binding=>binding.split('+').at(-1)===e.code)){if(!options.labelsAlways)document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}}
+    if(action==='show_usable'||keymap.show_usable?.some(binding=>binding.split('+').at(-1)===e.code)){if(!options.labelsAlways)document.body.classList.remove('labels-full');if(intentionsShown){intentionsShown=false;presenter?.setIntentions?.(null);}chamber?.hideRivals?.();}
     // Letting H go ends the glance, whatever else was held with it.
     if(glancing&&(action==='camera_horizon'||keymap.camera_horizon?.some(binding=>binding.split('+').at(-1)===e.code)))glance(false);
   }
@@ -700,6 +718,10 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
 
   function bind(){
     const click=(el,fn)=>{if(el)el.onclick=()=>{fn();canvas.focus({preventScroll:true});};};
+    // More keeps the focus, so a second press closes what the first opened.
+    if(dom.eventMore)dom.eventMore.onclick=()=>openEvent(!eventOpen);
+    if(dom.eventLine)dom.eventLine.onclick=()=>{if(dom.eventLine.hasAttribute('data-cut'))openEvent(!eventOpen);};
+    if(dom.eventFull)dom.eventFull.onclick=()=>openEvent(false);
     click(dom.pauseButton,togglePause);click(dom.slowButton,()=>act('slow_time'));click(dom.stepButton,()=>act('step_round'));click(dom.advanceButton,advance);
     click(dom.swordsButton,()=>act('combat_toggle'));click(dom.walkButton,()=>act('walk_toggle'));
     click(dom.forceButton,()=>{force=!force;say(force?'Force: the next tap or click attacks whatever is there.':'Force cancelled.');});

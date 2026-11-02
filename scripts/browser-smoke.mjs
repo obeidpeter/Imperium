@@ -671,13 +671,25 @@ async function campExitDeparture(){
     await page.waitForFunction(()=>/^The gate sentry: “/.test(document.querySelector('#announcement')?.textContent??''),null,{timeout:300000})
       .catch(async()=>assert.fail(`The sentry says what is missing: ${await where(page)}`));
     assert.match(await text(page,'#announcement'),/decision/,'The departure check is the sentry’s line');
+    // Polish after Gate 4: shown, not only announced. The full-screen camp has no site header to put a page message
+    // under, so the bar's event line says it; at this width it is whole on its line.
+    assert.match(await text(page,'[data-role="eventLine"]'),/^The gate sentry: “.*decision/,'The sentry’s words show on the bar');
+    assert.equal(await page.locator('[data-role="eventMore"]').isHidden(),true,'Whole on its line, the message needs no More');
     // Walking there recorded his first visit to the drill field (a save of its own). From where he stands now, the way
     // out is used again: the refusal itself saves and changes nothing.
     await page.waitForFunction(()=>!/Saving/.test(document.querySelector('.save-status')?.textContent??''),null,{timeout:30000});
     const before=await saved(page),first=await used();assert.ok(before,'The chronicle is saved');
+    // On a phone the sentry's words are too long for the line: More opens the whole of them over the world.
+    await page.setViewportSize({width:390,height:844});
     assert.equal((await useExit(page)).ok,true,'He uses the way out again');
     await page.waitForFunction(at=>(window.__realtime.world().objects.find(o=>o.kind==='exit').at??null)!==at,first,{timeout:120000})
       .catch(async()=>assert.fail(`The way out is used again: ${await where(page)}`));
+    await page.waitForFunction(()=>!document.querySelector('[data-role="eventMore"]')?.hidden,null,{timeout:30000})
+      .catch(async()=>assert.fail(`A cut message offers More: ${await text(page,'[data-role="eventLine"]')}`));
+    await page.click('[data-role="eventMore"]');
+    assert.match(await text(page,'[data-role="eventFull"]'),/^The gate sentry: “.*”$/,'More opens the whole message');
+    assert.equal(await page.locator('[data-role="eventMore"]').getAttribute('aria-expanded'),'true');
+    await page.click('[data-role="eventMore"]');assert.equal(await page.locator('[data-role="eventFull"]').isHidden(),true,'A second press closes it');
     await page.waitForTimeout(500);
     assert.equal(await page.evaluate(()=>document.documentElement.dataset.phase),'camp','Nothing happens');assert.equal(await saved(page),before,'The refusal leaves the save as it was');
     await page.context().close();
@@ -685,6 +697,14 @@ async function campExitDeparture(){
   const code=battleCampCode('ch2-marsh');
   for(const view of ['2d','3d']){
     const page=await camp(code,view);
+    if(view==='2d'){
+      // Polish after Gate 4: the 2D view places its names as the 3D view places its labels, so none overlap.
+      await page.waitForFunction(()=>window.__chamber.stage()?.labelBoxes?.length>0,null,{timeout:60000});
+      const boxes=await page.evaluate(()=>window.__chamber.stage().labelBoxes),overlaps=[];
+      for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){const a=boxes[i],b=boxes[j];
+        if(a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&&a.y+a.height>b.y)overlaps.push(`${a.id} / ${b.id}`);}
+      assert.ok(boxes.length>=5,`2d: the camp's names are placed (${boxes.length})`);assert.deepEqual(overlaps,[],'2d: no two names overlap');
+    }
     assert.equal((await useExit(page)).ok,true,`${view}: the soldier walks to the road out`);
     await page.waitForSelector('.area-card',{timeout:300000}).catch(async()=>assert.fail(`${view}: a card names where the column goes: ${await where(page)}`));
     assert.match(await text(page,'.area-card'),/The road out.*The broken causeway/,`${view}: the card names the way and the place`);
@@ -693,7 +713,7 @@ async function campExitDeparture(){
     await page.waitForSelector('.area-card',{state:'detached',timeout:30000}).catch(()=>assert.fail(`${view}: the card goes`));
     await page.context().close();
   }
-  console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words and changes nothing; Chapter II’s road out marches to the causeway with a card, in 2D and 3D');
+  console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words, shown on the bar (whole with More on a phone), and changes nothing; Chapter II’s road out marches to the causeway with a card, in 2D (no names overlapping) and 3D');
 }
 // Release 14: the field after a victory. Chapter III's station, won from New Game by the legal-command bot and not yet
 // recorded (realtime-autoplay.mjs), restored through Import. The result offers to walk the field; walked, the fallen

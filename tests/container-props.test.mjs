@@ -72,15 +72,18 @@ test('opening a camp chest changes the camp world, never its scenery; every camp
 
 test('the 2D view draws the forge and the containers in sight, a lock while locked, and never a hidden cache',()=>{
   const [chapter,list]=Object.entries(CAMP_CONTAINERS).find(([,l])=>l.some(c=>c.hidden)),world=Game.createCampWorld(campState(Number(chapter)));
-  const draw=()=>{const calls=[],c=new Proxy({},{get:(t,k)=>k in t?t[k]:(...a)=>{calls.push([k,a]);},set:(t,k,v)=>{t[k]=v;return true;}});
-    createFlatPresenter({},{world:()=>world,alpha:()=>1}).draw(c,{tw:32,th:16},{screen:(v,x,z)=>({x,y:z})},0);return calls;};
+  // The view names what it draws where there is room (stage-label-layout.js): a stand-in canvas that measures text, as
+  // the suite's others do, and the camp spread across a view a little larger than it.
+  const S=40,draw=()=>{const calls=[],c=new Proxy({},{get:(t,k)=>k==='measureText'?text=>({width:String(text).length*7}):k in t?t[k]:(...a)=>{calls.push([k,a]);},
+    set:(t,k,v)=>{t[k]=v;return true;}});
+    createFlatPresenter({},{world:()=>world,alpha:()=>1}).draw(c,{tw:32,th:16,w:(world.map.width*2.5+20)*S,h:(world.map.height*2.5+20)*S},{screen:(v,x,z)=>({x:x*S,y:z*S})},0);return calls;};
   const texts=calls=>calls.filter(([k])=>k==='fillText').map(([,a])=>a[0]);
   const hidden=list.find(c=>c.hidden),locked=list.find(c=>c.lock);
   let calls=draw();
   assert.ok(!texts(calls).some(t=>t.startsWith(hidden.name)),'a hidden cache is not drawn');
   assert.ok(texts(calls).includes(`${locked.name} (locked)`),'a locked chest says so');
   const forge=world.campPresentation.smithy,fx=forge.x+world.map.width*1.25;
-  assert.ok(calls.some(([k,a])=>k==='fillRect'&&Math.abs(a[0]-(fx-32*.18))<1e-6),'the forge is drawn where it stands');
+  assert.ok(calls.some(([k,a])=>k==='fillRect'&&Math.abs(a[0]-(fx*S-32*.18))<1e-6),'the forge is drawn where it stands');
   world.objects.find(o=>o.container===hidden.id).hidden=false;
   assert.ok(texts(draw()).some(t=>t.startsWith(hidden.name)),'found, it is drawn');
 });

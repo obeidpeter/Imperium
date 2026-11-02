@@ -1,5 +1,9 @@
 export const roman = n => ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][n-1] || n;
 export const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+// The offline notice in the same words wherever it shows (the site header's band, the camp's strip, the page's updates):
+// whether this chapter or all of them are ready, then any download under way.
+export const offlineNotice = ({offline=false,chapterReady=false,progress=''}={}) =>
+  [offline ? '✓ All chapters available offline' : chapterReady ? '✓ This chapter is ready offline' : '', progress].filter(Boolean).join(' · ');
 export const actionNames = {guard:'Protect comrade',inspire:'Inspire company',volley:'Aimed volley',move:'Move',strike:'Strike',brace:'Brace',throw:'Throw javelin',assist:'Assist',scout:'Scout',order:'Order',formation:'Formation',rally:'Rally',deploy:'Deploy',persuade:'Persuade',promise:'Promise',threaten:'Threaten',address:'Address chamber',record:'Invoke record',denounce:'Denounce',rebut:'Rebut',oath:'Swear the oath',prepare:'Prepare',negotiate:'Negotiate',stratagem:'Stratagem',allocate:'Allocate',judge:'Judge'};
 export const actionSymbols = {guard:'▣',inspire:'✦',volley:'⇢',move:'↗',strike:'╱',brace:'□',throw:'→',assist:'+',scout:'◎',order:'↠',formation:'≡',rally:'↑',deploy:'⊞',persuade:'◇',promise:'=',threaten:'!',address:'○',record:'▤',denounce:'−',rebut:'↶'};
 
