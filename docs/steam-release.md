@@ -29,6 +29,14 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
 - **The game's own code** has no licence chosen (`docs/LICENSE-NOTICES.md`). For a commercial release that is the owner's decision: by default all rights are reserved.
 - **Out-of-date records** for the owner to review: `README.md` (the owner's) still says horses use original geometry, and `docs/LICENSE-NOTICES.md` and `docs/3d-art-provenance.md` predate the Tripo models. The in-game credits were corrected in S1.
 
+## The free web demo (S2, built; publishing is yours)
+
+- [ ] **Where it lives.** `npm run build:demo` writes `dist-demo/`, the site to publish (`SITE_URL` as for the full build). Give it **its own origin**, such as its own domain or subdomain:
+  - two builds on one origin share its saves;
+  - each one's service worker replaces the other's offline caches.
+- [ ] **The store link.** Once the store page exists, rebuild with `STORE_URL=https://store.steampowered.com/app/<App ID>/...`, and the demo's last screen links to it. Until then it says the full game is coming to Steam.
+- [ ] **The full web build** (`dist/`) stays for development and your playtests; nothing changes it.
+
 ## Later (S4, after 0.40.0 and Gate 4)
 
 - [ ] **The store page:**

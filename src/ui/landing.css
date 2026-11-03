@@ -211,3 +211,6 @@ html[data-contrast="high"] .site-landing .play-section :is(.section-heading>p:no
 html[data-contrast="high"] .site-landing .chronicle-card{background:#080e0b;border-color:#e5c89a}
 html[data-reduced=true] .landing-header * ,html[data-reduced=true] .site-landing *{transition:none!important}
 @media(prefers-reduced-motion:reduce){.landing-header *,.site-landing *{transition:none!important}}
+/* The demo's notice for a chronicle past its last chapter (the Steam plan, S2). */
+.held-chronicle{margin:0 0 1rem;padding:.8rem 1rem;border:1px solid #d8be83;background:#fff8ea;color:#3d1c1f;border-radius:4px}
+.held-chronicle p{margin:0 0 .6rem}

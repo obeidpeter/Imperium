@@ -1898,9 +1898,27 @@ The desktop app for Windows is the same game, with these differences:
   Window → Fullscreen**. The game remembers your choice and the window's
   size. **Esc** still opens the Menu.
 
-- **To bring a chronicle from the browser**, export its save code there
-  and import it in the app (**Menu → Settings → Saves → Import save
-  code**), as between any two devices.
+- **To bring a chronicle from the browser** or the free demo, export its
+  save code there and import it in the app: **Import a chronicle from the
+  browser** on the title, or **Menu → Settings → Saves → Import save
+  code**, as between any two devices.
+
+## The free demo
+
+The free demo plays Chapters I to III in the browser. It is the same
+game until Chapter III's promotion, which ends it:
+
+- **End of the demo** names the appointment waiting in the full game.
+  **Keep a save code** keeps your chronicle for the full game, which
+  continues it from that moment, with every choice you made. **Continue
+  on Steam** opens the full game's store page once it has one.
+
+- The demo does not open a chronicle that has gone past Chapter III. A
+  save code from further on is refused before it replaces anything; a
+  chronicle already on the device stays as it is, and the title offers
+  its save code.
+
+- **Download all chapters** downloads the demo's three chapters.
 
 # Settings reference
 

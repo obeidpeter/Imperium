@@ -18,7 +18,8 @@
 # frame or in play, on more than 50 shader programs, or on draw calls, triangles
 # or shader programs above the ceilings recorded in scripts/stage-ceilings.json,
 # and whose report is uploaded. The desktop jobs package the Steam app (desktop/) on Linux and Windows and drive it
-# through its interface (scripts/desktop-smoke.mjs); main's Windows run keeps the app folder as an artifact.
+# through its interface (scripts/desktop-smoke.mjs); main's Windows run keeps the app folder as an artifact. The demo
+# job builds the free web demo (npm run build:demo) and checks it through its interface (scripts/demo-smoke.mjs).
 # Playwright is installed for those jobs only and is not a project dependency.
 name: Verify
 
@@ -185,6 +186,28 @@ jobs:
         with:
           name: campaign-world-smoke
           path: tests/visual-results/campaign-world/
+          retention-days: 14
+
+  demo:
+    name: web demo (Chromium)
+    runs-on: ubuntu-latest
+    # The free web demo (the Steam plan, S2): its own build, through its interface.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock playwright@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build:demo
+      - name: The demo's title, a later save refused, and the End of the demo
+        run: npm run smoke:demo
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: demo-smoke
+          path: tests/visual-results/demo/
           retention-days: 14
 
   world:

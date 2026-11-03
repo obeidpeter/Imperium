@@ -2,6 +2,39 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Steam, second package: the free web demo ([plan](docs/steam-plan.md), [the owner's checklist](docs/steam-release.md))
+
+The web version becomes a free demo of Chapters I–III that points to the full game on Steam. Publishing it stays the owner's decision: nothing about the full web build changes.
+
+- **`npm run build:demo`** builds the demo into `dist-demo/`, beside the full game's `dist/`, which every check still reads.
+  - It leaves out the 111 files only Chapters IV–XII use: models, landmarks, panoramas, later paintings and their sounds. That is 25.0 MB of the full game's 53.3 MB compressed, so the whole demo is 28.2 MB.
+  - Its title, description and install name say it is the free demo.
+  - `STORE_URL` gives it the full game's store page, once there is one.
+- **The rules end the demo at Chapter III's promotion.** `advanceChapter` takes the build's last chapter and refuses to go past it, changing nothing. The limit belongs to the build, never the save, so a demo save is a full-game save.
+- **End of the demo.** Chapter III's promotion names the appointment waiting in the full game, with **Keep a save code** and **Continue on Steam** (until the store page exists: "The full game is coming to Steam").
+- **The demo never opens a later chronicle.**
+  - A save code from past Chapter III is refused before it replaces anything.
+  - A later chronicle already on the device stays as it is: the title says why and offers its save code.
+- **What the demo's pages say.**
+  - The title says "Free demo · Chapters I–III of XII", with the demo's six encounters, and so does the footer.
+  - The offline notices download and count the demo's three chapters.
+  - The next chapter's art is not warmed past Chapter III.
+- **The desktop app** offers **Import a chronicle from the browser** on its first title page, and its restore panel explains how.
+- **A fix in the rules:** Chapter XII's accession, refused when the Senate admission or the confrontation is missing, now refuses before granting anything. A valid save never reaches it.
+- **For contributors:**
+  - `npm run smoke:demo` checks the demo build through its interface: the title, a Chapter IV code refused, Chapter III's promotion as the End of the demo, and a kept code that the full game advances. No request may fail.
+  - `runRealtimeCampaign` takes `lastChapter`, to play the demo from New Game.
+  - CI runs the check after building the demo.
+
+**Checked:**
+- **Automated tests:** `npm test`, with `tests/demo-edition.test.mjs`.
+- **Browser check:** `npm run smoke:demo` in headless Chromium, on the demo build.
+- **Builds:** both the demo and the full game build. The full build's files and budgets are unchanged.
+
+**Not checked:**
+- **A device:** phone and desktop browsers on the demo.
+- **The demo deployed:** that is the owner's step. It needs its own origin, because two builds on one origin share its saves and replace each other's offline caches.
+
 ### Steam, first package: the desktop app ([plan](docs/steam-plan.md), [the app](docs/desktop.md), [the owner's checklist](docs/steam-release.md))
 
 The owner chose to sell Imperium on Steam, Windows first, and to keep a free web demo. This first package builds the desktop app; Steam itself (achievements, the overlay, cloud saves) comes once the App ID exists.

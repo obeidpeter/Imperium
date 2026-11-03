@@ -212,8 +212,10 @@ function playTurnEncounter(state){
 }
 // `kit` names a reference player's camp policy (kit-policy.mjs): 'bare' (the recruit's kit, as before),
 // 'issued' or 'engaged'.
+// `lastChapter` plays the web demo (the Steam plan, S2): its promotion is refused, as in the demo's page, and the
+// campaign stops there.
 export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapter=3,choices={},settings={controlsModel:'realtime'},
-  ready=undefined,onEncounter=null,play=playRealtime,retries=0,missions=true,operations={},kit='bare'}={}){
+  ready=undefined,onEncounter=null,play=playRealtime,retries=0,missions=true,operations={},kit='bare',lastChapter=null}={}){
   const state=G.newGame('Aurelius Marcellus',seed,{featureEdition:35,progression:true,difficulty,missions}),encounters=[];let guard=0;
   while(state.phase!=='epilogue'&&state.chapter<=throughChapter&&guard++<200){
     const chapter=G.getChapter(state);
@@ -241,7 +243,11 @@ export function runRealtimeCampaign({seed=275,difficulty='standard',throughChapt
       if(state.encounter.status!=='won')throw new Error(`Real-time autoplay lost ${state.encounter.id}: ${summary.reason??''}\n${state.encounter.log.slice(-8).join('\n')}`);
       searchWonField(state,kit);
       const r=G.commitEncounter(state);if(!r.ok)throw new Error(r.message);
-    }else if(state.phase==='promotion'){const r=G.advanceChapter(state);if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);}
+    }else if(state.phase==='promotion'){
+      const r=G.advanceChapter(state,{lastChapter});
+      if(!r.ok&&lastChapter!=null&&state.chapter>=lastChapter)break;
+      if(!r.ok)throw new Error(`Chapter ${state.chapter}: ${r.message}`);
+    }
   }
   return {state,encounters};
 }

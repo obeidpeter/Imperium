@@ -333,9 +333,11 @@ export function createPanels(context){
 
 
   function showRestore(){
-    const {state,showModal}=context();
+    const {state,showModal,desktopApp}=context();
+    // The desktop app brings a chronicle from the browser the same way (the Steam plan, S2): by its save code.
     showModal('Restore your chronicle',`<div class="panel-lead"><p class="eyebrow">BRING YOUR RECORD WITH YOU</p>`+
-      `<p>Paste an Imperium save code or choose its text file. The code is validated before you review and confirm the replacement.</p></div>`+
+      `<p>Paste an Imperium save code or choose its text file. The code is validated before you review and confirm the replacement.</p>`+
+      (desktopApp?'<p>Played in the browser, or the free demo? There, open Menu → Settings → Saves &amp; offline → Export save code, then paste the code here. The chronicle continues from where you left it.</p>':'')+`</div>`+
       `<div class="panel-form"><label for="restore-file">Choose a saved text file</label>`+
       `<input id="restore-file" type="file" accept=".txt,.json,text/plain,application/json"><label for="restore-code">Or paste your save code</label>`+
       `<textarea id="restore-code" spellcheck="false" placeholder="SAC1.…" aria-describedby="restore-hint"></textarea>`+

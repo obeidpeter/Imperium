@@ -10,10 +10,14 @@ const ENCOUNTERS=CHAPTERS.flatMap(c=>c.encounters);
 export const LANDING_FACTS=Object.freeze({chapters:CHAPTERS.length,encounters:ENCOUNTERS.length,
   battles:ENCOUNTERS.filter(e=>e.kind==='battle').length,contests:ENCOUNTERS.filter(e=>e.kind==='contest').length});
 
-export function heroFacts({platform=platformKind()}={}){
+// `demo` is the web demo's edition (platform.js demoEdition): its first facts say what it plays.
+export function heroFacts({platform=platformKind(),demo=null}={}){
   const f=LANDING_FACTS,desktop=platform==='desktop';
-  return `<ul class="hero-facts" aria-label="At a glance">${[[`${f.chapters} chapters`,'AD 250–276'],[`${f.encounters} encounters`,'Battles and political Contests'],
-    ...(desktop?[['No account','Your chronicle stays on this computer'],['Plays offline','Every chapter is installed']]:[['Free to play','No account or installation'],['Plays offline','Once its chapters download']])]
+  const scope=demo?[['Free demo',`Chapters I–${roman(demo.lastChapter)} of ${f.chapters}`],[`${CHAPTERS.slice(0,demo.lastChapter).flatMap(c=>c.encounters).length} encounters`,'Then the full game on Steam']]
+    :[[`${f.chapters} chapters`,'AD 250–276'],[`${f.encounters} encounters`,'Battles and political Contests']];
+  const play=desktop?[['No account','Your chronicle stays on this computer'],['Plays offline','Every chapter is installed']]
+    :[[demo?'In your browser':'Free to play','No account or installation'],['Plays offline','Once its chapters download']];
+  return `<ul class="hero-facts" aria-label="At a glance">${[...scope,...play]
     .map(([fact,detail])=>`<li><strong>${fact}</strong><span>${detail}</span></li>`).join('')}</ul>`;
 }
 
