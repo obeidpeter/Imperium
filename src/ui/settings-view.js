@@ -1,4 +1,5 @@
 import {esc} from './view-helpers.js';
+import {allChaptersLabel} from './platform.js';
 import {controlPreferences,confirmMovesSetting} from './control-preferences.js';
 import {soundscapeSettings} from './campaign-upgrade-views.js';
 import {roman} from './view-helpers.js';
@@ -12,12 +13,13 @@ const group=(title,body)=>`<fieldset class="settings-group"><legend>${title}</le
 
 // One task at a time. Hidden pages retain the field IDs used by the settings
 // controller; they are excluded from both keyboard navigation and speech.
+const capitalized=text=>text.charAt(0).toUpperCase()+text.slice(1);
 export function settingsView(context,{page='general',pace='',development=''}={}){
-  const {settings:s,state,offline,currentChapterOffline,offlineProgress,preservedUnreadable,keymap,devMenu,desktopApp}=context;
+  const {settings:s,state,offline,currentChapterOffline,offlineProgress,preservedUnreadable,keymap,devMenu,desktopApp,demo=null}=context;
   const current=SETTINGS_PAGES.some(([id])=>id===page)?page:'general',live=s.controlsModel==='realtime';
   // The desktop app (platform.js): its window's fullscreen, saves on this computer, and every chapter installed.
   const desktop=!!desktopApp,pageLabel=(id,label)=>desktop&&id==='saves'?'Saves':label;
-  const offlineText=offline?'All twelve chapters are available offline.':offlineProgress?esc(offlineProgress):currentChapterOffline?`Chapter ${roman(state?.chapter||1)} is available offline.`:'This chapter is still downloading.';
+  const offlineText=offline?`${capitalized(allChaptersLabel(demo))} are available offline.`:offlineProgress?esc(offlineProgress):currentChapterOffline?`Chapter ${roman(state?.chapter||1)} is available offline.`:'This chapter is still downloading.';
   const pages={
     general:group('Make the game easier to read',
       select('text-size','Text size','',[[1,'100%'],[1.25,'125%'],[1.5,'150%'],[2,'200%']],s.textScale||1)+

@@ -33,3 +33,40 @@ export function desktopSaveMirror(){
   if(!saves||typeof saves.read!=='function'||typeof saves.write!=='function')return null;
   return {read:()=>saves.read('campaign'),write:text=>saves.write('campaign',text)};
 }
+
+// The edition (the Steam plan, S2): the free web demo plays the opening chapters and ends at the last one's promotion;
+// the full game is the web build for development and playtests, and the desktop app. The demo's build
+// (scripts/build.mjs --edition demo) writes CONFIG.edition 'demo', its last chapter and the store's address.
+
+/** 'demo' in the web demo's build, otherwise 'full'. */
+export const buildEdition=()=>CONFIG.edition==='demo'?'demo':'full';
+
+/** The demo's last chapter, or null in the full game. The rules refuse to advance past it (core/game.js advanceChapter);
+ * it comes from the build, never the save, so the demo's saves are the full game's. */
+export function demoLastChapter(){
+  if(buildEdition()!=='demo')return null;
+  const chapter=Math.trunc(Number(CONFIG.lastChapter));
+  return chapter>=1&&chapter<12?chapter:3;
+}
+
+/** The full game's store page, which the demo's build takes from STORE_URL, or '' until there is one. */
+export function storeUrl(){
+  const url=buildEdition()==='demo'?String(CONFIG.storeUrl??''):'';
+  return /^https:\/\/[^\s"'<>]+$/.test(url)?url:'';
+}
+
+/** What the page says and offers in the demo, or null in the full game: the views take it from their context. */
+export function demoEdition(){
+  const lastChapter=demoLastChapter();
+  return lastChapter?{lastChapter,storeUrl:storeUrl()}:null;
+}
+
+/** What the offline notices call everything there is to download: the full game's twelve chapters, or the demo's. */
+export function allChaptersLabel(demo=demoEdition()){
+  return demo?`all ${['one','two','three','four','five','six'][demo.lastChapter-1]??demo.lastChapter} chapters of the demo`:'all twelve chapters';
+}
+
+const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+/** A chronicle past the demo's last chapter (the full game's, by a save code): the demo never plays it, and says why. */
+export const pastDemo=(state,demo=demoEdition())=>!!demo&&!!state&&Number(state.chapter)>demo.lastChapter;
+export const pastDemoMessage=(state,demo=demoEdition())=>`This chronicle has reached Chapter ${ROMAN[state.chapter-1]??state.chapter}, past the end of the demo with Chapter ${ROMAN[demo.lastChapter-1]}. Continue it in the full game.`;

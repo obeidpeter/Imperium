@@ -73,3 +73,11 @@ html[data-hidden="true"] .cinematic-mural>img,html[data-hidden="true"] .cinemati
 /* Story paintings drift in 2.5D over the still painting, which stays underneath as the fallback. */
 .scene-depth-canvas{position:absolute;inset:0;inline-size:100%;block-size:100%;display:block;pointer-events:none;opacity:0;transition:opacity .8s ease-out}
 .scene-depth-canvas[data-ready="true"]{opacity:1}
+/* The web demo's last promotion (the Steam plan, S2). */
+.demo-end{max-width:42rem;margin:0 auto}
+.demo-end h2{margin:.3rem 0 .8rem}
+.demo-end-actions{display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;align-items:center;margin-top:1.2rem}
+.cinematic-promotion .demo-store{display:inline-flex;align-items:center;gap:.4rem;min-height:3.1rem;padding:.85rem 1.8rem;background:#682a26;color:#fff8ea;border:1px solid #d8be83;font-size:calc(1rem * var(--text-scale,1));text-decoration:none;box-shadow:0 4px 15px #0004}
+.cinematic-promotion .demo-store:hover,.cinematic-promotion .demo-store:focus-visible{background:#7d3530}
+.demo-coming{margin:0;font-style:italic}
+@media(max-width:560px){.demo-end-actions{flex-direction:column;align-items:stretch}.cinematic-promotion .demo-store{justify-content:center}}

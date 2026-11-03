@@ -5,7 +5,7 @@ import {animationAssets} from './sprite-frames.js';
 import {chapterBodies,actorBodyUrl,chapterHorses,horseBodyUrl} from './actor-body-catalog.js';
 import {chapterWorldFiles,worldFiles} from './world-catalog.js';
 import {ITEM_ATLAS} from '../data/item-pictures.js';
-import {networkConnection} from './platform.js';
+import {demoLastChapter,networkConnection} from './platform.js';
 // Presentation assets never infer or award campaign milestones.
 const artLoader=createAssetLoader({maxEntries:PRESENTATION_BUDGET.decodedEntries,maxBytes:PRESENTATION_BUDGET.decodedBytes});
 export function heroPortrait(rank='Tiro') {
@@ -107,7 +107,8 @@ export const viewDecodes=(path,{flat=false,painted=false}={})=>flat||!isFlatArt(
 export async function prefetchChapter(chapter,{next=true,onProgress,retry=false,connection=networkConnection(),shouldPrefetchNext=()=>true,skip=()=>false}={}) {
   const request=++chapterRequest;
   const current=await artLoader.prefetch(chapterAssets(chapter).filter(path=>!skip(path)),{onProgress,retry});
-  const nextAllowed=request===chapterRequest&&next&&chapter<12&&!constrainedConnection(connection)&&shouldPrefetchNext();
+  // The demo warms no chapter past its last: its build leaves their files out.
+  const nextAllowed=request===chapterRequest&&next&&chapter<(demoLastChapter()??12)&&!constrainedConnection(connection)&&shouldPrefetchNext();
   // Optional next-chapter requests warm compressed responses only: decoding them
   // here would evict sprites still used by the current battlefield.
   const nextResult=nextAllowed?await prefetchFiles(chapterAssets(chapter+1).filter(path=>!skip(path)),{shouldContinue:()=>request===chapterRequest&&shouldPrefetchNext()}):null;

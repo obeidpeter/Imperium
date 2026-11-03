@@ -9,7 +9,7 @@ Each package's changelog entry records what it actually delivered and measured. 
 | # | Package | State |
 | --- | --- | --- |
 | S1 | The desktop app | done ([changelog](../CHANGELOG.md), [the app](desktop.md)); a real Windows PC not yet checked |
-| S2 | The web demo | planned |
+| S2 | The web demo | done ([changelog](../CHANGELOG.md)); publishing it is the owner's step |
 | S3 | Steamworks | planned; needs the App ID |
 | S4 | The store and the release | planned; after 0.40.0 and the owner's Gate 4 sign-off |
 

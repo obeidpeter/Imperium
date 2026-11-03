@@ -45,7 +45,7 @@ import {clearBattleCache} from './battle-art.js';
 import {loadTacticalArt} from './unit-sprites.js';
 import {loadLocal,saveLocal,saveCode,restoreCode,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,subscribeSaveChanges,listUnreadableSaves,
   readUnreadableSave} from './storage.js';
-import {desktopBridge,inDesktopApp,platformKind,usesOfflineCache} from './platform.js';
+import {allChaptersLabel,demoEdition,demoLastChapter,desktopBridge,inDesktopApp,pastDemo,pastDemoMessage,platformKind,usesOfflineCache} from './platform.js';
 import {sound,stopAudio,audioLevel} from './audio.js';
 import {heroPortrait,chapterScene,loadArt,prefetchChapter,viewDecodes} from './art.js';
 import {snapshotEncounter,playEncounterMotion} from './motion.js';
@@ -142,14 +142,19 @@ const graphics=createGraphicsQuality({mode:settings.quality,chosen:settings.qual
   `changed to ${mode} after repeated slow rendering; scenery detail follows from the next encounter. You can choose a different quality in Settings.`);
     else if(reason==='measured-headroom')announce(`Graphics returned to ${mode}: rendering has kept up.`);
   }});
+// The web demo's edition (platform.js; the Steam plan, S2), or null in the full game: its last chapter and the store page.
+const demo=demoEdition(),allChapters=allChaptersLabel(demo);
+// In the demo, a chronicle past its last chapter found on this device is held, never played: it stays as it is, and the
+// title offers its save code for the full game. A save code past the demo is refused before it replaces anything.
+let heldChronicle=null;
 const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,
-  saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
+  saveConflict,offline,offlineProgress,currentChapterOffline,artProgress,demo,heldChronicle}));
 // The desktop app (platform.js; desktop/preload.cjs), or null on the web. Its window's fullscreen shows in Settings.
 const desktop=inDesktopApp()?desktopBridge():null,desktopApp=desktop?{fullscreen:false}:null;
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
   showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,
     screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap,
-    worldCamp:screen!=='title'&&!!state&&campMode(),desktopApp}));
+    worldCamp:screen!=='title'&&!!state&&campMode(),desktopApp,demo}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text,{problem=false}={}){
   // The inventory says what happened in its own status line (a live region) under the pack's heading (release 13).
@@ -1002,7 +1007,7 @@ function updateLoadingStatus(){
       if(node.classList.contains('world-line-status')){if(text)node.title=text;else node.removeAttribute('title');}}
   }
   const progress=document.querySelector('#settings-offline-status');
-  if(progress)progress.textContent=offline?'All twelve chapters are available offline.':offlineProgress||(currentChapterOffline&&state?`Chapter ${roman(state.chapter)} `+
+  if(progress)progress.textContent=offline?`${allChapters.charAt(0).toUpperCase()+allChapters.slice(1)} are available offline.`:offlineProgress||(currentChapterOffline&&state?`Chapter ${roman(state.chapter)} `+
     `is available offline. Later chapters download as you reach them.`:'The current chapter is not fully cached yet.');
 }
 // The offline pack follows the view: a change to the 2D view or painted figures requests the chapter's 2D art.
@@ -1124,13 +1129,15 @@ async function replaceCampaign({load,save,message}){
     let restored;
     saving=true;
     try{
-      await commitReplacement({load,save,publish:candidate=>{restored=candidate;}});
+      await commitReplacement({load:async()=>{const candidate=await load();
+        if(pastDemo(candidate,demo))throw Object.assign(new Error(pastDemoMessage(candidate,demo)),{code:'PAST_DEMO'});return candidate;},save,publish:candidate=>{restored=candidate;}});
       saving=false;
       useRestoredState(restored);lastPersisted=JSON.stringify(restored);
       toast(message);
       return {ok:true};
     }catch(error){
-      saving=false;lastSaved='';saveProblem=error.message;saveConflict=saveConflict||error.code==='SAVE_CONFLICT';
+      saving=false;if(error.code==='PAST_DEMO'){toast(error.message);return {ok:false,error};}
+      lastSaved='';saveProblem=error.message;saveConflict=saveConflict||error.code==='SAVE_CONFLICT';
       render();toast(error.message);
       return {ok:false,error};
     }finally{saving=false;}
@@ -1306,7 +1313,7 @@ document.addEventListener('click',
       case 'retry-offline':{
         const registration=await navigator.serviceWorker.getRegistration();
         if(registration?.active){
-          fullDownloadRequested=true;offlineProgress='Downloading all twelve chapters…';updateLoadingStatus();registration.active.postMessage('cache-campaign');
+          fullDownloadRequested=true;offlineProgress=`Downloading ${allChapters}…`;updateLoadingStatus();registration.active.postMessage('cache-campaign');
           toast('Downloading '+
   'all chapter artwork for offline play. Progress appears '+
   'here and in the game header.');
@@ -1481,12 +1488,13 @@ case 'end-turn':await change(()=>Game.endTurn(state),{tone:'turn',turn:true,comm
 case 'retry':if(state?.encounter?.status==='lost')await change(()=>Game.retry(state),{reset:true,tone:'click'});else showRetry();break;
 case 'retry-confirm':modal.close();await change(()=>Game.retry(state),{reset:true});break;
 case 'commit':await change(()=>Game.commitEncounter(state),{reset:true,tone:'promotion'});break;
-case 'advance':await change(()=>Game.advanceChapter(state),{reset:true,tone:'promotion'});break;
+case 'advance':await change(()=>Game.advanceChapter(state,{lastChapter:demoLastChapter()}),{reset:true,tone:'promotion'});break;
 case 'fallback':await change(()=>Game.acceptFallback(state),{reset:true});break;
 case 'replay':if(Game.replayLastEncounter)await change(()=>Game.replayLastEncounter(state),{reset:true});else toast('Use the encounter checkpoint save to '+
   'return and demonstrate the missing capability.');break;
 case 'settle-honour':case 'settle-break':await change(()=>Game.settleObligation(state,id,cmd==='settle-honour'),{afterRender:refreshOpenLedger});break;
 case 'export':await showExport();break;
+case 'export-held':if(heldChronicle)showExportCode(await saveCode(Game.codeState(heldChronicle)));break;
       case 'export-unreadable':{
         try{
           const list=await listUnreadableSaves();if(!list.length){toast('No unreadable save data is stored on this device.');break;}
@@ -1513,7 +1521,9 @@ case 'copy-code':try{
   break;
 case 'download-code':download(new Blob([document.querySelector('#save-code').value],{type:'text/plain'}),'imperium-save.txt');break;
 case 'import-code':try{
-  const imported=await restoreCode(document.querySelector('#restore-code').value);pendingImport=imported;showImportVerified(imported);
+  const imported=await restoreCode(document.querySelector('#restore-code').value);
+  if(pastDemo(imported,demo)){toast(pastDemoMessage(imported,demo));break;}
+  pendingImport=imported;showImportVerified(imported);
 }catch(error){toast(error.message);}
   break;
 case 'confirm-import':if(pendingImport){
@@ -1753,14 +1763,14 @@ document.addEventListener('visibilitychange',()=>{
 });
 subscribeSaveChanges(()=>{if(state&&!memoryOnly){saveConflict=true;saveProblem='The chronicle changed in another tab. Load the latest save to continue here, '+
   'or export this tab’s progress.';lastSaved='';render();announce(saveProblem);}});
-const loaded=await loadLocal();state=loaded.state;lastPersisted=state?JSON.stringify(state):'';render();if(loaded.error)toast(loaded.error+' The unreadable '+
+const loaded=await loadLocal();state=loaded.state;if(pastDemo(state,demo)){heldChronicle=state;state=null;}lastPersisted=state?JSON.stringify(state):'';render();if(loaded.error)toast(loaded.error+' The unreadable '+
   'data stays on this device; Settings can download it.');try{preservedUnreadable=(await listUnreadableSaves()).length;}catch{preservedUnreadable=0;}
 // The web build's offline cache. The desktop app has every file installed and Steam updates it (platform.js).
 if(usesOfflineCache()&&'serviceWorker'in navigator){
   navigator.serviceWorker.addEventListener('message',event=>{
     const data=event.data;
     if(data?.type==='offline-ready'){offline=true;currentChapterOffline=true;fullDownloadRequested=false;offlineProgress='';}
-    else if(data?.type==='offline-progress'){offline=false;if(fullDownloadRequested)offlineProgress=`Downloading all twelve chapters · ${data.percent}%`;}
+    else if(data?.type==='offline-progress'){offline=false;if(fullDownloadRequested)offlineProgress=`Downloading ${allChapters} · ${data.percent}%`;}
     else if(data?.type==='chapter-offline'&&state?.chapter===data.chapter&&Boolean(data.flat)===wantsFlatArt()){currentChapterOffline=data.ready;}
     else if(data?.type==='offline-error'){if(data.chapter&&state?.chapter!==data.chapter)return;offlineProgress=data.message;fullDownloadRequested=false;}
     updateLoadingStatus();
