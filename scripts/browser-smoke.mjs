@@ -26,7 +26,7 @@ import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
-import {closePanel,closedBy,menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions,throttleCpu,watchEventLine} from './ui-smoke-navigation.mjs';
+import {closePanel,closedBy,menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions,throttleCpu,watchEventLine,watchAreaCards} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign,protectCoalition} from './command-autoplay.mjs';
@@ -753,9 +753,9 @@ async function campExitDeparture(){
         if(a.x<b.x+b.width&&a.x+a.width>b.x&&a.y<b.y+b.height&&a.y+a.height>b.y)overlaps.push(`${a.id} / ${b.id}`);}
       assert.ok(boxes.length>=5,`2d: the camp's names are placed (${boxes.length})`);assert.deepEqual(overlaps,[],'2d: no two names overlap');
     }
-    assert.equal((await useExit(page)).ok,true,`${view}: the soldier walks to the road out`);
-    await page.waitForSelector('.area-card',{timeout:300000}).catch(async()=>assert.fail(`${view}: a card names where the column goes: ${await where(page)}`));
-    assert.match(await text(page,'.area-card'),/The road out.*The broken causeway/,`${view}: the card names the way and the place`);
+    // The card shows for about two seconds, whatever the page is doing: its words are recorded as it comes.
+    const cards=await watchAreaCards(page);assert.equal((await useExit(page)).ok,true,`${view}: the soldier walks to the road out`);
+    await cards(/The road out.*The broken causeway/).catch(async error=>assert.fail(`${view}: a card names the way and the place: ${error.message}; ${await where(page)}`));
     await page.waitForSelector('.rt-field[data-kind="field"] .rt-scene[data-ready="true"]',{timeout:120000}).catch(()=>assert.fail(`${view}: the field opens`));
     assert.equal(await page.evaluate(()=>window.__realtime.world().encounterId),'ch2-marsh',`${view}: the next encounter`);
     await page.waitForSelector('.area-card',{state:'detached',timeout:30000}).catch(()=>assert.fail(`${view}: the card goes`));
@@ -841,9 +841,9 @@ async function fieldAftermath(){
   // The road again: nothing is left, so it records the result once and the column comes back to camp. Software rendering
   // slows the walk (about 20 m, 8 s of game time) to a minute or more.
   await saveIdle(page);await running();
-  assert.equal((await issue({actorId:'hero',kind:'interact',payload:{objectId:'exit'}})).ok,true);
-  await page.waitForSelector('.area-card',{timeout:300000}).catch(async()=>assert.fail(`A card names the camp: ${await stateOf('exit')}`));
-  assert.match(await text(page,'.area-card'),/The road to camp/);
+  // The card shows for about two seconds, whatever the page is doing: its words are recorded as it comes.
+  const cards=await watchAreaCards(page);assert.equal((await issue({actorId:'hero',kind:'interact',payload:{objectId:'exit'}})).ok,true);
+  await cards(/The road to camp/).catch(async error=>assert.fail(`A card names the camp: ${error.message}; ${await stateOf('exit')}`));
   await page.waitForFunction(()=>document.documentElement.dataset.phase==='camp',null,{timeout:60000});await saveIdle(page);
   const recorded=await savedChronicle(page);
   assert.equal(recorded.history.filter(h=>h.id==='ch3-station').length,1,'The station is recorded once');

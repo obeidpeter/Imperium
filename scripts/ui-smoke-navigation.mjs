@@ -164,3 +164,15 @@ export async function watchEventLine(page){
   seen.last=()=>page.evaluate(()=>window.__eventTexts.at(-1)??'');
   return seen;
 }
+// The card naming the next area shows for about two seconds, whatever the page is doing (showAreaCard in app.js). A
+// check that waits for it and then reads it can find it already gone, as the field-after-a-victory check did with the
+// CPU slowed fourfold. watchAreaCards records each card's words as it is added (read-only, in the page) and returns
+// `seen(pattern)`, which waits for a card to have matched.
+export async function watchAreaCards(page){
+  await page.evaluate(()=>{window.__areaCardWatch?.disconnect();window.__areaCards=[];
+    window.__areaCardWatch=new MutationObserver(records=>{for(const r of records)for(const node of r.addedNodes)
+      if(node.nodeType===1&&node.matches('.area-card'))window.__areaCards.push(node.textContent);});
+    window.__areaCardWatch.observe(document.body,{childList:true});});
+  return (pattern,{timeout=300000}={})=>page.waitForFunction(([source,flags])=>window.__areaCards.some(text=>new RegExp(source,flags).test(text)),
+    [pattern.source,pattern.flags],{timeout}).then(()=>true,async()=>{throw new Error(`No area card showed ${pattern}; the cards were ${JSON.stringify(await page.evaluate(()=>window.__areaCards))}`);});
+}

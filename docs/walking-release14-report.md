@@ -503,7 +503,7 @@ The owner approved three items after #63:
   - **Paused** and **Resumed** are not kept, since the Pause button shows them.
 - **Checks:**
   - `realtime-hud` (Node): the six kept and the five listed, repeats counted, and the markup.
-  - `smoke`, `campExitDeparture`: once the sentry's words have gone, a click on the empty line lists them as the latest of the earlier messages. **Esc** closes the list without opening the Menu, and **Enter** on the line opens it again.
+  - `smoke`, `campExitDeparture`: once the sentry's words have gone, a click on the empty line lists them as the latest of the earlier messages, and the keys stay with the world. **Esc** closes the list without opening the Menu, and **Enter** on the line opens it again.
 
 ### A longer message stays longer
 
@@ -517,7 +517,7 @@ The owner approved three items after #63:
   | One of the game's own, 150 characters | 6.5 s | 7.75 s |
   | Any, 400 characters | 2.6 s | 8 s |
 
-- **Checks:** `realtime-hud` (Node), including that a longer message never gets less time.
+- **Checks:** `realtime-hud` (Node), including that a longer message never gets less time. `npm test`: all 1,615 tests passed.
 
 ### The browser checks stop racing short-lived messages
 
@@ -533,8 +533,26 @@ The owner approved three items after #63:
   - `watchEventLine` (`scripts/ui-smoke-navigation.mjs`) records every text the line shows, from before the action that says it, and the checks wait on what was recorded. The twelve camps use it too.
   - `smoke:polish`'s **Paused.** check records the line, its tooltip and the world's height at each change, instead of reading them after the fact.
 - **The throttle:** `SMOKE_CPU_THROTTLE=4` slows the page's CPU fourfold through the DevTools protocol, for any browser check. That is about as slow as a busy CI runner: the More failure reproduced at 6× and nearly at 4×.
+- **The throttled runs:** each browser check once at 4×, one at a time, on this branch's production build (local, headless Chromium, software rendering):
 
-THROTTLED-RESULTS
+  | Check | At 4× |
+  | --- | --- |
+  | `smoke:polish` | all 23 checks passed (2 min 12 s) |
+  | `smoke:cavalry` | passed (32 s) |
+  | layouts (`smoke:immersive`) | passed (275 s) |
+  | paused orders (`smoke:orders`) | passed (56 s) |
+  | errand guidance (`smoke:errands`) | passed (82 s) |
+  | `smoke:usability` | passed (396 s) |
+  | `smoke`, group a | passed (987 s) |
+  | `smoke`, group b | failed at `fieldAftermath`, a race, now fixed (below) |
+  | `smoke:ch5-pilot` | failed: a slow load, not a race (below) |
+
+- **The race found:** `fieldAftermath` waited for the card naming the next area, then read its words in a second step, and at 4× the card had gone. Read in that second step, the card was empty.
+  - The card shows for about two seconds, whatever the page is doing (1.7 s, then a 0.45 s fade).
+  - `watchAreaCards` (`scripts/ui-smoke-navigation.mjs`) now records each card's words as it is added. The camp way-out check, which read the card the same way, uses it too.
+  - Re-run at 4×, `fieldAftermath` passed (303 s), and so did `campExitDeparture` (202 s).
+- **The slow load:** in `smoke:ch5-pilot`, after a restore, the courtyard's scenery models took longer at 4× than the check's 90-second wait. That is a time budget, not a race: CI loads them within it on every recent run. It stays as it is.
+- **Not run throttled:** the twelve camps and the 3D siege check, which would take hours at 4×. The twelve camps already recorded the event line.
 
 ### Not checked
 
