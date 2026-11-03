@@ -459,3 +459,27 @@ The third round's split at Chapter VIII made the twelve camps' slower half slowe
 - **Measured with the same throttling:** More opened at the first try in 4 of 4 runs at 6× and 3 of 3 at 10×, and the pointer click closed it each time. Unthrottled, `campExitDeparture` passed in 145 seconds.
 - **The game is unchanged:** More shows while the words do, 6.5 seconds for a page message.
 
+## After Gate 4: a message cut short waits while you read it
+
+The owner asked for this after the More check's failure above showed how short a message's time is.
+
+- **Before (main's build):** a message on the bar's event line went after its time, even with the pointer resting on it or with **More** focused: 6.5 seconds for the game's own messages, 2.6 for the rest. A reader had that long to press **More**.
+- **Now:** a message cut short stays while it is held:
+  - a mouse or pen rests on its line or on **More** (`pointerenter` and `pointerleave`, not `:hover`, which on a phone stays set after a tap);
+  - or **More** has the focus.
+- **Let go:** it stays a moment more, 1.5 seconds, as after closing it whole. A finger's tap still opens it whole. A message that fits its line goes in its time, as before.
+- **Measured** in the first camp at 390 wide, 3D on Performance, with the gate sentry's words:
+
+  | Case | Main's build | This branch |
+  | --- | --- | --- |
+  | Pointer resting on the line | gone by 9 s | still there at 9 s; cleared 1.6 s after the pointer moved to the world |
+  | **More** focused | gone by 9 s, and the focus with it | still there at 9 s; cleared 1.5 s after the world took the focus |
+  | Not held | cleared 6.6 s after More showed | cleared 6.2 s after More showed |
+
+- **Checks:** `smoke`, `campExitDeparture`. After **More** closes the words, each hold is left alone for 8 seconds, far past the 1.5 seconds the words would have without it:
+  - **More** focused, with the pointer on the world;
+  - the pointer on the line, with the world focused.
+
+  Then the pointer moves away and the words go. On main's build the check fails at the first hold; on this branch it passes (150 seconds).
+- **Not checked:** no device, touch screen or screen reader.
+

@@ -86,7 +86,16 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const sceneEncounter=()=>stageEncounter(base,world,{appearance:appearance(),wayOut});
   // The bar's event line keeps one line of room (realtime.css): a message too long for it ends in an ellipsis, the whole
   // of it is the line's tooltip, and More (or a tap on the line) opens it whole over the world until it is closed.
-  let eventOpen=false;
+  // A message cut short is also held while a mouse or pen rests on its line or on More, or while More has the focus
+  // (Polish after Gate 4, at the owner's request): its time runs out only once it is let go, and then it stays a moment
+  // more (1.5 s), as after closing it whole. A finger's tap opens it whole instead.
+  let eventOpen=false;const eventPointer={line:false,more:false};
+  const eventHeld=()=>!!dom.eventLine?.hasAttribute('data-cut')&&(eventPointer.line||eventPointer.more||(!!dom.eventMore&&document.activeElement===dom.eventMore));
+  const expireEvent=now=>{
+    if(!eventMessage||eventOpen)return;
+    if(eventHeld()){eventMessage.until=Math.max(eventMessage.until,now+1500);return;}
+    if(now>eventMessage.until){eventMessage=null;showEvent('');}
+  };
   const openEvent=open=>{
     eventOpen=!!open&&!!dom.eventLine?.textContent;if(dom.eventFull){dom.eventFull.hidden=!eventOpen;dom.eventFull.textContent=eventOpen?dom.eventLine.textContent:'';}
     dom.eventMore?.setAttribute('aria-expanded',String(eventOpen));
@@ -346,7 +355,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(dom.notice&&now>noticeUntil)dom.notice.hidden=true;
     if(chamber){
       // The chamber's HUD is its own (the hour, the speakers, the speeches and the coalition); Pause still stops its walks.
-      const paused=clock.paused&&!stepping(clock);if(eventMessage&&now>eventMessage.until&&!eventOpen){eventMessage=null;showEvent('');}
+      const paused=clock.paused&&!stepping(clock);expireEvent(now);
       chamber.update(now);
       const chamberState=callbacks.chamber.state(),coalitionKey=chamberReadoutKey(chamberState,dom.coalition?.innerHTML??'');
       if(coalitionKey!==coalitionSummaryKey){coalitionSummaryKey=coalitionKey;const c=compactChamberReadout(chamberState);
@@ -363,7 +372,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const oath=world.controlled===world.heroId?oathForecast(world):null;
     const key=[team,world.controlled,h?.walkMode,h?.ammo?.pilum,h?.bandages,paused,clock.slow,clock.speed,round,Math.floor(progress*50),world.status,ability,
       armed,force,ranges,keyTarget,abilityState,world.mission?.phase,world.mission?.heldTicks>>4,oath?`${oath.heard}:${oath.squadId}:${oath.distance}`:''].join('|');
-    if(eventMessage&&now>eventMessage.until&&!eventOpen){eventMessage=null;showEvent('');}
+    expireEvent(now);
     if(listOpen&&metrics.frames%10===0)renderList();
     squads?.update();showThreat();
     if(key===hudKey)return;hudKey=key;callbacks.onHud?.(world);if(listOpen)renderList();
@@ -729,6 +738,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(dom.eventMore)dom.eventMore.onclick=()=>openEvent(!eventOpen);
     if(dom.eventLine)dom.eventLine.onclick=()=>{if(dom.eventLine.hasAttribute('data-cut'))openEvent(!eventOpen);};
     if(dom.eventFull)dom.eventFull.onclick=()=>openEvent(false);
+    for(const [key,el] of [['line',dom.eventLine],['more',dom.eventMore]]){if(!el)continue;
+      el.onpointerenter=e=>{if(e.pointerType!=='touch')eventPointer[key]=true;};el.onpointerleave=()=>{eventPointer[key]=false;};}
     click(dom.pauseButton,togglePause);click(dom.slowButton,()=>act('slow_time'));click(dom.stepButton,()=>act('step_round'));click(dom.advanceButton,advance);
     click(dom.swordsButton,()=>act('combat_toggle'));click(dom.walkButton,()=>act('walk_toggle'));
     click(dom.forceButton,()=>{force=!force;say(force?'Force: the next tap or click attacks whatever is there.':'Force cancelled.');});

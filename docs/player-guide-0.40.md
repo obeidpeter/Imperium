@@ -658,8 +658,11 @@ over it.
   size. A message too long for it ends in an ellipsis: **More** at its
   end, or a tap on the line, opens the whole of it over the world until
   you close it (**More** again, or **Esc**), and pointing at it shows it
-  too. A message from the game itself, such as the gate sentry's word,
-  a save in progress or "Chronicle restored", is said on the same line.
+  too. Such a message also stays while the pointer rests on it or on
+  **More**, or while **More** has the focus, and goes a moment after you
+  let go. A message from the game itself, such as the gate sentry's
+  word, a save in progress or "Chronicle restored", is said on the same
+  line.
 
   The keys stay the world's wherever you click outside a control: on the
   strip's text or the bar's, they still pause, label and walk.
