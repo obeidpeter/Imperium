@@ -701,6 +701,21 @@ async function campExitDeparture(){
     assert.ok(opened,'More opens the whole message, within three uses of the way out');
     assert.match(await text(page,'[data-role="eventFull"]'),/^The gate sentry: “.*”$/,'More opens the whole message');
     await page.click('[data-role="eventMore"]');assert.equal(await page.locator('[data-role="eventFull"]').isHidden(),true,'A second press closes it');
+    // Polish after Gate 4, at the owner's request: a message cut short stays while it is held, by More's focus or by the
+    // pointer on its line, and goes a moment (1.5 s) after it is let go. The close leaves More focused under the pointer;
+    // each hold is then left alone for 8 s, far past the 1.5 s the words would have without it.
+    const centre=selector=>page.evaluate(s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2};},selector);
+    const words=async()=>`line "${await text(page,'[data-role="eventLine"]')}", focus ${await page.evaluate(()=>document.activeElement?.dataset?.role??document.activeElement?.id)}`;
+    const worldAt=await centre('#rt-board'),lineAt=await centre('[data-role="eventLine"]');
+    await page.evaluate(()=>document.querySelector('[data-role="eventMore"]').focus());await page.mouse.move(worldAt.x,worldAt.y);
+    await page.waitForTimeout(8000);
+    assert.match(await text(page,'[data-role="eventLine"]'),/^The gate sentry: “/,`Focused, More holds the words: ${await words()}`);
+    await page.mouse.move(lineAt.x,lineAt.y);await page.locator('#rt-board').focus();
+    await page.waitForTimeout(8000);
+    assert.match(await text(page,'[data-role="eventLine"]'),/^The gate sentry: “/,`The pointer on the line holds the words: ${await words()}`);
+    await page.mouse.move(worldAt.x,worldAt.y);
+    await page.waitForFunction(()=>document.querySelector('[data-role="eventLine"]')?.textContent==='',null,{timeout:30000})
+      .catch(async()=>assert.fail(`Let go, the words go: ${await words()}`));
     // A click on the strip's text puts the focus on the page around the world: the keys are still the world's.
     const strip=await page.evaluate(()=>{const bar=document.querySelector('.world-camp-bar'),r=bar.getBoundingClientRect();
       for(let x=r.left+8;x<r.right-8;x+=12){const el=document.elementFromPoint(x,r.top+r.height/2);if(el&&!el.closest('button,a,input,select,summary,canvas')&&el.textContent.trim())return {x,y:r.top+r.height/2};}return null;});
@@ -732,7 +747,7 @@ async function campExitDeparture(){
     await page.waitForSelector('.area-card',{state:'detached',timeout:30000}).catch(()=>assert.fail(`${view}: the card goes`));
     await page.context().close();
   }
-  console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words, shown on the bar (whole with More on a phone), and changes nothing; the keys still work after a click on the strip; Chapter II’s road out marches to the causeway with a card, in 2D (no names overlapping) and 3D');
+  console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words, shown on the bar (whole with More on a phone, and held while focused or pointed at), and changes nothing; the keys still work after a click on the strip; Chapter II’s road out marches to the causeway with a card, in 2D (no names overlapping) and 3D');
 }
 // Release 14: the field after a victory. Chapter III's station, won from New Game by the legal-command bot and not yet
 // recorded (realtime-autoplay.mjs), restored through Import. The result offers to walk the field; walked, the fallen
