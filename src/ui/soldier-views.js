@@ -161,8 +161,8 @@ export function recruitChoices({grants=null}={}){
     `${grants?` · ${grants[id]} training points for the service already done`:''}</small></span></label>`).join('')}</fieldset>`+
     `<div class="recruit-look">${figurePreview()}<fieldset class="recruit-appearance"><legend>Appearance</legend>${Object.entries(APPEARANCE_CHOICES).map(([key,label])=>`<label class="setting" `+
     `for="recruit-${key}"><span>${label}</span><select id="recruit-${key}" data-appearance="${key}">${APPEARANCE[key].map((name,i)=>`<option `+
-    `value="${i}">${esc(name)}</option>`).join('')}</select></label>`).join('')}<p class="settings-description">He wears a generated body that `+
-    `matches his armour, with its own face, hair and tunic. The preview shows him in a cloak of the chosen colour; the quartermaster sells one `+
+    `value="${i}">${esc(name)}</option>`).join('')}</select></label>`).join('')}<p class="settings-description">Your outfit changes as you earn and equip new armour. `+
+    `The preview shows your chosen cloak colour; the quartermaster sells a cloak `+
     `from Chapter I.</p></fieldset></div>`;
 }
 export function adoptPanel(state,{grants=null}={}){

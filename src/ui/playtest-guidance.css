@@ -1,0 +1,15 @@
+.camp-task-link{background:transparent;border:0;text-align:start;cursor:pointer;text-decoration:underline;text-underline-offset:3px;min-block-size:1.75rem}
+.camp-task-link:focus-visible{outline:2px solid #247c94;outline-offset:-2px}
+.camp-navigation-map{display:block;width:100%;max-height:22rem;margin:1rem 0}
+.camp-next-task{padding:.8rem 1rem;border-left:3px solid #94651d;background:#e8dfc8;color:#202e29}
+.camp-next-task p{margin:.35rem 0}.camp-route-actions{display:flex;gap:.4rem;flex-wrap:wrap}
+.recruit-customize{border:1px solid #9c885e66;border-radius:.35rem;padding:.65rem;margin:.8rem 0}
+.recruit-customize>summary{cursor:pointer;font-weight:600;min-height:2rem}
+#modal[data-panel="your-chronicle-begins"] .panel-actions{position:sticky;bottom:-1.5rem;z-index:2;background:var(--plaster,#f0e8d6);padding:.75rem 0;box-shadow:0 -.4rem 1rem #28282014}
+.camp-map-number{display:none;font-size:26px}
+@media(max-width:600px){
+  .rt-camp-places>li{display:grid;grid-template-columns:minmax(0,1fr);gap:.6rem}
+  .camp-route-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));inline-size:100%}
+  .camp-route-actions button{min-inline-size:0;min-block-size:2.75rem;overflow-wrap:normal}
+  .camp-navigation-map{min-height:13rem}.camp-map-name{display:none}.camp-map-number{display:block}
+}

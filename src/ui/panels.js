@@ -34,11 +34,9 @@ export function createPanels(context){
       `<label class="difficulty-choice"><input type="radio" name="new-play-mode" value="realtime"${playMode==='realtime'?' checked':''}><span><strong>Real-time with pause</strong><small>Recommended for a new player. Walk through the camps and battles. Pause whenever you want to plan and give orders.</small></span></label>`+
       `<label class="difficulty-choice"><input type="radio" name="new-play-mode" value="turns"${playMode==='turns'?' checked':''}><span><strong>Turn-based</strong><small>Move and act in turns on the tactical board. Time advances when you end your turn.</small></span></label>`+
       `<p class="settings-description">Both modes follow the same twelve-chapter chronicle. You can switch in camp through Settings → Controls.</p></fieldset>`+
-      `${recruitChoices()}${difficultyChoices()}<label class="setting" for="iron-discipline"><span>Iron discipline<small class="muted">No saving inside `+
+      `${difficultyChoices({brief:true})}<details class="recruit-customize"><summary>Customize training, cloak and challenge rules</summary>${recruitChoices()}<label class="setting" for="iron-discipline"><span>Iron discipline<small class="muted">No saving inside `+
       `encounters, by quick save or by name; a save code copied mid-encounter carries only its checkpoint. It can be lifted later, never taken up again.</small>`+
-      `</span><input id="iron-discipline" type="checkbox"></label><p class="panel-note">New chronicles include operational preparations, chapter-specific field opportunities, coordinated `+
-      `enemy doctrines, documented political cases, mechanical weather, policy debates, branching operations, veteran specializations and recurring political `+
-      `agreements. Restored chronicles keep the rules they began with.</p><label class="setting" for="new-soundscape">`+
+      `</span><input id="iron-discipline" type="checkbox"></label></details><p class="settings-description">Your default training is Legionary. Varro will teach movement, defence and combat in a short drill.</p><label class="setting" for="new-soundscape">`+
       `<span>Enable the soundscape<small class="muted">Music, environmental sound and optional voiced briefings. You can adjust each in Settings.</small>`+
       `</span><input id="new-soundscape" type="checkbox"></label>${state?`<aside class="panel-note notice">`+
       `<strong>A new beginning replaces this device’s campaign.</strong>`+

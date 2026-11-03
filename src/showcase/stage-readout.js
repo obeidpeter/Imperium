@@ -13,7 +13,7 @@ export function actorReadout(unit, encounter) {
     const stance = Number(unit.stance) || 0, promised = encounter.promises?.includes(unit.id);
     const agreed = encounter.staged?.agreements?.some(a => a.personId === (unit.negotiatorId || unit.id));
     return {type:'vote', tone:stance >= 1 ? 'support' : 'opposition', value:stance,
-      ratio:bounded(Math.abs(stance), 6), signal:`${stance >= 1 ? '✓' : '−'} ${stance > 0 ? '+' : ''}${stance} stance`,
+      ratio:bounded(Math.abs(stance), 6), signal:`${stance>=1?'Supports':stance===0?'Undecided · no vote yet':'Against'} · ${stance>0?'+':''}${stance} stance`,
       detail:`${unit.bloc || 'Delegate'} · ${Math.abs(stance) >= 3 ? 'Committed' : 'Wavering'}${promised ? ' · Promised' : ''}${agreed ? ' · Agreed' : ''}`};
   }
   // A hearing's presiding magistrate (the walk-and-talk chamber): he receives the evidence.

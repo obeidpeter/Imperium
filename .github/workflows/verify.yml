@@ -123,6 +123,14 @@ jobs:
       - run: npm run build
       - name: Usability, navigation and save protection
         run: npm run smoke:usability
+      - name: Required tasks and undiscovered walking routes
+        run: npm run smoke:navigation
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playtest-navigation
+          path: tests/visual-results/playtest-navigation/
+          retention-days: 14
       - name: Tracked errand guidance and legal camp destinations
         run: npm run smoke:errands
       - uses: actions/upload-artifact@v7

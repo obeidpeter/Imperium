@@ -7,7 +7,9 @@ import {battleSoundPlan} from '../src/showcase/battle-sound.js';
 test('Civic labels preserve voting, promises and withdrawn speaker votes without inventing health',()=>{
   const e={promises:['v'],staged:{agreements:[{personId:'lucan'}]}},voter={id:'v',role:'voter',side:'neutral',hp:1,stance:3,bloc:'Veterans'};
   const original=JSON.stringify({e,voter}),readout=actorReadout(voter,e);
-  assert.equal(readout.type,'vote');assert.equal(readout.signal,'✓ +3 stance');assert.equal(readout.detail,'Veterans · Committed · Promised');
+  assert.equal(readout.type,'vote');assert.equal(readout.signal,'Supports · +3 stance');assert.equal(readout.detail,'Veterans · Committed · Promised');
+  assert.equal(actorReadout({...voter,stance:0},e).signal,'Undecided · no vote yet · 0 stance');
+  assert.equal(actorReadout({...voter,stance:-2},e).signal,'Against · -2 stance');
   assert.equal(actorReadout({...voter,id:'v2',negotiatorId:'lucan'},e).detail,'Veterans · Committed · Agreed');
   assert.equal(JSON.stringify({e,voter}),original);
   const speaker={id:'s',role:'speaker',side:'enemy',resolve:0,maxResolve:10,hp:0,vote:'against'};

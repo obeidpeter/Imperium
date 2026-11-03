@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from '../vendor/three/three.module.js';
-import {buildTerrainSplat,splatWeights,splatGrid,SPLAT_MAX_SIDE,SPLAT_CHANNELS} from '../src/showcase/terrain-splat.js';
+import {buildTerrainSplat,splatWeights,splatGrid,terrainRoleMix,SPLAT_MAX_SIDE,SPLAT_CHANNELS} from '../src/showcase/terrain-splat.js';
 import {createGroundHeight,gridToWorld,roadSegments} from '../src/showcase/environment-layout.js';
 import {createRoadSurfaceSampler} from '../src/showcase/environment-road-surface.js';
 import {runSteps} from '../src/showcase/build-steps.js';
@@ -16,6 +16,14 @@ const TELLING=freeze({turf:[['grass',1]],worn:[['soil',1]],road:[['paving',1]],b
 const KEY={'.':'grass','^':'high','=':'road',s:'sand',m:'marsh','#':'wall',o:'stone',c:'camp',X:'rock',f:'floor'};
 const board=rows=>freeze({width:rows[0].length,height:rows.length,terrain:rows.map(row=>[...row].map(t=>KEY[t]))});
 const E=board(['........','.^^.....','........','========','...^....','.ss.mm..','.#o.cX..','..f.....']);
+test('Material margins blend continuously while centres retain their terrain identity',()=>{
+  const e=board(['ssXX','ssXX']),mix=(x,z=0)=>Object.fromEntries(terrainRoleMix(e,x,z));
+  assert.deepEqual(mix(-1.25),{sand:1});assert.deepEqual(mix(1.25),{rock:1});
+  assert.deepEqual(mix(0),{rock:.5,sand:.5});
+  let previous=0;
+  for(let x=-.68;x<=.68;x+=.04){const w=mix(x),rock=w.rock??0;assert.ok(rock>=previous-1e-9);assert.ok(rock-previous<.08);assert.ok(Math.abs(Object.values(w).reduce((a,b)=>a+b,0)-1)<1e-9);previous=rock;}
+  assert.ok(Object.fromEntries(terrainRoleMix(e,-5,0)).turf>0,'the outside edge blends into its landscape');
+});
 function splatOf(e=E,options={}){
   const height=createGroundHeight(e),road=createRoadSurfaceSampler(roadSegments(e),2.5),half=Math.max(e.width,e.height)*2.5/2+20;
   return runSteps(buildTerrainSplat({e,biome:TELLING,height,road,bounds:{minX:-half,minZ:-half,maxX:half,maxZ:half},...options}));

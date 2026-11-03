@@ -42,7 +42,10 @@ export function mountSoldierPreview(canvas,{soldier,name,chapter=1,rank,uncovere
   let unitKey=JSON.stringify([unit.equipment,unit.appearance]);
   function setSoldier(next){
     if(disposed||!renderer||!actor||!next)return;
-    const nextUnit=soldierPreviewUnit(next,{name,uncovered,cloaked}),key=JSON.stringify([nextUnit.equipment,nextUnit.appearance]);if(key===unitKey)return;
+    const nextUnit=soldierPreviewUnit(next,{name,uncovered,cloaked}),key=JSON.stringify([nextUnit.equipment,nextUnit.appearance]);
+    // A comparison changes the surrounding dialog even when no item is worn.
+    // Present the retained actor again after that patch; do not recreate its rig.
+    if(key===unitKey){invalidate();return;}
     unitKey=key;scene.remove(actor.group);actor.dispose();actor=createActor(nextUnit,{quality:'balanced',chapter,rank});scene.add(actor.group);
     actor.ready.then(()=>{if(!disposed)invalidate();}).catch(()=>{if(!disposed)invalidate();});invalidate();
   }

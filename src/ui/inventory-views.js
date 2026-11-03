@@ -195,10 +195,10 @@ function characterSheet(state){
   const protection=protectionOf({kit:wornIds(s)});
   return `<h3 id="inv-other-title" class="inv-heading">Your soldier</h3>`+
     `<p class="soldier-balance"><strong>${s.tp} training points</strong> · ${esc(TRAINING_PATHS[s.path].name)}</p>`+
-    `<dl class="inv-attributes">${attributes}</dl><dl class="inv-combat">${combat}</dl>`+
+    `<details id="kit-soldier-statistics" class="inv-statistics"><summary>Soldier statistics</summary><dl class="inv-attributes">${attributes}</dl><dl class="inv-combat">${combat}</dl>`+
     disclosure('kit-protection-details','Protection by damage type',`<table class="kit-protection"><caption>Protection (flat / share)</caption><tbody>`+
       `${DAMAGE_TYPES.map(t=>`<tr><th scope="row">${t[0].toUpperCase()+t.slice(1)}</th><td>${protection[t].absorb}</td><td>${percent(protection[t].resist)}</td></tr>`).join('')}</tbody></table>`)+
-    `<p class="inv-honours"><strong>Honours:</strong> ${honours.length?esc(honours.join(', ')):'none yet'}.</p>`+
+    `<p class="inv-honours"><strong>Honours:</strong> ${honours.length?esc(honours.join(', ')):'none yet'}.</p></details>`+
     `<div class="panel-actions inv-links"><button data-cmd="soldier-panel" data-id="character">Training <kbd>C</kbd></button>`+
     `<button data-cmd="soldier-panel" data-id="decorations">Honours <kbd>A</kbd></button></div>`;
 }

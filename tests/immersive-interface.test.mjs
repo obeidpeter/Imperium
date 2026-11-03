@@ -85,7 +85,9 @@ test('camp keeps one objective in its strip and the briefing over the world, and
     const problem=Game.departureCheck(state);
     if(problem){
       const warning=page.getElementById('camp-departure-problem');assert.equal(warning.textContent,problem);assert.equal(warning.closest('details'),null);assert.equal(warning.hidden,false);
-      assert.equal(page.querySelector('.world-camp-bar .world-camp-problem').textContent,problem,'the strip says it too, with the world in view');
+      const next=page.querySelector('.world-camp-bar .world-camp-problem');
+      assert.equal(next.getAttribute('data-cmd'),'camp-next','the requirement is actionable from the world');
+      assert.ok(next.textContent.trim().length>0);assert.ok(next.getAttribute('title').length>0,'the full task and destination remain available');
     }
   }
 });

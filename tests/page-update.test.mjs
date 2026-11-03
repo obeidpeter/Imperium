@@ -1,12 +1,28 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Document} from './mini-dom.mjs';
-import {updatePage} from '../src/ui/page-update.js';
+import {updatePage,rememberPage} from '../src/ui/page-update.js';
 import * as G from '../src/core/game.js';
 import {bootApp} from './inert-app.mjs';
 
 function page(html) {const doc = new Document(), root = doc.createElement('div');root.id = 'app';doc.body.append(root);updatePage(root, html);return {doc, root};}
 const board = (label, extra = '') => `<div class="battle-stage"><span class="battle-loading">Preparing…</span><canvas id="battle-board" tabindex="0" aria-label="${label}"${extra}></canvas></div>`;
+
+test('the first inventory comparison preserves renderer-owned canvas dimensions from initial modal HTML',()=>{
+  const doc=new Document(),root=doc.createElement('div');doc.body.append(root);
+  root.innerHTML='<figure data-key="soldier-model"><canvas data-key="soldier-preview" aria-label="Your kit"></canvas></figure><section id="comparison" data-empty="true">Select a piece</section>';
+  rememberPage(root);
+  const canvas=root.querySelector('canvas');
+  canvas.setAttribute('width','612');canvas.setAttribute('height','744');canvas.dataset.preview='ready';
+  let dimensionsReset=0;const remove=canvas.removeAttribute.bind(canvas);
+  canvas.removeAttribute=name=>{if(['width','height'].includes(name))dimensionsReset++;remove(name);};
+  updatePage(root,'<figure data-key="soldier-model"><canvas data-key="soldier-preview" aria-label="Your equipped kit"></canvas></figure><section id="comparison">Galea: protection +1</section>');
+  assert.equal(root.querySelector('canvas'),canvas);
+  assert.equal(dimensionsReset,0,'resetting either dimension erases the WebGL drawing buffer');
+  assert.equal(canvas.getAttribute('width'),'612');assert.equal(canvas.getAttribute('height'),'744');
+  assert.equal(canvas.dataset.preview,'ready');assert.equal(canvas.getAttribute('aria-label'),'Your equipped kit');
+  assert.equal(root.querySelector('#comparison').hasAttribute('data-empty'),false,'obsolete authored attributes still disappear');
+});
 
 test('an update keeps every element that is still on the page, so the board keeps its focus and listeners', () => {
   const {doc, root} = page(`<header><h1>Chapter I</h1></header><main id="main">${board('Select open ground')}<p id="hint">Walk</p></main>`);

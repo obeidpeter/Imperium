@@ -24,11 +24,11 @@ export function compactMissionReadout(world,full={}){
       progress=`${party.filter(a=>a.alive&&Math.hypot(a.x-m.goal.x,a.z-m.goal.z)<=m.radius).length}/${party.length} ${m.convoy?'columns':'survivors'} at marker`;
       if(m.holdRequired>0){
         headline+=` Keep the marker clear for ${m.holdRequired} rounds.`;
-        progress+=` · ${Math.min(m.holdRequired,Math.floor((m.heldTicks??0)/TIME.roundTicks))}/${m.holdRequired} rounds held`;
+        progress+=` · ${Math.min(m.holdRequired,Math.floor((m.heldTicks??0)/TIME.roundTicks))}/${m.holdRequired} rounds held · ${Math.max(0,Math.ceil((m.holdRequired*TIME.roundTicks-(m.heldTicks??0))/TIME.ticksPerSecond))}s control needed`;
       }
       break;
     }
-    case 'hold':headline=m.convoy?'Hold the line while the column withdraws.':'Hold the marked ground and keep enemies out.';progress=`${Math.min(m.holdRequired,Math.floor(m.heldTicks/TIME.roundTicks))}/${m.holdRequired} rounds held`;break;
+    case 'hold':headline=m.convoy?'Hold the line while the column withdraws.':'Hold the marked ground and keep enemies out.';progress=`${Math.min(m.holdRequired,Math.floor(m.heldTicks/TIME.roundTicks))}/${m.holdRequired} rounds held · ${Math.max(0,Math.ceil((m.holdRequired*TIME.roundTicks-(m.heldTicks??0))/TIME.ticksPerSecond))}s control needed`;break;
     case 'capture':case 'supply':
       // Release 7's missions: the enemy's siege works, and the horse to draw onto the marker.
       if(m.works?.length){const ram=m.works.some(w=>w.kind==='ram');

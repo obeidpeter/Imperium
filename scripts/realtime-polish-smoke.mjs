@@ -1,7 +1,8 @@
 // Regression checks for the Windows real-time playtest findings. Uses a built
 // production site, fresh browser contexts, visible settings/import/start controls
 // and ordinary keyboard/button actions. Checkpoints are earned by the legal
-// campaign harness; browser evaluation only reads state/DOM for assertions.
+// campaign harness. The explicitly labelled layout probe temporarily changes
+// presentation text/visibility only; no campaign or simulation state is injected.
 // This is automated Chromium evidence, not a human or physical-device playtest.
 // Run: node scripts/build.mjs && node scripts/realtime-polish-smoke.mjs
 // Set PLAYWRIGHT_MODULE if Playwright is installed outside this repository.
@@ -67,6 +68,11 @@ async function restore(viewport,id){
   if(id==='failed-drill'){await page.waitForSelector('.rt-result');return page;}
   await page.waitForSelector('.camp-page');await (await revealControl(page,'[data-cmd="start"]')).click();
   await page.waitForSelector(`.rt-field[data-kind="${id==='ch7-council'?'chamber':'field'}"] .rt-scene[data-ready="true"]`);
+  if(['ch1-road','ch5-mine'].includes(id)){
+    assert.equal(await paused(page),true,`${id}: a fresh battle gives a planning pause`);
+    assert.equal(await tick(page),0,`${id}: reviewing the mission spends no battle time`);
+    evidence.checks.push({name:`${id} opens paused before its first simulation tick`,pass:true});
+  }
   if(id==='ch2-marsh'){
     assert.equal(await paused(page),true,'The first rescue opens paused for a safe look at the casualty, threat and marker');
     assert.equal(await tick(page),0,'Planning the first rescue spends no simulation time');
@@ -101,6 +107,26 @@ async function layout(page,label){
   assert.notEqual(result.targetLive,'assertive','Continuous target updates must not repeatedly interrupt speech');
   evidence.checks.push({name:label,...result});
   await page.locator('.rt-field').screenshot({path:`${output}${label}.png`});
+}
+async function stableGuidance(page,label){
+  const result=await page.evaluate(()=>{
+    const board=document.querySelector('#rt-board'),message=document.querySelector('[data-role="messageLine"]'),notice=document.querySelector('[data-role="notice"]');
+    const box=el=>{const r=el.getBoundingClientRect();return [r.x,r.y,r.width,r.height];};
+    const before=box(board),original=message.textContent,hidden=notice.hidden,body=notice.querySelector('[data-role="noticeBody"]'),oldBody=body.textContent;
+    const world=JSON.stringify(window.__realtime.world());
+    message.textContent='This delegate is outside speaking distance. Move closer within the highlighted area, or choose another delegate. No speech is spent. '.repeat(8);
+    body.textContent='Opportunity secured. The engineer has opened a second route.';notice.hidden=false;
+    const during=box(board),noticeBox=box(notice),guidance={overflow:getComputedStyle(message).overflowY,scroll:message.scrollHeight,height:message.clientHeight,focusable:message.tabIndex===0};
+    notice.hidden=hidden;body.textContent=oldBody;message.textContent=original;
+    return {before,during,after:box(board),noticeBox,guidance,unchanged:world===JSON.stringify(window.__realtime.world())};
+  });
+  assert.deepEqual(result.during,result.before,`${label}: long hover guidance and a battlefield notice cannot resize or move the world`);
+  assert.deepEqual(result.after,result.before,`${label}: dismissing the notice cannot move a target under the pointer`);
+  assert.ok(result.noticeBox[1]>=result.before[1]&&result.noticeBox[1]+result.noticeBox[3]<=result.before[1]+result.before[3],`${label}: the notice is anchored inside the visible world`);
+  assert.equal(result.unchanged,true,'The synthetic presentation probe never changes the simulation');
+  assert.equal(result.guidance.overflow,'auto');assert.ok(result.guidance.scroll>result.guidance.height,'Long guidance remains available by scrolling');
+  assert.equal(result.guidance.focusable,true,'Keyboard users can focus and scroll the full guidance');
+  evidence.checks.push({name:`Stable guidance geometry (${label}; synthetic presentation only)`,pass:true,...result});
 }
 try{
   for(const viewport of [{width:390,height:844},{width:1280,height:900}]){
@@ -182,8 +208,19 @@ try{
   assert.ok(!/\bAssist\b/.test(await text(rescue,'.rt-status-strip')),'Mission instructions use the available action vocabulary');
   await layout(rescue,'rescue-narrow');await rescue.context().close();
 
-  for(const viewport of [{width:580,height:700},{width:1280,height:900}]){
-    const suffix=viewport.width<900?'narrow':'desktop',field=await restore(viewport,'ch5-mine');
+  for(const viewport of [{width:390,height:844},{width:580,height:700},{width:1280,height:900}]){
+    const suffix=viewport.width<480?'phone':viewport.width<900?'narrow':'desktop',field=await restore(viewport,'ch5-mine');
+    await stableGuidance(field,`chapter-v-${suffix}`);
+    const roster=await field.locator('[data-role="squadBar"]').evaluate(el=>({scroll:el.scrollWidth,width:el.clientWidth,cards:[...el.querySelectorAll('button')].map(b=>{const r=b.getBoundingClientRect();return {left:r.left,right:r.right,label:b.getAttribute('aria-label'),status:b.querySelector('.rt-standard-status')?.textContent};})}));
+    assert.ok(roster.scroll<=roster.width+1,'All squad cards are visible without horizontal scrolling');
+    assert.ok(roster.cards.every(r=>r.left>=0&&r.right<=viewport.width),'Every formation stays within the viewport');
+    assert.equal(await field.locator('[data-role="squadBar"] .rt-standard-status:visible').count(),roster.cards.length,'Each formation shows its condition and current order');
+    assert.ok(roster.cards.every(card=>card.label?.includes(card.status)&&/morale/i.test(card.label)),'Each squad has one accessible name including its condition and current order');
+    if(viewport.width<760){
+      const typography=await field.locator('[data-role="squadBar"]').evaluate(el=>[...el.querySelectorAll('.rt-standard-name,.rt-standard-status')].map(label=>parseFloat(getComputedStyle(label).fontSize)));
+      assert.ok(typography.every(size=>size>=12),'Narrow squad names and current orders remain at least 12px');
+    }
+    for(const role of ['followButton','overviewButton','cutawayButton'])assert.equal(await field.locator(`[data-role="${role}"]`).isVisible(),true,`${role}: camera controls are discoverable`);
     await field.locator('[data-role="squadBar"] button').first().click();
     await field.waitForSelector('[data-role="commandCard"]:not([hidden])');
     await layout(field,`chapter-v-command-${suffix}`);
@@ -209,6 +246,18 @@ try{
       await field.waitForFunction(()=>/Drag or use the arrows/.test(document.querySelector('[data-preview-status]')?.textContent??''),null,{timeout:120000});
       const model=field.locator('[data-soldier-preview]');
       await model.screenshot({path:`${output}equipped-soldier.png`});
+      const buffer=await model.evaluate(c=>({width:c.width,height:c.height}));
+      // This first patch was the blank-preview regression: its initial modal
+      // HTML did not know which attributes belonged to the renderer.
+      await field.locator('.pack-item').first().click();
+      await field.waitForSelector('.inv-details:not(.is-empty)');
+      assert.deepEqual(await model.evaluate(c=>({width:c.width,height:c.height})),buffer,'The first item comparison preserves the equipped preview drawing buffer');
+      assert.equal(await model.getAttribute('data-preview'),'ready','The model remains ready after comparison');
+      const comparison=await field.locator('.inv-details').boundingBox();
+      assert.ok(comparison.y>=0&&comparison.y<viewport.height-100,'The selected item opens beside the pack, within the initial viewport');
+      await model.screenshot({path:`${output}equipped-soldier-after-comparison.png`});
+      await field.locator('#modal').screenshot({path:`${output}inventory-comparison-desktop.png`});
+      evidence.checks.push({name:'First equipment comparison preserves WebGL buffer; details visible beside the pack',pass:true,buffer});
       const bounds=await model.boundingBox();
       await field.locator('[data-preview-turn="1"]').click();await field.waitForTimeout(250);
       assert.deepEqual(await model.boundingBox(),bounds,'Turning the model preserves the inspection canvas geometry');
@@ -219,6 +268,7 @@ try{
     }
     await field.context().close();
     const council=await restore(viewport,'ch7-council');
+    await stableGuidance(council,`council-${suffix}`);
     await (await revealControl(council,'[data-role="coalition"] [data-person]')).click();
     await council.waitForSelector('[data-role="conversation"]:not([hidden])');
     await layout(council,`council-conversation-${suffix}`);

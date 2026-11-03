@@ -308,7 +308,10 @@ broken halt on the retreat west, a council camp before Milan, a ferry
 assembly on the Danube, a governor's relief courtyard and a portico in
 Rome among them. The people of the story stand in the camps of their
 chapters, each with something to say about it. Click a person to talk, click a door or a table to use it, and use the map
-(**M**) to go at once to any part of the camp you have already visited.
+(**M**) to find your soldier and the numbered places. **Walk there** works
+even before you have visited a place; **Fast travel** unlocks after discovery.
+The gold marker and **Show me the way** lead you to the next required person,
+decision table or departure point using ordinary walking and interaction.
 Everything a camp offers is also listed under **Menu → Camp**, so you
 never have to find it in the scene: the chapter decision, **Battle preparation**,
 **People & conversations**, **Travel to a place**, **Courses &
@@ -563,9 +566,9 @@ the right mouse button uses it.
   orders.
 
   Pause also works while a command-list or HUD button has focus. Text
-  fields and modal panels keep their own keyboard controls. Rescue
-  encounters begin paused so you can identify the casualty and plan the
-  approach before pressing **Resume**.
+  fields and modal panels keep their own keyboard controls. New campaign
+  battles begin paused so you can review the objective and give orders before
+  pressing **Resume**.
 
 - Commands given while paused are carried out when you resume. Each
   person keeps only the latest command you gave him, and a faint line
@@ -805,6 +808,10 @@ looks from the south-east toward the north-west, so up on the screen is
 north-west on the map in both views, and the arrow keys walk that way.
 It never turns. Moving the camera never spends anything or changes the
 rules, and it works while paused.
+
+The visible **Follow**, **Overview** and **Cutaway** buttons provide the main
+camera controls. Cutaway starts enabled and also keeps relevant sight lines
+clear in the overview; toggle it when you want to inspect the complete walls.
 
 | **Control**                | **What it does**                                                                                                                                                                                                                                                                                       |
 |----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

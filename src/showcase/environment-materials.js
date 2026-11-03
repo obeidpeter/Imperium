@@ -66,6 +66,10 @@ export function createEnvironmentMaterials({loadTextures=true,profile=null,quali
   }
   const marbleMap=texture(marbleBytes,128);
   m.floor=make({map:marbleMap,color:0xeee5d2,roughness:.64});
+  // The campaign's field councils use worn stone, while Rome keeps marble.
+  // Keep a dedicated floor material so excluding floors from cutaway never
+  // excludes a wall that happens to share the region's stone material.
+  if(profile?.civic&&profile.chapter<10){m.floor.map=maps.stone.map;m.floor.color.set(0xb7ad98);m.floor.roughness=.97;}
   m.redMarble=make({map:marbleMap,color:0x765348,roughness:.66});
   m.ivory=make({map:maps.cloth.map,color:0xeadfc8,roughness:.89});
   m.plaster=make({map:maps.stone.map,color:0xc8b79a,roughness:.96,normalMap:maps.stone.normalMap,normalScale:new THREE.Vector2(.08,.08)});

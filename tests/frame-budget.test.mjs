@@ -32,6 +32,19 @@ test('Resolution responds to sustained GPU load, cools down, recovers cautiously
   for(let i=0;i<100;i++)budget.record(2);assert.ok(budget.scale>.65&&budget.scale<1);
   budget.setEnabled(false);assert.equal(budget.scale,1);for(let i=0;i<100;i++)budget.record(50);assert.equal(budget.scale,1);assert.equal(changes.at(-1),1);
 });
+
+test('Resolution recovers useful clarity with measured headroom and settles without scale oscillation',()=>{
+  const budget=createResolutionBudget({fps:60}),history=[];
+  for(let i=0;i<160;i++)budget.record(30);
+  assert.ok(budget.scale<=.8);
+  const start=budget.scale;
+  // 17 ms at full size scales with pixel area. A moderate workload cannot
+  // meet the former 55% rule but can safely restore some lost sharpness.
+  for(let i=0;i<1000;i++){budget.record(17*budget.scale**2);history.push(budget.scale);}
+  assert.ok(budget.scale>start&&budget.scale<1);assert.ok(17*budget.scale**2<1000/60*.82*.85);
+  assert.equal(new Set(history.slice(-300)).size,1,'sustained headroom settles at one safe scale');
+  const stable=budget.scale;for(let i=0;i<17;i++)budget.record(30);assert.equal(budget.scale,stable,'a brief spike does not repeatedly change resolution');
+});
 test('Frame cadence paints on whole display refreshes for 30 and 60 fps targets at 60, 120 and 144 Hz',()=>{
   const run=(hz,fps,frames=240)=>{const cadence=createFrameCadence({fps}),times=[];for(let i=0;i<frames;i++){const now=i*1000/hz;if(cadence.shouldRender(now))times.push(now);}const gaps=times.slice(20).map((t,i,list)=>i?t-list[i-1]:null).filter(Boolean);return {cadence,gaps};};
   for(const [hz,fps,refreshes]of [[60,60,1],[60,30,2],[120,60,2],[120,30,4],[144,60,2]]){

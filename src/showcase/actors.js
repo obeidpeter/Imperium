@@ -397,7 +397,11 @@ function createActorRig(unit={},options={},reuseGroup=null){
       // One mesh for each material at each level: the trims cost a draw or two, not one a band.
       const bands=trimBands(unit.bloc);
       for(const gilt of [false,true]){const specs=bands.filter(band=>!!band.gilt===gilt);if(!specs.length)continue;
-        for(const overview of [false,true]){const geometry=blocTrimGeometry(body.band,specs,{lift:overview?.012:0});geometries.add(geometry);blocTrims.push({geometry,material:trimMaterial(specs[0]),overview});}}
+        for(const overview of [false,true]){
+          // The far mesh keeps each bloc's broad/double/broken pattern but
+          // carries a wider strip, rather than disappearing to a grey robe.
+          const readable=specs.map(b=>{const extra=(b.to-b.from)*(overview?.32:.12);return {...b,from:Math.max(0,b.from-extra),to:Math.min(1,b.to+extra)};});
+          const geometry=blocTrimGeometry(body.band,readable,{lift:overview?.012:0});geometries.add(geometry);blocTrims.push({geometry,material:trimMaterial(specs[0]),overview});}}
     }else{
       const toga=part(torso,'draped-civic-robe');clothRigs.push(createClothRig(toga,.49,.04,-.54));const ivory=material(p.cloth,{...clothSurface,side:T.DoubleSide});
       const rows=[[.49,.18,.15,.15],[.37,.08,.38,.205],[.19,-.015,.46,.225],[.02,-.025,.48,.215],[-.22,.025,.49,.22],[-.40,.06,.42,.205],[-.54,.08,.34,.185]];

@@ -5,6 +5,7 @@ import {squadById,squadCentre} from '../core/realtime/squads.js';
 import {clampToMap,navGrid} from '../core/realtime/navigation.js';
 import {deploying} from '../core/realtime/deployment.js';
 import {actionLabel,ariaKeyShortcuts,DEFAULT_KEYMAP} from '../ui/action-map.js';
+import {squadCardStatus} from '../ui/realtime-assistance.js';
 
 // The squads on the page (guide "Squads", "Command"; build brief §3.8,
 // §3.16): the squad bar's standards, the Command pips beside the clock, the
@@ -38,7 +39,7 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
         const b=document.createElement('button');b.type='button';b.className='rt-standard';b.dataset.squad=s.id;
         if(i<6)b.setAttribute('aria-keyshortcuts',ariaKeyShortcuts(`select_squad_${i+1}`,keymap));
         b.innerHTML=`<span class="rt-standard-flag" aria-hidden="true">${i+1}</span><span class="rt-standard-name">${esc(s.name)}</span>`+
-          `<span class="bar strength"><i></i></span><span class="rt-standard-mark" aria-hidden="true"></span><span class="visually-hidden rt-standard-state"></span>`;
+          `<span class="bar strength"><i></i></span><small class="rt-standard-status"></small><span class="rt-standard-mark" aria-hidden="true"></span>`;
         b.addEventListener('click',event=>{setSelection(selectSquads(world(),selection,{squadId:s.id,shift:event.shiftKey,touch:event.pointerType==='touch'},{deployment:deploying(world())}));
           canvas.focus({preventScroll:true});});
         // While deploying, a standard can be dragged onto the field: it is placed where it is let go.
@@ -60,7 +61,7 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
     // Selected squads' places count too: whether they can take a formation together depends on them.
     const c=w.command,near=s=>selection.includes(s.id)?`${Math.round(s.x/2)},${Math.round(s.z/2)}`:'';
     const key=[selection.join(','),deploying(w),c?`${c.capacity}/${c.left}/${c.round}/${w.queue.length}`:'',...w.squads.map(s=>`${s.id}:${s.members.filter(id=>actorById(w,id)?.alive).length}:${near(s)}:`+
-      `${Math.round(s.morale)}:${Math.round(s.cohesion)}:${Math.floor(s.suppression)}:${s.broken}:${s.formation}:${s.braced}:${s.pending?.order.kind??''}:${s.pending?.round??''}`)].join('|');
+      `${Math.round(s.morale)}:${Math.round(s.cohesion)}:${Math.floor(s.suppression)}:${s.broken}:${s.formation}:${s.braced}:${s.pending?.order.kind??''}:${s.pending?.round??''}:${squadCardStatus(w,s)}`)].join('|');
     if(key===frameKey&&!force)return;frameKey=key;
     const bar=(w.squads??[]).filter(s=>s.side!=='enemy').map(s=>s.id).join(',');if(bar!==barKey){barKey=bar;build();}
     for(const b of dom.squadBar?.children??[]){
@@ -68,7 +69,9 @@ export function createSquadControl({world:getWorld,dom,issue,say,presenter,keyma
       b.querySelector('.strength i').style.inlineSize=`${men/s.maxMen*100}%`;b.setAttribute('aria-pressed',String(on));b.classList.toggle('selected',on);
       b.classList.toggle('shaken',!down&&!s.broken&&s.morale<=40);b.classList.toggle('broken',!down&&s.broken);b.classList.toggle('down',down);b.disabled=down;
       b.querySelector('.rt-standard-mark').textContent=down?'✕':s.broken?'⚠':s.morale<=40?'!':'';
-      const text=down?`${s.name}: cut down.`:squadState(w,s);if(b.title!==text){b.title=text;b.querySelector('.rt-standard-state').textContent=text;}
+      const status=squadCardStatus(w,s);b.querySelector('.rt-standard-status').textContent=status;
+      // One accessible name conveys the full condition without repeating the visible name/status.
+      const text=down?`${s.name}: cut down.`:`${squadState(w,s)} ${status}.`;if(b.title!==text){b.title=text;b.setAttribute('aria-label',text);}
     }
     const pips=commandPips(w);
     if(dom.commandPips&&pips){

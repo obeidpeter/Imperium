@@ -687,3 +687,68 @@ html[data-world="full"] .rt-hud .rt-message-lines>.rt-event:focus-visible{outlin
 @keyframes area-card-in{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.area-card,.area-card.is-leaving{animation:none;transition:none}}
 html[data-reduced="true"] .area-card,html[data-reduced="true"] .area-card.is-leaving{animation:none;transition:none}
+
+/* Windows playtest: transient guidance must never resize the picking surface.
+   Notices sit over the world; long pointer guidance keeps two lines and scrolls
+   inside its keyboard-focusable area, retaining every word of the reason. */
+html[data-world="full"] .rt-workspace>.rt-notice{position:absolute;z-index:8;
+  inset-block-start:.5rem;inset-inline-start:50%;translate:-50% 0;
+  inline-size:min(38rem,calc(100% - 2rem));max-block-size:30dvh;overflow:auto;overscroll-behavior:contain;
+  border:1px solid var(--rt-bronze);border-inline-start-width:4px;border-radius:.4rem;box-shadow:0 .5rem 1.5rem #0008}
+html[data-world="full"] .rt-hud .rt-message-lines{grid-template-rows:2.7em 1.35em;font-size:.83rem;line-height:1.35}
+html[data-world="full"] .rt-hud .rt-message-lines>p.rt-message:not([hidden]){display:block;block-size:2.7em;min-block-size:0;max-block-size:2.7em;
+  overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;white-space:normal;-webkit-line-clamp:unset;line-clamp:unset;line-height:1.35}
+.rt-message:focus-visible{outline:2px solid var(--rt-focus);outline-offset:2px}
+
+/* Every formation stays visible. The card's last line reports its current task
+   or crisis, while a stable two-column roster avoids hiding the engineers. */
+html[data-world="full"] .rt-unit-dock .rt-squad-area{display:flex;flex-wrap:wrap;overflow:visible;inline-size:100%;min-inline-size:0}
+html[data-world="full"] .rt-unit-dock .rt-squads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));inline-size:100%;overflow:visible;gap:.25rem}
+html[data-world="full"] .rt-field .rt-standard{inline-size:auto;min-inline-size:0;grid-template-columns:auto minmax(0,1fr);justify-items:stretch;align-content:start;flex:initial}
+html[data-world="full"] .rt-standard-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* The flag belongs beside all three card rows. Spanning only name/strength
+   stretched those rows and made a two-row roster steal the short desktop's world. */
+@container(min-width:761px){
+  html[data-world="full"] .rt-field .rt-standard{padding-block:.1rem}
+  html[data-world="full"] .rt-standard-flag{grid-row:1/span 3}
+}
+.rt-standard-status{grid-column:2;display:block;min-inline-size:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.66rem;line-height:1.25;color:var(--rt-muted);font-weight:400}
+.rt-standard.shaken .rt-standard-status,.rt-standard.broken .rt-standard-status{color:#ffd0a6}
+.rt-camera-controls{position:absolute;z-index:3;inset-inline-end:.6rem;inset-block-end:.6rem;display:flex;flex-wrap:wrap;gap:.3rem;max-inline-size:calc(100% - 1.2rem)}
+.rt-field .rt-camera-controls button{min-block-size:2.2rem;padding:.3rem .55rem;font-size:.75rem;background:#202922ed;box-shadow:0 2px 6px #0005}
+.rt-action-search{display:grid;gap:.35rem;margin:.6rem 0 1rem;color:var(--rt-muted);font-size:.8rem}
+.rt-action-search input{box-sizing:border-box;inline-size:100%;min-inline-size:0;min-block-size:2.75rem;margin:0;padding:.5rem .65rem;
+  border:1px solid var(--rt-line);border-radius:.35rem;background:#141d18;color:#f4ead5;font:inherit;font-size:.9rem}
+.rt-action-search input::placeholder{color:#b6b7a8}
+.rt-action-search input:focus-visible{outline:2px solid var(--rt-focus);outline-offset:2px}
+@container(max-width:760px){
+  /* Resume already exposes the paused state. Keep its duplicate badge for
+     assistive technology without wrapping the nearby Review orders control. */
+  html[data-world="full"] .rt-top .rt-time{flex:0 0 auto;flex-wrap:nowrap}
+  html[data-world="full"] .rt-time .rt-paused{position:absolute;inline-size:1px;block-size:1px;padding:0;margin:-1px;
+    overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+  html[data-world="full"] .rt-field>.rt-hud{padding-block:.15rem}
+  html[data-world="full"] .rt-hud>.rt-message-area{padding-block:.15rem}
+  /* Keep every squad readable without charging another row when it is selected.
+     Soldier controls shares the party's row; only spacing contracts on phones. */
+  html[data-world="full"] .rt-hud>.rt-unit-dock{display:grid;grid-template-columns:minmax(0,1fr) auto;overflow:visible;padding-block:0;gap:.1rem .3rem}
+  html[data-world="full"] .rt-unit-dock .rt-party{grid-area:1/1;max-inline-size:100%;overflow-x:auto;padding-block:.1rem}
+  html[data-world="full"] .rt-unit-dock .rt-squad-area{display:contents}
+  html[data-world="full"] .rt-unit-dock .rt-clear{grid-area:1/2;padding-block:.15rem}
+  html[data-world="full"] .rt-unit-dock .rt-squads{grid-area:2/1/3/-1;grid-template-columns:repeat(2,minmax(0,1fr));padding-block:.1rem}
+  html[data-world="full"] .rt-field .rt-standard{padding:.1rem .3rem;gap:.1rem .3rem;min-block-size:2.75rem}
+  html[data-world="full"] .rt-standard-flag{inline-size:1rem;font-size:.75rem}
+  html[data-world="full"] :is(.rt-standard-name,.rt-standard-status){font-size:calc(.75rem * var(--text-scale,1))}
+  /* Keep utility controls on the action row so readable squad cards leave room for the world. */
+  html[data-world="full"] .rt-ability-area .rt-tools{flex-wrap:nowrap}
+  html[data-world="full"] .rt-ability-area .rt-toolbox[open]{flex-basis:auto}
+  /* More actions opens above the bar, keeping the world and its targets still.
+     Both children use the HUD as their containing block, outside the action row's horizontal scroller. */
+  html[data-world="full"] .rt-more-actions[open]{position:static;flex:none;padding:0;border:0;background:none}
+  html[data-world="full"] .rt-more-actions[open]>summary{border:1px solid var(--rt-line);background:#29312a}
+  html[data-world="full"] .rt-more-actions[open]>.rt-extra-actions{position:absolute;z-index:8;inset-inline-start:.5rem;inset-block-end:calc(100% + .3rem);
+    inline-size:min(30rem,calc(100% - 1rem));max-block-size:min(50dvh,20rem);margin:0;padding:.6rem .6rem 3.7rem;overflow:auto;overscroll-behavior:contain;
+    background:var(--rt-panel);border:1px solid var(--rt-line);border-radius:.4rem;box-shadow:0 -.4rem 1.4rem #0009}
+  html[data-world="full"] .rt-more-actions[open]>button{position:absolute;z-index:9;inset-inline-start:1.1rem;inset-block-end:calc(100% + .9rem);margin:0}
+  .rt-field .rt-camera-controls button{min-block-size:2.75rem}
+}

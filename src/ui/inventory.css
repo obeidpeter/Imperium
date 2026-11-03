@@ -205,3 +205,22 @@ html[data-text-scale="2"] .inv-pack-head,html[data-text-scale="2"] .inv-details{
 html[data-contrast="high"] .inventory{--pack-line:#ffffff55;--tile-edge:#2b2112}
 html[data-contrast="high"] .worn-socket .item-picture{border-color:#f2d58f}
 html[data-reduced="true"] .inventory-drag{box-shadow:none}
+
+/* Compare alongside the pack on a desktop. Browsing a piece never sends the
+   figure or its Wear button beneath the fold. Large text keeps the list layout. */
+.inv-statistics>summary{cursor:pointer;min-block-size:2.75rem;display:flex;align-items:center;font-weight:600}
+.inv-details .kit-actions{position:sticky;inset-block-end:0;background:var(--pale,#fffaf0);padding-block:.4rem;z-index:1}
+@media(min-width:1181px){
+  html:not([data-text-scale="2"]) .inventory[data-other="sheet"]{
+    --cell:clamp(1.9rem,2.5vw,3.4rem);--socket:clamp(2.6rem,4.1vw,3.4rem);--figure-w:clamp(9rem,12vw,15rem);
+    grid-template-columns:var(--doll-w) var(--pack-w) minmax(15rem,1fr);
+    grid-template-rows:auto auto 1fr;grid-template-areas:"tabs tabs tabs" "worn middle details" "worn middle other";gap:12px 16px}
+  html:not([data-text-scale="2"]) .inventory[data-other="sheet"] .inv-details-wrap{max-block-size:calc(100dvh - 12rem);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+  html:not([data-text-scale="2"]) .inventory[data-other="sheet"] .inv-details{display:flex;flex-direction:column;gap:.3rem}
+  html:not([data-text-scale="2"]) .inventory[data-other="sheet"] .inv-details-head{order:0}
+  html:not([data-text-scale="2"]) .inventory[data-other="sheet"] .inv-details>.kit-actions{order:1;position:sticky;inset-block-start:0;inline-size:100%;margin:0}
+  html:not([data-text-scale="2"]) .inventory[data-other="sheet"] .inv-details>p{order:2}
+  html:not([data-text-scale="2"]) .inventory[data-other="sheet"] .inv-details>.kit-comparison{order:3;inline-size:100%}
+  html:not([data-text-scale="2"]) .inventory[data-other="sheet"] :is(.inv-doll,.inv-middle){position:sticky;inset-block-start:5rem}
+  html:not([data-text-scale="2"]) .inventory[data-other="sheet"] .inv-other-wrap{max-block-size:40dvh;overflow:auto;overscroll-behavior:contain}
+}

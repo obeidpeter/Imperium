@@ -1,6 +1,6 @@
 import * as THREE from '../../vendor/three/three.module.js';
 import {stagingEdge} from './environment-staging.js';
-import {hash} from './environment-layout.js';
+import {hash,smooth} from './environment-layout.js';
 import {addSiegeLandmark} from './environment-siege.js';
 
 /** Connected precincts sit beyond the rule board. Repeated structural parts
@@ -30,6 +30,12 @@ export function addEncounterPrecinct({root,e,p,m,profile,height,tileSize,quality
     for(const xx of [-w/2+.35,w/2-.35])for(const zz of [-d/2+.35,d/2-.35])kind==='timber'?p.beam(g,[xx,0,zz],[xx,3.5,zz],.14,m.wood):pillar(g,xx,zz,3.5,mat);
     p.plank(g,0,3.72,0,w+.6,.28,d+.6,kind==='timber'?m.wood:m.terra);
     for(const side of [-1,1]){const roof=p.plank(g,0,4.05,side*d*.255,w+.9,.16,d*.57,kind==='timber'?m.wood:m.terra);roof.rotation.x=side*.24;}
+    // Visible load-bearing joinery and a deep fascia give the repeated street
+    // bays a constructed silhouette; all use the existing static batches.
+    for(const zz of [-d/2+.35,d/2-.35]){
+      p.plank(g,0,3.36,zz,w,.22,.25,kind==='timber'?m.darkWood:m.stone);
+      if(kind==='timber')for(const side of [-1,1])p.beam(g,[side*(w/2-.35),2.55,zz],[side*(w/2-1.05),3.36,zz],.075,m.wood);
+    }
     p.plank(g,0,1.45,d/2-.14,w,2.8,.28,kind==='timber'?m.darkWood:m.plaster);return g;
   };
   const wallBay=(parent,x,z,w,h=2.8,mat=m.stone)=>{p.plank(parent,x,h/2,z,w,h,.48,mat);p.plank(parent,x,h+.09,z,w+.10,.18,.72,mat);};
@@ -55,6 +61,13 @@ export function addEncounterPrecinct({root,e,p,m,profile,height,tileSize,quality
   }else if(['council','pavilion'].includes(staging.form)){
     const g=solid('open-sided council pavilion',atEdge('north',5.2));
     const portico=porch(g,0,0,9,4,'timber');p.plank(portico,0,1.05,-.6,5,.22,1.25,m.wood);for(const x of [-3.3,3.3])p.banner(g,x,0,-2.6);
+    // A working council: rolled dispatches, wax tablets, a map and a cloth
+    // runner make the headquarters readable without cluttering its walkable floor.
+    p.plank(portico,0,1.17,-.6,3.4,.018,.94,m.cloth);
+    p.plank(portico,-.45,1.185,-.6,1.1,.018,.66,m.ivory);
+    for(const x of [-1.7,1.45]){p.plank(portico,x,1.2,-.55,.38,.05,.45,m.darkWood);p.plank(portico,x,1.23,-.55,.3,.012,.36,m.redMarble);}
+    for(const x of [-.95,.65]){const scroll=p.mesh(portico,p.cylinder,m.ivory,x,1.23,-.23,.055,.45,.055);scroll.rotation.z=Math.PI/2;}
+    for(const side of [-1,1]){const wing=solid('council side gallery',atEdge(side<0?'west':'east',4.8));porch(wing,0,0,6.6,3.7,'timber');}
     for(const side of [-1,1]){const a=atEdge(side<0?'west':'east',6.2);loading(a,-1.2,1,2);}
   }else if(['causeway','refuge','quay','bridgehead'].includes(staging.form)){
     const g=solid('timber landing approach',atEdge(staging.landmarkEdge,5.3));
@@ -106,16 +119,23 @@ export function addEncounterPrecinct({root,e,p,m,profile,height,tileSize,quality
   // A connected, ground-following apron is outside the legal board. Avoids
   // the floating building pads of the former perimeter-only arrangement.
   if(!profile.civic&&['avenue','city-gate','imperial-gate','courier','granary','gate','sally','breach'].includes(staging.form)){
-    const positions=[],uv=[],indices=[],hx=e.width*tileSize/2,hz=e.height*tileSize/2;
+    const positions=[],uv=[],colors=[],indices=[],hx=e.width*tileSize/2,hz=e.height*tileSize/2;
     for(const edge of [staging.entranceEdge,staging.landmarkEdge]){
       const a=stagingEdge(e,edge,tileSize),side=edge==='west'||edge==='east',sign=edge==='west'||edge==='north'?-1:1;
       const paved=['avenue','city-gate','imperial-gate','courier','granary','gate','sally'].includes(staging.form),length=paved?14:11,width=paved?9:7,step=perf?1:.7,nx=Math.ceil(width/step),nz=Math.ceil(length/step),base=positions.length/3;
-      for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){const lateral=(i/nx-.5)*width,d=.12+j/nz*length,x=side?sign*(hx+d):a.x+lateral,z=side?a.z+lateral:sign*(hz+d);positions.push(x,height(x,z)+.027,z);uv.push(x*.28,z*.28);if(i<nx&&j<nz){const n=base+j*(nx+1)+i;indices.push(n,n+nx+1,n+1,n+1,n+nx+1,n+nx+2);}}
+      for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){
+        const u=i/nx,v=j/nz,shoulder=width*(1-.16*smooth((v-.65)/.35)),lateral=(u-.5)*shoulder+(hash(j,37)-.5)*.2,
+          d=.12+v*length,x=side?sign*(hx+d):a.x+lateral,z=side?a.z+lateral:sign*(hz+d),edge=Math.min(u,1-u)*shoulder;
+        positions.push(x,height(x,z)+.027,z);uv.push(x*.28,z*.28);
+        const feather=smooth(edge/(.6+hash(j,23)*.5))*(1-smooth((v-.78)/.22)),tone=.91+hash(i,j,19)*.09;
+        colors.push(tone,tone,paved?tone*.96:tone*.88,feather*.84);
+        if(i<nx&&j<nz){const n=base+j*(nx+1)+i;indices.push(n,n+nx+1,n+1,n+1,n+nx+1,n+nx+2);}
+      }
     }
-    const geometry=p.geo(new THREE.BufferGeometry());geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geometry.setIndex(indices);geometry.computeVertexNormals();
+    const geometry=p.geo(new THREE.BufferGeometry());geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,4));geometry.setIndex(indices);geometry.computeVertexNormals();
     // Orient every top face upward even when a route changes compass edge.
     const normals=geometry.attributes.normal;for(let i=0;i<indices.length;i+=3){const n=indices[i];if(normals.getY(n)<0)[indices[i+1],indices[i+2]]=[indices[i+2],indices[i+1]];}geometry.setIndex(indices);geometry.computeVertexNormals();
-    const paved=['avenue','city-gate','imperial-gate','courier','granary','gate','sally'].includes(staging.form),apron=p.mesh(precinct,geometry,paved?m.stone:m.earth);apron.name='connected precinct apron';apron.castShadow=false;
+    const apron=p.mesh(precinct,geometry,m.road);apron.name='connected precinct apron';apron.castShadow=false;apron.userData.environmentGround=true;
   }
   precinct.updateWorldMatrix(true,true);
   root.userData.precinctStructures=structures.map(g=>{const b=new THREE.Box3().setFromObject(g);return {name:g.name,min:b.min.toArray(),max:b.max.toArray()};});

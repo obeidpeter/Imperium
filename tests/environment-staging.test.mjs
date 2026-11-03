@@ -39,7 +39,8 @@ test('Every new precinct leaves the complete playable rectangle and routes clear
     // newly-authored structure. Roof/arch faces are included in this check.
     for(let z=-9.9;z<=9.9;z+=1.1)for(let x=-9.9;x<=9.9;x+=1.1){const ray=new THREE.Raycaster(new THREE.Vector3(x,16,z),new THREE.Vector3(0,-1,0),0,16);assert.equal(ray.intersectObjects(solids,false).length,0,s.id+` structure above ${x},${z}`);}
     root.traverse(o=>{if(!o.isMesh)return;for(const a of Object.values(o.geometry.attributes))for(const n of a.array)assert.ok(Number.isFinite(n),s.id);});
-    const apron=root.getObjectByName('connected precinct apron');if(apron){const a=apron.geometry.attributes.position,n=apron.geometry.attributes.normal;for(let i=0;i<a.count;i++){assert.ok(Math.abs(a.getX(i))>10||Math.abs(a.getZ(i))>10,'Paving never covers the authored board');assert.ok(n.getY(i)>.75,'Paving top faces remain visible');}}
+    const apron=root.getObjectByName('connected precinct apron');if(apron){const a=apron.geometry.attributes.position,n=apron.geometry.attributes.normal,colors=apron.geometry.attributes.color;for(let i=0;i<a.count;i++){assert.ok(Math.abs(a.getX(i))>10||Math.abs(a.getZ(i))>10,'Paving never covers the authored board');assert.ok(n.getY(i)>.75,'Paving top faces remain visible');}
+      assert.equal(colors.itemSize,4);assert.ok(apron.material.transparent&&!apron.material.depthWrite);let clear=0,solid=0;for(let i=0;i<colors.count;i++){if(colors.getW(i)===0)clear++;if(colors.getW(i)>.7)solid++;}assert.ok(clear>20&&solid>20,'eroded edges feather into the underlying ground but retain a solid worn centre');}
     assert.equal(JSON.stringify(e),before);for(const g of geometries)g.dispose();library.dispose();
   }
 });

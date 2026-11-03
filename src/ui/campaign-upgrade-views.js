@@ -5,7 +5,7 @@ import {esc,actionNames} from './view-helpers.js';
 import {briefingFor} from './soundscape-data.js';
 import {explainUnavailableActions,unusedTurnSummary} from './direct-controls.js';
 
-export function difficultyChoices(){return `<fieldset class="difficulty-choices"><legend>The pace of your campaign</legend>${Game.difficultyOptions().map(d=>`<label class="difficulty-choice"><input type="radio" name="campaign-difficulty" value="${d.id}" ${d.id==='standard'?'checked':''}><span><strong>${esc(d.label)}</strong><small>${esc(d.description)}</small></span></label>`).join('')}<p class="settings-description">Applies to this new chronicle. Your choice stays with its checkpoints.</p></fieldset>`;}
+export function difficultyChoices({brief=false}={}){const descriptions={story:'More forgiving battles and more time to learn.',standard:'A balanced challenge. Recommended for your first campaign.',veteran:'Stronger opposition for experienced commanders.'};return `<fieldset class="difficulty-choices"><legend>The pace of your campaign</legend>${Game.difficultyOptions().map(d=>`<label class="difficulty-choice"><input type="radio" name="campaign-difficulty" value="${d.id}" ${d.id==='standard'?'checked':''}><span><strong>${esc(d.label)}</strong><small>${esc(brief?descriptions[d.id]??d.description:d.description)}</small></span></label>`).join('')}<p class="settings-description">Applies to this new chronicle. Your choice stays with its checkpoints.</p></fieldset>`;}
 
 export function companyPreparation(state){
   const plan=Game.companyPlan(state);if(!plan.enabled)return '';
