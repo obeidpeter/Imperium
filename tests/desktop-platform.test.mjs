@@ -67,3 +67,14 @@ test('the credits name every source the game ships, and every licence they link 
   // The texts the links open are the libraries' own.
   assert.match(readFileSync(new URL('../vendor/three/addons/libs/LICENSE-zstddec.txt',import.meta.url),'utf8'),/Copyright \(c\) 2020 Don McCurdy[\s\S]*BSD License[\s\S]*Zstandard/);
 });
+
+test('the desktop app carries the game’s version and packages the desktop build beside itself',()=>{
+  const root=JSON.parse(readFileSync(new URL('../package.json',import.meta.url),'utf8')),desktop=JSON.parse(readFileSync(new URL('../desktop/package.json',import.meta.url),'utf8'));
+  assert.equal(desktop.version,root.version,'Bump desktop/package.json with the game');
+  assert.equal(desktop.productName,'Imperium');assert.equal(desktop.private,true);
+  assert.deepEqual(desktop.build.extraResources.map(r=>[r.from,r.to]),[['../dist-desktop','game']],'The game is served from resources/game');
+  assert.equal(desktop.build.publish,null,'Steam updates the app: no updater feed');
+  for(const file of desktop.build.files.filter(f=>f!=='package.json'))assert.ok(existsSync(new URL(`../desktop/${file}`,import.meta.url)),`${file} exists`);
+  assert.equal(root.scripts['build:desktop'],'node scripts/build.mjs --target desktop');assert.equal(root.scripts['smoke:desktop'],'node scripts/desktop-smoke.mjs');
+  assert.equal(root.dependencies,undefined,'The web project stays dependency-free');assert.equal(root.devDependencies,undefined);
+});
