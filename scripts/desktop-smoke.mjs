@@ -10,6 +10,7 @@
 // No request may leave app://imperium (data: and blob: URLs are the page's own).
 // PLAYWRIGHT_MODULE as for the other checks; SMOKE_CPU_THROTTLE slows the page as theirs do.
 import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {existsSync,readFileSync,readdirSync,rmSync,mkdirSync,writeFileSync} from 'node:fs';
 import {fileURLToPath,pathToFileURL} from 'node:url';
@@ -21,22 +22,32 @@ for(const p of [process.env.PLAYWRIGHT_MODULE,'playwright'].filter(Boolean))try{
 assert.ok(pw?._electron,'Set PLAYWRIGHT_MODULE to an installed Playwright.');
 const desktopDir=fileURLToPath(new URL('../desktop/',import.meta.url)),gameDir=fileURLToPath(new URL('../dist-desktop/',import.meta.url));
 const out=fileURLToPath(new URL('../tests/visual-results/desktop/',import.meta.url)),userData=join(out,'user-data');
-assert.ok(process.env.DESKTOP_APP==='packaged'||existsSync(join(gameDir,'index.html')),'Build first: npm run build:desktop');
-let electronPath;try{electronPath=createRequire(join(desktopDir,'package.json'))('electron');}catch{}
-assert.ok(process.env.DESKTOP_APP==='packaged'||electronPath&&existsSync(electronPath),'Install the desktop app’s packages first: cd desktop && npm ci');
-rmSync(out,{recursive:true,force:true});mkdirSync(userData,{recursive:true});
-
 // DESKTOP_APP=packaged drives the packaged app (npm run package:linux or package:win in desktop/), which serves the
 // game from its own resources folder; otherwise the repository's Electron runs desktop/ on dist-desktop/.
 // Chromium refuses to run as root with its sandbox (a container); everywhere else the sandbox stays on.
 const packaged=process.env.DESKTOP_APP==='packaged',sandbox=process.getuid?.()===0?['--no-sandbox']:[];
+assert.ok(packaged||existsSync(join(gameDir,'index.html')),'Build first: npm run build:desktop');
+// Only the repository's Electron is needed (requiring it downloads its binary when it is missing).
+let electronPath;if(!packaged)try{electronPath=createRequire(join(desktopDir,'package.json'))('electron');}catch{}
+assert.ok(packaged||electronPath&&existsSync(electronPath),'Install the desktop app’s packages first: cd desktop && npm ci');
+rmSync(out,{recursive:true,force:true});mkdirSync(userData,{recursive:true});
+
 const packagedApp=join(desktopDir,'out',process.platform==='win32'?'win-unpacked/Imperium.exe':'linux-unpacked/imperium');
 if(packaged)assert.ok(existsSync(packagedApp),`Package the app first: cd desktop && npm run package:${process.platform==='win32'?'win':'linux'}`);
 const executable=packaged?packagedApp:electronPath,args=packaged?sandbox:[desktopDir,...sandbox];
 const report={method:`Automated Electron (Playwright) on the ${packaged?'packaged app':'desktop build in the repository’s Electron'}, through the visible interface`,checks:[],requests:[],errors:[]};
 const outside=url=>!/^(app:\/\/imperium\/|data:|blob:|about:blank|devtools:)/.test(url);
+const env={...process.env,IMPERIUM_USER_DATA:userData,...(packaged?{}:{IMPERIUM_GAME_DIR:gameDir})};
 async function launch(label){
-  const app=await pw._electron.launch({executablePath:executable,args,env:{...process.env,IMPERIUM_USER_DATA:userData,...(packaged?{}:{IMPERIUM_GAME_DIR:gameDir})}});
+  let app;
+  try{app=await pw._electron.launch({executablePath:executable,args,env});}
+  catch(error){
+    // Playwright says only that the process failed to launch: run the app once by itself to show why (on Linux, often
+    // Chromium's sandbox, when its setuid helper is not root-owned with mode 4755 and user namespaces are restricted).
+    const run=spawnSync(executable,args,{env,encoding:'utf8',timeout:15000});
+    const said=[run.error?.message,run.stdout,run.stderr].filter(Boolean).join('\n').split('\n').filter(line=>line.trim()).slice(-15).join('\n');
+    throw new Error(`${label}: ${error.message}\nThe app, run by itself, said:\n${said||'(nothing)'}`);
+  }
   const page=await app.firstWindow();page.setDefaultTimeout(60000);await throttleCpu(page);
   page.on('request',request=>{const url=request.url();if(outside(url))report.requests.push(`${label}: ${url}`);});
   page.on('pageerror',error=>report.errors.push(`${label}: ${error.message}`));

@@ -284,6 +284,11 @@ jobs:
         working-directory: desktop
       - run: npm run package:${{ matrix.os == 'windows-latest' && 'win' || 'linux' }}
         working-directory: desktop
+      # Chromium's sandbox on Linux: the runner's Ubuntu restricts the user namespaces it would use, so it needs its
+      # setuid helper root-owned with mode 4755, as an installed Linux package sets it. The sandbox stays on.
+      - if: matrix.os != 'windows-latest'
+        working-directory: desktop/out/linux-unpacked
+        run: sudo chown root:root chrome-sandbox && sudo chmod 4755 chrome-sandbox
       - name: The packaged app, through its visible interface
         shell: bash
         run: ${{ matrix.os != 'windows-latest' && 'xvfb-run -a' || '' }} npm run smoke:desktop
