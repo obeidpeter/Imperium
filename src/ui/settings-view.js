@@ -13,8 +13,10 @@ const group=(title,body)=>`<fieldset class="settings-group"><legend>${title}</le
 // One task at a time. Hidden pages retain the field IDs used by the settings
 // controller; they are excluded from both keyboard navigation and speech.
 export function settingsView(context,{page='general',pace='',development=''}={}){
-  const {settings:s,state,offline,currentChapterOffline,offlineProgress,preservedUnreadable,keymap,devMenu}=context;
+  const {settings:s,state,offline,currentChapterOffline,offlineProgress,preservedUnreadable,keymap,devMenu,desktopApp}=context;
   const current=SETTINGS_PAGES.some(([id])=>id===page)?page:'general',live=s.controlsModel==='realtime';
+  // The desktop app (platform.js): its window's fullscreen, saves on this computer, and every chapter installed.
+  const desktop=!!desktopApp,pageLabel=(id,label)=>desktop&&id==='saves'?'Saves':label;
   const offlineText=offline?'All twelve chapters are available offline.':offlineProgress?esc(offlineProgress):currentChapterOffline?`Chapter ${roman(state?.chapter||1)} is available offline.`:'This chapter is still downloading.';
   const pages={
     general:group('Make the game easier to read',
@@ -31,7 +33,7 @@ export function settingsView(context,{page='general',pace='',development=''}={})
       controlPreferences(s,{keymap:live?keymap:null,readability:false})+
       (live?pace:confirmMovesSetting(s))+
       (devMenu?`<details id="settings-development" class="settings-details"><summary>Developer tools</summary>${development}</details>`:''),
-    graphics:group('Scene',
+    graphics:(desktop?group('Window',toggle('desktop-fullscreen','Fullscreen','Also F11 or Alt+Enter.',desktopApp.fullscreen)):'')+group('Scene',
       select('battle-view','Game view','', [['3d','3D scene'],['2d','2D tactical view']],s.battleView==='2d'?'2d':'3d')+
       select('graphics-quality','Graphics quality','Choose Performance if the game feels slow.',[['performance','Performance'],['balanced','Balanced'],['high','High quality']],s.quality)+
       toggle('adaptive-resolution','Automatic resolution','Keep the scene smooth; text stays sharp.',s.adaptiveResolution!==false)+
@@ -44,11 +46,11 @@ export function settingsView(context,{page='general',pace='',development=''}={})
     audio:group('Sound',toggle('audio-setting','Sound effects','',s.audio)+
       `<label class="setting" for="audio-volume"><span>Effects volume<small id="audio-volume-value">${Math.round((s.audioVolume??.5)*100)}%</small></span><input id="audio-volume" type="range" min="0" max="100" step="10" value="${Math.round((s.audioVolume??.5)*100)}"></label>`+
       soundscapeSettings(s)),
-    saves:`<section class="settings-group"><h3>Your progress</h3><p>Progress saves on this device. Keep a backup before changing browsers.</p><div class="panel-actions">${state?'<button class="primary" data-cmd="saves">Save & load</button><button data-cmd="export">Export save code</button>':''}<button data-cmd="restore">Import save code</button></div>`+
+    saves:`<section class="settings-group"><h3>Your progress</h3><p>${desktop?'Progress saves on this computer, in the game’s own folder.':'Progress saves on this device. Keep a backup before changing browsers.'}</p><div class="panel-actions">${state?'<button class="primary" data-cmd="saves">Save & load</button><button data-cmd="export">Export save code</button>':''}<button data-cmd="restore">Import save code</button></div>`+
       '<details id="settings-recovery" class="settings-details"><summary>Recover older progress</summary><p>The last three checkpoints are kept on this device.</p><button data-cmd="recovery">Find earlier saves</button>'+
       (preservedUnreadable?`<p>${preservedUnreadable} older save${preservedUnreadable===1?'':'s'} cannot be read. The original data is preserved.</p><button data-cmd="export-unreadable">Download preserved save data</button>`:'')+'</details></section>'+
-      `<section class="settings-group"><h3>Offline play</h3><p id="settings-offline-status" role="status">${offlineText}</p><p class="settings-description">Chapters download as you reach them. Download everything before playing without internet.</p><div class="panel-actions">${state&&!currentChapterOffline?'<button data-cmd="retry-chapter">Retry chapter download</button>':''}${!offline&&globalThis.navigator&&'serviceWorker' in globalThis.navigator?'<button data-cmd="retry-offline">Download all chapters</button>':''}</div></section>`+
+      (desktop?'':      `<section class="settings-group"><h3>Offline play</h3><p id="settings-offline-status" role="status">${offlineText}</p><p class="settings-description">Chapters download as you reach them. Download everything before playing without internet.</p><div class="panel-actions">${state&&!currentChapterOffline?'<button data-cmd="retry-chapter">Retry chapter download</button>':''}${!offline&&globalThis.navigator&&'serviceWorker' in globalThis.navigator?'<button data-cmd="retry-offline">Download all chapters</button>':''}</div></section>`)+
       '<details id="settings-save-tools" class="settings-details"><summary>New game & local data</summary><div class="panel-actions"><button data-cmd="new">Start a new game</button><button data-cmd="privacy">Privacy & local data</button></div></details>'
   };
-  return `<p class="settings-status" role="status">Changes save automatically.${state?' Play is paused.':''}</p><div class="settings-layout"><nav class="settings-nav" aria-label="Settings categories">${SETTINGS_PAGES.map(([id,label])=>`<button type="button" data-cmd="settings-section" data-id="${id}"${id===current?' aria-current="page"':''} aria-controls="settings-${id}">${label}</button>`).join('')}</nav><div class="settings-pages">${SETTINGS_PAGES.map(([id,label])=>`<section id="settings-${id}" data-settings-page="${id}" aria-labelledby="settings-${id}-title"${id===current?'':' hidden'}><h3 id="settings-${id}-title" class="settings-page-title" tabindex="-1">${label}</h3>${pages[id]}</section>`).join('')}</div></div>`;
+  return `<p class="settings-status" role="status">Changes save automatically.${state?' Play is paused.':''}</p><div class="settings-layout"><nav class="settings-nav" aria-label="Settings categories">${SETTINGS_PAGES.map(([id,label])=>`<button type="button" data-cmd="settings-section" data-id="${id}"${id===current?' aria-current="page"':''} aria-controls="settings-${id}">${pageLabel(id,label)}</button>`).join('')}</nav><div class="settings-pages">${SETTINGS_PAGES.map(([id,label])=>`<section id="settings-${id}" data-settings-page="${id}" aria-labelledby="settings-${id}-title"${id===current?'':' hidden'}><h3 id="settings-${id}-title" class="settings-page-title" tabindex="-1">${label}</h3>${pages[id]}</section>`).join('')}</div></div>`;
 }

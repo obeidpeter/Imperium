@@ -346,7 +346,7 @@ export function createPanels(context){
   }
 
   function showNavigation(page='main'){
-    const {state,screen,showModal,worldCamp}=context();
+    const {state,screen,showModal,worldCamp,desktopApp}=context();
     const item=(cmd,label,hint='',id='')=>`<button class="menu-link" data-cmd="${cmd}"${id?` data-id="${id}"`:''}><strong>${label}</strong>${hint?`<span>${hint}</span>`:''}</button>`;
     const soldier=state?.soldier;
     const groups={
@@ -355,7 +355,9 @@ export function createPanels(context){
         state?item('menu-section','Campaign','Mission, progress and commitments','campaign'):'',
         // In a real-time camp (release 12) the camp list takes How to play's place: the bar's Help and More keep it.
         state?item('saves','Save & load'):'',item('settings','Settings'),worldCamp?item('page-overlay','Camp','People, places, preparations and departure','services'):item('help','How to play'),
-        item('menu-section','More','Title screen, history and credits','about')],
+        item('menu-section','More','Title screen, history and credits','about'),
+        // The desktop app (platform.js): the chronicle is saved before it closes.
+        ...(desktopApp?[item('quit','Quit to desktop',state?'Your chronicle is saved first':'')]:[])],
       soldier:soldier?[item('soldier-panel','Equipment','Wear, compare and manage items','kit'),item('soldier-panel','Training','Attributes and techniques','character'),
         item('soldier-panel','Company','Companions and standing orders','company'),item('soldier-panel','Honours','Decorations and titles','decorations')]:[item('character','Character & equipment')],
       campaign:[item('soldier-panel','Current mission','Objective and next step','mission'),item('map','Campaign map'),item('journal','Mission journal'),
@@ -370,7 +372,7 @@ export function createPanels(context){
     showModal(titles[current],`${intro}<nav class="menu-links menu-simple" aria-label="${titles[current]}">${groups[current].join('')}</nav>`,{menu:true,back:current==='main'?null:'menu'});
   }
   function showCredits(){
-    const {showModal}=context();
+    const {showModal,desktopApp}=context();
     showModal('Art & credits',`<div class="panel-lead"><p class="eyebrow">AN ORIGINAL ROMAN CHRONICLE</p>`+
       `<p>Imperium brings together an original fictional career, deterministic turn-based play, and locally bundled painted artwork.</p>`+
       `</div>${section('Illustration & visual design','<p>Character portraits, settings, and unit atlases were generated for this project with OpenAI’s '+
@@ -378,26 +380,43 @@ export function createPanels(context){
       'direction; their images were not copied.</p><p>No exclusive copyright or third-party licence ownership is asserted for the generated images. Detailed '+
       'prompts, provenance, transformations, and file hashes are recorded in the asset manifest and art documentation supplied '+
       'with the source project.</p>')}${section('The game on your device','<p>The campaign offers 3D battlefields and political chambers, with articulated '+
-      'characters, local materials, shadows and animated action feedback. A Canvas 2D tactical view is also available. All artwork and models are bundled or '+
-      'constructed locally; no artwork service runs during play. Near-view male anatomy adapts the MakeHuman Community CC0 base mesh; equipment, costumes and '+
-      'horses use original geometry. <a href="./vendor/makehuman/LICENSE.CC0.md" target="_blank" rel="noopener noreferrer">Read the MakeHuman asset license '+
-      '(opens a new tab)</a>.</p><p>The campaign 3D view and optional frontier skirmish use Three.js 0.186.1, copyright 2010-2026 three.js authors, under the '+
-      'MIT License. Its renderer is bundled locally, without a CDN. <a href="./vendor/three/LICENSE" target="_blank" rel="noopener noreferrer">Read the '+
-      'Three.js license (opens a new tab)</a>. The standalone skirmish keeps a separate in-memory session and does not change your campaign save.</p>'+
+      'characters, local materials, shadows and animated action feedback. A Canvas 2D tactical view is also available. All artwork and models are bundled '+
+      'with the game; no artwork service runs during play.</p><p>Most 3D figures and horses, many props, landmarks and rocks, and the item pictures were made for '+
+      'Imperium with Tripo’s text-to-model and rigging service, from text prompts only, then processed for the game. The game’s own code builds their kit, '+
+      'armour and animation, and code-built figures remain the fallback; animation is authored as joint clips, not motion capture. Near-view anatomy and '+
+      'hair adapt MakeHuman Community CC0 sources. <a href="./vendor/makehuman/LICENSE.CC0.md" target="_blank" rel="noopener noreferrer">Read the MakeHuman '+
+      'asset license (opens a new tab)</a>. Ground textures and some trees use CC0 sets from Poly Haven; the kits, buildings and panoramas built in Blender '+
+      'are the project’s own.</p><p>The campaign 3D view and optional frontier skirmish use Three.js 0.186.1, copyright 2010-2026 three.js authors, under the '+
+      'MIT License, bundled locally without a CDN. <a href="./vendor/three/LICENSE" target="_blank" rel="noopener noreferrer">Read the Three.js license '+
+      '(opens a new tab)</a>. Its texture and geometry decoders are the Basis Universal transcoder by Binomial LLC (<a href="./vendor/three/addons/libs/basis/LICENSE" '+
+      'target="_blank" rel="noopener noreferrer">Apache License 2.0</a>), the meshoptimizer decoder by Arseny Kapoulkine (<a href="./vendor/three/addons/libs/LICENSE-meshoptimizer.txt" '+
+      'target="_blank" rel="noopener noreferrer">MIT</a>), and ktx-parse and zstddec by Don McCurdy (<a href="./vendor/three/addons/libs/LICENSE-ktx-parse.txt" '+
+      'target="_blank" rel="noopener noreferrer">MIT</a>; <a href="./vendor/three/addons/libs/LICENSE-zstddec.txt" target="_blank" rel="noopener noreferrer">MIT, with '+
+      'Zstandard’s BSD licence</a>). The standalone skirmish keeps a separate in-memory session and does not change your campaign save.</p>'+
+      (desktopApp?'<p>The desktop app runs on Electron and Chromium. Their licences are in the game’s install folder, in LICENSE.electron.txt and LICENSES.chromium.html.</p>':'')+
       '<p>Interface typography uses system fonts with local fallbacks. No external font service or icon package is required. Images, game code, and offline '+
       'content are served with the game; there are no compulsory accounts.</p>')}${section('Music, ambience & voices','<p>Fourteen original recordings '+
       'provide optional music, environmental ambience, combat foley and four fictional voiced moments. They were generated for Imperium using Lyria and '+
       'ElevenLabs through Runway and bundled locally. No real person’s voice was requested or imitated. Exact spoken text remains available on screen.</p>'+
-      '<p>Characters use original code-authored sculpted meshes and joint animation clips, with a locally bundled generated material atlas. These are not '+
-      'motion-captured performances. Source documentation records the generation prompts and file hashes; no exclusive copyright ownership is '+
-      'asserted for generated media.</p>')}${section('History & fiction','<p>The military and political journey condenses a turbulent third-century setting '+
+      '<p>Source documentation records the generation prompts and file hashes; no exclusive copyright ownership is asserted for generated media.</p>')}${section('History & fiction','<p>The military and political journey condenses a turbulent third-century setting '+
       'into twelve chapters. Names, dialogue, and the protagonist’s career are fictionalised. Historical notes identify the public events and the campaign’s '+
       'deliberate divergence.</p>')}${actions('<button data-cmd="history">Read historical notes</button>'+
       '<button data-cmd="privacy">Privacy & local data</button><button data-cmd="close-modal">Close credits</button>')}`);
   }
 
   function showPrivacy(){
-    const {showModal}=context();
+    const {showModal,desktopApp}=context();
+    if(desktopApp){
+      showModal('Your game stays with you',`<div class="panel-lead"><p class="eyebrow">NO ACCOUNT. YOUR LOCAL CHRONICLE.</p>`+
+        `<p>Imperium has no account, advertising, analytics, or game server. The game makes no network requests of its own.</p></div>`+
+        `${section('What this computer keeps','<p>Saves, settings and recovery checkpoints stay on this computer, in the game’s own folder. '+
+        'The chronicle is also kept as a save file there.</p>')}${section('What you choose to carry or share','<p>A save code contains your chosen name and game decisions. A reign '+
+        'card contains your name and broad choices. The game does not upload these. Copying uses your clipboard, and downloading saves a file where you choose.</p>')}`+
+        `${section('Keeping or clearing your progress','<p>Starting a new chronicle replaces the current campaign and keeps the displaced record in local recovery storage. '+
+        'Uninstalling the game can remove its saves, so keep a portable save code if your progress matters to you.</p>')}${actions('<button data-cmd="settings">Settings & saved data</button>'+
+        '<button data-cmd="close-modal">Close privacy notes</button>')}`);
+      return;
+    }
     showModal('Your game stays with you',`<div class="panel-lead"><p class="eyebrow">NO ACCOUNT. YOUR LOCAL CHRONICLE.</p>`+
       `<p>Imperium has no account, advertising, analytics, or game server. The hosting provider may keep ordinary access logs when serving the `+
       `website and its files.</p></div>${section('What this browser keeps','<p>Saves, settings, recovery checkpoints, and downloaded offline content stay in '+

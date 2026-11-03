@@ -1,3 +1,4 @@
+import {networkConnection} from './platform.js';
 /** Browser decoding is bounded separately from the HTTP/service-worker cache. */
 export function decodeImage(src) {
   return new Promise(resolve => {
@@ -23,7 +24,7 @@ export function decodeImage(src) {
   });
 }
 
-export function constrainedConnection(connection = globalThis.navigator?.connection) {
+export function constrainedConnection(connection = networkConnection()) {
   return Boolean(connection?.saveData || ['slow-2g','2g'].includes(connection?.effectiveType) ||
     (typeof connection?.downlink === 'number' && connection.downlink < 1));
 }

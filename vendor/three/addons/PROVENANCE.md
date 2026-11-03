@@ -26,6 +26,15 @@ Only changes: bare `three` imports become local `../../three.module.js` imports.
 
 `libs/basis/LICENSE` is the Apache License 2.0 text, copied from the Basis Universal source (v1.16.4).
 
+## Licence texts
+
+The decoders' licences, shipped with the game beside the files they cover:
+
+- `libs/LICENSE-ktx-parse.txt`: ktx-parse, MIT, Copyright (c) 2020 Don McCurdy, from the `ktx-parse@2.0.0` npm package.
+- `libs/LICENSE-zstddec.txt`: zstddec, MIT, Copyright (c) 2020 Don McCurdy, with the Zstandard BSD licence (Copyright (c) 2016-present, Yann Collet, Facebook, Inc.) for the decoder compiled into it, from the `zstddec@0.3.4` npm package.
+- `libs/LICENSE-meshoptimizer.txt`: meshoptimizer, MIT, with the copyright line from the decoder's own header.
+- `libs/basis/LICENSE` and `libs/basis/ATTRIBUTION.txt`: Basis Universal, Apache License 2.0, Binomial LLC.
+
 ## Generated from the vendored files
 
 `libs/basis/basis_worker.js` is the transcoder worker that `KTX2Loader` assembles at run time from `KTX2Loader.BasisWorker` and `basis_transcoder.js` and starts from a `blob:` URL. The page's Content Security Policy (`worker-src 'self'`) refuses `blob:` workers, so [`scripts/assets/ktx2-worker.mjs`](../../../scripts/assets/ktx2-worker.mjs) writes the same script as a file, and the game's loader ([`model-loader.js`](../../../src/showcase/model-loader.js)) starts it from the page's own origin. The test above fails while the file differs from what the script produces.

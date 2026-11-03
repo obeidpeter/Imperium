@@ -45,6 +45,7 @@ import {clearBattleCache} from './battle-art.js';
 import {loadTacticalArt} from './unit-sprites.js';
 import {loadLocal,saveLocal,saveCode,restoreCode,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,subscribeSaveChanges,listUnreadableSaves,
   readUnreadableSave} from './storage.js';
+import {desktopBridge,inDesktopApp,platformKind,usesOfflineCache} from './platform.js';
 import {sound,stopAudio,audioLevel} from './audio.js';
 import {heroPortrait,chapterScene,loadArt,prefetchChapter,viewDecodes} from './art.js';
 import {snapshotEncounter,playEncounterMotion} from './motion.js';
@@ -143,10 +144,12 @@ const graphics=createGraphicsQuality({mode:settings.quality,chosen:settings.qual
   }});
 const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,
   saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}));
+// The desktop app (platform.js; desktop/preload.cjs), or null on the web. Its window's fullscreen shows in Settings.
+const desktop=inDesktopApp()?desktopBridge():null,desktopApp=desktop?{fullscreen:false}:null;
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
   showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,
     screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap,
-    worldCamp:screen!=='title'&&!!state&&campMode()}));
+    worldCamp:screen!=='title'&&!!state&&campMode(),desktopApp}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text,{problem=false}={}){
   // The inventory says what happened in its own status line (a live region) under the pack's heading (release 13).
@@ -1249,7 +1252,7 @@ async function showShare(selectedTheme='imperial'){
   shareFile=null;
   showSharePreview(selectedTheme);
   const canvas=document.querySelector('#reign-card');
-  const summary={name:state.name,route:state.route,theme:selectedTheme,laurels:reignLaurels(state),url:CONFIG.siteUrl||new URL('./',location.href).href,
+  const summary={name:state.name,route:state.route,theme:selectedTheme,laurels:reignLaurels(state),url:CONFIG.siteUrl||(platformKind()==='desktop'?'':new URL('./',location.href).href),
     choices:[state.decisions.ch9==='mercy'?'Mercy after victory':'Order after victory',
       state.decisions.ch4==='withdraw'?'A commander who preserved the ranks':'A commander who held the line',
       state.decisions.ch11==='independent'?'A voice earned by service':'Power built on alliances'],
@@ -1401,6 +1404,7 @@ case 'journal':showJournal();break;
 case 'character':showCharacter();break;
 case 'privacy':showPrivacy();break;
 case 'credits':showCredits();break;
+case 'quit':desktop?.quit?.();break;
 case 'menu':showNavigation();break;
 case 'menu-section':showNavigation(id);break;
 case 'next-story':await change(()=>Game.setStoryProgress(state,Math.min(Game.storyProgress(state)+1,Game.storyLines(state).length-1)),{tone:null,silent:true});
@@ -1663,6 +1667,7 @@ document.addEventListener('change',async event=>{
     battleStage.audio(settings.audio,settings.audioVolume);battleStage.unlock();const label=document.querySelector('#audio-volume-value');
     if(label)label.textContent=Math.round(settings.audioVolume*100)+'%';sound('click',settings.audio,settings.audioVolume);
   }
+  if(control.id==='desktop-fullscreen'){desktop?.window?.setFullscreen?.(control.checked);}
   if(control.id==='text-size'){settings.textScale=Number(control.value);saveSettings();render();}
   if(control.id==='battle-view'){settings.battleView=control.value;failed3D=false;saveSettings();render();}
   if(control.id==='graphics-quality'){
@@ -1724,6 +1729,19 @@ document.addEventListener('keydown',event=>{
   else if(shortcut==='grid'){event.preventDefault();showGrid=!showGrid;render();}
 });
 window.addEventListener('resize',()=>{stopMotion();requestAnimationFrame(()=>{paint();startAtmosphere();});});
+// Before the desktop app closes (desktop/main.js asks when its window is closing, the Menu's Quit included): a save under
+// way finishes, then what has changed is saved, as when the page is hidden. The app closes on the answer, and asks the
+// player before closing on a chronicle it could not save.
+async function saveBeforeQuit(){
+  for(let waited=0;sessionGate.busy&&waited<8000;waited+=100)await new Promise(resolve=>setTimeout(resolve,100));
+  if(!state||state.archiveReplay||memoryOnly||saveConflict||JSON.stringify(state)===lastPersisted)return true;
+  try{const result=await sessionGate.run(()=>persist());return !!result?.ok;}catch{return false;}
+}
+if(desktop){
+  desktop.onQuitRequest?.(async()=>{let saved=false;try{saved=await saveBeforeQuit();}finally{desktop.quitReady?.(saved);}});
+  const showFullscreen=value=>{desktopApp.fullscreen=!!value;const box=document.getElementById('desktop-fullscreen');if(box)box.checked=!!value;};
+  desktop.window?.onFullscreenChange?.(showFullscreen);Promise.resolve(desktop.window?.isFullscreen?.()).then(showFullscreen,()=>{});
+}
 document.addEventListener('visibilitychange',()=>{
   document.documentElement.dataset.hidden=document.hidden;
   if(document.hidden){
@@ -1737,7 +1755,8 @@ subscribeSaveChanges(()=>{if(state&&!memoryOnly){saveConflict=true;saveProblem='
   'or export this tab’s progress.';lastSaved='';render();announce(saveProblem);}});
 const loaded=await loadLocal();state=loaded.state;lastPersisted=state?JSON.stringify(state):'';render();if(loaded.error)toast(loaded.error+' The unreadable '+
   'data stays on this device; Settings can download it.');try{preservedUnreadable=(await listUnreadableSaves()).length;}catch{preservedUnreadable=0;}
-if('serviceWorker'in navigator){
+// The web build's offline cache. The desktop app has every file installed and Steam updates it (platform.js).
+if(usesOfflineCache()&&'serviceWorker'in navigator){
   navigator.serviceWorker.addEventListener('message',event=>{
     const data=event.data;
     if(data?.type==='offline-ready'){offline=true;currentChapterOffline=true;fullDownloadRequested=false;offlineProgress='';}

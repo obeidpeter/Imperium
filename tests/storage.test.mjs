@@ -294,4 +294,54 @@ test('SAV-14 an unreadable stored chronicle is preserved before a new save repla
   await storage.saveLocal(newGame('Second save'));assert.equal((await storage.listUnreadableSaves()).filter(item=>item.source==='localStorage').length,1,'Repeated saves do not duplicate a preserved record');
   await assert.rejects(storage.readUnreadableSave(99),/unavailable/);
 }));
-
+
+// The desktop app's save file (platform.js desktopSaveMirror; the Steam plan, docs/steam-plan.md). A fake file stands in
+// for the bridge: the store must treat it as the chronicle without losing what it replaces.
+const fakeFile=(text=null)=>{const file={text,writes:0,fail:false};
+  return Object.assign(file,{mirror:{read:async()=>file.text,write:async next=>{if(file.fail)throw Error('disk full');file.writes++;file.text=next;}}});};
+
+test('DESK-01 every desktop save is written to its file, and an empty profile loads the chronicle from it',async()=>withPlatform(async env=>{
+  const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror});
+  await desk.saveLocal(newGame('Desk'));
+  const written=JSON.parse(file.text);
+  assert.equal(file.writes,1);assert.equal(written.sequence,env.idb.sequence);assert.equal(written.payload,env.idb.payload);assert.equal(written.checksum,env.idb.checksum);
+  // Another PC, or a reinstall: an empty profile with the synced file.
+  env.idb=null;env.local.clear();
+  const fresh=createSaveStore({...env.options,mirror:file.mirror}),loaded=await fresh.loadLocal();
+  assert.equal(loaded.state.name,'Desk');assert.equal(env.idb.sequence,written.sequence,'Adopted as it is, with its own sequence');
+  await fresh.saveLocal(loaded.state);assert.equal(JSON.parse(file.text).sequence,written.sequence+1,'Saving continues from the file');
+}));
+
+test('DESK-02 a save file that differs wins at load, and the chronicle it replaces stays a recovery checkpoint',async()=>withPlatform(async env=>{
+  const plain=createSaveStore(env.options);
+  await plain.saveLocal(newGame('Cloud'));const cloud=JSON.stringify(env.idb);
+  await plain.saveLocal(newGame('Local'),{replace:true});
+  const file=fakeFile(cloud),desk=createSaveStore({...env.options,mirror:file.mirror}),loaded=await desk.loadLocal();
+  assert.equal(loaded.state.name,'Cloud','Steam Cloud’s copy is the chronicle');
+  assert.equal(JSON.parse(env.local.get(CONFIG.saveKey)).payload,JSON.parse(cloud).payload);
+  assert.ok((await desk.listRecoverySaves()).some(e=>e.name==='Local'),'The replaced chronicle can be restored');
+  assert.equal(file.writes,0,'Adopting the file does not rewrite it');
+}));
+
+test('DESK-03 a chronicle only the profile holds is written to the missing file at load',async()=>withPlatform(async env=>{
+  await createSaveStore(env.options).saveLocal(newGame('Profile only'));
+  const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror});
+  assert.equal((await desk.loadLocal()).state.name,'Profile only');
+  assert.equal(JSON.parse(file.text).payload,env.idb.payload);assert.equal(JSON.parse(file.text).sequence,env.idb.sequence);
+}));
+
+test('DESK-04 an unreadable save file is set aside and the profile’s chronicle loads',async()=>withPlatform(async env=>{
+  await createSaveStore(env.options).saveLocal(newGame('Kept'));
+  const file=fakeFile('{"format":9,"payload":"not a campaign"}'),desk=createSaveStore({...env.options,mirror:file.mirror});
+  assert.equal((await desk.loadLocal()).state.name,'Kept');
+  const preserved=await desk.listUnreadableSaves(),item=preserved.find(entry=>entry.source==='file');
+  assert.ok(item,'The unreadable file is kept for export');assert.equal(await desk.readUnreadableSave(item.index),'{"format":9,"payload":"not a campaign"}');
+}));
+
+test('DESK-05 a save file that cannot be written is reported, while the store keeps the save',async()=>withPlatform(async env=>{
+  const file=fakeFile();file.fail=true;
+  const desk=createSaveStore({...env.options,mirror:file.mirror});
+  await assert.rejects(desk.saveLocal(newGame('Written')),error=>error.code==='SAVE_FILE_UNAVAILABLE'&&/save file could not be written/.test(error.message));
+  assert.equal((await createSaveStore(env.options).loadLocal()).state.name,'Written','The profile kept the save');
+  file.fail=false;await desk.saveLocal(newGame('Written'));assert.equal(JSON.parse(file.text).payload,env.idb.payload,'The next save writes the file');
+}));

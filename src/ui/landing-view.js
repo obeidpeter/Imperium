@@ -2,6 +2,7 @@ import {CHAPTERS} from '../data/campaign.js';
 import {esc,roman} from './view-helpers.js';
 import {heroPortrait} from './art.js';
 import {THEATRES,careerLegs,paintedJourneyMap} from './campaign-map.js';
+import {platformKind} from './platform.js';
 
 // The landing page's sections that read the campaign data. Presentation only:
 // nothing here changes a chronicle, and every figure comes from the data.
@@ -9,10 +10,10 @@ const ENCOUNTERS=CHAPTERS.flatMap(c=>c.encounters);
 export const LANDING_FACTS=Object.freeze({chapters:CHAPTERS.length,encounters:ENCOUNTERS.length,
   battles:ENCOUNTERS.filter(e=>e.kind==='battle').length,contests:ENCOUNTERS.filter(e=>e.kind==='contest').length});
 
-export function heroFacts(){
-  const f=LANDING_FACTS;
+export function heroFacts({platform=platformKind()}={}){
+  const f=LANDING_FACTS,desktop=platform==='desktop';
   return `<ul class="hero-facts" aria-label="At a glance">${[[`${f.chapters} chapters`,'AD 250–276'],[`${f.encounters} encounters`,'Battles and political Contests'],
-    ['Free to play','No account or installation'],['Plays offline','Once its chapters download']]
+    ...(desktop?[['No account','Your chronicle stays on this computer'],['Plays offline','Every chapter is installed']]:[['Free to play','No account or installation'],['Plays offline','Once its chapters download']])]
     .map(([fact,detail])=>`<li><strong>${fact}</strong><span>${detail}</span></li>`).join('')}</ul>`;
 }
 
