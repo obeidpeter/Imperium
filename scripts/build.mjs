@@ -7,18 +7,31 @@ import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
 import {moduleClosure,staticImportClosure,studyAssets,initialAssets} from './module-closure.mjs';
 
-const root=resolve('.'),dist=resolve(root,'dist');
+// The target (the Steam plan, docs/steam-plan.md): `web` (the default) is the static site with its service worker and
+// install manifest; `desktop` is the same game for the Electron app in desktop/, which serves it from its own files:
+// no service worker, offline packs or install manifest, and the platform recorded in the configuration.
+const targetArg=process.argv.find(a=>a.startsWith('--target='))?.slice(9)??(process.argv.includes('--target')?process.argv[process.argv.indexOf('--target')+1]:'web');
+if(!['web','desktop'].includes(targetArg))throw new Error(`Unknown build target ${targetArg}: use web or desktop.`);
+const target=targetArg,desktop=target==='desktop',outName=desktop?'dist-desktop':'dist';
+const root=resolve('.'),dist=resolve(root,outName);
 const packageInfo=JSON.parse(await readFile(join(root,'package.json'),'utf8'));
 // Delete only the reproducible output after checking its absolute boundary.
-if(dirname(dist)!==root||basename(dist)!=='dist'||packageInfo.name!=='imperium')throw new Error('Run the build from the Imperium project root.');
+if(dirname(dist)!==root||basename(dist)!==outName||packageInfo.name!=='imperium')throw new Error('Run the build from the Imperium project root.');
 await rm(dist,{recursive:true,force:true});await mkdir(dist,{recursive:true});
-for(const file of ['index.html','icon.svg','manifest.webmanifest','src','icons','assets','showcase','vendor'])await cp(join(root,file),join(dist,file),{recursive:true,filter:path=>!path.endsWith('debug.js')});
+for(const file of ['index.html','icon.svg',...(desktop?[]:['manifest.webmanifest']),'src','icons','assets','showcase','vendor'])await cp(join(root,file),join(dist,file),{recursive:true,filter:path=>!path.endsWith('debug.js')});
 const raw=process.env.SITE_URL||'';let siteUrl='';
 if(raw){const u=new URL(raw);if(!['https:','http:'].includes(u.protocol))throw new Error('SITE_URL must be an HTTP(S) address.');if(u.username||u.password||u.search||u.hash)throw new Error('SITE_URL must contain no credentials, query or fragment.');siteUrl=u.href.endsWith('/')?u.href:u.href+'/';}
-await writeFile(join(dist,'src/config.js'),'export const CONFIG=Object.freeze('+JSON.stringify({siteUrl,version:packageInfo.version,saveKey:CONFIG.saveKey,development:false})+');\n');
-const manifest=JSON.parse(await readFile(join(dist,'manifest.webmanifest'),'utf8'));
-if(siteUrl){manifest.id=siteUrl;manifest.start_url=siteUrl;manifest.scope=siteUrl;}
-await writeFile(join(dist,'manifest.webmanifest'),JSON.stringify(manifest,null,2));
+await writeFile(join(dist,'src/config.js'),'export const CONFIG=Object.freeze('+JSON.stringify({siteUrl:desktop?'':siteUrl,version:packageInfo.version,saveKey:CONFIG.saveKey,development:false,platform:target})+');\n');
+if(desktop){
+  // The app is its own window: no install manifest to link.
+  const page=await readFile(join(dist,'index.html'),'utf8'),linked=/\n?[ \t]*<link rel="manifest"[^>]*>/;
+  if(!linked.test(page))throw new Error('index.html no longer links the install manifest the desktop build removes.');
+  await writeFile(join(dist,'index.html'),page.replace(linked,''));
+}else{
+  const manifest=JSON.parse(await readFile(join(dist,'manifest.webmanifest'),'utf8'));
+  if(siteUrl){manifest.id=siteUrl;manifest.start_url=siteUrl;manifest.scope=siteUrl;}
+  await writeFile(join(dist,'manifest.webmanifest'),JSON.stringify(manifest,null,2));
+}
 async function files(dir){const result=[];for(const entry of await readdir(dir,{withFileTypes:true})){const path=join(dir,entry.name);if(entry.isDirectory())result.push(...await files(path));else if(!['sw.js','build-report.json'].includes(entry.name))result.push(path);}return result.sort();}
 const list=await files(dist),hash=createHash('sha256'),records=[];
 const workerTemplate=(await readFile(join(root,'scripts/service-worker.template.js'),'utf8')).replaceAll('\r\n','\n');
@@ -54,10 +67,12 @@ for(const groups of [chapterGroups,chapterFlatGroups])for(const [chapter,paths]o
 for(const url of await moduleClosure(dist,'src/ui/app.js'))if(!initial.includes(url))for(const [chapter,paths]of Object.entries(chapterGroups))
   if(!paths.includes(url))throw new Error(`Chapter ${chapter}'s offline pack lacks ${url}, which the page can load`);
 const sw=workerTemplate.replaceAll('__REVISION__',revision).replace('__ALL_FILES__',JSON.stringify(assets)).replace('__INITIAL_FILES__',JSON.stringify(initial)).replace('__CHAPTER_FILES__',JSON.stringify(chapterGroups)).replace('__CHAPTER_FLAT_FILES__',JSON.stringify(chapterFlatGroups));
-await writeFile(join(dist,'sw.js'),sw);
+// The offline packs are still worked out on the desktop (they check every chapter's assets are present), but only the
+// web build has a worker to carry them.
+if(!desktop)await writeFile(join(dist,'sw.js'),sw);
 const sum=(items,key)=>items.reduce((total,item)=>total+item[key],0);
 const bytes=sum(records,'bytes'),gzipBytes=sum(records,'gzipBytes');
-const workerBytes=Buffer.byteLength(sw),workerGzipBytes=gzipSync(sw).length;
+const workerBytes=desktop?0:Buffer.byteLength(sw),workerGzipBytes=desktop?0:gzipSync(sw).length;
 const initialRecords=records.filter(r=>initial.includes(r.url));
 const initialBytes=sum(initialRecords,'bytes')+workerBytes,initialGzipBytes=sum(initialRecords,'gzipBytes')+workerGzipBytes;
 const chapterOneFiles=[...new Set([...initial,...chapterGroups[1]])];
@@ -73,7 +88,8 @@ const download=paths=>[...new Set(paths)].reduce((total,url)=>total+gzipOf[url],
 const chapterDownloadGzipBytes=Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,{view3D:download([...initial,...paths]),view2D:download([...initial,...paths,...chapterFlatGroups[chapter]])}]));
 const largestChapterGzipBytes=Math.max(...Object.values(chapterDownloadGzipBytes).map(sizes=>sizes.view2D));
 // Keep the initial shell small; authored animation and environments arrive by chapter.
-if(initialGzipBytes>budget.initialGzipBytes||chapterOneGzipBytes>budget.chapterOneGzipBytes||largestChapterGzipBytes>budget.chapterGroupGzipBytes||completeGzipBytes>budget.completeGzipBytes)throw new Error('Compressed initial '+initialGzipBytes+' / chapter 1 '+chapterOneGzipBytes+' / largest chapter '+largestChapterGzipBytes+' / complete '+completeGzipBytes+' exceed the declared presentation budgets.');
-const report={version:packageInfo.version,revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,chapterOneFlatGzipBytes,completeBytes,completeGzipBytes,chapterDownloadGzipBytes,largestChapterGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,chapterGroupBudget:budget.chapterGroupGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/chapter download/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),showcaseAssets,showcaseGzipBytes:sum(records.filter(r=>showcaseSet.has(r.url)),'gzipBytes'),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
+// The download limits are the web's: the desktop app installs every file at once.
+if(!desktop&&(initialGzipBytes>budget.initialGzipBytes||chapterOneGzipBytes>budget.chapterOneGzipBytes||largestChapterGzipBytes>budget.chapterGroupGzipBytes||completeGzipBytes>budget.completeGzipBytes))throw new Error('Compressed initial '+initialGzipBytes+' / chapter 1 '+chapterOneGzipBytes+' / largest chapter '+largestChapterGzipBytes+' / complete '+completeGzipBytes+' exceed the declared presentation budgets.');
+const report={version:packageInfo.version,target,revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,chapterOneFlatGzipBytes,completeBytes,completeGzipBytes,chapterDownloadGzipBytes,largestChapterGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,chapterGroupBudget:budget.chapterGroupGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/chapter download/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),showcaseAssets,showcaseGzipBytes:sum(records.filter(r=>showcaseSet.has(r.url)),'gzipBytes'),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
 await writeFile(join(dist,'build-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 
