@@ -249,3 +249,13 @@ rate or a first-time human playthrough of all twelve chapters.
   tests** passed after regenerating help. `git diff --check` passes. These are
   local validation results; no GitHub upload or CI run was performed in this
   implementation task.
+
+### PR #65 verification follow-up
+
+The first GitHub run exposed an outdated accessible-name selector in the
+paused-orders smoke: command buttons now announce the specific action, while
+the harness still searched for a button named `Use`. The row and command are
+unchanged; the check now selects the action's accessible name. The same harness
+also checks that retry advice is visible initially and can be folded and
+reopened, instead of reading its text after inadvertently closing it. No game
+behavior, timeouts or acceptance limits changed in this follow-up.

@@ -68,7 +68,7 @@ try{
     await row.locator('[data-review-action="replace"]').click();await page.locator('[data-role="commandList"]').waitFor({state:'visible'});
     assert.equal(await page.locator('input[name="rt-list-actor"]:checked').inputValue(),squad,'Replace selects the correct squad');
     const advance=page.locator('[data-role="listOptions"] li').filter({hasText:'Advance to the objective marker'}).first();
-    await advance.getByRole('button',{name:'Use',exact:true}).click();await page.locator('[data-role="closeListButton"]').click();
+    await advance.getByRole('button',{name:'Advance to the objective marker',exact:true}).click();await page.locator('[data-role="closeListButton"]').click();
     await page.locator('[data-role="orderReviewButton"]').click();assert.match(await row.textContent(),/Advance.*Position/s);
     await row.locator('[data-review-action="hold"]').click();assert.match(await row.textContent(),/Queued.*Hold/s);
     const focus=await page.evaluate(()=>{
@@ -117,7 +117,11 @@ try{
     const page=await restore(codes[status],{width:1280,height:900});await page.locator('.rt-result').waitFor({state:'visible'});
     assert.deepEqual(await page.locator('.rt-debrief li p').allTextContents(),expected.moments.map(m=>m.text),'The result quotes actual retained events');
     assert.ok(expected.moments.length>0&&expected.moments.length<=3);if(status==='lost'){
-      await page.locator('.rt-retry-help summary').click();assert.equal(await page.locator('.rt-defeat-help').textContent(),expected.advice);
+      const advice=page.locator('.rt-defeat-help'),adviceToggle=page.locator('.rt-retry-help summary');
+      assert.equal(await advice.isVisible(),true,'Specific retry advice starts visible');
+      assert.equal(await advice.textContent(),expected.advice);
+      await adviceToggle.click();assert.equal(await advice.isHidden(),true,'Retry advice can be folded');
+      await adviceToggle.click();assert.equal(await advice.isVisible(),true,'Retry advice can be reopened');
       const retryState=()=>page.evaluate(()=>{const world=window.__realtime.world();return {
         encounterId:world?.encounterId,status:world?.status,tick:world?.tick,paused:window.__realtime.paused(),
         result:!!document.querySelector('.rt-result'),ready:!!document.querySelector('.rt-scene[data-ready="true"]'),
