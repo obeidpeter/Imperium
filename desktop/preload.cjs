@@ -17,5 +17,11 @@ contextBridge.exposeInMainWorld('imperiumDesktop',Object.freeze({
     isFullscreen:()=>ipcRenderer.invoke('window:is-fullscreen'),
     setFullscreen:value=>ipcRenderer.invoke('window:set-fullscreen',!!value),
     onFullscreenChange:handler=>{ipcRenderer.on('window:fullscreen',(_event,value)=>handler(!!value));}
+  }),
+  // Steam (desktop/steam.cjs): status() says whether it is running for the app; unlock(ids) unlocks the achievements
+  // the chronicle has earned (src/core/achievements.js) that Steam does not have yet.
+  steam:Object.freeze({
+    status:()=>ipcRenderer.invoke('steam:status'),
+    unlock:ids=>ipcRenderer.invoke('steam:unlock',Array.isArray(ids)?ids.map(String):[])
   })
 }));

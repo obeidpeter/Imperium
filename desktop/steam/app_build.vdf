@@ -1,0 +1,15 @@
+"AppBuild"
+{
+	// Imperium's SteamPipe upload (docs/desktop.md). Replace APP_ID and DEPOT_ID with the numbers from Steamworks.
+	// Paths are relative to this file. Upload the packaged Windows app (npm run package:win in desktop/).
+	"AppID" "APP_ID"
+	"Desc" "Imperium"
+	"ContentRoot" "../out/win-unpacked/"
+	"BuildOutput" "./output/"
+	// Empty: set the build live on a branch in Steamworks, such as a private beta branch first.
+	"SetLive" ""
+	"Depots"
+	{
+		"DEPOT_ID" "depot_build_windows.vdf"
+	}
+}

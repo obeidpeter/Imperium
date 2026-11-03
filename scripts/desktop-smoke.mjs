@@ -61,13 +61,16 @@ try{
   {
     const {app,page}=await launch('first launch');
     const facts=await page.evaluate(async()=>({origin:location.origin,bridge:typeof window.imperiumDesktop?.saves?.write,
+      steam:await window.imperiumDesktop?.steam?.status?.(),unlocked:await window.imperiumDesktop?.steam?.unlock?.(['ACH_CHAPTER_01']),
       workers:await Promise.resolve(navigator.serviceWorker?.getRegistrations?.()).then(list=>list?.length??0,()=>'unavailable'),footer:document.querySelector('.footer-version')?.textContent??'',
       manifest:!!document.querySelector('link[rel="manifest"]')}));
     assert.equal(facts.origin,'app://imperium');assert.equal(facts.bridge,'function');
     // The app's origin has no service workers at all (Chromium refuses them on it), which is stronger than none registered.
     assert.ok([0,'unavailable'].includes(facts.workers),'No service worker');
     assert.doesNotMatch(facts.footer,/browser/i);assert.equal(facts.manifest,false,'No install manifest');
-    report.checks.push(`the app opens on app://imperium with its bridge, no service worker (${facts.workers===0?'none registered':'none possible on its origin'}) and no install manifest`);
+    // Steam (desktop/steam.cjs) only with a Steam App ID: without one, the bridge says so and unlocks nothing.
+    assert.equal(facts.steam?.available,false);assert.match(facts.steam?.reason??'',/No Steam App ID/);assert.deepEqual(facts.unlocked,{available:false,unlocked:[]});
+    report.checks.push(`the app opens on app://imperium with its bridge, no service worker (${facts.workers===0?'none registered':'none possible on its origin'}) and no install manifest; without a Steam App ID, Steam is off and unlocks nothing`);
 
     // Settings: a Window group with Fullscreen, and no offline section on the saves page.
     await page.locator('[data-cmd="settings"]').first().click();await page.locator('#modal[open]').waitFor();

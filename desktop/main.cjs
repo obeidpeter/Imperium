@@ -16,6 +16,9 @@ app.commandLine.appendSwitch('force_high_performance_gpu');
 app.commandLine.appendSwitch('autoplay-policy','no-user-gesture-required');
 // One copy at a time: a second launch brings the first window forward, so no two pages ever write one chronicle.
 if(!app.requestSingleInstanceLock())app.exit(0);
+// Steam (steam.cjs), before the app is ready, as its overlay sets Chromium switches: only with a Steam App ID.
+const steam=require('./steam.cjs');
+steam.start();
 
 // The built game: beside the app in a package (electron-builder's extraResources), or the repository's build.
 const gameRoot=()=>process.env.IMPERIUM_GAME_DIR?path.resolve(process.env.IMPERIUM_GAME_DIR):app.isPackaged?path.join(process.resourcesPath,'game'):path.resolve(__dirname,'..','dist-desktop');
@@ -118,6 +121,8 @@ ipcMain.handle('saves:write',(event,name,text)=>{if(!fromGame(event))throw new E
 ipcMain.handle('window:is-fullscreen',event=>fromGame(event)&&win.isFullScreen());
 ipcMain.handle('window:set-fullscreen',(event,value)=>{if(fromGame(event))win.setFullScreen(!!value);});
 ipcMain.on('app:quit',event=>{if(fromGame(event))win.close();});
+ipcMain.handle('steam:status',event=>fromGame(event)?steam.status():null);
+ipcMain.handle('steam:unlock',(event,ids)=>{if(!fromGame(event))throw new Error('Refused.');return steam.unlock(ids);});
 
 app.on('second-instance',()=>{if(win){if(win.isMinimized())win.restore();win.focus();}});
 app.whenReady().then(()=>{

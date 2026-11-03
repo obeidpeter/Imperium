@@ -1898,6 +1898,12 @@ The desktop app for Windows is the same game, with these differences:
   Window → Fullscreen**. The game remembers your choice and the window's
   size. **Esc** still opens the Menu.
 
+- **Steam achievements.** On Steam, the app unlocks achievements for each
+  chapter, decoration and errand title, the finale's routes, and finishing
+  on Veteran or under Iron discipline. They come from what your chronicle
+  records, after each save, so a chronicle brought from the browser unlocks
+  what it has already earned. Practice earns none.
+
 - **To bring a chronicle from the browser** or the free demo, export its
   save code there and import it in the app: **Import a chronicle from the
   browser** on the title, or **Menu → Settings → Saves → Import save

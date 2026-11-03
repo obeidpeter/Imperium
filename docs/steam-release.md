@@ -37,6 +37,17 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
 - [ ] **The store link.** Once the store page exists, rebuild with `STORE_URL=https://store.steampowered.com/app/<App ID>/...`, and the demo's last screen links to it. Until then it says the full game is coming to Steam.
 - [ ] **The full web build** (`dist/`) stays for development and your playtests; nothing changes it.
 
+## Steam features (S3, once you have the App ID)
+
+- [ ] **The App ID in the app.** Set `"steamAppId"` in `desktop/package.json` to it (I can do this when you send it). Steam then runs inside the app.
+- [ ] **The achievements.** Enter the 35 from [steam-achievements.md](steam-achievements.md) in Steamworks, each with its API name, name, description and the hidden flag. Their icons follow in S3.
+- [ ] **Cloud saves.** Turn on Steam Auto-Cloud with the path in [desktop.md](desktop.md#steam-s3).
+- [ ] **The first upload.**
+  - Put the App ID and depot ID in `desktop/steam/`.
+  - Upload with `steamcmd` to a private beta branch.
+  - Set the launch option to `Imperium.exe`.
+- [ ] **Steam's API library.** The app ships Valve's Steamworks API library (`steam_api64.dll`), as every Steamworks game does, under the Steamworks SDK terms that come with your partner account.
+
 ## Later (S4, after 0.40.0 and Gate 4)
 
 - [ ] **The store page:**
