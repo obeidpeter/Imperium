@@ -599,7 +599,7 @@ function goToCampTask(){
   if(modal.open)modal.close();
   if(pageOverlay){pageOverlay='';render();}
   const result=runtime.issue(command);
-  if(result.ok){runtime.follow();announce(`${task.label}. Your soldier will approach when the camp resumes.`);}
+  if(result.ok){runtime.follow();announce(task.depart?`Walking to ${task.label.replace(/^The\b/,'the')}. Use it when you are ready.`:`${task.label}. Your soldier will approach when the camp resumes.`);}
 }
 function campTravel(place){
   const runtime=field?.runtime,p=runtime?.world.places?.[place];if(!p){toast('The camp is not open.');return;}

@@ -557,3 +557,42 @@ The owner approved three items after #63:
 ### Not checked
 
 No device, touch screen or screen reader.
+
+## After the Windows playtest follow-up (#65): two choices and four fixes
+
+The owner merged [#65](https://github.com/obeidpeter/Imperium/pull/65), the Windows playtest follow-up (its own record: [windows-playtest-followup.md](windows-playtest-followup.md)). Reading it raised six points. The owner chose how to settle the first two.
+
+### Show me the way stops at the way out
+
+- **Before:** at the last step in camp, **Show me the way** sent the soldier to *use* the way out, so he marched straight into the next battle.
+- **Now (the owner's choice):** it walks him there and stops 1.2 m short of its post, on the camp side, and the player uses it when ready (`campTaskCommand`, `src/ui/camp-runtime.js`).
+- **Checks:**
+  - Node: in every camp where the way out is next after the decision (Chapters I–VII, XI and XII), the walk is a legal move and the soldier stops 0.6–2 m from the post. Nothing is used, blocked or refused, and the chronicle is unchanged.
+  - Browser: `smoke:navigation` now makes the decision at the table, opens the map and uses **Show me the way**. It then waits two seconds of the camp's time after the soldier stops and checks he is still in camp with the way out unused, at 1,280 and 390 pixels.
+  - On main's build that check fails, as it should: the soldier is in the drill field. On this branch it passes, and also passes at 4× CPU throttle.
+
+### The camp's strip names a missing preparation
+
+- **Before:** in Chapters VIII–X, the strip read "Review departure preparations →", and the reason was only in its tooltip, which a phone never shows.
+- **Now (the owner's choice):** the strip says the reason itself, for example "Choose an operational stratagem before battle →". Its tooltip holds the whole reason, and the button still opens the camp list.
+- **Checks:** a Node markup test for Chapters VIII, IX and X.
+
+### Four small fixes
+
+- **A message on the bar was listed again under Earlier** when news held back behind it came after it. `earlierMessages` now leaves out the newest kept message with the line's words, wherever it is in the list. Node test: a casualty on the line and two blows held back behind it.
+- **The Use buttons in All actions** were named by the action alone, without the word "Use" shown on them. They are now "Use: …" with the action (WCAG 2.5.3, label in name), and `smoke:orders` finds them by that name.
+- **The bar's guidance line** was a paragraph with an `aria-label`, which ARIA prohibits on paragraphs. The label is gone; the line stays focusable for scrolling.
+- **Housekeeping:**
+  - `smoke:navigation` now applies `SMOKE_CPU_THROTTLE` and loads a CommonJS Playwright as the other checks do;
+  - CLAUDE.md lists the check;
+  - the changelog records #65 and this follow-up.
+
+### Checks run
+
+- `npm test`: all 1,636 passed.
+- Browser checks, on this branch's production build, one at a time (local headless Chromium, software rendering):
+  - `smoke:navigation`: passed, and at 4× throttle;
+  - `smoke:orders`: passed;
+  - the camp way-out scenario of `smoke`: passed;
+  - `smoke:polish`: all 39 checks passed.
+- **Not checked:** no device, touch screen or screen reader.

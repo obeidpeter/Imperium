@@ -92,6 +92,15 @@ test('camp keeps one objective in its strip and the briefing over the world, and
   }
 });
 
+test('a missing preparation is named on the camp strip itself, not only in its tooltip (the owner\'s choice after PR 65)',()=>{
+  for(const chapter of [8,9,10]){
+    const state=camp(chapter);assert.equal(Game.choose(state,Game.getChapter(state).decision.options[0].id).ok,true);
+    const problem=Game.departureCheck(state);assert.ok(problem,`Chapter ${chapter} still needs a preparation`);
+    const page=documentFor(createCampaignViews(()=>({state,screen:'game',settings:{}})).realtimeCamp()),next=page.querySelector('.world-camp-bar .world-camp-problem');
+    assert.equal(next.textContent,`${problem.replace(/\.$/,'')} →`,'the strip says what is missing');assert.equal(next.getAttribute('data-cmd'),'camp-next','and opens the camp list for it');
+    assert.equal(next.getAttribute('title'),`${problem} · Review departure preparations`,'its tooltip holds the whole of it');
+  }
+});
 test('the compact camp shell retains save recovery and conflict takeover outside optional content',()=>{
   const state=camp(5),html=createCampaignViews(()=>({state,screen:'game',settings:{},saveProblem:'Storage is full.',saveConflict:true})).realtimeCamp(),doc=documentFor(html);
   const warning=doc.querySelector('[role="alert"]');assert.match(warning.textContent,/Storage is full/);

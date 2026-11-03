@@ -13,13 +13,20 @@ export function campNextTask(state,world=null){
   if(!state.decisions?.[chapter.decision.id])task={label:'Visit the commander’s table',detail:'Make the chapter decision',place:'principia',tree:'table',objectId:'table'};
   else if(state.chapter===1&&state.encounterIndex>=1&&!state.oath)task={label:'Speak to Signifer Quintus',detail:'Swear the military oath',place:'principia',tree:'ch1:signifer',actorId:'signifer'};
   else if(departureCheck(state))task={label:'Review departure preparations',detail:departureCheck(state),place:'principia',panel:'services'};
-  else {const exit=world?.objects?.find(o=>o.kind==='exit'),way=campExitFor(state);task={label:exit?.name??way?.name??chapter.encounters[state.encounterIndex]?.title??'Review your progress',detail:'Ready to depart',place:way?.place??'principia',objectId:exit?.id??'exit'};}
+  else {const exit=world?.objects?.find(o=>o.kind==='exit'),way=campExitFor(state);task={label:exit?.name??way?.name??chapter.encounters[state.encounterIndex]?.title??'Review your progress',detail:'Ready to depart',place:way?.place??'principia',objectId:exit?.id??'exit',depart:true};}
   const target=task.actorId?world?.actors?.find(a=>a.id===task.actorId):task.objectId?world?.objects?.find(o=>o.id===task.objectId):world?.places?.[task.place];
   return {...task,location:campPlaceName(state.chapter,task.place),...(target?{x:target.x,z:target.z}:{})};
 }
 
 export function campTaskCommand(task,world){
   if(!task||world?.kind!=='camp'||task.panel)return null;
+  // The way out is walked to, never used for the player (the owner's choice after #65): the soldier stops 1.2 m
+  // short of its post, on the line from its place's centre, and the player uses it when ready.
+  if(task.depart){
+    const exit=world.objects.find(o=>o.id===task.objectId);if(!exit)return null;
+    const centre=world.places?.[task.place],dx=exit.x-(centre?.x??exit.x),dz=exit.z-(centre?.z??exit.z),d=Math.hypot(dx,dz),back=d>1.2?1.2/d:0;
+    return {actorId:world.heroId,kind:'move',payload:{x:exit.x-dx*back,z:exit.z-dz*back}};
+  }
   if(task.actorId&&world.actors.some(a=>a.id===task.actorId))return {actorId:world.heroId,kind:'talk',payload:{targetId:task.actorId}};
   if(task.objectId&&world.objects.some(o=>o.id===task.objectId))return {actorId:world.heroId,kind:'interact',payload:{objectId:task.objectId}};
   return null;

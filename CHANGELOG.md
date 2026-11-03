@@ -2,6 +2,37 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The Windows playtest follow-up ([#65](https://github.com/obeidpeter/Imperium/pull/65), [notes](docs/windows-playtest-followup.md))
+
+The owner's changes after the 3 November playtest in Chrome on Windows:
+
+- **Battlefield messages have a rank.** Your own actions and refusals always show on the bar. Game news replaces what is there only if it ranks as high, or once its time is up: a casualty or a broken squad ranks above routine blows, and victory or defeat above everything. What is held back is kept under **Earlier** and in the battle log.
+- **The battlefield notice floats over the world.** A lower-ranked notice never replaces a higher one, and its time stops while you are paused or reading it.
+- **New campaign battles open paused**, so you can review the objective and give orders before **Resume**. Drills, rescues (which already did), extractions and deployments keep their own openings.
+- **Camps name the next required step:** the commander's table, then the oath in Chapter I, then a missing preparation, then the way out. The strip, the **Objective** marker and the map (**M**) show it. The map numbers the places, each with **Walk there** (any time) and **Fast travel** (after a visit), and offers **Show me the way**.
+- **Follow, Overview and Cutaway** are buttons over the world. Cutaway starts on and now also works in Overview, keeping your soldier, the figure you inspect and the objective in view clear of walls and roofs.
+- **Softer ground.** Ground types blend at cell edges, and the aprons beyond the board fade into the ground. Field councils get furnishings, side galleries and worn stone floors.
+- **The bar.**
+  - Squad cards show strength and the current or queued order.
+  - **All actions** lists the objective first and has a search box; in the Curia, talking comes first.
+  - Council speeches say what they do to the count, and delegates read "Bloc · Supports / Undecided / Against".
+  - Hold objectives count the seconds still needed, and the advice for retrying starts open.
+  - A blow's wind-up reads in the whole figure.
+- **The inventory's soldier no longer goes blank** on the first comparison. On wide screens the comparison sits beside the pack.
+- **New Game folds its optional choices away.**
+- **Performance.** Dynamic resolution steps back up once frames have room. The Settings performance check no longer changes the saved quality.
+- **For contributors:** `npm run smoke:navigation`, run in CI's usability job, and new layout checks in `smoke:polish`.
+
+After it, the owner chose two changes, and four small fixes followed:
+
+- **Show me the way stops at the way out.** At the last step it walks your soldier to the way out and stops beside its post, and you use it when you are ready. Before, it marched straight into the next battle.
+- **The camp's strip says which preparation is missing**, for example "Choose an operational stratagem before battle →", instead of "Review departure preparations →" with the reason only in its tooltip. It still opens the camp list.
+- **Fix: a message on the bar is not listed again under Earlier** when news held back behind it came after it.
+- **Accessibility:**
+  - **All actions**' **Use** buttons are named "Use: …" with the action, so the word on them is in their name, for voice control.
+  - The bar's guidance line no longer carries a label that a screen reader could read instead of its text.
+- **For contributors:** `SMOKE_CPU_THROTTLE` now slows `smoke:navigation` too, and that check now walks to the way out and checks it is not used.
+
 ### Polish after Gate 4
 
 - **The way out of camp is marked once you can march.** When nothing keeps you in camp (the chapter's decision made and every needed preparation in hand), its way out is marked like a battle's objective: a ring at the waymarker and its name. You often arrive with it behind you, out of sight; its name then waits at the edge of the view with an arrow pointing to it, in 3D and 2D. A line says so when it becomes ready while you are in camp. **Settings → Display → Objective markers** turns it off with the battle's markers.

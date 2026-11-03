@@ -310,8 +310,11 @@ Rome among them. The people of the story stand in the camps of their
 chapters, each with something to say about it. Click a person to talk, click a door or a table to use it, and use the map
 (**M**) to find your soldier and the numbered places. **Walk there** works
 even before you have visited a place; **Fast travel** unlocks after discovery.
-The gold marker and **Show me the way** lead you to the next required person,
-decision table or departure point using ordinary walking and interaction.
+The gold marker and **Show me the way** lead you to the next required person
+or decision table, using ordinary walking and interaction. When nothing more
+is needed, they lead to the way out: your soldier walks there and stops beside
+it, and you use it when you are ready to march. While a preparation is still
+missing, the camp's strip names it; click it to open the camp list.
 Everything a camp offers is also listed under **Menu → Camp**, so you
 never have to find it in the scene: the chapter decision, **Battle preparation**,
 **People & conversations**, **Travel to a place**, **Courses &

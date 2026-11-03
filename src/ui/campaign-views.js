@@ -159,7 +159,9 @@ function worldCampBar(state,ch,next){
   // (app.js updateLoadingStatus); a notice too long for the line ends in an ellipsis, with the whole of it its tooltip.
   const notice=(id,text)=>`<span id="${id}" class="world-line-status" role="status"${text?` title="${esc(text)}"`:' hidden'}>${esc(text||'')}</span>`;
   return `<div class="rt-chronicle-bar world-camp-bar"><span class="eyebrow">Chapter ${roman(ch.id)} · ${esc(state.rank)} · Next: ${esc(next?.title||ch.title)}</span>`+
-    `${problem?`<button class="world-camp-problem camp-task-link" data-cmd="camp-next" title="${esc(task.detail)} · ${esc(task.location)}">${esc(task.label)} →</button>`:''}${notice('offline-status',offlineText)}${notice('art-loading-status',artProgress)}`+
+    // A missing preparation says what is missing, not only where to look (the owner's choice after #65): the
+    // reason, in full in its tooltip if the line cuts it. Its button opens the camp list, as before.
+    `${problem?`<button class="world-camp-problem camp-task-link" data-cmd="camp-next" title="${esc(task.detail)} · ${esc(task.panel?task.label:task.location)}">${esc(task.panel?task.detail.replace(/\.$/,''):task.label)} →</button>`:''}${notice('offline-status',offlineText)}${notice('art-loading-status',artProgress)}`+
     `<span class="save-status game-status" role="status">${saving?'Saving…':lastSaved?'Chronicle saved':''}</span></div>`+
     `${saveProblem?`<div class="notice system-notice" role="alert">${esc(saveProblem)} <button data-cmd="export">Export a save code</button> ${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div>`:''}`;
 }

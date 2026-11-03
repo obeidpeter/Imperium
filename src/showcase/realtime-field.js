@@ -465,7 +465,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       for(const [i,o]of options.entries()){
         if(o.group!==group)continue;
         const li=document.createElement('li'),text=document.createElement('span'),detail=document.createElement('small'),use=document.createElement('button');
-        li.dataset.option=i;text.textContent=o.label;detail.textContent=o.reason?o.message:o.detail;use.type='button';use.textContent='Use';use.setAttribute('aria-label',o.label);use.disabled=!o.command;
+        li.dataset.option=i;text.textContent=o.label;detail.textContent=o.reason?o.message:o.detail;use.type='button';use.textContent='Use';use.setAttribute('aria-label',`Use: ${o.label}`);use.disabled=!o.command;
         if(o.command)use.addEventListener('click',()=>useOption(o));else use.title=o.message;
         li.append(text,detail,use);ul.append(li);
       }
