@@ -90,6 +90,7 @@ body:not(.labels-full) .world-labels[data-dense=true] .world-unit:not(.selected)
 .world-unit[data-bloc=Landholders] .world-short{box-shadow:inset 3px 0 0 #d8ae4c}.world-unit[data-bloc=Landholders] .world-short::before{content:"L"}
 .world-unit[data-bloc=Civic] .world-short{box-shadow:inset 3px 0 0 #6a96dc}.world-unit[data-bloc=Civic] .world-short::before{content:"C"}
 .world-unit[data-bloc=Chamber] .world-short{box-shadow:inset 3px 0 0 #a070b8}.world-unit[data-bloc=Chamber] .world-short::before{content:"Ch"}
+.world-unit[data-type=vote][data-bloc] .world-short::before{display:none}
 
 /* Settings → Run performance check: the page takes no input until it ends. */
 .performance-check{position:fixed;inset:0;z-index:2000;display:flex;align-items:flex-start;justify-content:center;padding:max(.75rem,env(safe-area-inset-top)) 1rem 0;background:rgba(18,14,10,.12);cursor:progress}

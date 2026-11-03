@@ -2,6 +2,26 @@ import * as T from '../../vendor/three/three.module.js';
 
 const finite=p=>p&&[p.x,p.y,p.z].every(Number.isFinite);
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+export const CUTAWAY_TARGET_LIMIT=3;
+
+// Keep the controlled figure and inspection target readable, then open only
+// the objective the camera is actually looking at. Distant or secured markers
+// must not punch unrelated holes through the perimeter.
+export function sceneryFocusTargets(actors=[],objectives=[],focus,{wide=false}={}){
+  const targets=[];
+  for(const actor of actors){
+    if(!finite(actor?.position)||targets.some(t=>Math.hypot(t.position.x-actor.position.x,t.position.z-actor.position.z)<.1))continue;
+    targets.push({position:{x:actor.position.x,y:actor.position.y+(actor.mounted?1.8:1.1),z:actor.position.z},radius:(actor.mounted?1.7:1.35)*(wide?2.4:1)});
+    if(targets.length===2)break;
+  }
+  if(finite(focus)){
+    const nearest=objectives.filter(o=>finite(o?.position)&&o.tone!=='secured'&&o.tone!=='warning')
+      .map(o=>({...o,distance:Math.hypot(o.position.x-focus.x,o.position.z-focus.z)})).sort((a,b)=>a.distance-b.distance)[0];
+    if(nearest&&nearest.distance<=6&&!targets.some(t=>Math.hypot(t.position.x-nearest.position.x,t.position.z-nearest.position.z)<1.5))
+      targets.push({position:{x:nearest.position.x,y:nearest.position.y+.55,z:nearest.position.z},radius:2.5});
+  }
+  return targets;
+}
 
 // Presentation-only screen corridor. Fragment cutaways also work after static
 // scenery has been merged/instanced: a pillar fades locally, not its whole hall.
@@ -25,7 +45,7 @@ const vertex=`
 const fragment=`
   if(cutawayAmount>0.0){
     float sceneryCut=0.0;
-    for(int cutIndex=0;cutIndex<2;cutIndex++){
+    for(int cutIndex=0;cutIndex<3;cutIndex++){
       vec3 axis=cutawayTargets[cutIndex].xyz-cutawayCamera;
       float axisLength=length(axis),radius=cutawayTargets[cutIndex].w;
       if(radius>0.0&&axisLength>0.5){
@@ -46,7 +66,7 @@ const fragment=`
 
 // One set of uniforms for every patched material; the stage writes them before
 // it draws. Only one stage draws at a time (a battle or a ceremony).
-export const CUTAWAY_UNIFORMS=Object.freeze({cutawayCamera:{value:new T.Vector3()},cutawayTargets:{value:[new T.Vector4(),new T.Vector4()]},cutawayAmount:{value:0}});
+export const CUTAWAY_UNIFORMS=Object.freeze({cutawayCamera:{value:new T.Vector3()},cutawayTargets:{value:Array.from({length:CUTAWAY_TARGET_LIMIT},()=>new T.Vector4())},cutawayAmount:{value:0}});
 
 // The cutaway is part of an eligible material's own program from its first
 // compile and switched by uniforms, so turning it on never compiles a shader
@@ -57,9 +77,9 @@ function patch(material){
   material.onBeforeCompile=(shader,...args)=>{
     previous.call(material,shader,...args);Object.assign(shader.uniforms,CUTAWAY_UNIFORMS);
     shader.vertexShader='varying vec3 vSceneryCutaway;\n'+shader.vertexShader.replace('#include <project_vertex>',vertex+'\n#include <project_vertex>');
-    shader.fragmentShader='varying vec3 vSceneryCutaway; uniform vec3 cutawayCamera; uniform vec4 cutawayTargets[2]; uniform float cutawayAmount;\n'+shader.fragmentShader.replace('#include <alphatest_fragment>','#include <alphatest_fragment>\n'+fragment);
+    shader.fragmentShader='varying vec3 vSceneryCutaway; uniform vec3 cutawayCamera; uniform vec4 cutawayTargets[3]; uniform float cutawayAmount;\n'+shader.fragmentShader.replace('#include <alphatest_fragment>','#include <alphatest_fragment>\n'+fragment);
   };
-  material.customProgramCacheKey=()=>`${previousKey}:scenery-cutaway-v2`;
+  material.customProgramCacheKey=()=>`${previousKey}:scenery-cutaway-v3`;
   material.userData.sceneryCutaway=true;material.needsUpdate=true;
 }
 
@@ -94,7 +114,7 @@ export function createSceneryOcclusion(...groups){
     add,
     update(camera,{targets=[],enabled=true,delta=1/60,reducedMotion=false}={}){
       if(disposed)return;
-      const valid=targets.filter(t=>finite(t?.position)&&Number.isFinite(t.radius??1.35)&&(t.radius??1.35)>0).slice(0,2);
+      const valid=targets.filter(t=>finite(t?.position)&&Number.isFinite(t.radius??1.35)&&(t.radius??1.35)>0).slice(0,CUTAWAY_TARGET_LIMIT);
       if(!enabled||!camera||!valid.length){reset();return;}
       camera.getWorldPosition(CUTAWAY_UNIFORMS.cutawayCamera.value);
       if(!finite(CUTAWAY_UNIFORMS.cutawayCamera.value)){reset();return;}

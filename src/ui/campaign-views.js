@@ -15,6 +15,8 @@ import {LANDING_FACTS,chronicleCard,heroFacts,journeySection} from './landing-vi
 import {campFor,campPlaceName,campPlaceHint,campPersonPresent,campPersonSpot,CAMP_PLACES} from '../data/camps.js';
 import {companyStories} from '../core/camp-stories.js';
 import {companyActivities} from '../core/company-activities.js';
+import {campNextTask} from './camp-runtime.js';
+import {newGamePlayMode} from './settings.js';
 
 const campDisclosure=(id,label,body,{open=false}={})=>body?`<details id="${id}" class="camp-disclosure"${open?' open':''}><summary>${esc(label)}</summary>${body}</details>`:'';
 
@@ -40,7 +42,7 @@ function header({immersive=false}={}){
 }
 function footer(){if(context().screen!=='title')return `<footer class="footer game-footer"><span>IMPERIUM · ${CONFIG.version}</span><button class="ghost" data-cmd="help">Help</button></footer>`;return `<footer class="footer site-footer"><div class="footer-brand"><strong>IMPERIUM</strong><span>An original Roman tactical chronicle · c. AD 250–276</span></div><nav class="footer-links" aria-label="Help and information"><button class="ghost" data-cmd="help">How to play</button><button class="ghost" data-cmd="settings">Accessibility</button><button class="ghost" data-cmd="settings">Settings</button><button class="ghost" data-cmd="credits">Credits</button><button class="ghost" data-cmd="privacy">Privacy</button></nav><span class="footer-version">Version ${CONFIG.version} · Free browser play</span></footer>`;}
 function titleView(){
-  const {state,settings}=context(),early=CHAPTERS[0].decision,facts=LANDING_FACTS,live=skirmishControls(settings)==='realtime';
+  const {state,settings}=context(),early=CHAPTERS[0].decision,facts=LANDING_FACTS,live=newGamePlayMode(settings)==='realtime';
   const skirmish=`<a class="hero-secondary" href="./showcase/${skirmishControls(settings)==='realtime'?'arena.html':'index.html'}">Try a standalone skirmish</a>`;
   const playButton=`<button class="primary" data-cmd="${state?'continue':'new'}">${state?'Continue your chronicle':'Play now'} <span aria-hidden="true">→</span></button>`;
   // A returning player sees where the chronicle stands; a newcomer, what the game is.
@@ -151,13 +153,13 @@ function camp(){
 function worldCampBar(state,ch,next){
   const {saving,lastSaved,saveProblem,saveConflict,offline,offlineProgress,currentChapterOffline,artProgress}=context();
   const offlineText=offlineNotice({offline,chapterReady:currentChapterOffline,progress:offlineProgress});
-  const problem=Game.departureCheck(state);
+  const problem=Game.departureCheck(state),task=campNextTask(state);
   // The offline and artwork notices say their piece on the strip's own line, beside the save, rather than as bands under
   // it that take the world's room when they come (the owner's request after Gate 4). The page updates them in place
   // (app.js updateLoadingStatus); a notice too long for the line ends in an ellipsis, with the whole of it its tooltip.
   const notice=(id,text)=>`<span id="${id}" class="world-line-status" role="status"${text?` title="${esc(text)}"`:' hidden'}>${esc(text||'')}</span>`;
   return `<div class="rt-chronicle-bar world-camp-bar"><span class="eyebrow">Chapter ${roman(ch.id)} · ${esc(state.rank)} · Next: ${esc(next?.title||ch.title)}</span>`+
-    `${problem?`<span class="world-camp-problem">${esc(problem)}</span>`:''}${notice('offline-status',offlineText)}${notice('art-loading-status',artProgress)}`+
+    `${problem?`<button class="world-camp-problem camp-task-link" data-cmd="camp-next" title="${esc(task.detail)} · ${esc(task.location)}">${esc(task.label)} →</button>`:''}${notice('offline-status',offlineText)}${notice('art-loading-status',artProgress)}`+
     `<span class="save-status game-status" role="status">${saving?'Saving…':lastSaved?'Chronicle saved':''}</span></div>`+
     `${saveProblem?`<div class="notice system-notice" role="alert">${esc(saveProblem)} <button data-cmd="export">Export a save code</button> ${saveConflict?'<button data-cmd="takeover">Continue in this tab</button>':''}</div>`:''}`;
 }

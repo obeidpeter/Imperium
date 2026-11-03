@@ -13,6 +13,20 @@ export const SPLAT_ROLES=Object.freeze({grass:'turf',road:'turf',sand:'sand',mar
   high:'turf',hill:'turf',wall:'rubble',camp:'camp',stone:'joints',floor:'slabs',bench:'slabs',chamber:'slabs'});
 const LAYERS=GROUND_LAYERS.length,WATER_ROLES=new Set(['bed','wet']);
 
+// Blend only the margins of neighbouring cells. Cell centres still show their
+// authored material, while soil, rubble and grass meet through an eroded verge
+// instead of the hard rectangular edge of a single cell lookup.
+export function terrainRoleMix(e,x,z,tileSize=2.5){
+  const gx=x/tileSize+e.width/2,gz=z/tileSize+e.height/2,cx=Math.floor(gx),cz=Math.floor(gz),band=.68/tileSize;
+  const axis=(v,c)=>{const f=v-c,near=f<.5?f:1-f,share=.5*(1-smooth(near/band));return share>0?[[c,1-share],[c+(f<.5?-1:1),share]]:[[c,1]];};
+  const roles=new Map();
+  for(const [xx,wx]of axis(gx,cx))for(const [zz,wz]of axis(gz,cz)){
+    const type=xx>=0&&zz>=0&&xx<e.width&&zz<e.height?terrainAt(e,xx,zz):'grass',role=SPLAT_ROLES[type]??'turf';
+    roles.set(role,(roles.get(role)??0)+wx*wz);
+  }
+  return [...roles];
+}
+
 /** The weights of a mix (role) scaled by `amount`, added into `w`. */
 function add(w,pairs,amount){if(amount<=0||!pairs)return;for(const [key,share]of pairs)w[GROUND_LAYER_INDEX[key]]+=share*amount;}
 // Turf varies in patches: each component's share swells or shrinks with its own broad noise.
@@ -59,7 +73,9 @@ export function* buildTerrainSplat({e,tileSize=2.5,biome,height,road=null,route=
       const wx=x+(noise(x*.55,z*.55,61)-.5)*1.1,wz=z+(noise(x*.55+9.1,z*.55-4.7,67)-.5)*1.1,inside=isPlayable(wx,wz,e,tileSize);
       const cell=inside?worldToGrid(wx,wz,e,tileSize):null,type=inside?terrainAt(e,Math.min(e.width-1,Math.max(0,cell.x)),Math.min(e.height-1,Math.max(0,cell.y))):'grass';
       const role=SPLAT_ROLES[type]??'turf';
-      if(role==='turf')turf(w,biome.turf,x,z,1);else add(w,biome[role],1);
+      for(const [blendRole,share]of terrainRoleMix(e,wx,wz,tileSize)){
+        if(blendRole==='turf')turf(w,biome.turf,x,z,share);else add(w,biome[blendRole],share);
+      }
       // Wear: scattered trodden patches, the fort's yard, staged routes and the river's bank.
       const yard=training?1-smooth(Math.max(Math.abs(x)-hx+.8,Math.abs(z)-hz+.8)/2.7):0;
       const wear=role==='turf'?(training?yard*(.72+noise(x*.23,z*.23,8)*.18):Math.pow(noise(x*.19,z*.19,31),2)*.48):0;

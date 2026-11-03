@@ -36,8 +36,15 @@ export function createGraphicsQuality({mode,chosen:savedChoice,saveData=false,de
   let current=mode??defaultGraphicsMode({saveData,deviceMemory,phone});
   if(!Object.hasOwn(GRAPHICS_MODES,current))throw new TypeError('Unknown graphics mode.');
   const above=Object.hasOwn(GRAPHICS_MODES,savedChoice??'')&&ORDER.indexOf(savedChoice)>ORDER.indexOf(current);
-  let samples=[],totalSamples=0,downgrades=0,upgrades=0,lastReason='initial',chosen=above?savedChoice:current,fastRun=0,sinceChange=0;
+  let samples=[],totalSamples=0,downgrades=0,upgrades=0,lastReason='initial',chosen=above?savedChoice:current,fastRun=0,sinceChange=0,adaptationHolds=0;
   const restart=()=>{samples=[];fastRun=0;sinceChange=0;};
+  // A profiler deliberately rebuilds and stresses other tiers. Those frames
+  // are not evidence about normal play and must never rewrite saved quality.
+  // Nested/idempotent releases also cover cancellation and error cleanup.
+  function suspendAdaptation(){
+    adaptationHolds++;restart();let released=false;
+    return ()=>{if(released)return;released=true;adaptationHolds--;if(!adaptationHolds)restart();};
+  }
   function setMode(next) {
     if(!Object.hasOwn(GRAPHICS_MODES,next))throw new TypeError('Unknown graphics mode.');
     const changed=next!==current;current=next;chosen=next;restart();lastReason='player';
@@ -45,7 +52,7 @@ export function createGraphicsQuality({mode,chosen:savedChoice,saveData=false,de
     return GRAPHICS_MODES[current];
   }
   function recordFrame(costMs,{hidden=false,active=true}={}) {
-    if(hidden||!active||!Number.isFinite(costMs)||costMs<0)return {mode:current,changed:false,accepted:false};
+    if(adaptationHolds||hidden||!active||!Number.isFinite(costMs)||costMs<0)return {mode:current,changed:false,accepted:false};
     totalSamples++;sinceChange++;samples.push(costMs);if(samples.length>WINDOW)samples.shift();
     fastRun=costMs<=RECOVERY_MS?fastRun+1:0;
     if(current!=='performance'&&samples.length===WINDOW&&samples.filter(cost=>cost>OVER_BUDGET_MS).length>=OVER_BUDGET_COUNT){
@@ -63,14 +70,14 @@ export function createGraphicsQuality({mode,chosen:savedChoice,saveData=false,de
   // A 3D battle that stayed slow at its lowest resolution: the next one is
   // built a tier lower (never rebuilt mid-battle). Returns the new mode.
   function stepDown(reason='measured-cost') {
-    if(current==='performance')return current;
+    if(adaptationHolds||current==='performance')return current;
     current=ORDER[ORDER.indexOf(current)-1];restart();downgrades++;lastReason=reason;
     onChange?.({mode:current,reason});return current;
   }
   // Strain a battle reported (battle-stage-controller.js onStrain). It counts
   // only if measured at the current tier with adaptive resolution on.
   function strained(measured,{adaptive=true}={}) {
-    return measured===current&&adaptive!==false?stepDown('measured-cost'):null;
+    return !adaptationHolds&&measured===current&&adaptive!==false?stepDown('measured-cost'):null;
   }
   function stats() {
     const sorted=[...samples].sort((a,b)=>a-b);
@@ -79,5 +86,5 @@ export function createGraphicsQuality({mode,chosen:savedChoice,saveData=false,de
       meanMs:samples.length?samples.reduce((sum,cost)=>sum+cost,0)/samples.length:0,
       p95Ms:sorted.length?sorted[Math.ceil(sorted.length*.95)-1]:0,reason:lastReason};
   }
-  return {get mode(){return current;},get chosen(){return chosen;},get profile(){return GRAPHICS_MODES[current];},setMode,recordFrame,stepDown,strained,stats};
+  return {get mode(){return current;},get chosen(){return chosen;},get profile(){return GRAPHICS_MODES[current];},setMode,recordFrame,stepDown,strained,suspendAdaptation,stats};
 }

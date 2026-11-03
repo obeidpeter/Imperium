@@ -22,10 +22,13 @@ export function updatePage(root,html){
   updateChildren(root,template.content,doc);
 }
 
-function remember(node){
+// Register freshly assigned HTML before a renderer or input controller adds
+// attributes. Without this boundary the first patch cannot distinguish authored
+// attributes from a canvas's live drawing-buffer dimensions.
+export function rememberPage(node){
   if(node.nodeType!==1)return;
   rendered.set(node,new Map(node.attributes?[...node.attributes].map(a=>[a.name,a.value]):[]));
-  for(const child of node.childNodes)remember(child);
+  for(const child of node.childNodes)rememberPage(child);
 }
 
 function updateChildren(parent,next,doc){
@@ -59,7 +62,7 @@ function updateChildren(parent,next,doc){
       if(match!==cursor)parent.insertBefore(match,cursor);else cursor=cursor.nextSibling;
       updateNode(match,want,doc);
     }else{
-      const node=doc.importNode(want,true);remember(node);parent.insertBefore(node,cursor);
+      const node=doc.importNode(want,true);rememberPage(node);parent.insertBefore(node,cursor);
     }
   }
   for(let n=cursor;n;){const nextNode=n.nextSibling;if(!live(n))n.remove();n=nextNode;}

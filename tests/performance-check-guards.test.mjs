@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {runPerformanceCheck} from '../src/ui/performance-check.js';
+import {createGraphicsQuality} from '../src/ui/graphics-quality.js';
 
 function harness(){
   let clock=0,listener=null,visible=true,removed=false,disposed=false,simulations=0;
@@ -20,6 +21,27 @@ function harness(){
     get cleaned(){return removed&&disposed;},get simulations(){return simulations;}};
 }
 const settle=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
+
+test('Performance tours cannot change the application tier or saved choice, even on cancellation or failure',async t=>{
+  for(const outcome of ['complete','cancel','error'])await t.test(outcome,async()=>{
+    const h=harness(),saved=[],graphics=createGraphicsQuality({mode:'balanced',chosen:'high',onChange:change=>{saved.push(change);h.controller.quality(change.mode);}});
+    // A pre-existing near-full slow window formerly let the first profiler
+    // frame downgrade the app while the profiler restored only its stage.
+    for(let i=0;i<29;i++)graphics.recordFrame(100);
+    let frames=0;h.options.graphics=graphics;h.options.isCancelled=()=>outcome==='cancel'&&frames>=50;
+    h.options.nextFrame=async()=>{
+      frames++;h.frame(200);assert.equal(graphics.recordFrame(1000).accepted,false);
+      assert.equal(graphics.strained(graphics.mode),null);
+      if(outcome==='error'&&frames>=50)throw Error('Synthetic frame failure');
+    };
+    if(outcome==='error')await assert.rejects(runPerformanceCheck(h.controller,h.options),/Synthetic frame failure/);
+    else {const report=await runPerformanceCheck(h.controller,h.options);assert.equal(report.complete,outcome==='complete');assert.equal(report.cancelled,outcome==='cancel');}
+    assert.equal(h.stage.quality,'balanced');assert.equal(graphics.mode,'balanced');assert.equal(graphics.chosen,'high');assert.deepEqual(saved,[]);
+    assert.equal(graphics.stats().samples,0);assert.equal(h.cleaned,true);assert.deepEqual(h.adaptive,[false,true]);
+    for(let i=0;i<29;i++)graphics.recordFrame(100);assert.equal(graphics.mode,'balanced');
+    graphics.recordFrame(100);assert.equal(graphics.mode,'performance','automatic adaptation resumes after cleanup');
+  });
+});
 // Only the one-shot watchdogs need a clock. MockTracker.method works on every
 // supported Node 20 release, unlike the newer experimental MockTimers API.
 function timerClock(t){

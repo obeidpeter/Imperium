@@ -101,7 +101,6 @@ export function fieldMarkup({state,keymap,kind='field'}){
       <button data-role="menuButton" class="rt-menu" type="button" data-cmd="menu" aria-haspopup="dialog" aria-keyshortcuts="Escape">Menu</button>
     </header>
     ${camp?'':missionStrip}
-    <aside class="rt-notice" data-role="notice" role="status" hidden><div><strong data-role="noticeTitle"></strong><p data-role="noticeBody"></p></div><button type="button" data-role="dismissNotice" aria-label="Dismiss battlefield update">×</button></aside>
     ${chamber?'<div class="rt-chamber-strip"><div class="rt-vote-summary"><p data-role="voteSummary"></p><p data-role="voteProjection"></p></div><details class="rt-coalition-details" data-role="coalitionDetails"><summary>Votes &amp; delegates</summary><div class="rt-detail-body"><div class="rt-coalition" data-role="coalition" aria-label="Votes and forecasts"></div><button type="button" data-close-disclosure>Close delegates</button></div></details>'+
       '<button type="button" class="rt-records" data-cmd="page-overlay" data-id="records" aria-expanded="false" title="The motion, the members and the record">Members</button></div>':''}
     <div class="rt-deploy" data-role="deployBar" role="group" aria-label="Deployment" hidden>
@@ -110,9 +109,11 @@ export function fieldMarkup({state,keymap,kind='field'}){
     </div>
     ${chamber?'<div class="rt-rivals" data-role="rivalsBand" role="status" aria-live="polite" hidden></div>':''}
     <div class="rt-workspace">
+      <aside class="rt-notice" data-role="notice" role="status" hidden><div><strong data-role="noticeTitle"></strong><p data-role="noticeBody"></p></div><button type="button" data-role="dismissNotice" aria-label="Dismiss battlefield update">×</button></aside>
       <div class="rt-scene" data-action-region="clear">
         <canvas id="rt-board" class="rt-canvas" tabindex="0" data-cursor="walk" role="application" aria-describedby="rt-keys" aria-label="${label}"></canvas>
         <div class="rt-wayfinders"><button type="button" data-role="locateTarget" hidden>Find target</button><button type="button" data-role="locateObjective" hidden>Find objective</button></div>
+        <div class="rt-camera-controls" role="group" aria-label="Camera"><button type="button" data-role="followButton" title="Follow the controlled soldier or speaker">Follow</button><button type="button" data-role="overviewButton" title="See the whole field; press again to follow">Overview</button><button type="button" data-role="cutawayButton" aria-pressed="true" title="Fade walls and roofs blocking your view">Cutaway</button></div>
         <p id="rt-keys" class="visually-hidden">${keys}</p>
         <div class="rt-veil" role="status" aria-live="polite"><p>${camp?'Preparing the camp…':chamber?'Preparing the chamber…':'Preparing the battlefield…'}</p></div>
       </div>
@@ -138,6 +139,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
     <div class="rt-list-head"><h2 id="rt-list-title">All actions</h2><button type="button" data-role="closeListButton">Close</button></div>
     <p class="rt-log-note">${chamber?'Choose a speaker and an action.':'Choose a unit and an action. Queued actions run when you resume.'}</p>
     <div class="rt-list-actors" data-role="listActors" role="radiogroup" aria-label="Who acts"></div>
+    <label class="rt-action-search">Find an action <input type="search" data-role="actionSearch" placeholder="Name, task or place" autocomplete="off"></label>
     <div data-role="listOptions"></div>
   </section>
     </div>
@@ -156,7 +158,7 @@ export function fieldMarkup({state,keymap,kind='field'}){
           <p><strong data-role="roundLabel">Round 1</strong><span data-role="clockTime">0:00</span></p>
         </div>
         <div class="rt-command" data-role="commandPips" role="img" hidden></div>
-        <div class="rt-message-lines"><p data-role="targetLine" class="rt-target-line" hidden></p><p data-role="targetCue" class="rt-target-cue" hidden></p><details class="rt-target-details" data-role="targetDetails" hidden><summary>Target details</summary><p data-role="targetForecast"></p></details><p data-role="messageLine" class="rt-message">${chamber?'Click a member to talk to him; click the floor to walk.':'Click open ground to move. A far click runs.'}</p><p data-role="eventLine" class="rt-event"></p><button type="button" data-role="eventMore" class="rt-event-more" aria-expanded="false" aria-controls="rt-event-full" hidden>More</button><div id="rt-event-full" data-role="eventFull" class="rt-event-full" hidden><p data-role="eventFullText"></p><div data-role="eventEarlier" class="rt-event-earlier" hidden><p class="rt-event-earlier-title">Earlier</p><ol data-role="eventEarlierList"></ol></div></div></div>
+        <div class="rt-message-lines"><p data-role="targetLine" class="rt-target-line" hidden></p><p data-role="targetCue" class="rt-target-cue" hidden></p><details class="rt-target-details" data-role="targetDetails" hidden><summary>Target details</summary><p data-role="targetForecast"></p></details><p data-role="messageLine" class="rt-message" tabindex="0" aria-label="Action guidance">${chamber?'Click a member to talk to him; click the floor to walk.':'Click open ground to move. A far click runs.'}</p><p data-role="eventLine" class="rt-event"></p><button type="button" data-role="eventMore" class="rt-event-more" aria-expanded="false" aria-controls="rt-event-full" hidden>More</button><div id="rt-event-full" data-role="eventFull" class="rt-event-full" hidden><p data-role="eventFullText"></p><div data-role="eventEarlier" class="rt-event-earlier" hidden><p class="rt-event-earlier-title">Earlier</p><ol data-role="eventEarlierList"></ol></div></div></div>
       </div>
       <div class="rt-ability-area">
         <p class="rt-current"><span>${chamber?'Selected speech':'Selected action'}</span><strong data-role="currentAbility">${chamber?'Persuade':'Strike'}</strong></p>
@@ -251,7 +253,7 @@ export function realtimeResult(state,{keymap}={}){
     ${rewards?`<p class="rt-reward-summary">Earned: <strong>${rewards.tp} training points</strong>${rewards.denarii?` · ${rewards.denarii} denarii`:''}${rewards.decorations.length?` · ${rewards.decorations.length} decorations`:''}. Collected equipment is kept when you continue.</p>`:''}
     <div class="panel-actions rt-result-actions">${practice?`<button class="primary" data-cmd="retry">${won?'Practise again':'Retry battle'}</button>${walk}<button data-cmd="exit-archive">Return to chronicle →</button>`
       :won?`${walk}<button${search?'':' class="primary"'} data-cmd="commit">Continue →</button>`:'<button class="primary" data-cmd="retry">Retry battle</button>'}</div>
-    ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p><details class="rt-retry-help"><summary>Advice for retrying</summary><p class="rt-defeat-help">${esc(debrief.advice)}</p><button type="button" data-close-disclosure>Close advice</button></details>`}
+    ${won?'':`<p class="rt-defeat-cause">${esc(defeatCause(world))}</p><details class="rt-retry-help" open><summary>Advice for retrying</summary><p class="rt-defeat-help">${esc(debrief.advice)}</p><button type="button" data-close-disclosure>Close advice</button></details>`}
     ${debriefMarkup(debrief)}
     ${search?`<details class="rt-result-loot"><summary>Collect spoils · ${bodies.length} ${bodies.length===1?'body':'bodies'}</summary>${search}</details>`:''}
     <details class="rt-result-details"><summary>Battle details &amp; rewards</summary>

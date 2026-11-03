@@ -3,6 +3,7 @@
 // Browser evaluation only observes state/DOM; it never injects play or saves.
 // Build first. PLAYWRIGHT_MODULE / PLAYWRIGHT_EXECUTABLE_PATH are optional.
 // USABILITY_ONLY=phone-settings diagnoses the settings/reload flow alone.
+// USABILITY_ONLY=phone-field checks narrow battle controls and their geometry.
 // USABILITY_ONLY=desktop runs all desktop flows after a focused repair.
 // USABILITY_ONLY=onboarding checks ordinary-player mode choice and old saves.
 import assert from 'node:assert/strict';
@@ -20,7 +21,7 @@ import {ITEM_ATLAS,ITEM_PICTURES} from '../src/data/item-pictures.js';
 
 const root=fileURLToPath(new URL('../dist/',import.meta.url)),output=fileURLToPath(new URL('../tests/visual-results/usability/',import.meta.url));
 const only=process.env.USABILITY_ONLY;
-assert.ok(!only||['phone-settings','desktop','onboarding'].includes(only),'Unknown USABILITY_ONLY scenario');
+assert.ok(!only||['phone-settings','phone-field','desktop','onboarding'].includes(only),'Unknown USABILITY_ONLY scenario');
 await access(`${root}index.html`).catch(()=>{throw new Error('Build first: node scripts/build.mjs');});
 const build=JSON.parse(await readFile(`${root}build-report.json`,'utf8'));
 let playwright;
@@ -425,7 +426,8 @@ async function fieldControls(page,label){
   await page.locator('#rt-board').focus();await page.keyboard.press(`Digit${shortcut}`);
   await advanced.waitFor({state:'visible'});await page.waitForSelector(`[data-ability="${ability}"][aria-pressed="true"]`);assert.equal(await advanced.getAttribute('aria-pressed'),'true','The number shortcut opens and selects its advanced action');
   fits(await metrics(page,'.rt-field'),`${label} more actions`);
-  await fieldGeometry(page,`${label} more actions`);
+  const moreGeometry=await fieldGeometry(page,`${label} more actions`);
+  if(geometry.viewport.width<=760)assert.equal(moreGeometry.canvas.height,geometry.canvas.height,'Opening More actions preserves the narrow battlefield height');
   await page.keyboard.press('KeyS');assert.equal(await page.evaluate(()=>document.activeElement?.dataset.ability),ability,'S focuses the selected advanced action');
   await page.keyboard.press('Escape');assert.equal(await more.getAttribute('open'),null,'Escape closes the active disclosure');
   assert.equal(await more.locator('summary').evaluate(el=>el===document.activeElement),true,'Escape restores focus to the More actions summary');
@@ -520,8 +522,9 @@ async function ordinaryModeChoice(){
 try{
   if(!only||only==='onboarding')await ordinaryModeChoice();
   if(!only)await campTransitions();
-  for(const viewport of [{width:390,height:844},{width:1280,height:900}].filter(v=>only!=='onboarding'&&(!only||v.width===(only==='phone-settings'?390:1280)))){
+  for(const viewport of [{width:390,height:844},{width:1280,height:900}].filter(v=>only!=='onboarding'&&(!only||v.width===(only?.startsWith('phone-')?390:1280)))){
     const label=viewport.width<600?'phone':'desktop',page=await setup(viewport);
+    if(only==='phone-field'){await fieldControls(page,label);await page.context().close();continue;}
     await campNoticeLine(page,label);await menuAndSettings(page,label);
     if(only!=='phone-settings'){await helpAndSoldier(page,label);if(label==='desktop')await inventoryKeyboardAndMouse(page,label);
       await saveConfirmation(page,label);await fieldControls(page,label);}

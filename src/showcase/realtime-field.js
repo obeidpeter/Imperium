@@ -24,6 +24,7 @@ import {oathForecast} from '../core/realtime/mission.js';
 import {commandSoundCue} from '../ui/adaptive-score.js';
 import {createOrderReview} from '../ui/squad-order-review.js';
 import {FIELD_PITCH,FIELD_YAW} from './camera-bearing.js';
+import {feedbackCanReplace,fieldTaskOptions,noticeRemaining,noticePriority} from '../ui/realtime-assistance.js';
 
 // The real-time field on the page (build brief §3.14–§3.16), shared by the
 // campaign's battles, camps and chambers and by the standalone arena. It owns the
@@ -71,9 +72,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const clock=createClock({speed:SPEEDS.includes(Number(options.gameSpeed))?Number(options.gameSpeed):1});
   let ability='strike',keyTarget=null,hoverPoint=null,hoverDirty=false,pressMove=false,force=false,armed=null,ranges=false,arrows=new Set();
   let logShown=0,eventMessage=null,lastNow=0,hudKey='',partyKey='',barKey='',pausedFor=null,interrupted=false,ended=world.status!=='active',shown=shownKey(world);
-  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},marksKey='{}',edge=null,lessonKey=null,glancing=false,seeThroughOn=false;
+  let resumePending=false,listOpen=false,listActor=null,listKey='',marks={},marksKey='{}',edge=null,lessonKey=null,glancing=false,seeThroughOn=true;
   let readoutAt=-Infinity,targetState='',missionWarningKey='';
-  let noticeUntil=0;
+  let noticeUntil=0,noticeAt=0,noticeLevel=0,noticeReading=false,guidance=null,guidanceKey='null',listFilter='';
   const warnedAt=new Map();
   // The guided opening's memory of what the world does not record: a pause and a slowing (callbacks.lesson).
   const seen={paused:false,slowed:false};
@@ -128,12 +129,16 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   };
   // A message stays its time, longer if it takes longer to read (messageTime); `keep:false` leaves it out of the
   // earlier messages (Paused and Resumed, which the Pause button shows anyway).
-  const say=(text,{warning=false,announce=false,ms=2600,keep=true}={})=>{
-    eventMessage={text,until:performance.now()+messageTime(text,ms),warning};if(keep)recent=rememberMessage(recent,text,{warning});
+  const say=(text,{warning=false,announce=false,ms=2600,keep=true,source='input',priority=source==='input'?2:warning?1:0}={})=>{
+    if(keep)recent=rememberMessage(recent,text,{warning});
+    // Casualties must remain readable while routine blows continue. Those
+    // blows remain in Earlier messages and the battle log.
+    if(!feedbackCanReplace(eventMessage,{source,priority},performance.now())){if(eventOpen)renderEventFull();return;}
+    eventMessage={text,until:performance.now()+messageTime(text,ms),warning,priority};
     if(dom.eventLine){showEvent(text);dom.eventLine.classList.toggle('warning',warning);}
     if(announce&&dom.announcer)dom.announcer.textContent=text;
   };
-  const message=(text,warning=false)=>{const line=dom.messageLine;if(!line)return;if(line.textContent!==text)line.textContent=text;line.classList.toggle('warning',warning);};
+  const message=(text,warning=false)=>{const line=dom.messageLine;if(!line)return;if(line.textContent!==text)line.textContent=text;line.title=text;line.classList.toggle('warning',warning);};
   const write=(el,text)=>{if(el&&el.textContent!==text)el.textContent=text;};
   function refreshReadouts(now,{announceTarget=false}={}){
     if(chamber||now-readoutAt<200&&!announceTarget)return;readoutAt=now;
@@ -166,20 +171,23 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     if(r.warningKey&&r.warningKey!==missionWarningKey&&now-(warnedAt.get(r.warningKey)??-Infinity)>=6000){say(r.warning,{warning:true,announce:true});warnedAt.set(r.warningKey,now);}missionWarningKey=r.warningKey??'';
     write(dom.inputContext,`${firstKeyLabel('pause',keymap)} pauses. Enter uses a focused button. Click the scene to use movement keys.`);
   }
-  function objectivePoint(){return world.mission?.points?.find(p=>!p.secured)??world.mission?.goal??null;}
+  function objectivePoint(){return kind==='camp'&&guidance?(actorById(world,guidance.actorId)??objectById(world,guidance.objectId)??(Number.isFinite(guidance.x)&&Number.isFinite(guidance.z)?guidance:null)):world.mission?.points?.find(p=>!p.secured)??world.mission?.goal??null;}
   function updateWayfinders(){
     const target=actorById(world,keyTarget)??objectById(world,keyTarget);
     for(const [button,point,label] of [[dom.locateTarget,target&&!target.hidden?target:null,'Target'],[dom.locateObjective,objectivePoint(),'Objective']]){
       if(!button)continue;
       button.hidden=!point||ended||!stage?.camera||!stage?.world;if(button.hidden)continue;
       const projected=stage.world(stageTile(point.x,point.z));projected.y+=1;projected.project(stage.camera);
-      button.hidden=projected.z<1&&Math.abs(projected.x)<.86&&Math.abs(projected.y)<.78;
+      button.hidden=!(kind==='camp'&&guidance)&&projected.z<1&&Math.abs(projected.x)<.86&&Math.abs(projected.y)<.78;
       if(!button.hidden){const reverse=projected.z>1?-1:1,x=projected.x*reverse,y=projected.y*reverse;
-        write(button,`${Math.abs(x)>Math.abs(y)?x<0?'←':'→':y<0?'↓':'↑'} ${label} · ${Math.round(Math.hypot(point.x-me().x,point.z-me().z))} m`);
+        write(button,`${Math.abs(x)>Math.abs(y)?x<0?'←':'→':y<0?'↓':'↑'} ${kind==='camp'&&guidance?guidance.label:label} · ${Math.round(Math.hypot(point.x-me().x,point.z-me().z))} m`);
       }
     }
   }
   function rescueBriefing(){
+    if(kind==='field'&&hudRoot&&world.tick===0&&world.mission&&world.mission.mode!=='training'&&!world.mission.rescue&&world.mission.mode!=='extract'&&world.status==='active'&&!deploying(world)){
+      setPaused(clock,true);say('Battle ready. Check the objective, place your first orders, then Resume when ready.',{announce:true});
+    }
     if(kind==='field'&&world.tick===0&&world.mission?.mode==='training'&&world.status==='active'){
       setPaused(clock,true);if(dom.lesson)dom.lesson.open=true;
       say(`Drill ready. Read the first step, then press ${firstKeyLabel('pause',keymap)} or Resume to begin.`,{announce:true});
@@ -256,6 +264,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const nameOf=id=>actorById(world,id)?.name??'Someone';
   let signalWorld=null,signalTick=-Infinity;
   function handleEvents(events){
+    const report=(text,options={})=>say(text,{source:'simulation',...options});
     if(signalWorld!==world){signalWorld=world;signalTick=-Infinity;}
     const signal=commandSoundCue(events,world);
     if(signal&&world.tick-signalTick>=TIME.ticksPerSecond*1.6&&stage?.sound?.cue(signal,{intensity:.8})){signalTick=world.tick;stage.cuesPlayed++;}
@@ -263,44 +272,45 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     let pause=null;
     for(const e of events){
       const notice=fieldNotice(world,e);
-      if(notice&&dom.notice){write(dom.noticeTitle,notice.title);write(dom.noticeBody,notice.body);dom.notice.hidden=false;noticeUntil=performance.now()+14000;}
+      const level=noticePriority(e,world);
+      if(notice&&dom.notice&&(noticeUntil<=0||level>=noticeLevel)){write(dom.noticeTitle,notice.title);write(dom.noticeBody,notice.body);dom.notice.hidden=false;noticeUntil=14000;noticeLevel=level;noticeAt=performance.now();}
       // Auto-pause: the rule decides (intents.js); the field stops the clock after this tick's news and says why last.
       if(kind==='field'&&!interrupted&&!pause)pause=autoPauseReason(world,e,options);
-      if(e.kind==='hit'&&party.has(e.defenderId)&&e.defenderId===mine)say(`${nameOf(e.attackerId)} hits you: ${e.damage}${e.critical?', a critical':''}.`,{warning:true,announce:true});
-      if(e.kind==='hit'&&party.has(e.defenderId)&&e.defenderId!==mine)say(`${nameOf(e.attackerId)} hits ${nameOf(e.defenderId)}: ${e.damage}.`,{warning:true,announce:true});
-      if(e.kind==='hit'&&e.attackerId===mine)say(`You hit ${nameOf(e.defenderId)}: ${e.damage}${e.critical?e.ambush?', from ambush':', a critical':''}.`);
-      if(e.kind==='block'&&e.attackerId===mine)say(`${nameOf(e.defenderId)} blocks your ${e.missile?'missile':'blow'}.`);
-      if(e.kind==='stuck')say('The pilum sticks in his shield: it blocks half as often now.');
-      if(e.kind==='fall')say(`${nameOf(e.defenderId)} falls.`,{announce:true});
-      if(e.kind==='down')say(`${nameOf(e.defenderId)} is down: bind his wounds or carry him.`,{warning:true,announce:true});
-      if(e.kind==='heal'&&party.has(e.actorId))say(`${nameOf(e.actorId)} binds ${e.targetId===e.actorId?'his own wounds':`${nameOf(e.targetId)}’s wounds`}: +${e.amount}.`,{announce:true});
-      if(e.kind==='revealed')say(`${nameOf(e.actorId)} is revealed.`,{warning:true,announce:true});
-      if(e.kind==='reinforcements')say('Enemy reinforcements arrive.',{warning:true,announce:true});
-      if(e.kind==='phase')say(`New objective: ${e.label}.`,{announce:true});
-      if(e.kind==='squad-broken'){const q=world.squads?.find(x=>x.id===e.squadId);if(q)say(`${q.name} breaks and falls back.`,{warning:q.side!=='enemy',announce:true});}
-      if(e.kind==='squad-rallied'){const q=world.squads?.find(x=>x.id===e.squadId);if(q&&q.side!=='enemy')say(`${q.name} stands again.`,{announce:true});}
-      if(e.kind==='squad-destroyed'){const q=world.squads?.find(x=>x.id===e.squadId);if(q)say(`${q.name} is cut down.`,{warning:q.side!=='enemy',announce:true});}
-      if(e.kind==='rally')say(`Rally: ${e.squads.length} squad${e.squads.length===1?'':'s'} steadied.`,{announce:true});
+      if(e.kind==='hit'&&party.has(e.defenderId)&&e.defenderId===mine)report(`${nameOf(e.attackerId)} hits you: ${e.damage}${e.critical?', a critical':''}.`,{warning:true,announce:true});
+      if(e.kind==='hit'&&party.has(e.defenderId)&&e.defenderId!==mine)report(`${nameOf(e.attackerId)} hits ${nameOf(e.defenderId)}: ${e.damage}.`,{warning:true,announce:true});
+      if(e.kind==='hit'&&e.attackerId===mine)report(`You hit ${nameOf(e.defenderId)}: ${e.damage}${e.critical?e.ambush?', from ambush':', a critical':''}.`);
+      if(e.kind==='block'&&e.attackerId===mine)report(`${nameOf(e.defenderId)} blocks your ${e.missile?'missile':'blow'}.`);
+      if(e.kind==='stuck')report('The pilum sticks in his shield: it blocks half as often now.');
+      if(e.kind==='fall')report(`${nameOf(e.defenderId)} falls.`,{announce:true});
+      if(e.kind==='down')report(`${nameOf(e.defenderId)} is down: bind his wounds or carry him.`,{warning:true,announce:true,priority:3,ms:6500});
+      if(e.kind==='heal'&&party.has(e.actorId))report(`${nameOf(e.actorId)} binds ${e.targetId===e.actorId?'his own wounds':`${nameOf(e.targetId)}’s wounds`}: +${e.amount}.`,{announce:true});
+      if(e.kind==='revealed')report(`${nameOf(e.actorId)} is revealed.`,{warning:true,announce:true});
+      if(e.kind==='reinforcements')report('Enemy reinforcements arrive.',{warning:true,announce:true,priority:2});
+      if(e.kind==='phase')report(`New objective: ${e.label}.`,{announce:true,priority:2});
+      if(e.kind==='squad-broken'){const q=world.squads?.find(x=>x.id===e.squadId);if(q)report(`${q.name} breaks and falls back.`,{warning:q.side!=='enemy',announce:true,priority:q.side!=='enemy'?3:0,ms:6500});}
+      if(e.kind==='squad-rallied'){const q=world.squads?.find(x=>x.id===e.squadId);if(q&&q.side!=='enemy')report(`${q.name} stands again.`,{announce:true});}
+      if(e.kind==='squad-destroyed'){const q=world.squads?.find(x=>x.id===e.squadId);if(q)report(`${q.name} is cut down.`,{warning:q.side!=='enemy',announce:true,priority:q.side!=='enemy'?3:0,ms:6500});}
+      if(e.kind==='rally')report(`Rally: ${e.squads.length} squad${e.squads.length===1?'':'s'} steadied.`,{announce:true});
       // The finale's standoffs (mission.js): an oath heard or not, a band pledged, the meeting's rounds.
-      if(e.kind==='oath-heard')say(`${e.name} hears your oath: its morale falls to ${e.morale}.`,{announce:true});
-      if(e.kind==='oath-unheard')say(e.name?`No rival band heard your oath: the nearest, ${e.name}, is ${e.distance} m away. Swear it within ${e.reach} m.`
-        :'No rival band is left on the field to hear your oath.',{warning:true,announce:true});
-      if(e.kind==='pledge')say(`${e.name} pledges itself to you${e.joined?' and joins your side':' and leaves the field'}.`,{announce:true});
-      if(e.kind==='meeting')say(`The meeting holds: ${e.rounds} of 2 rounds.`,{announce:true});
+      if(e.kind==='oath-heard')report(`${e.name} hears your oath: its morale falls to ${e.morale}.`,{announce:true});
+      if(e.kind==='oath-unheard')report(e.name?`No rival band heard your oath: the nearest, ${e.name}, is ${e.distance} m away. Swear it within ${e.reach} m.`
+        :'No rival band is left on the field to hear your oath.',{warning:true,announce:true,source:'input'});
+      if(e.kind==='pledge')report(`${e.name} pledges itself to you${e.joined?' and joins your side':' and leaves the field'}.`,{announce:true});
+      if(e.kind==='meeting')report(`The meeting holds: ${e.rounds} of 2 rounds.`,{announce:true});
       // The field objects (field-objects.js): what changed, as the log says it.
       if(e.kind==='field'&&e.what!=='brazier-burns'){const line=world.log.findLast?.(l=>l.tick===e.tick&&/gate|bridge|barricade|brazier|pitch|opportunit|secures/i.test(l.text));
-        if(line)say(line.text,{announce:true,warning:e.what==='opportunities-closed'});}
-      if(e.kind==='capability-needed')say(`The objective is held: now ${capabilityTasks(e.missing)}.`,{warning:true,announce:true});
-      if(e.kind==='work-stopped'&&e.actorId===mine)say('Your work is interrupted.',{warning:true});
-      if(e.kind==='rejected'&&e.actorId===mine)say(REASONS[e.reason]??'That cannot be done now.',{warning:true});
-      if(e.kind==='blocked'&&e.actorId===mine)say(REASONS[e.reason],{warning:true});
-      if(e.kind==='war-cry')say(`${nameOf(e.actorId)} raises the war cry.${world.party.length?' The companions answer: “Roma!”':''}`);
+        if(line)report(line.text,{announce:true,warning:e.what==='opportunities-closed'});}
+      if(e.kind==='capability-needed')report(`The objective is held: now ${capabilityTasks(e.missing)}.`,{warning:true,announce:true,priority:2});
+      if(e.kind==='work-stopped'&&e.actorId===mine)report('Your work is interrupted.',{warning:true,priority:2});
+      if(e.kind==='rejected'&&e.actorId===mine)report(REASONS[e.reason]??'That cannot be done now.',{warning:true,source:'input'});
+      if(e.kind==='blocked'&&e.actorId===mine)report(REASONS[e.reason],{warning:true,source:'input'});
+      if(e.kind==='war-cry')report(`${nameOf(e.actorId)} raises the war cry.${world.party.length?' The companions answer: “Roma!”':''}`);
       if(e.kind==='talk'&&e.actorId===mine)openSoon(()=>callbacks.onTalk?.(e.targetId));
       if(e.kind==='loot'&&e.actorId===mine)openSoon(()=>callbacks.onLoot?.(e.targetId));
       if(e.kind==='used-object')callbacks.onObject?.(e.objectId,e.actorId);
       if(['victory','defeat'].includes(e.kind)&&!ended){
         ended=true;interruptClock(clock);interrupted=true;arrows.clear();
-        say(e.kind==='victory'?'The objective is secured.':world.mission?.reason??'You have fallen.',{announce:true});
+        report(e.kind==='victory'?'The objective is secured.':world.mission?.reason??'You have fallen.',{announce:true,priority:4});
         const ending=world;setTimeout(()=>{if(!disposed&&world===ending)callbacks.onEnd?.(ending);},350);
       }
     }
@@ -375,7 +385,8 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   }
   function updateHud(now){
     if(disposed)return;orderReview.update();showLesson();refreshReadouts(now);
-    if(dom.notice&&now>noticeUntil)dom.notice.hidden=true;
+    if(dom.notice&&!dom.notice.hidden){noticeUntil=noticeRemaining(noticeUntil,noticeAt?now-noticeAt:0,{paused:clock.paused&&!stepping(clock),reading:noticeReading||dom.notice.contains(document.activeElement)});if(noticeUntil<=0)dom.notice.hidden=true;}
+    noticeAt=now;
     if(chamber){
       // The chamber's HUD is its own (the hour, the speakers, the speeches and the coalition); Pause still stops its walks.
       const paused=clock.paused&&!stepping(clock);expireEvent(now);
@@ -435,11 +446,12 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const party=chamber?chamber.speakers():partyIds().map(id=>actorById(world,id)).filter(a=>a?.alive&&!a.down),bands=chamber?[]:commandSquads(world);
     if(!party.some(a=>a.id===listActor)&&!bands.some(q=>q.id===listActor))listActor=world.controlled;
     const band=bands.find(q=>q.id===listActor);
-    const options=chamber?chamber.options(listActor):band?squadOrderOptions(world,{squadId:band.id}):commandOptions(world,{actorId:listActor}),
+    const available=chamber?chamber.options(listActor).sort((a,b)=>Number(b.group==='Talk')-Number(a.group==='Talk')):band?squadOrderOptions(world,{squadId:band.id}):fieldTaskOptions(world,commandOptions(world,{actorId:listActor})),
+      options=listFilter?available.filter(o=>`${o.group} ${o.label} ${o.detail??''}`.toLowerCase().includes(listFilter)):available,
       key=`${listActor}|${bands.map(q=>q.id).join(',')}|${options.map(o=>`${o.group}:${o.label}:${o.reason??''}`).join('|')}`;
     if(key===listKey){
       // Same choices: only the distances and forecasts change, in place.
-      dom.listOptions.querySelectorAll('[data-option]').forEach(row=>{const o=options[Number(row.dataset.option)],d=row.querySelector('small');if(o&&d&&d.textContent!==o.detail)d.textContent=o.detail;});
+      dom.listOptions.querySelectorAll('[data-option]').forEach(row=>{const o=options[Number(row.dataset.option)],d=row.querySelector('small'),detail=o?.reason?o.message:o?.detail;if(o&&d&&d.textContent!==detail)d.textContent=detail;});
       return;
     }
     listKey=key;const focused=document.activeElement?.closest?.('[data-option]')?.querySelector('span')?.textContent??null;
@@ -453,7 +465,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       for(const [i,o]of options.entries()){
         if(o.group!==group)continue;
         const li=document.createElement('li'),text=document.createElement('span'),detail=document.createElement('small'),use=document.createElement('button');
-        li.dataset.option=i;text.textContent=o.label;detail.textContent=o.reason?o.message:o.detail;use.type='button';use.textContent='Use';use.disabled=!o.command;
+        li.dataset.option=i;text.textContent=o.label;detail.textContent=o.reason?o.message:o.detail;use.type='button';use.textContent='Use';use.setAttribute('aria-label',o.label);use.disabled=!o.command;
         if(o.command)use.addEventListener('click',()=>useOption(o));else use.title=o.message;
         li.append(text,detail,use);ul.append(li);
       }
@@ -728,6 +740,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   function seeThrough(){
     if(!stage)return;if(stage.flat){say('The 2D view shows the ground from above: there is nothing to see through.');return;}
     seeThroughOn=!seeThroughOn;stage.seeThrough=seeThroughOn;stage.wake?.();
+    dom.cutawayButton?.setAttribute('aria-pressed',String(seeThroughOn));
     say(seeThroughOn?'See-through: walls and roofs between you and the camera fade.':'Walls and roofs stand again.',{announce:true});
   }
   // A chamber opens on the whole floor (F follows the speaker); a field follows the soldier.
@@ -766,11 +779,13 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     for(const [key,el] of [['line',dom.eventLine],['more',dom.eventMore]]){if(!el)continue;
       el.onpointerenter=e=>{if(e.pointerType!=='touch')eventPointer[key]=true;};el.onpointerleave=()=>{eventPointer[key]=false;};}
     click(dom.pauseButton,togglePause);click(dom.slowButton,()=>act('slow_time'));click(dom.stepButton,()=>act('step_round'));click(dom.advanceButton,advance);
+    click(dom.followButton,()=>act('camera_follow'));click(dom.overviewButton,()=>act('camera_overview'));click(dom.cutawayButton,()=>act('see_through'));
     click(dom.swordsButton,()=>act('combat_toggle'));click(dom.walkButton,()=>act('walk_toggle'));
     click(dom.forceButton,()=>{force=!force;say(force?'Force: the next tap or click attacks whatever is there.':'Force cancelled.');});
     click(dom.rangesButton,()=>act('show_ranges'));
     if(dom.listButton)dom.listButton.onclick=()=>toggleList();
     if(dom.closeListButton)dom.closeListButton.onclick=()=>toggleList(false);
+    if(dom.actionSearch)dom.actionSearch.oninput=()=>{listFilter=dom.actionSearch.value.trim().toLowerCase();listKey='';renderList();};
     for(const [button,complete]of [[dom.lessonContinue,true],[dom.lessonSkip,false]])if(button)button.onclick=()=>{
       const lesson=callbacks.lesson?.(world,seen);if(!lesson?.id||complete&&!lesson.complete)return;
       callbacks.onLessonProgress?.(lesson.id,complete);lessonKey=null;
@@ -780,6 +795,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     };
     for(const [button,point]of [[dom.locateTarget,()=>actorById(world,keyTarget)??objectById(world,keyTarget)],[dom.locateObjective,objectivePoint]])if(button)button.onclick=()=>{const p=point();if(p){stage?.focusPoint(stageTile(p.x,p.z));stage?.wake?.();canvas.focus({preventScroll:true});}};
     if(dom.dismissNotice)dom.dismissNotice.onclick=()=>{dom.notice.hidden=true;noticeUntil=0;canvas.focus({preventScroll:true});};
+    if(dom.notice){dom.notice.onpointerenter=e=>{if(e.pointerType!=='touch')noticeReading=true;};dom.notice.onpointerleave=()=>{noticeReading=false;};}
     // The page opens the Menu from this button itself (data-cmd="menu", release 12), even before this module loads.
     if(dom.menuButton&&!dom.menuButton.dataset.cmd)dom.menuButton.onclick=()=>callbacks.onMenu?.();
     // The bar's panel buttons (release 12): each opens its panel as its key does. On a phone they fold into Panels.
@@ -834,12 +850,13 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // The stage is built (or rebuilt) for this world: draw it live and follow the soldier.
     // Its camera is the field's one (camera-bearing.js): fixed in bearing, and see-through as the player left it.
     attach(next){const again=stage===next;stage=next;glancing=false;if(!stage.flat){stage.fixedCamera=true;stage.seeThrough=seeThroughOn;}
+      if(dom.cutawayButton){dom.cutawayButton.disabled=!!stage.flat;dom.cutawayButton.setAttribute('aria-pressed',String(!stage.flat&&seeThroughOn));}
       stage.sync(sceneEncounter());if(again)stage.rebuildRemains?.();resetPresenter();firstView();},
     // The stage's encounter for this world (the page builds the stage from it).
     stageView:sceneEncounter,
     // A different fight in the same place (a retry or a load): the HUD, log and figures start again from it.
     load(next,nextBase=base){
-      world=next;base=nextBase;ended=world.status!=='active';shown=shownKey(world);logShown=0;hudKey='';partyKey='';barKey='';keyTarget=null;armed=null;force=false;noticeUntil=0;if(dom.notice)dom.notice.hidden=true;
+      world=next;base=nextBase;ended=world.status!=='active';shown=shownKey(world);logShown=0;hudKey='';partyKey='';barKey='';keyTarget=null;armed=null;force=false;noticeUntil=0;noticeAt=0;noticeLevel=0;noticeReading=false;guidance=null;guidanceKey='null';listFilter='';if(dom.actionSearch)dom.actionSearch.value='';if(dom.notice)dom.notice.hidden=true;
       eventMessage=null;hoverPoint=null;hoverDirty=false;hoverEnemy=null;pressMove=false;edge=null;arrows.clear();ability='strike';targetState='';readoutAt=-Infinity;missionWarningKey='';warnedAt.clear();
       pausedFor=null;resumePending=false;lastNow=0;lessonKey=null;listKey='';listActor=null;threatKey='';intentionsShown=false;marks={};marksKey='{}';wayOut=null;wayOutKey='null';seen.paused=false;seen.slowed=false;
       Object.assign(clock,createClock({speed:clock.speed}));orderReview.close({focus:false});toggleList(false);
@@ -867,6 +884,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // The page refreshes a camp's marks on every update: only a change reaches the stage (and wakes it).
     setMarks(next){const key=JSON.stringify(next??{});if(key===marksKey)return;marksKey=key;marks=next??{};presenter?.setMarks(marks);},
     setWayOut(next){const key=JSON.stringify(next??null);if(key===wayOutKey)return;wayOutKey=key;wayOut=next??null;stage?.sync(sceneEncounter());stage?.wake?.();},
+    setGuidance(next){const key=JSON.stringify(next??null);if(key===guidanceKey)return;guidanceKey=key;guidance=next??null;updateWayfinders();stage?.wake?.();},
     snapshot:()=>snapshotWorld(world),
     dispose(){
       unbindDisclosures();orderReview.dispose();

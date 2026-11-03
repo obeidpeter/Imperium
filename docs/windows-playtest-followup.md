@@ -132,3 +132,120 @@ node scripts/playtest-balance.mjs
 The latter writes `tests/visual-results/playtest-overhaul/balance.json` and
 checks that every available scenario resolves, retries exactly, and retains
 the campaign-strength reward.
+
+## Follow-up to the 3 November Windows playtest
+
+Implemented from main `5c7168c` after the native Chrome assessment. These changes
+apply to the shared camp, battlefield, character and chamber systems throughout
+Chapters I–XII. They do not replace the campaign rules or its saved progress.
+
+- Hover explanations have a fixed, keyboard-scrollable space. Battlefield
+  notices float within the world without moving the canvas under the pointer;
+  important losses take precedence and notices remain while paused or read.
+- The first inventory comparison preserves renderer-owned canvas dimensions
+  and redraws the retained soldier. Desktop comparisons sit beside the pack,
+  with secondary statistics folded and the Wear control kept near the item.
+- Camps name the required person, decision table or departure destination.
+  The map shows the soldier and numbered destinations; walking to an unvisited
+  place uses ordinary movement, while fast travel still requires discovery.
+  Choosing a route closes any Services overlay before following the soldier.
+- Follow, Overview and Cutaway are visible controls. Overview also fades
+  obstructing architecture along relevant sight lines. Terrain approaches use
+  softer irregular transitions and chambers have additional staged furnishings.
+- Squad cards expose strength and current orders without a horizontal roster.
+  All actions can be searched, with objectives and engineering work first and
+  optional opportunities identified separately. New battles begin with time to
+  plan; hold objectives show remaining control time and retry advice opens.
+- Council actions lead with talking to a delegate and explain the vote change
+  in plain language. Delegate labels name their bloc and current support.
+  Civic clothing and combat anticipation are more legible without changing
+  the simulation's strike/contact timing.
+- Creation folds optional training, cloak and challenge choices. Its landing
+  copy reflects the chosen play mode. Dynamic resolution recovers in measured
+  steps when GPU timings leave enough headroom, rather than remaining blurry
+  behind an unnecessarily strict recovery threshold.
+
+Validation for this follow-up is recorded below. Software-rendered Chromium
+checks establish behavior and rendering integrity, not a physical GPU frame
+rate or a first-time human playthrough of all twelve chapters.
+
+- Full Node suite: **1,627 passed**, with no failures, skips or cancellations.
+  The subsequent direct-input feedback refinement passed **17 focused tests**.
+- All four autoplay scripts, production asset integrity, character-asset audit,
+  performance-export freshness and character-production audit passed.
+- The strict Balanced stage checks for Chapter V and Chapter XII passed against
+  the existing ceilings, with no browser errors or first-frame/late shader
+  compilation. Their respective overview counts were **157 / 160 draws**,
+  **470,365 / 792,719 triangles**, and **46 / 47 programs**. The later UI-only
+  refinements do not change those stage assets or renderer paths.
+- The optional editable artist-handoff GLBs still record an earlier character
+  source fingerprint. `check-character-handoff.mjs --warn` reports this; these
+  development exports are excluded from the game build and should be exported
+  again before an artist handoff. Runtime character checks pass.
+- The twelve-chapter benchmark passed **13 scenes and all five acceptance
+  checks**, with no browser or runner errors, on build `42dd54199fc2`. Chapter V
+  used Balanced; the other chapter inventory used Performance. Checks include
+  political preview/commit, 320-pixel width at 200% text, remapped controls and
+  practice-save isolation. The subsequent build `66c58ffae95a` only changes
+  squad accessible names, phone camp-map button layout and guide text; those
+  UI refinements receive the browser checks below.
+- Camp navigation, DOM patching and generated guide/help checks passed
+  **21 focused tests** after those later changes.
+- Build `66c58ffae95a` passed the new navigation smoke at **1,280 and 390 pixels**:
+  compact creation, map destinations, legible phone route buttons, preserved
+  fast-travel discovery requirements, closing the Services overlay, and a legal
+  walk to the chapter decision. The browser observes movement and conversation
+  arrival; it does not inject a destination or campaign state. This regression
+  now runs in the GitHub usability job and uploads its report and captures.
+- A later phone-field check caught a height regression when opening More
+  actions with the larger squad cards. In build `60e05c8cf02c`, those extra
+  actions open as a bounded drawer above the HUD. The focused phone flow
+  passes the original minimum-canvas and no-page-scroll requirements, plus a
+  new assertion that the battlefield height stays exactly unchanged. Keyboard
+  selection, button selection, focus return, All actions and pause also pass.
+- The full usability suite passed **15 flows** on `60e05c8cf02c`, including
+  phone/desktop field controls, 200% settings, help and save protections,
+  keyboard/mouse equipment handling and emulated touch equipment handling.
+- The expanded real-time polish suite passed **39 checks** on `60e05c8cf02c`,
+  including Chapter V and council layouts at 390, 580 and 1,280 pixels,
+  fixed world geometry during long guidance/notices, readable complete squad
+  rosters, discoverable cameras and zero-time preparation pauses. The capture
+  immediately after the first equipment comparison visibly retains the soldier;
+  its WebGL drawing-buffer dimensions also remain unchanged. Comparison details
+  are visible beside the pack. In battle they correctly direct equipment changes
+  to camp; actual wear/remove interactions are covered by the usability suite.
+- Chromium smoke group B passed **13/13 scenarios** on `60e05c8cf02c`, with no
+  page or console errors. Coverage includes the real-time opening and completion
+  flow, 3D/2D switching, deployment, all six political contests, hearings,
+  finale defection, remapping, practice-save isolation, legacy chronicles and
+  post-battle exploration/search with once-only result recording.
+- A native Windows Chrome check reloaded the current local build, continued the
+  existing Chapter VII playtest and opened Equipment. The first Galea comparison
+  retained the visible soldier; Turn model right visibly changed his orientation
+  and Full kit restored the front view. No item was equipped. Closing the panel
+  returned to the paused chamber at Hour 2 with 6/13 support. This supplements
+  the headless capture limitation for rendered preview rotation; it is not a
+  new complete campaign playthrough or a hardware frame-rate measurement.
+- Chromium smoke group A passed ten scenarios on `60e05c8cf02c`. Its two
+  remaining scenarios passed isolated reruns on `f9fb078d355e`, so all **25
+  scenarios across groups A and B** are verified across these runs. The camp
+  departure check now uses 320 pixels for its truncated-message assertion:
+  the complete sentry message fits at 390 pixels. Full text, focus/hover holds,
+  expiry, history, keyboard pause and saved-state protection passed, as did
+  Chapter II departures in both 2D and 3D. No retry was needed in the final run.
+- The performance smoke exposed a separate defect: the deliberately demanding
+  graphics tour could trigger the application's automatic quality downgrade
+  while its stage-level adaptation was disabled. The tour now suspends both
+  mechanisms and releases the hold on success, cancellation or error. All
+  **35 focused graphics/profiler tests** passed. The unchanged browser smoke
+  assertions then confirmed restoration of the original Balanced quality,
+  an unchanged board, all three measured tiers and zero first-frame shader
+  compilation, with no page or console errors. Its software-rendering report
+  remains explicitly labelled and never applies a recommendation automatically.
+- Final production build: **`c983c891db5f`**, successfully built after the two
+  isolated browser reruns. The only runtime-source change from `f9fb078d355e`
+  removes an unsupported help claim about preserving a resumed battle's pause;
+  the fresh-battle preparation pause is unchanged. The **11 guide/settings
+  tests** passed after regenerating help. `git diff --check` passes. These are
+  local validation results; no GitHub upload or CI run was performed in this
+  implementation task.

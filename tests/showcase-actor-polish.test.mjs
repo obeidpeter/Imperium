@@ -2,7 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from '../vendor/three/three.module.js';
 import {createActor} from '../src/showcase/actors.js';
-import {actorPose,horsePose,groundHumanPose,groundHorsePose,createFootPlanting} from '../src/showcase/actor-pose.js';
+import {actorPose,horsePose,groundHumanPose,groundHorsePose,createFootPlanting,ACTOR_TIMING} from '../src/showcase/actor-pose.js';
+
+test('Melee wind-up reads through shoulders and knees but keeps exact contact and recovery poses',()=>{
+  for(const weapon of ['sword','spear'])for(const mounted of [false,true]){
+    const pose=phase=>actorPose({motion:'attack',phase,weapon,mounted}),quiet=phase=>actorPose({motion:'attack',phase,weapon,mounted,reducedMotion:true});
+    const load=pose(.22),still=quiet(.22);assert.ok(load.hipY<still.hipY-.01);assert.ok(load.rightElbow<still.rightElbow-.1);assert.ok(load.bodyY<still.bodyY-.04);
+    for(const phase of [0,ACTOR_TIMING.contact,1])assert.deepEqual(pose(phase),quiet(phase),'contact and endpoints remain exactly authored');
+  }
+});
 
 const measure=actor=>{let draws=0,triangles=0;const bounds=new T.Box3();actor.group.updateMatrixWorld(true);actor.group.traverseVisible(o=>{if(o.isMesh){draws++;triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;o.geometry.computeBoundingBox();bounds.union(o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld));}});return {draws,triangles,bounds};};
 const point=o=>o.getWorldPosition(new T.Vector3());

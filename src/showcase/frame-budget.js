@@ -68,7 +68,12 @@ export function createResolutionBudget({fps=45,enabled=true,onChange=()=>{}}={})
       if(!enabled||!Number.isFinite(ms)||ms<0)return false;
       total++;lastMs=ms;if(cooldown>0){cooldown--;return false;}
       samples.push(ms);if(samples.length>36)samples.shift();if(samples.length<24)return false;
-      const budget=1000/fps*.82,slow=samples.filter(n=>n>budget).length,fast=samples.filter(n=>n<budget*.55).length;
+      // Estimate the extra pixel cost of the next small recovery step. A
+      // healthy GPU previously had to run at <55% of its budget, leaving a
+      // 70%-scale scene blurred indefinitely even with ample measured room.
+      // Keep 15% headroom, sustained samples and the same cooling period.
+      const budget=1000/fps*.82,nextScale=Math.min(1,Math.round((scale+.05)*100)/100),pixelCost=(nextScale/scale)**2,
+        slow=samples.filter(n=>n>budget).length,fast=samples.filter(n=>n*pixelCost<budget*.85).length;
       return apply(slow>=18?Math.max(.65,Math.round((scale-.1)*100)/100):samples.length===36&&fast>=32?Math.min(1,Math.round((scale+.05)*100)/100):scale);
     },
     recordInterval(ms,expectedMs){

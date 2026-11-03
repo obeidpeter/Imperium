@@ -34,7 +34,7 @@ export const stageLabels={
     label.dataset.type=readout.type;label.dataset.role=labelRole(u);if(u.bloc)label.dataset.bloc=u.bloc;else delete label.dataset.bloc;
     label.classList.toggle('named',namedFigure(u));
     const refs=this.labelRefs.get(u.id);refs.name.textContent=u.name||u.id;refs.signal.textContent=readout.signal;refs.detail.textContent=readout.detail;
-    refs.short.textContent=readout.type==='vote'?`${readout.value>0?'+':''}${readout.value}`:readout.type==='resolve'?`${readout.value} R`:'';
+    refs.short.textContent=readout.type==='vote'?`${u.bloc||'Delegate'} · ${readout.value>=1?'Supports':readout.value===0?'Undecided':'Against'}`:readout.type==='resolve'?`${readout.value} R`:'';
     refs.short.title=readout.signal;
     refs.health.style.width=`${readout.ratio*100}%`;label.hidden=!actorVisible(u);refs.stateKey=null;
   },

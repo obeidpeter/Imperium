@@ -44,6 +44,16 @@ export function actorPose({time=0,motion='idle',phase,direction=0,turnSign=1,hea
     // and held-equipment aiming still solve after sampling.
     applyActorClip(pose,motion==='throw'?'throw':weapon==='spear'?'spearAttack':mounted?'mountedAttack':'attack',p);
     if(motion!=='throw'){applyPerformance(pose,'strike',p);if(p>.48)applyPerformance(pose,'recover',(p-.48)/.52);}
+    // Read the wind-up through the whole silhouette at gameplay distance:
+    // shoulders coil, knees load and the weapon elbow draws back. The
+    // envelope is exactly zero at contact, so authored hit/grip anchors and
+    // the simulation's attack clock stay intact for every chapter and kit.
+    if(!reducedMotion&&motion!=='throw'){
+      const load=actionEnvelope(motion,p).anticipation;
+      pose.bodyY-=(weapon==='spear'?.10:.15)*load;pose.hipY-=.025*load;
+      pose.rightElbow-=.24*load;pose.rightArm[2]+=(weapon==='spear'?.04:.12)*load;
+      pose.leftElbow-=.12*load;pose.headY+=.07*load;
+    }
     if(mounted&&weapon==='spear'){const reach=actionEnvelope(motion,p).reach;pose.bodyZ+=.045*reach;pose.headY-=.04*reach;}
     // Three presentation accents share the exact contact/release pose and
     // endpoints. Variation cannot change reach, the hit clock or the result.

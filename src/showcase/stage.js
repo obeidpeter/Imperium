@@ -4,7 +4,7 @@ import {renderDeviceReport} from './device-report.js';
 import {applyPairedContacts} from './paired-contact.js';
 import {createFrameProfile} from './frame-profile.js';
 import * as T from '../../vendor/three/three.module.js';
-import {createSceneryOcclusion} from './environment-occlusion.js';
+import {createSceneryOcclusion,sceneryFocusTargets} from './environment-occlusion.js';
 import {createFrameCadence,createGpuTimer,createResolutionBudget,isQuietStage} from './frame-budget.js';
 import {createPaintedLighting,paintedLight} from './painted-actor.js';
 import {followerCount} from './formation.js';
@@ -816,12 +816,12 @@ export class BattleStage{
     // The Curia's walls stand down while the camera is beyond them.
     this.sceneryModels?.updateCutaway?.(this.camera);
     const cutawayUnits=[selected,this.actors.get(this.inspected)].filter((actor,index,list)=>actor?.group.visible&&list.indexOf(actor)===index);
-    // See-through (X, the real-time field) widens the cut round the soldier to the walls and roofs about him, in every view.
-    const wide=this.seeThrough?2.4:1;
+    // A narrow automatic cut also works in the default overview. Explicit
+    // Cutaway widens it; a camera-framed objective gets its own local opening.
+    const cutawayTargets=sceneryFocusTargets(cutawayUnits.map(actor=>({position:actor.group.position,mounted:!!actor.group.userData.actor?.mounted})),
+      [...this.missionMarkers.values()].map(marker=>({position:marker.mesh.position,tone:marker.label.dataset.tone})),this.lookTarget,{wide:!!this.seeThrough});
     this.sceneryOcclusion?.update(this.camera,
-      {targets:cutawayUnits.map(actor=>({position:actor.group.position.clone().add(new T.Vector3(0,actor.group.userData.actor?.mounted?1.8:1.1,0)),
-        radius:(actor.group.userData.actor?.mounted?1.7:1.35)*wide})),
-        enabled:this.cameraView!=='overview'||!!this.animation||this.seeThrough,delta:dt,reducedMotion:this.reducedMotion});
+      {targets:cutawayTargets,delta:dt,reducedMotion:this.reducedMotion});
     this.positionLabels();this.ink?.flush?.(now);
     const shadowInterval=(SHADOW_REFRESH_MS[this.quality]??125)*(floor?2:1);
     if(this.shadowDirty||this.animation||!this.reducedMotion&&now-this.lastShadow>=shadowInterval){

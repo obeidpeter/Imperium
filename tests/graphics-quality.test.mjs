@@ -89,3 +89,17 @@ test('QUALITY-09 after a reload, a choice saved above the saved tier is still th
   assert.equal(reloaded.mode,'high');
   for(const chosen of ['performance','ultra',undefined])assert.equal(createGraphicsQuality({mode:'balanced',chosen}).chosen,'balanced',String(chosen));
 });
+
+test('Profiler holds ignore tier stress and release idempotently with a fresh normal-play sample window',()=>{
+  const changes=[],quality=createGraphicsQuality({mode:'balanced',chosen:'high',onChange:change=>changes.push(change)});
+  for(let i=0;i<29;i++)quality.recordFrame(100);
+  const outer=quality.suspendAdaptation(),inner=quality.suspendAdaptation();
+  for(let i=0;i<600;i++)assert.equal(quality.recordFrame(i%2?1000:1).accepted,false);
+  assert.equal(quality.strained('balanced'),null);assert.equal(quality.stepDown(),'balanced');
+  outer();outer();assert.equal(quality.recordFrame(1000).accepted,false,'one hold is still active');
+  inner();inner();assert.equal(quality.mode,'balanced');assert.equal(quality.chosen,'high');assert.deepEqual(changes,[]);
+  assert.equal(quality.stats().samples,0);assert.equal(quality.stats().totalSamples,29);
+  for(let i=0;i<29;i++)quality.recordFrame(100);
+  assert.equal(quality.mode,'balanced','old samples and profiler frames do not trigger an immediate downgrade');
+  quality.recordFrame(100);assert.equal(quality.mode,'performance','ordinary adaptation resumes after a full window');
+});

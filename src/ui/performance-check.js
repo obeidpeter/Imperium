@@ -79,7 +79,15 @@ function visibilityWatch(listener){const doc=globalThis.document;doc?.addEventLi
 
 /** Runs the check on the controller's live stage. Resolves to the report;
  * rejects only if there is no 3D battle to measure or the battle goes away. */
-export async function runPerformanceCheck(controller,{current='balanced',adaptive=true,app={},onProgress=()=>{},isCancelled=()=>false,
+export async function runPerformanceCheck(controller,options={}){
+  // Stage resolution and the application's automatic quality tier are separate
+  // controllers. Freeze both: the tour's deliberate workload must not change
+  // saved preferences or contaminate the next normal-play sample window.
+  const resume=options.graphics?.suspendAdaptation();
+  try{return await measurePerformanceCheck(controller,options);}finally{resume?.();}
+}
+
+async function measurePerformanceCheck(controller,{current='balanced',adaptive=true,app={},onProgress=()=>{},isCancelled=()=>false,
   now=()=>performance.now(),nextFrame=()=>new Promise(done=>requestAnimationFrame(done)),longTasks=createLongTaskLog(),facts=browserFacts,
   simulation=simulationTiming,isVisible=()=>globalThis.document?.visibilityState!=='hidden',watchVisibility=visibilityWatch,steadyFrames=240}={}){
   const first=controller.stage;if(!first)throw Error('Open a 3D battle, then run the check.');

@@ -5,6 +5,7 @@ import {actionLabel,firstKeyLabel} from '../ui/action-map.js';
 import {hourly} from '../ui/view-helpers.js';
 import {delegatePortrait} from '../ui/delegate-portrait.js';
 import {delegateVoice} from '../ui/field-experience.js';
+import {voteConsequence} from '../ui/realtime-assistance.js';
 
 // The walk-and-talk Curia on the page (build brief §3.11; guide "Political
 // Contests"): the chamber's part of the real-time field, which hands it the
@@ -279,18 +280,18 @@ export function createChamberControl({world:getWorld,dom,say:speak,message:line,
     const key=JSON.stringify([c,s.progressionVersion===1?agreementOptions(s,talking):null]);if(key===talkKey&&!panel.hidden&&!focus)return;talkKey=key;
     // A speech given from here re-renders the panel: the same button keeps the focus.
     const was=panel.contains(document.activeElement)?controlKey(document.activeElement):null;
-    const p=c.person,e=contest(),promised=e.promises?.includes(p.id),letter=p.letter?`<span class="rt-bloc-letter" aria-hidden="true">${esc(p.letter)} · </span>`:'';
-    const standing=p.role==='voter'?`${p.stance>=1?'For your motion':'Against your motion'} <strong>${signed(p.stance)}</strong> · ${Math.abs(p.stance)>=3?'committed':'wavering'}${promised?' · promised':''}`
+    const p=c.person,e=contest(),promised=e.promises?.includes(p.id);
+    const standing=p.role==='voter'?`${p.stance>=1?'Supports your motion':p.stance===0?'Undecided · no vote yet':'Against your motion'} <strong>${signed(p.stance)}</strong> · ${Math.abs(p.stance)>=3?'committed':'wavering'}${promised?' · promised':''}`
       :`${p.side==='enemy'?'Rival speaker':'Your allied speaker'} · ${p.resolve} of ${p.maxResolve} Resolve${p.resolve<=0?' · withdrawn':''}`;
     const interest=p.role!=='voter'?'':p.interest?`<p class="rt-talk-interest"><strong>His interest: ${esc(p.interest)}.</strong> ${esc(Chamber.interestNote(p.interest,p.bloc,known()))}</p>`
       :`<button type="button" class="rt-talk-ask" data-ask>Ask about his interests <small>Free; takes no time</small></button>`;
-    const row=x=>x.ok?`<li><button type="button" data-speak="${x.action}"><strong>${esc(x.name)}</strong><small>${esc(Chamber.forecastLine(x))}</small></button></li>`
+    const row=x=>x.ok?`<li><button type="button" data-speak="${x.action}"><strong>${esc(x.name)}</strong><small>${esc(voteConsequence(x))} ${esc(Chamber.forecastLine(x))}</small></button></li>`
       :x.walk?`<li><button type="button" data-walk="${x.walk.x},${x.walk.y}"><strong>Walk beside him</strong><small>Walk ${x.walk.cost*Chamber.SEAT} m; no speech spent. Then ${esc(x.name)}: ${esc(Chamber.forecastLine(x))}</small></button></li>`
       :`<li class="rt-talk-off"><span><strong>${esc(x.name)}</strong><small>${esc(x.message)}</small></span></li>`;
     const deals=p.role==='voter'&&s.progressionVersion===1?agreementOptions(s,p.id):null;
     const agreements=deals?.options?.length?`<section class="rt-talk-deals"><h4>An agreement · trust ${deals.trust}</h4>${deals.reason?`<p>${esc(deals.reason)}</p>`:''}<ul>${deals.options.map(o=>
-      `<li><button type="button" data-deal="${o.id==='demand'?'demand':'counteroffer'}" ${o.available?'':'disabled'}><strong>${esc(o.label)}</strong><small>${esc(o.pledge)} · ${o.cost} supplies, due Chapter ${o.due} · stance ${signed(o.stanceFrom)} → ${signed(o.stanceTo)}. Uses your soldier’s speech.</small></button></li>`).join('')}</ul></section>`:'';
-    panel.innerHTML=`<header class="rt-talk-head">${delegatePortrait(p,{decorative:true})}<div><p class="eyebrow">${letter}${esc(p.bloc??(p.side==='enemy'?'Opposition':'Your side'))}</p><h3 id="rt-talk-title">${esc(p.name)}</h3><p>${standing}</p></div>`+
+      `<li><button type="button" data-deal="${o.id==='demand'?'demand':'counteroffer'}" ${o.available?'':'disabled'}><strong>${esc(o.label)}</strong><small>${esc(o.pledge)} · ${o.cost} supplies, due Chapter ${o.due} · ${o.stanceFrom<1&&o.stanceTo>=1?'Gains this vote.':o.stanceTo>=1?'Keeps this vote; strengthens support.':'Still no supporting vote after this offer.'} Stance ${signed(o.stanceFrom)} → ${signed(o.stanceTo)}. Uses your soldier’s speech.</small></button></li>`).join('')}</ul></section>`:'';
+    panel.innerHTML=`<header class="rt-talk-head">${delegatePortrait(p,{decorative:true})}<div><p class="eyebrow">${p.role==='voter'?'Voting delegate · ':''}${esc(p.bloc??(p.side==='enemy'?'Opposition':'Your side'))}</p><h3 id="rt-talk-title">${esc(p.name)}</h3><p>${standing}</p></div>`+
       `<button type="button" class="rt-talk-close" data-close aria-label="Close the conversation (Esc)">×</button></header><blockquote class="rt-delegate-voice">${esc(delegateVoice(p))}</blockquote>${interest}`+
       `<p class="rt-talk-where">${p.metres} m from ${esc(c.speaker.name)}${c.speaker.spoken?`, who has spoken this hour`:''}.</p>`+
       `<ul class="rt-talk-speeches" aria-label="Speeches">${c.speeches.map(row).join('')}</ul>${agreements}`;

@@ -679,13 +679,22 @@ async function campExitDeparture(){
     // out is used again: the refusal itself saves and changes nothing.
     await page.waitForFunction(()=>!/Saving/.test(document.querySelector('.save-status')?.textContent??''),null,{timeout:30000});
     const before=await saved(page);assert.ok(before,'The chronicle is saved');
-    // On a phone the sentry's words are too long for the line: More opens the whole of them over the world. The words,
+    // At 320px the sentry's words are too long for the line (they fit at 390px): More opens them whole over the world. The words,
     // and More with them, stay 6.5 s. A pointer click first waits for More to keep still over two frames: under
     // software rendering that took 4-5 s at 4x CPU throttling and missed the words at 6x, as on main's CI after #61.
     // So More is focused in the frame it is found showing and pressed with Enter, as from the keyboard; if the words
     // still go first, the way out is used again, at most three times. Opened, the words stay until closed, so a pointer
     // click closes them.
-    await page.setViewportSize({width:390,height:844});
+    await page.setViewportSize({width:320,height:844});
+    // Read-only presentation evidence distinguishes an expired message from an
+    // overflow/disclosure regression on a slow software-rendered Windows run.
+    await page.evaluate(()=>{
+      const line=document.querySelector('[data-role="eventLine"]'),more=document.querySelector('[data-role="eventMore"]'),samples=[];
+      const record=()=>{const next={text:line.textContent,cut:line.hasAttribute('data-cut'),width:line.clientWidth,scroll:line.scrollWidth,more:!more.hidden};
+        if(JSON.stringify(samples.at(-1))!==JSON.stringify(next)){samples.push(next);if(samples.length>20)samples.shift();}};
+      const observer=new MutationObserver(record);observer.observe(line.parentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden','data-cut']});
+      window.__campExitEventSamples=samples;record();
+    });
     let opened=false;
     for(let attempt=1;attempt<=3&&!opened;attempt++){
       await page.waitForFunction(()=>!/Saving/.test(document.querySelector('.save-status')?.textContent??''),null,{timeout:30000});
@@ -693,12 +702,13 @@ async function campExitDeparture(){
       assert.equal((await useExit(page)).ok,true,'He uses the way out again');
       await page.waitForFunction(prev=>(window.__realtime.world().objects.find(o=>o.kind==='exit').at??null)!==prev,at,{timeout:120000})
         .catch(async()=>assert.fail(`The way out is used again: ${await where(page)}`));
-      await page.waitForFunction(()=>{const more=document.querySelector('[data-role="eventMore"]');if(!more||more.hidden)return false;more.focus();return document.activeElement===more;},null,{timeout:30000})
-        .catch(async()=>assert.fail(`A cut message offers More: ${await text(page,'[data-role="eventLine"]')}`));
+      const moreReady=await page.waitForFunction(()=>{const more=document.querySelector('[data-role="eventMore"]');if(!more||more.hidden)return false;more.focus();return document.activeElement===more;},null,{timeout:30000})
+        .then(()=>true,()=>false);
+      if(!moreReady){console.log(`# campExitDeparture: message window missed on attempt ${attempt}; ${JSON.stringify(await page.evaluate(()=>window.__campExitEventSamples))}`);continue;}
       await page.keyboard.press('Enter');
       opened=await page.locator('[data-role="eventMore"]').getAttribute('aria-expanded')==='true';
     }
-    assert.ok(opened,'More opens the whole message, within three uses of the way out');
+    assert.ok(opened,`More opens the whole message within three uses of the way out: ${JSON.stringify(await page.evaluate(()=>window.__campExitEventSamples))}`);
     assert.match(await text(page,'[data-role="eventFullText"]'),/^The gate sentry: “.*”$/,'More opens the whole message');
     await page.click('[data-role="eventMore"]');assert.equal(await page.locator('[data-role="eventFull"]').isHidden(),true,'A second press closes it');
     // Polish after Gate 4, at the owner's request: a message cut short stays while it is held, by More's focus or by the

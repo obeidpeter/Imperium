@@ -4,7 +4,7 @@ import {esc,roman,offlineNotice} from './view-helpers.js';
 import {createCampaignViews,allocationDraftPreview} from './campaign-views.js';
 import {createPanels} from './panels.js';
 import {createRenderScheduler,createRenderHold,prepareShareCard} from './render-controller.js';
-import {updatePage} from './page-update.js';
+import {updatePage,rememberPage} from './page-update.js';
 import {encounterView,selectedActor,selectedCommand} from './encounter-view.js';
 import {directIntent,nextReadyUnit,keyboardAction,samePoint,clickRoute,walkableReach} from './direct-controls.js';
 import {bindBoardInput} from './board-input.js';
@@ -26,7 +26,8 @@ import * as Chamber from '../core/chamber.js';
 import {KEY_GROUPS,eventBinding,keyLabel,keymapChanges,keymapFrom,remapAction} from './action-map.js';
 import {createSoldier} from '../core/soldier.js';
 import {campFor,CAMP_PLACES,campPlaceName,campPlaceHint} from '../data/camps.js';
-import {campRuntimeKey,campWayOut} from './camp-runtime.js';
+import {campRuntimeKey,campWayOut,campNextTask,campTaskCommand} from './camp-runtime.js';
+import {campMapView} from './camp-navigation.js';
 import {createErrandTracker,errandDestinationAction} from './errand-guidance.js';
 import {practicePanel} from './command-edition-views.js';
 import {SLOT_IDS,listSlots,writeSlot,readSlot,clearSlots} from './save-slots.js';
@@ -521,6 +522,7 @@ function refreshCampMarks(){
   else if(wayOut&&!wayOutSeen.ready){wayOutSeen.ready=true;announce(`Ready to march: ${wayOut.label} is marked.`);}
   else if(!wayOut)wayOutSeen.ready=false;
   field.runtime.setWayOut?.(wayOut);
+  field.runtime.setGuidance?.(campNextTask(state,world));
 }
 let conversation=null;
 function showConversation(treeId,nodeId=null){
@@ -579,8 +581,25 @@ function showCouncil(){
 // The camp's map (M): its places, and travel to those already walked to.
 function showCampMap(){
   const visited=new Set(Game.campVisited(state));
-  showModal('The camp',`<ul class="rt-camp-places">${CAMP_PLACES.map(id=>`<li><span><strong>${esc(campPlaceName(state.chapter,id))}</strong> <small>${esc(campPlaceHint(state.chapter,id))}</small></span>`+
-    `<button data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once first."'}>${visited.has(id)||id==='gate'?'Go there':'Not yet visited'}</button></li>`).join('')}</ul>`);
+  showModal('The camp',campMapView(state,field?.runtime?.world)+`<ul class="rt-camp-places">${CAMP_PLACES.map((id,i)=>`<li><span><strong>${i+1}. ${esc(campPlaceName(state.chapter,id))}</strong> <small>${esc(campPlaceHint(state.chapter,id))}</small></span>`+
+    `<div class="camp-route-actions"><button data-cmd="camp-walk" data-id="${id}">Walk there</button><button data-cmd="camp-travel" data-id="${id}" ${visited.has(id)||id==='gate'?'':'disabled title="Walk there once to unlock fast travel."'}>${visited.has(id)||id==='gate'?'Fast travel':'Not yet visited'}</button></div></li>`).join('')}</ul>`);
+}
+function campWalk(place){
+  const runtime=field?.kind==='camp'?field.runtime:null,p=runtime?.world?.places?.[place];if(!p)return;
+  if(modal.open)modal.close();
+  if(pageOverlay){pageOverlay='';render();}
+  const result=runtime.issue({actorId:runtime.world.heroId,kind:'move',payload:{x:p.x,z:p.z+2}});
+  if(result.ok){runtime.follow();announce(`Walking to ${campPlaceName(state.chapter,place)}.`);}
+}
+function goToCampTask(){
+  const runtime=field?.kind==='camp'&&field.runtime,task=campNextTask(state,runtime?.world);if(!task)return;
+  if(task.panel){if(modal.open)modal.close();pageOverlay='services';render();return;}
+  const command=campTaskCommand(task,runtime?.world);
+  if(!command){if(task.tree)showConversation(task.tree);return;}
+  if(modal.open)modal.close();
+  if(pageOverlay){pageOverlay='';render();}
+  const result=runtime.issue(command);
+  if(result.ok){runtime.follow();announce(`${task.label}. Your soldier will approach when the camp resumes.`);}
 }
 function campTravel(place){
   const runtime=field?.runtime,p=runtime?.world.places?.[place];if(!p){toast('The camp is not open.');return;}
@@ -1134,6 +1153,7 @@ function showModal(title,body,{menu=false,back='menu',pause=false}={}){
   const returnButton=back?`<button class="text-link modal-back" ${back==='company'?'data-cmd="soldier-panel" data-id="company"':'data-cmd="menu"'}>← ${back==='company'?'Company':'Menu'}</button>`:'';
   modal.innerHTML=`<div class="modal-head"><div>${returnButton}<h2 id="panel-title" tabindex="-1">${esc(title)}</h2>`+
     `</div><button class="ghost modal-close" data-cmd="close-modal" aria-label="Close panel">Close <kbd>Esc</kbd></button></div><div class="modal-body">${body}</div>`;
+  rememberPage(modal);
   syncSessionControls();
   for(const id of openDetails){const detail=document.getElementById(id);if(detail?.tagName==='DETAILS')detail.open=true;}
   modal.scrollTop=0;if(!modal.open)modal.showModal();
@@ -1217,7 +1237,7 @@ async function startPerformanceCheck(){
   const names={performance:'Performance',balanced:'Balanced',high:'High quality'};
   try{
     performanceReport=await runPerformanceCheck(battleStage,
-      {current:graphics.mode,adaptive:settings.adaptiveResolution!==false,app:{version:CONFIG.version},isCancelled:()=>check.cancelled,
+      {current:graphics.mode,graphics,adaptive:settings.adaptiveResolution!==false,app:{version:CONFIG.version},isCancelled:()=>check.cancelled,
       onProgress:({tier,index,total,step})=>{check.show(step==='simulation'?'Checking simulation timing. Escape cancels.':
         `Performance check ${index+1} of ${total}: ${step==='build'?'building':step==='steady'?'checking repeat stability for':'measuring'} ${names[tier]}. Escape cancels.`);}});
   }catch(error){performanceReport=null;toast(`The performance check stopped: ${error.message||error}`);}
@@ -1299,6 +1319,8 @@ case 'conversation':
   showConversation(id);break;
 case 'reply':await replyConversation(Number(id));break;
 case 'camp-travel':if(pageOverlay){pageOverlay='';render();}campTravel(id);break;
+case 'camp-walk':campWalk(id);break;
+case 'camp-next':goToCampTask();break;
 case 'track-errand':trackErrand(id);break;
 case 'untrack-errand':untrackErrand();break;
 case 'errand-destination':goToErrand(id);break;

@@ -1,7 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from '../vendor/three/three.module.js';
-import {CUTAWAY_UNIFORMS,createSceneryOcclusion,sceneryCutawayWeight} from '../src/showcase/environment-occlusion.js';
+import {CUTAWAY_UNIFORMS,createSceneryOcclusion,sceneryCutawayWeight,sceneryFocusTargets} from '../src/showcase/environment-occlusion.js';
+
+test('Overview corridors retain the soldier and inspected figure, and expose only the camera-framed objective',()=>{
+  const a={position:{x:0,y:0,z:0}},b={position:{x:3,y:0,z:0},mounted:true},goal={position:{x:8,y:0,z:0},tone:'goal'};
+  const targets=sceneryFocusTargets([a,a,b],[{position:{x:7,y:0,z:0},tone:'secured'},goal],goal.position);
+  assert.equal(targets.length,3);assert.equal(targets[0].position.y,1.1);assert.equal(targets[1].position.y,1.8);assert.deepEqual(targets[2],{position:{x:8,y:.55,z:0},radius:2.5});
+  assert.equal(sceneryFocusTargets([a],[goal],{x:30,y:0,z:0}).length,1);
+  assert.equal(sceneryFocusTargets([a],[{...goal,tone:'warning'}],goal.position).length,1);
+  assert.equal(sceneryFocusTargets([a],[{position:a.position}],a.position).length,1,'a nearby goal shares the soldier corridor');
+  assert.ok(sceneryFocusTargets([a],[],null,{wide:true})[0].radius>targets[0].radius);
+});
 
 test('Cutaway covers the camera-to-figure corridor, never scenery beside or behind the figure',()=>{
   const camera={x:0,y:2,z:10},target={x:0,y:2,z:0};
@@ -52,6 +62,6 @@ test('Models that arrive later join the cutaway before they are drawn; mixed mes
   const late=new T.Group(),c=new T.MeshStandardMaterial();late.add(new T.Mesh(g,c));
   assert.equal(helper.add(late),1);assert.equal(c.userData.sceneryCutaway,true);assert.equal(helper.stats().meshes,2);
   helper.update(camera,{targets:Array.from({length:6},()=>({position:{x:0,y:1,z:0},radius:99})),delta:99});
-  assert.deepEqual(mesh.material,[a,b]);assert.equal(helper.stats().targets,2);assert.ok(helper.stats().amount<=1);
+  assert.deepEqual(mesh.material,[a,b]);assert.equal(helper.stats().targets,3);assert.ok(helper.stats().amount<=1);
   helper.dispose();assert.equal(helper.add(new T.Group()),0);a.dispose();b.dispose();c.dispose();g.dispose();
 });
