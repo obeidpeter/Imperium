@@ -17,7 +17,8 @@
 # (scripts/benchmark-stage.mjs), which fails on a shader compiled in the first
 # frame or in play, on more than 50 shader programs, or on draw calls, triangles
 # or shader programs above the ceilings recorded in scripts/stage-ceilings.json,
-# and whose report is uploaded.
+# and whose report is uploaded. The desktop jobs package the Steam app (desktop/) on Linux and Windows and drive it
+# through its interface (scripts/desktop-smoke.mjs); main's Windows run keeps the app folder as an artifact.
 # Playwright is installed for those jobs only and is not a project dependency.
 name: Verify
 
@@ -259,3 +260,53 @@ jobs:
           name: stage-benchmark
           path: tests/visual-results/stage-benchmark.json
           retention-days: 14
+
+  # The desktop app for Steam (desktop/; docs/desktop.md): the desktop build packaged by electron-builder, then driven
+  # through its visible interface (scripts/desktop-smoke.mjs) as Steam would install it, under a virtual display on
+  # Linux and in the runner's session on Windows. Its packages install in desktop/ only; the web project stays
+  # dependency-free.
+  desktop:
+    name: desktop app ${{ matrix.os == 'windows-latest' && 'Windows' || 'Linux' }} (Electron)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock playwright@1.56.1
+      - run: npm run build:desktop
+      - run: npm ci
+        working-directory: desktop
+      - run: npm run package:${{ matrix.os == 'windows-latest' && 'win' || 'linux' }}
+        working-directory: desktop
+      # Chromium's sandbox on Linux: the runner's Ubuntu restricts the user namespaces it would use, so it needs its
+      # setuid helper root-owned with mode 4755, as an installed Linux package sets it. The sandbox stays on.
+      - if: matrix.os != 'windows-latest'
+        working-directory: desktop/out/linux-unpacked
+        run: sudo chown root:root chrome-sandbox && sudo chmod 4755 chrome-sandbox
+      - name: The packaged app, through its visible interface
+        shell: bash
+        run: ${{ matrix.os != 'windows-latest' && 'xvfb-run -a' || '' }} npm run smoke:desktop
+        env:
+          DESKTOP_APP: packaged
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: desktop-smoke-${{ matrix.os }}
+          path: |
+            tests/visual-results/desktop/report.json
+            tests/visual-results/desktop/relaunch.png
+          retention-days: 14
+      # The Windows app folder, to try on a PC, from main's runs only (it is about 130 MB compressed). It is unsigned,
+      # so Windows may warn before opening it.
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'windows-latest' && github.event_name == 'push'
+        with:
+          name: imperium-windows
+          path: desktop/out/win-unpacked/
+          retention-days: 7

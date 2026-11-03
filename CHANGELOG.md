@@ -2,6 +2,30 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Steam, first package: the desktop app ([plan](docs/steam-plan.md), [the app](docs/desktop.md), [the owner's checklist](docs/steam-release.md))
+
+The owner chose to sell Imperium on Steam, Windows first, and to keep a free web demo. This first package builds the desktop app; Steam itself (achievements, the overlay, cloud saves) comes once the App ID exists.
+
+- **The desktop app.** `desktop/` is an Electron window around the same game, in a package of its own, so the web project still has no dependencies. It serves the game from its own files at `app://imperium`, one origin that must never change, since the saves belong to it.
+  - **It starts full-screen.** F11, Alt+Enter or **Settings → Graphics → Window** switch it, and it remembers the window. Esc stays with the game.
+  - **The chronicle is a file:** `%APPDATA%\Imperium\saves\campaign.json` on Windows, written atomically with the copy before it kept beside it. Steam Cloud will sync that file. Loading adopts the file when it differs from the app's own store, and keeps what it replaces as a recovery checkpoint.
+  - **Menu → Quit to desktop**, and closing the window, save first. If the save fails, the player chooses between quitting anyway and playing on.
+  - **One copy at a time**; no browser menus, reload or zoom keys; the faster graphics chip on laptops with two.
+  - **No network.** Web links open in the system browser, and the game makes no request outside its origin.
+- **`npm run build:desktop`** builds the game for it into `dist-desktop/` (63 MB): no service worker, offline packs or install manifest, and `platform: 'desktop'` in its configuration. `src/ui/platform.js` is the one place the game asks which it is. Without the app's bridge, a desktop build behaves as the web.
+- **On the desktop, the page speaks of the installed game.** The title page, footer and privacy notes no longer offer free browser play. Settings has no offline section, and its saves page is called **Saves**. The reign card prints no site address.
+- **The web game is unchanged**, except its credits. They now name every source the game ships (Tripo, MakeHuman, Poly Haven, Blender, the audio generators, Three.js and its decoders) and link the licences, and no longer say the figures and horses are original code-built meshes. The decoders' missing licence texts now ship with them: ktx-parse, zstddec, meshoptimizer and Basis Universal's attribution.
+- **The player guide and the in-game help** have a section on the desktop app.
+- **For contributors:**
+  - `npm run smoke:desktop` drives the app through its interface with Playwright's Electron support: New Game to the first camp with the save written as a file, Quit after it, and a relaunch with only the file, which offers to continue the same chronicle.
+  - CI's new `desktop` job packages the app on Linux and Windows and runs that check on the packaged app. Each push to main keeps the Windows app folder for a week, as `imperium-windows`. It is unsigned.
+
+**Checked:**
+- **Automated tests:** `npm test`, with new storage and platform tests.
+- **The desktop check, in this session:** on Linux under a virtual display (xvfb), both on the repository's Electron and on the packaged app folder (341 MB, the game 63 MB of it). The Windows run is CI's.
+
+**Not checked:** a real Windows PC, which waits for the owner's machine. Steam, the overlay and cloud saves come in the third package.
+
 ### The Windows playtest follow-up ([#65](https://github.com/obeidpeter/Imperium/pull/65), [notes](docs/windows-playtest-followup.md))
 
 The owner's changes after the 3 November playtest in Chrome on Windows:

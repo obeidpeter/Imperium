@@ -1,0 +1,55 @@
+{
+  "name": "imperium-desktop",
+  "productName": "Imperium",
+  "version": "0.38.1",
+  "private": true,
+  "description": "Imperium's desktop app for Steam: one window around the game built by npm run build:desktop (docs/desktop.md).",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "package:win": "electron-builder --win dir --x64",
+    "package:linux": "electron-builder --linux dir --x64"
+  },
+  "devDependencies": {
+    "electron": "45.2.1",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "com.imperium.game",
+    "productName": "Imperium",
+    "copyright": "Imperium",
+    "directories": {
+      "output": "out"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../dist-desktop",
+        "to": "game",
+        "filter": [
+          "**/*",
+          "!build-report.json"
+        ]
+      }
+    ],
+    "asar": true,
+    "electronLanguages": [
+      "en-US"
+    ],
+    "win": {
+      "target": "dir",
+      "icon": "../icons/icon-512.png"
+    },
+    "linux": {
+      "target": "dir",
+      "icon": "../icons/icon-512.png",
+      "category": "Game",
+      "executableName": "imperium"
+    },
+    "publish": null
+  }
+}

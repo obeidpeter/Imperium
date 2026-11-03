@@ -1,9 +1,11 @@
 import {CONFIG} from '../config.js';
 import {serialize,deserialize} from '../core/game.js';
+import {desktopSaveMirror} from './platform.js';
 
 const HISTORY_LIMIT=3;
 const conflict=()=>Object.assign(new Error('A newer save exists in another tab. Reload or explicitly take over before continuing.'),{code:'SAVE_CONFLICT'});
 const unavailable=()=>Object.assign(new Error('Safe browser storage is unavailable. Continue in memory and export a save code to keep this chronicle.'),{code:'SAVE_UNAVAILABLE'});
+const fileUnavailable=()=>Object.assign(new Error('The save file could not be written. Progress is kept in the app; export a save code to keep a copy.'),{code:'SAVE_FILE_UNAVAILABLE'});
 function checksum(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(16);}
 function rawObject(raw){try{return typeof raw==='string'?JSON.parse(raw):raw;}catch{return null;}}
 function unpack(raw){try{const e=rawObject(raw);if(!e||e.format!==1||typeof e.payload!=='string'||e.checksum!==checksum(e.payload))return null;return {...e,state:deserialize(e.payload)};}catch{return null;}}
@@ -35,6 +37,11 @@ export function createSaveStore(options={}){
   const ls='localStorage'in options?options.localStorage:safeGlobal('localStorage');
   const nav='navigator'in options?options.navigator:safeGlobal('navigator');
   const Channel='BroadcastChannel'in options?options.BroadcastChannel:safeGlobal('BroadcastChannel');
+  // The desktop app's save file (platform.js desktopSaveMirror): {read(), write(text)}, both async. The file is what
+  // Steam Cloud syncs and what a reinstall restores, so on the desktop it is the chronicle: loading adopts it when it
+  // differs from the store, keeping what it replaces as a recovery checkpoint, and every save writes it through.
+  // The store itself (IndexedDB and localStorage in the app's own profile) keeps its locks, history and quarantine.
+  const mirror='mirror'in options?options.mirror:null;
   const sessionId=globalThis.crypto?.randomUUID?.()||Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
   const takeoverToken=Symbol('confirmed takeover');
   let useLocks=options.useWebLocks!==false&&typeof nav?.locks?.request==='function';
@@ -60,6 +67,25 @@ export function createSaveStore(options={}){
     return new Promise(resolve=>{try{const tx=db.transaction('saves'),r=tx.objectStore('saves').get('campaign');r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>resolve(null);tx.onabort=()=>resolve(null);}catch{dbPromise=null;resolve(null);}});
   }
   async function records(){return [localRaw(),await idbRaw()];}
+  async function mirrorRaw(){if(!mirror)return null;try{return await mirror.read()||null;}catch{return null;}}
+  async function writeMirror(envelope){if(!mirror)return true;try{await mirror.write(JSON.stringify(envelope));return true;}catch{return false;}}
+  // Put an envelope as the store's current record as it is (adopting the file): no new sequence, writer or history.
+  async function putEnvelope(envelope){
+    const db=await database();
+    if(db)await new Promise(resolve=>{try{const tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(envelope,'campaign');tx.oncomplete=()=>resolve();tx.onabort=()=>resolve();}catch{resolve();}});
+    try{ls?.setItem(key,JSON.stringify(envelope));}catch{}
+  }
+  // The file wins when it differs from the store: Steam Cloud's copy, or a reinstall's. An unreadable file is set
+  // aside like any unreadable record. Returns whether the file existed.
+  async function adoptMirror(){
+    const raw=await mirrorRaw();if(!raw)return false;
+    const file=localEnvelope(raw);if(!file){keepLocal(raw,'file');return true;}
+    const raws=await records(),current=newest(raws.map(localEnvelope));
+    if(current&&fingerprint(current)===fingerprint(file))return true;
+    const {state:_state,...saved}=file;
+    await putEnvelope({...saved,recovery:mergedHistory([raw,...raws],current?[current]:[],file)});
+    return true;
+  }
   function adopt(e){sequence=e.sequence;observed=fingerprint(e);campaignId=campaign(e);}
   function listen(){
     if(channel||!Channel||closed)return;
@@ -105,7 +131,10 @@ export function createSaveStore(options={}){
     });
   }
   async function loadLocal(){
+    const hadFile=await adoptMirror();
     const raws=await records(),current=newest(raws.map(localEnvelope)),recoveries=mergedHistory(raws);
+    // A chronicle the store has but the file lacks (the first launch with files, or a deleted file) is written out.
+    if(current&&mirror&&!hadFile){const {state:_state,...saved}=current;await writeMirror({...saved,recovery:mergedHistory(raws,[],current)});}
     if(current){adopt(current);return {state:current.state,error:null,recoveryAvailable:recoveries.length};}
     return {state:null,error:raws.some(Boolean)?'The current chronicle is damaged or incompatible. Review recovery checkpoints or restore a save code.':null,recoveryAvailable:recoveries.length};
   }
@@ -126,6 +155,8 @@ export function createSaveStore(options={}){
       }
       adopt({...next,state:deserialize(next.payload)});broadcast(next);
       if(!persistAsked){persistAsked=true;try{nav?.storage?.persist?.().catch(()=>{});}catch{}}
+      // The store has the save; the file must have it too, or Steam Cloud and a reinstall would not.
+      if(!await writeMirror(next))throw fileUnavailable();
       return next.savedAt;
     };
     if(!useLocks)return write(false);
@@ -180,10 +211,10 @@ export function createSaveStore(options={}){
   async function close(){closed=true;channel?.close();channel=null;const db=await dbPromise;db?.close?.();listeners.clear();}
   return {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges,listUnreadableSaves,readUnreadableSave,close};
 }
-const defaultStore=createSaveStore();
+const defaultStore=createSaveStore({mirror:desktopSaveMirror()});
 export const {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges,listUnreadableSaves,readUnreadableSave}=defaultStore;
 // SAC1/SAC1J identify the portable format; retain both across the Imperium rename.
 export async function saveCode(state){const payload=serialize(state);const raw=new TextEncoder().encode(JSON.stringify({format:1,payload,checksum:checksum(payload)}));let bytes=raw,prefix='SAC1J.';if(globalThis.CompressionStream){bytes=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());prefix='SAC1.';}let binary='';for(const b of bytes)binary+=String.fromCharCode(b);return prefix+btoa(binary);}
 export async function restoreCode(code){const text=code.trim();if(text.length>3000000)throw new Error('Save code is too large.');if(text.startsWith('{'))return deserialize(text);let bytes;try{const parts=text.split('.');if(!['SAC1','SAC1J'].includes(parts[0])||parts.length!==2)throw new Error();bytes=Uint8Array.from(atob(parts[1]),c=>c.charCodeAt(0));if(parts[0]==='SAC1'){if(!globalThis.DecompressionStream)throw new Error('This browser cannot read compressed save codes. Use a recent browser.');const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();const chunks=[];let total=0;for(;;){const {value,done}=await reader.read();if(done)break;total+=value.length;if(total>2000000){await reader.cancel();throw new Error('Expanded save exceeds the size limit.');}chunks.push(value);}bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}}const decoded=new TextDecoder('utf-8',{fatal:true}).decode(bytes);const parsed=JSON.parse(decoded);if(parsed.format===1){const checked=unpack(parsed);if(!checked)throw new Error('Checksum or save validation failed.');return checked.state;}return deserialize(decoded);}catch(error){throw new Error(error.message?.includes('browser')?error.message:'This save code is invalid or incompatible. Your existing chronicle has not been changed.');}}
 
-
+

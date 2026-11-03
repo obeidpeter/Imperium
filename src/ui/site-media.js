@@ -1,5 +1,6 @@
+import {networkConnection} from './platform.js';
 // Optional website imagery never participates in campaign state or chapter caching.
-export function setupSiteMedia(root,connection=navigator.connection){
+export function setupSiteMedia(root,connection=networkConnection()){
   const images=[...root.querySelectorAll('img[data-src]')];
   let cancelled=false;
   const limited=connection?.saveData||['slow-2g','2g'].includes(connection?.effectiveType)||(Number.isFinite(connection?.downlink)&&connection.downlink<1);

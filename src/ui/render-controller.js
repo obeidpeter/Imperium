@@ -1,3 +1,4 @@
+import {platformKind} from './platform.js';
 // Coalesce DOM-to-Canvas work so discarded renders cannot bind stale controls.
 export function createRenderScheduler(requestFrame, commit) {
   let revision = 0;
@@ -37,5 +38,7 @@ export async function prepareShareCard({canvas,summary,loadPortrait,loadScene,dr
   downloadButton.textContent = 'Download card';
   shareButton.disabled = false;
   shareButton.textContent = 'Share with your device';
+  // The desktop app has no share sheet (platform.js): the card is downloaded instead.
+  shareButton.hidden = platformKind() === 'desktop';
   return file;
 }
