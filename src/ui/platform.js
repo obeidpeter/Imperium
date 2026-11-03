@@ -1,4 +1,5 @@
 import {CONFIG} from '../config.js';
+import {earnedAchievements} from '../core/achievements.js';
 
 // The platform boundary (CLAUDE.md; the Steam plan, docs/steam-plan.md). The game runs as the web site or inside the
 // desktop app (desktop/, for Steam). The desktop build writes CONFIG.platform 'desktop', and the app's preload
@@ -70,3 +71,14 @@ const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 /** A chronicle past the demo's last chapter (the full game's, by a save code): the demo never plays it, and says why. */
 export const pastDemo=(state,demo=demoEdition())=>!!demo&&!!state&&Number(state.chapter)>demo.lastChapter;
 export const pastDemoMessage=(state,demo=demoEdition())=>`This chronicle has reached Chapter ${ROMAN[state.chapter-1]??state.chapter}, past the end of the demo with Chapter ${ROMAN[demo.lastChapter-1]}. Continue it in the full game.`;
+
+/** Steam's achievements (the Steam plan, S3): the desktop app unlocks what the chronicle has earned
+ * (core/achievements.js) after each save and when a chronicle loads. Nothing happens on the web, or in the app without
+ * Steam; a failure is never the game's. Resolves to the ids Steam newly unlocked. */
+export async function reportAchievements(state,{bridge=inDesktopApp()?desktopBridge():null}={}){
+  const steam=bridge?.steam;
+  if(!state||typeof steam?.unlock!=='function')return [];
+  const ids=earnedAchievements(state).map(a=>a.id);
+  if(!ids.length)return [];
+  try{const result=await steam.unlock(ids);return Array.isArray(result?.unlocked)?result.unlocked:[];}catch{return [];}
+}

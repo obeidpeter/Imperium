@@ -54,13 +54,27 @@ For development:
   - the reign card prints no site address;
   - there is no share sheet, so the card is downloaded.
 
-## Steam (S3, once the App ID exists)
+## Steam (S3)
 
+- **Achievements.** The 35 achievements are data (`src/data/achievements.js`). [docs/steam-achievements.md](steam-achievements.md) lists them for entering in Steamworks, and `node scripts/steam-achievements.mjs` regenerates it.
+  - `earnedAchievements(state)` (`src/core/achievements.js`) reads them from what the chronicle records. It changes nothing and never grants anything, and a Practice replay earns none.
+  - The page reports them through the bridge after each save, restore and load (`reportAchievements`, `src/ui/platform.js`). Steam unlocks the ones it does not have yet, so a chronicle brought from the browser or the demo unlocks what it has already earned.
+- **The Steam link,** `desktop/steam.cjs`, uses [steamworks.js](https://github.com/ceifa/steamworks.js) 0.4.0 (MIT). It runs only with a Steam App ID: `"steamAppId"` in `desktop/package.json` (null until the owner has one), or `IMPERIUM_STEAM_APP_ID` for development.
+  - Without an App ID, or without the Steam client running, the app runs as before. The bridge's `steam.status()` says why Steam is off.
+  - With one, the app starts the Steam API and turns on the overlay (Shift+Tab) before its window opens. steamworks.js's Electron helper sets Chromium's in-process GPU and repaints the window each frame so the overlay can draw. Check the frame rate with it on a real PC.
+  - For a development run on Valve's test app, set `IMPERIUM_STEAM_APP_ID=480` with Steam running. The overlay can be tried there, but the game's achievements exist only in its own app.
 - **Cloud saves.** Steam Auto-Cloud needs no game code. In Steamworks, sync the root `WinAppDataRoaming` (`%APPDATA%`), subdirectory `Imperium/saves`, pattern `campaign.json`. Only that file is the chronicle; `campaign.prev.json` stays local.
-- **Overlay and achievements.** These come with steamworks.js in the main process. The renderer will reach them only through the bridge.
-- **Upload.** SteamPipe build scripts go in `desktop/steam/`. The upload content is the packaged `win-unpacked/` folder.
+- **Upload.** SteamPipe's build scripts are in `desktop/steam/`.
+  1. Put the App ID and the Windows depot's ID in `app_build.vdf` and `depot_build_windows.vdf`.
+  2. Package the app (`npm run package:win` in `desktop/`).
+  3. Upload with Valve's `steamcmd`: `steamcmd +login <account> +run_app_build <path to>/desktop/steam/app_build.vdf +quit`.
+  4. Set the build live on a private beta branch in Steamworks first.
+
+  The scripts follow SteamPipe's documented format. Check them against Steamworks' SteamPipe page, which this session could not reach.
+- **Steam's own files.** steamworks.js brings Valve's Steamworks API library: `steam_api64.dll` on Windows, `libsteam_api.so` on Linux. The packaged app carries only its platform's copy, unpacked beside `app.asar`. Valve's Steamworks SDK terms cover shipping it with a game on Steam.
 
 ## Licences
 
 - The packaged folder carries Electron's and Chromium's licences at its root: `LICENSE.electron.txt` and `LICENSES.chromium.html`. The desktop credits point there.
 - The game's own third-party licences ship inside the game: Three.js, its decoders and the MakeHuman assets. The credits link them.
+- steamworks.js's MIT licence ships with it in `resources/app.asar.unpacked/node_modules/steamworks.js/`.

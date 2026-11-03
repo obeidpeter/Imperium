@@ -45,7 +45,7 @@ import {clearBattleCache} from './battle-art.js';
 import {loadTacticalArt} from './unit-sprites.js';
 import {loadLocal,saveLocal,saveCode,restoreCode,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,subscribeSaveChanges,listUnreadableSaves,
   readUnreadableSave} from './storage.js';
-import {allChaptersLabel,demoEdition,demoLastChapter,desktopBridge,inDesktopApp,pastDemo,pastDemoMessage,platformKind,usesOfflineCache} from './platform.js';
+import {allChaptersLabel,demoEdition,demoLastChapter,desktopBridge,inDesktopApp,pastDemo,pastDemoMessage,platformKind,reportAchievements,usesOfflineCache} from './platform.js';
 import {sound,stopAudio,audioLevel} from './audio.js';
 import {heroPortrait,chapterScene,loadArt,prefetchChapter,viewDecodes} from './art.js';
 import {snapshotEncounter,playEncounterMotion} from './motion.js';
@@ -1091,7 +1091,7 @@ async function persist(){
   if(memoryOnly||state?.archiveReplay)return {ok:true};
   saving=true;
   const label=document.querySelector('.save-status');if(label)label.textContent='Saving…';
-  try{lastSaved=await saveLocal(state);lastPersisted=JSON.stringify(state);saveProblem='';saveConflict=false;return {ok:true};}
+  try{lastSaved=await saveLocal(state);lastPersisted=JSON.stringify(state);saveProblem='';saveConflict=false;reportAchievements(state);return {ok:true};}
   catch(error){lastSaved='';saveProblem=error.message;saveConflict=error.code==='SAVE_CONFLICT';return {ok:false,error};}
   finally{saving=false;}
 }
@@ -1132,7 +1132,7 @@ async function replaceCampaign({load,save,message}){
       await commitReplacement({load:async()=>{const candidate=await load();
         if(pastDemo(candidate,demo))throw Object.assign(new Error(pastDemoMessage(candidate,demo)),{code:'PAST_DEMO'});return candidate;},save,publish:candidate=>{restored=candidate;}});
       saving=false;
-      useRestoredState(restored);lastPersisted=JSON.stringify(restored);
+      useRestoredState(restored);lastPersisted=JSON.stringify(restored);reportAchievements(restored);
       toast(message);
       return {ok:true};
     }catch(error){
@@ -1763,7 +1763,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 subscribeSaveChanges(()=>{if(state&&!memoryOnly){saveConflict=true;saveProblem='The chronicle changed in another tab. Load the latest save to continue here, '+
   'or export this tab’s progress.';lastSaved='';render();announce(saveProblem);}});
-const loaded=await loadLocal();state=loaded.state;if(pastDemo(state,demo)){heldChronicle=state;state=null;}lastPersisted=state?JSON.stringify(state):'';render();if(loaded.error)toast(loaded.error+' The unreadable '+
+const loaded=await loadLocal();state=loaded.state;if(pastDemo(state,demo)){heldChronicle=state;state=null;}lastPersisted=state?JSON.stringify(state):'';render();reportAchievements(state);if(loaded.error)toast(loaded.error+' The unreadable '+
   'data stays on this device; Settings can download it.');try{preservedUnreadable=(await listUnreadableSaves()).length;}catch{preservedUnreadable=0;}
 // The web build's offline cache. The desktop app has every file installed and Steam updates it (platform.js).
 if(usesOfflineCache()&&'serviceWorker'in navigator){

@@ -74,7 +74,8 @@ test('the desktop app carries the game’s version and packages the desktop buil
   assert.equal(desktop.productName,'Imperium');assert.equal(desktop.private,true);
   assert.deepEqual(desktop.build.extraResources.map(r=>[r.from,r.to]),[['../dist-desktop','game']],'The game is served from resources/game');
   assert.equal(desktop.build.publish,null,'Steam updates the app: no updater feed');
-  for(const file of desktop.build.files.filter(f=>f!=='package.json'))assert.ok(existsSync(new URL(`../desktop/${file}`,import.meta.url)),`${file} exists`);
+  for(const file of desktop.build.files.filter(f=>f!=='package.json'&&!f.startsWith('!')))assert.ok(existsSync(new URL(`../desktop/${file}`,import.meta.url)),`${file} exists`);
+  assert.deepEqual(Object.keys(desktop.dependencies??{}),['steamworks.js'],'Steam’s binding is the app’s one runtime dependency');assert.equal(desktop.steamAppId,null,'No App ID until the owner has one');
   assert.equal(root.scripts['build:desktop'],'node scripts/build.mjs --target desktop');assert.equal(root.scripts['smoke:desktop'],'node scripts/desktop-smoke.mjs');
   assert.equal(root.dependencies,undefined,'The web project stays dependency-free');assert.equal(root.devDependencies,undefined);
 });

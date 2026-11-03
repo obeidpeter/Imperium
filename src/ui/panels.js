@@ -395,7 +395,7 @@ export function createPanels(context){
       'target="_blank" rel="noopener noreferrer">MIT</a>), and ktx-parse and zstddec by Don McCurdy (<a href="./vendor/three/addons/libs/LICENSE-ktx-parse.txt" '+
       'target="_blank" rel="noopener noreferrer">MIT</a>; <a href="./vendor/three/addons/libs/LICENSE-zstddec.txt" target="_blank" rel="noopener noreferrer">MIT, with '+
       'Zstandard’s BSD licence</a>). The standalone skirmish keeps a separate in-memory session and does not change your campaign save.</p>'+
-      (desktopApp?'<p>The desktop app runs on Electron and Chromium. Their licences are in the game’s install folder, in LICENSE.electron.txt and LICENSES.chromium.html.</p>':'')+
+      (desktopApp?'<p>The desktop app runs on Electron and Chromium. Their licences are in the game’s install folder, in LICENSE.electron.txt and LICENSES.chromium.html. It reaches Steam through steamworks.js (MIT licence, in the install folder’s resources) and Valve’s Steamworks API.</p>':'')+
       '<p>Interface typography uses system fonts with local fallbacks. No external font service or icon package is required. Images, game code, and offline '+
       'content are served with the game; there are no compulsory accounts.</p>')}${section('Music, ambience & voices','<p>Fourteen original recordings '+
       'provide optional music, environmental ambience, combat foley and four fictional voiced moments. They were generated for Imperium using Lyria and '+

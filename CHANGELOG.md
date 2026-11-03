@@ -2,6 +2,43 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Steam, third package, first part: achievements and the Steam link ([plan](docs/steam-plan.md), [the list](docs/steam-achievements.md), [the app](docs/desktop.md#steam-s3))
+
+The owner approved the achievements on 3 November: all 35, with English names, and the 24 tied to Chapters IV–XII hidden on Steam until earned. Steam itself switches on once there is an App ID; until then the app runs exactly as before.
+
+- **The 35 achievements** are data (`src/data/achievements.js`):
+  - the twelve chapters, named after their titles;
+  - the seven decorations: Civic Crown, Armlets of Valour, Rampart Crown, Mural Crown, Torc of Valour, Medals of Service and Spear of Honour;
+  - the nine errand titles;
+  - the five routes through the final confrontation;
+  - finishing on Veteran, and under Iron discipline.
+- **Earned from the chronicle, never granted.** `earnedAchievements(state)` (`src/core/achievements.js`) reads them from what the rules already record and changes nothing. That is the completed chapters, the soldier's decorations and titles, the confrontation's winning route, and the accession with its difficulty (chosen at New Game) or Iron discipline (which can be turned off but not on again). A Practice replay earns none.
+- **The desktop app reports them.** After each save, restore and load, the page sends what the chronicle has earned to the bridge, and Steam unlocks what it does not have yet. A chronicle brought from the browser or the demo therefore unlocks what it already earned.
+- **The Steam link,** `desktop/steam.cjs`, uses steamworks.js 0.4.0 (MIT), the app's one runtime dependency.
+  - It starts only with a Steam App ID (`"steamAppId"` in `desktop/package.json`, or `IMPERIUM_STEAM_APP_ID` for development) and a running Steam client. It then turns on the overlay.
+  - Without them, the bridge's `steam.status()` says why, and nothing happens.
+  - Each package is set to carry only its own platform's Steam library. Measured on Linux: 2.3 MB.
+- **For the owner:**
+  - [docs/steam-achievements.md](docs/steam-achievements.md) lists each achievement's API name, name, description and hidden flag to enter in Steamworks. `node scripts/steam-achievements.mjs` regenerates it, and a test fails while it differs from the list.
+  - `desktop/steam/` holds SteamPipe templates for the first upload.
+  - The checklist in [docs/steam-release.md](docs/steam-release.md) has the new steps.
+- **The desktop credits** name steamworks.js and Valve's Steamworks API.
+
+**Checked:**
+- **Automated tests:** `npm test`, with `tests/achievements.test.mjs`. It covers:
+  - the list against the game's chapters, decorations, titles and routes;
+  - the owner's cut-off, checked against each item's chapter;
+  - a finished campaign's twelve chapters and route, read without changing anything;
+  - an injected record for the decorations, titles and finishes;
+  - the sheet in step;
+  - the report through a stand-in bridge;
+  - Steam off without an App ID.
+- **The desktop check:** on the packaged Linux app it now also finds Steam off and unlocking nothing.
+
+**Not checked:**
+- Steam itself: the overlay, unlocking and cloud saves need the App ID and the owner's Windows PC.
+- The icons, which come next.
+
 ### Steam, second package: the free web demo ([plan](docs/steam-plan.md), [the owner's checklist](docs/steam-release.md))
 
 The web version becomes a free demo of Chapters I–III that points to the full game on Steam. Publishing it stays the owner's decision: nothing about the full web build changes.

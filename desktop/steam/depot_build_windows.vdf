@@ -1,0 +1,11 @@
+"DepotBuild"
+{
+	// The Windows depot: the whole packaged app folder. Replace DEPOT_ID with the depot's number from Steamworks.
+	"DepotID" "DEPOT_ID"
+	"FileMapping"
+	{
+		"LocalPath" "*"
+		"DepotPath" "."
+		"Recursive" "1"
+	}
+}
