@@ -678,17 +678,28 @@ async function campExitDeparture(){
     // Walking there recorded his first visit to the drill field (a save of its own). From where he stands now, the way
     // out is used again: the refusal itself saves and changes nothing.
     await page.waitForFunction(()=>!/Saving/.test(document.querySelector('.save-status')?.textContent??''),null,{timeout:30000});
-    const before=await saved(page),first=await used();assert.ok(before,'The chronicle is saved');
-    // On a phone the sentry's words are too long for the line: More opens the whole of them over the world.
+    const before=await saved(page);assert.ok(before,'The chronicle is saved');
+    // On a phone the sentry's words are too long for the line: More opens the whole of them over the world. The words,
+    // and More with them, stay 6.5 s. A pointer click first waits for More to keep still over two frames: under
+    // software rendering that took 4-5 s at 4x CPU throttling and missed the words at 6x, as on main's CI after #61.
+    // So More is focused in the frame it is found showing and pressed with Enter, as from the keyboard; if the words
+    // still go first, the way out is used again, at most three times. Opened, the words stay until closed, so a pointer
+    // click closes them.
     await page.setViewportSize({width:390,height:844});
-    assert.equal((await useExit(page)).ok,true,'He uses the way out again');
-    await page.waitForFunction(at=>(window.__realtime.world().objects.find(o=>o.kind==='exit').at??null)!==at,first,{timeout:120000})
-      .catch(async()=>assert.fail(`The way out is used again: ${await where(page)}`));
-    await page.waitForFunction(()=>!document.querySelector('[data-role="eventMore"]')?.hidden,null,{timeout:30000})
-      .catch(async()=>assert.fail(`A cut message offers More: ${await text(page,'[data-role="eventLine"]')}`));
-    await page.click('[data-role="eventMore"]');
+    let opened=false;
+    for(let attempt=1;attempt<=3&&!opened;attempt++){
+      await page.waitForFunction(()=>!/Saving/.test(document.querySelector('.save-status')?.textContent??''),null,{timeout:30000});
+      const at=await used();
+      assert.equal((await useExit(page)).ok,true,'He uses the way out again');
+      await page.waitForFunction(prev=>(window.__realtime.world().objects.find(o=>o.kind==='exit').at??null)!==prev,at,{timeout:120000})
+        .catch(async()=>assert.fail(`The way out is used again: ${await where(page)}`));
+      await page.waitForFunction(()=>{const more=document.querySelector('[data-role="eventMore"]');if(!more||more.hidden)return false;more.focus();return document.activeElement===more;},null,{timeout:30000})
+        .catch(async()=>assert.fail(`A cut message offers More: ${await text(page,'[data-role="eventLine"]')}`));
+      await page.keyboard.press('Enter');
+      opened=await page.locator('[data-role="eventMore"]').getAttribute('aria-expanded')==='true';
+    }
+    assert.ok(opened,'More opens the whole message, within three uses of the way out');
     assert.match(await text(page,'[data-role="eventFull"]'),/^The gate sentry: “.*”$/,'More opens the whole message');
-    assert.equal(await page.locator('[data-role="eventMore"]').getAttribute('aria-expanded'),'true');
     await page.click('[data-role="eventMore"]');assert.equal(await page.locator('[data-role="eventFull"]').isHidden(),true,'A second press closes it');
     // A click on the strip's text puts the focus on the page around the world: the keys are still the world's.
     const strip=await page.evaluate(()=>{const bar=document.querySelector('.world-camp-bar'),r=bar.getBoundingClientRect();

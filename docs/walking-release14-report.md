@@ -445,3 +445,17 @@ The third round's split at Chapter VIII made the twelve camps' slower half slowe
   Moving Chapter VIII added a camp and its services, about 6.5 minutes, to half a.
 - **Estimate for the split at VII:** from the same step times, about 26 and 27 minutes. Runners still vary from run to run: half a has taken 17 to 28 minutes with the same split. This pull request's CI run records the actual times.
 - **Now:** half a is Chapters I–VII with Chapter I's services, the return and the failed downloads. Half b is VII–XII with VIII's and XII's services, Performance and the return to VII. The script names each half's service chapters (`HALVES` in `scripts/regional-world-smoke.mjs`), and every check runs as before.
+
+## Main's CI after #61: the More check
+
+- **The failure:** main's CI run after #61 failed browser smoke a at `campExitDeparture`. At 390 wide, the click on **More** for the gate sentry's words timed out: More was first "not stable", then "not visible". The split change in #61 did not touch this check.
+- **Why:** the words, and More with them, stay 6.5 seconds. A pointer click first waits for More to keep still over two frames, and a 3D camp's frames are slow under software rendering. A probe on this machine throttled the CPU through the browser's DevTools protocol:
+  - at 4×, the click landed 4.3 to 5.2 seconds after More showed;
+  - at 6×, it missed the words in 2 of 3 runs, failing as in CI.
+- **Now:**
+  - The check focuses More in the frame it finds it showing and presses Enter, as from the keyboard.
+  - If the words still go first, it uses the way out again, at most three times.
+  - Opened, the words stay until closed, so a pointer click closes them, as before.
+- **Measured with the same throttling:** More opened at the first try in 4 of 4 runs at 6× and 3 of 3 at 10×, and the pointer click closed it each time. Unthrottled, `campExitDeparture` passed in 145 seconds.
+- **The game is unchanged:** More shows while the words do, 6.5 seconds for a page message.
+
