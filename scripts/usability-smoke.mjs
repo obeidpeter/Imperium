@@ -13,7 +13,7 @@ import {isAbsolute} from 'node:path';
 import {createHash} from 'node:crypto';
 import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions,closePanel,closedBy,verifyEnlargedSettingsGeometry} from './ui-smoke-navigation.mjs';
+import {menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions,closePanel,closedBy,verifyEnlargedSettingsGeometry,throttleCpu} from './ui-smoke-navigation.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 import {ITEM_ATLAS,ITEM_PICTURES} from '../src/data/item-pictures.js';
@@ -114,7 +114,7 @@ async function exported(page){
   return Game.serialize(Game.deserialize(data.format===1?data.payload:JSON.stringify(data)));
 }
 async function setup(viewport,{touch=false}={}){
-  const context=await browser.newContext({viewport,...(touch?{hasTouch:true,isMobile:true}:{})}),page=await context.newPage();page.setDefaultTimeout(30000);
+  const context=await browser.newContext({viewport,...(touch?{hasTouch:true,isMobile:true}:{})}),page=await context.newPage();await throttleCpu(page);page.setDefaultTimeout(30000);
   observeNetwork(page);
   page.on('pageerror',e=>report.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
   await page.goto(base);await menuCommand(page,'settings');
@@ -462,7 +462,7 @@ async function fieldControls(page,label){
   await screenshot(page,{path:`${output}${label}-field.png`,fullPage:true});
 }
 async function campTransitions(){
-  const context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();page.setDefaultTimeout(30000);
+  const context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();await throttleCpu(page);page.setDefaultTimeout(30000);
   observeNetwork(page);
   page.on('pageerror',e=>report.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
   try{
@@ -479,7 +479,7 @@ async function campTransitions(){
   }finally{await context.close();}
 }
 async function ordinaryModeChoice(){
-  const context=await browser.newContext({viewport:{width:390,height:844}}),page=await context.newPage();page.setDefaultTimeout(30000);
+  const context=await browser.newContext({viewport:{width:390,height:844}}),page=await context.newPage();await throttleCpu(page);page.setDefaultTimeout(30000);
   observeNetwork(page);
   page.on('pageerror',e=>report.errors.push(e.message));page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
   try{
@@ -505,7 +505,7 @@ async function ordinaryModeChoice(){
     await close(page);assert.equal(await exported(page),checkpoint,'Inspecting the locked mode preserves the complete encounter checkpoint');
     record('Ordinary New Game: explicit mode, real-time default, persisted choice, safe camp switch and active-encounter lock',{normalUrl:true,saveUnchanged:true});
   }finally{await context.close();}
-  const oldContext=await browser.newContext({viewport:{width:1280,height:900}}),old=await oldContext.newPage();old.setDefaultTimeout(30000);
+  const oldContext=await browser.newContext({viewport:{width:1280,height:900}}),old=await oldContext.newPage();await throttleCpu(old);old.setDefaultTimeout(30000);
   observeNetwork(old);
   old.on('pageerror',e=>report.errors.push(e.message));old.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});
   try{

@@ -21,7 +21,7 @@ import {resolve,isAbsolute,join} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,settingsCommand,closePanel,closedBy,openCampList,closeCampList} from './ui-smoke-navigation.mjs';
+import {menuCommand,revealControl,settingsCommand,closePanel,closedBy,openCampList,closeCampList,throttleCpu,watchEventLine} from './ui-smoke-navigation.mjs';
 import {runRealtimeCampaign} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 import {saveCode,restoreCode} from '../src/ui/storage.js';
@@ -87,7 +87,7 @@ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base=`http://127.0.0.1:${server.address().port}/`;
 const browser=await playwright.chromium.launch({headless:!process.argv.includes('--headed'),executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,
   args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
-const context=await browser.newContext({viewport:{width:1270,height:720},serviceWorkers:'block'}),page=await context.newPage();
+const context=await browser.newContext({viewport:{width:1270,height:720},serviceWorkers:'block'}),page=await context.newPage();await throttleCpu(page);
 // Software rendering takes seconds a frame over the camps, and a click waits for two still frames: in Chapter XII's
 // camp after the overview camera, one action can take 10-30 s. Each action has the screenshots' 120 s.
 page.setDefaultTimeout(120000);
@@ -202,10 +202,8 @@ async function services(checkpoint){
   await pause();const peacefulBefore=await page.evaluate(()=>JSON.stringify(window.__realtime.world()));
   // The refusal shows for 2.6 s; in software rendering one frame of a camp's overview can outlast that, so the
   // check records each text the event line shows rather than sampling it once a frame (read-only).
-  await page.evaluate(()=>{const line=document.querySelector('[data-role="eventLine"]');window.__eventTexts=[];
-    new MutationObserver(()=>window.__eventTexts.push(line.textContent)).observe(line,{childList:true,characterData:true,subtree:true});});
-  await page.locator('#rt-board').focus();await page.keyboard.press('Space');
-  await page.waitForFunction(()=>window.__eventTexts.some(text=>/Weapons stay sheathed/.test(text)));
+  const said=await watchEventLine(page);await page.locator('#rt-board').focus();await page.keyboard.press('Space');
+  await said(/Weapons stay sheathed/);
   await page.keyboard.press('Shift+KeyT');await page.keyboard.press('Shift+Enter');
   assert.equal(await page.evaluate(()=>JSON.stringify(window.__realtime.world())),peacefulBefore);
   record(`Chapter ${checkpoint.chapter}: direct services, panel Back and peaceful controls protect the save`);

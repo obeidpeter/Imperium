@@ -9,7 +9,7 @@ import {resolve,isAbsolute,join} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {serveRequest} from './serve.mjs';
-import {closePanel,closedBy,menuCommand,openCampList,revealControl,settingsCommand} from './ui-smoke-navigation.mjs';
+import {closePanel,closedBy,menuCommand,openCampList,revealControl,settingsCommand,throttleCpu,watchEventLine} from './ui-smoke-navigation.mjs';
 import {runRealtimeCampaign,playRealtime} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 import {saveCode,restoreCode} from '../src/ui/storage.js';
@@ -53,7 +53,7 @@ const report={method:'Automated Chromium on production dist with the existing ?d
 const record=(name,detail={})=>{report.checks.push({name,pass:true,...detail});console.log(`ok - ${name}`);};
 // This acceptance controls one module download; offline cache behaviour is
 // covered separately by the release smoke, so it must not bypass that route.
-const context=await browser.newContext({viewport:{width:1270,height:720},serviceWorkers:'block'}),page=await context.newPage();
+const context=await browser.newContext({viewport:{width:1270,height:720},serviceWorkers:'block'}),page=await context.newPage();await throttleCpu(page);
 page.setDefaultTimeout(30000);
 page.on('pageerror',error=>report.errors.push(error.message));
 page.on('console',message=>{if(message.type()==='error')report.errors.push(message.text());});
@@ -148,7 +148,8 @@ try{
   }
   await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('main[data-overlay="services"]'));
   await pause();const peacefulBefore=JSON.stringify(await world());await page.locator('#rt-board').focus();
-  await page.keyboard.press('Space');await page.waitForFunction(()=>/Weapons stay sheathed/.test(document.querySelector('[data-role="eventLine"]')?.textContent??''));
+  // The refusal shows for 2.6 s, which one slow frame can outlast: every text the bar's line shows is recorded.
+  const said=await watchEventLine(page);await page.keyboard.press('Space');await said(/Weapons stay sheathed/);
   assert.equal(JSON.stringify(await world()),peacefulBefore);
   await page.keyboard.press('Shift+KeyT');await page.keyboard.press('Shift+Enter');
   assert.equal(JSON.stringify(await world()),peacefulBefore,'a forced neutral attack is rejected without changing the paused world');

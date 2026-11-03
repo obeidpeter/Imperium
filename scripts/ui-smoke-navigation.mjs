@@ -140,3 +140,27 @@ export async function verifyCampPanelTransitions(page){
   await page.locator('#modal [data-cmd="settings"]').click();await (await revealControl(page,'#panel-pause')).setChecked(wasPanelPaused);
   await closePanel(page);
 }
+
+// SMOKE_CPU_THROTTLE=4 runs a browser check with the page's CPU slowed fourfold through the DevTools protocol, about as
+// slow as a busy CI runner: a step that races a message's few seconds or a slow frame then fails here first, as the
+// way-out check's More did on main's CI after #61. Off unless set; the checks call it on every page they open.
+export async function throttleCpu(page){
+  const rate=Number(process.env.SMOKE_CPU_THROTTLE||0);if(!(rate>1))return;
+  const session=await page.context().newCDPSession(page);await session.send('Emulation.setCPUThrottlingRate',{rate});
+}
+// The bar's event line shows a message for a few seconds, 2.6 s for most. Under software rendering one frame can outlast
+// that, so a check that reads the line once, or once a frame, can miss it. watchEventLine records every text the line
+// shows from now on (read-only, in the page; again after the page builds a new bar) and returns `seen(pattern)`, which
+// waits for a shown text to match; `seen.last()` gives the latest text shown.
+export async function watchEventLine(page){
+  await page.evaluate(()=>{
+    const line=document.querySelector('[data-role="eventLine"]');window.__eventWatch?.disconnect();
+    window.__eventTexts=line?.textContent?[line.textContent]:[];if(!line)throw new Error('No event line to watch');
+    window.__eventWatch=new MutationObserver(()=>{if(line.textContent)window.__eventTexts.push(line.textContent);});
+    window.__eventWatch.observe(line,{childList:true,characterData:true,subtree:true});
+  });
+  const seen=(pattern,{timeout=60000}={})=>page.waitForFunction(([source,flags])=>window.__eventTexts.some(text=>new RegExp(source,flags).test(text)),
+    [pattern.source,pattern.flags],{timeout}).then(()=>true,async()=>{throw new Error(`The event line never showed ${pattern}; it showed ${JSON.stringify(await page.evaluate(()=>window.__eventTexts))}`);});
+  seen.last=()=>page.evaluate(()=>window.__eventTexts.at(-1)??'');
+  return seen;
+}

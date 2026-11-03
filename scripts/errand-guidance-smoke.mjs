@@ -8,7 +8,7 @@ import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
 import {isAbsolute} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {serveRequest} from './serve.mjs';
-import {closePanel,fieldPanel,menuCommand,revealControl} from './ui-smoke-navigation.mjs';
+import {closePanel,fieldPanel,menuCommand,revealControl,throttleCpu} from './ui-smoke-navigation.mjs';
 import {runRealtimeCampaign} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 
@@ -31,7 +31,7 @@ async function mission(page){await fieldPanel(page,'orders');await page.locator(
 try{
   browser=await playwright.chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});report.browser=browser.version();
   for(const width of [1280,390]){
-    const context=await browser.newContext({viewport:{width,height:900},serviceWorkers:'block'}),page=await context.newPage();page.setDefaultTimeout(45000);
+    const context=await browser.newContext({viewport:{width,height:900},serviceWorkers:'block'}),page=await context.newPage();await throttleCpu(page);page.setDefaultTimeout(45000);
     page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
     await page.goto(`${base}?dev`);await menuCommand(page,'settings');
     await (await revealControl(page,'#controls-model')).selectOption('realtime');await closePanel(page);await menuCommand(page,'settings');

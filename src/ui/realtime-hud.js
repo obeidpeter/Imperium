@@ -85,3 +85,24 @@ export function bindHudDisclosures(root){
   root.addEventListener('click',click);root.addEventListener('keydown',key);
   return ()=>{root.removeEventListener('click',click);root.removeEventListener('keydown',key);};
 }
+
+// The bar's event line (Polish after Gate 4). A message stays at least its given time, 2.6 s for most and 6.5 s for
+// the page's own; a longer one stays about as long as it takes to read, 1 s and 45 ms a character, at most 8 s.
+export const EVENT_READING={base:1000,perCharacter:45,most:8000};
+export function messageTime(text,ms=2600){
+  const reading=EVENT_READING.base+EVENT_READING.perCharacter*String(text??'').length;
+  return Math.max(ms,Math.min(EVENT_READING.most,reading));
+}
+// The bar keeps its last messages, oldest first, so one that went by can be read again. The same message said again
+// straight after is kept once, with how many times; at most `keep` are kept. Returns a new list.
+export function rememberMessage(recent,text,{warning=false,keep=6}={}){
+  if(!text)return recent;
+  const last=recent.at(-1);
+  const next=last?.text===text?[...recent.slice(0,-1),{...last,count:last.count+1,warning:last.warning||warning}]:[...recent,{text,warning,count:1}];
+  return next.slice(-keep);
+}
+// What the bar lists under "Earlier": the kept messages other than the one on the line now, newest first, at most five.
+export function earlierMessages(recent,current='',{shown=5}={}){
+  const before=current&&recent.at(-1)?.text===current?recent.slice(0,-1):recent;
+  return before.slice(-shown).reverse();
+}

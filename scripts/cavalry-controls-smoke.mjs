@@ -9,7 +9,7 @@ import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
 import {isAbsolute} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {serveRequest} from './serve.mjs';
-import {closePanel,menuCommand,revealControl} from './ui-smoke-navigation.mjs';
+import {closePanel,menuCommand,revealControl,throttleCpu,watchEventLine} from './ui-smoke-navigation.mjs';
 import {playRealtime,runRealtimeCampaign} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 
@@ -46,7 +46,7 @@ const record=name=>{report.checks.push({name,pass:true});console.log(`ok - ${nam
 try{
   browser=await playwright.chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,
     args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
-  const context=await browser.newContext({viewport:{width:1280,height:900},...(external?{serviceWorkers:'block'}:{})});page=await context.newPage();page.setDefaultTimeout(30000);
+  const context=await browser.newContext({viewport:{width:1280,height:900},...(external?{serviceWorkers:'block'}:{})});page=await context.newPage();await throttleCpu(page);page.setDefaultTimeout(30000);
   page.on('pageerror',error=>problems.push(error.message));page.on('console',message=>{if(message.type()==='error')problems.push(message.text());});
   await page.goto(`${base}?dev`);await menuCommand(page,'settings');
   await (await revealControl(page,'#controls-model')).selectOption('realtime');await closePanel(page);
@@ -67,23 +67,24 @@ try{
   const card=page.locator('[data-role="commandCard"]'),button=kind=>card.locator(`[data-order="${kind}"]`);
   const state=()=>page.evaluate(()=>JSON.stringify(window.__realtime.world()));
   const select=async squad=>{await page.locator(`.rt-standard[data-squad="${squad.id}"]`).click();await card.waitFor({state:'visible'});};
-  const feedback=()=>page.locator('[data-role="eventLine"]').textContent();
+  // Each key's feedback shows for 2.6 s, which a slow frame can outlast: every text the bar's line shows is recorded.
+  let said=null;
   async function unchanged(keys,label){
-    const before=await state();await page.locator('#rt-board').focus();
+    const before=await state();await page.locator('#rt-board').focus();said=await watchEventLine(page);
     for(const key of keys)await page.keyboard.press(key);
     assert.equal(await state(),before,`${label}: the whole world, queue and random streams stay unchanged`);
     assert.equal(await page.evaluate(()=>window.__realtime.paused()),true,`${label}: remains paused`);
   }
   async function order(key,kind,words){
-    await page.locator('#rt-board').focus();await page.keyboard.press(key);
+    await page.locator('#rt-board').focus();said=await watchEventLine(page);await page.keyboard.press(key);
     await page.waitForFunction(({id,kind})=>window.__realtime.world().queue.some(c=>c.kind==='order'&&c.payload.squads.includes(id)&&c.payload.order.kind===kind),{id:horse.id,kind});
-    assert.match(await feedback(),words,`${key} gives visible command feedback`);
+    await said(words).catch(error=>assert.fail(`${key} gives visible command feedback: ${error.message}`));
     assert.equal(await page.evaluate(()=>window.__realtime.paused()),true,'Ordering while paused does not resume play');
   }
   await select(foot);assert.equal(await card.getAttribute('aria-label'),'Orders for the selected squads (keys: 1 to 7)');
   assert.equal(await card.locator('button').count(),7);assert.equal(await button('charge').count(),0);assert.equal(await button('feigned_retreat').count(),0);
   await unchanged(['Digit8','Digit9'],'Mounted orders with infantry selected');
-  assert.match(await feedback(),/horse|cavalry/i);
+  await said(/horse|cavalry/i);
   record('Infantry names keys 1–7; unavailable mounted orders preserve the paused world');
   await select(horse);assert.equal(await card.getAttribute('aria-label'),'Orders for the selected squads (keys: 1 to 9)');
   assert.equal(await card.locator('button').count(),9);

@@ -7,7 +7,7 @@ import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
 import {isAbsolute} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {serveRequest} from './serve.mjs';
-import {closePanel,menuCommand,revealControl} from './ui-smoke-navigation.mjs';
+import {closePanel,menuCommand,revealControl,throttleCpu} from './ui-smoke-navigation.mjs';
 import {playRealtime,runRealtimeCampaign} from './realtime-autoplay.mjs';
 import * as Game from '../src/core/game.js';
 import {step} from '../src/core/realtime/simulation.js';
@@ -37,7 +37,7 @@ const base=`http://127.0.0.1:${server.address().port}/`,errors=[],report={build,
 let browser;
 const record=name=>{report.checks.push({name,pass:true});console.log(`ok - ${name}`);};
 async function restore(code,viewport){
-  const context=await browser.newContext({viewport}),page=await context.newPage();page.setDefaultTimeout(30000);
+  const context=await browser.newContext({viewport}),page=await context.newPage();await throttleCpu(page);page.setDefaultTimeout(30000);
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await page.goto(`${base}?dev`);await menuCommand(page,'settings');await (await revealControl(page,'#controls-model')).selectOption('realtime');await closePanel(page);
   await menuCommand(page,'settings');await (await revealControl(page,'#battle-view')).selectOption('2d');await (await revealControl(page,'#graphics-quality')).selectOption('performance');

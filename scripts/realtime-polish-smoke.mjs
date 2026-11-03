@@ -10,7 +10,7 @@ import http from 'node:http';
 import {access,mkdir,readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl} from './ui-smoke-navigation.mjs';
+import {menuCommand,revealControl,throttleCpu,watchEventLine} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import {step} from '../src/core/realtime/simulation.js';
@@ -51,7 +51,7 @@ const paused=page=>page.evaluate(()=>window.__realtime.paused());
 const tick=page=>page.evaluate(()=>window.__realtime.world().tick);
 async function pause(page,value=true){if(await paused(page)!==value)await page.click('[data-role="pauseButton"]');await page.waitForFunction(v=>window.__realtime.paused()===v,value);}
 async function restore(viewport,id){
-  const context=await browser.newContext({viewport}),page=await context.newPage();page.setDefaultTimeout(30000);
+  const context=await browser.newContext({viewport}),page=await context.newPage();await throttleCpu(page);page.setDefaultTimeout(30000);
   page.on('pageerror',e=>problems.push(e.message));page.on('console',m=>{if(m.type()==='error')problems.push(m.text());});
   await page.goto(`${base}?dev`);
   await menuCommand(page,'settings');
@@ -150,17 +150,22 @@ try{
   await pause(road,false);await road.click('[data-role="listButton"]');
   await road.locator('[data-role="listOptions"] button:not(:disabled)').first().focus();
   assert.equal(await road.evaluate(()=>document.activeElement?.textContent),'Use');
+  // "Paused." shows for 2.6 s, which a slow frame can outlast: each change of the bar's event line is recorded as it
+  // happens, with its tooltip and the world's height at that moment (read-only).
+  await road.evaluate(()=>{const line=document.querySelector('[data-role="eventLine"]'),board=document.querySelector('#rt-board');window.__lineSnaps=[];
+    new MutationObserver(()=>window.__lineSnaps.push({text:line.textContent,title:line.getAttribute('title'),height:board.getBoundingClientRect().height}))
+      .observe(line,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['title']});});
   await road.keyboard.press('KeyP');await road.waitForFunction(()=>window.__realtime.paused());
   const stopped=await tick(road);await road.waitForTimeout(400);assert.equal(await tick(road),stopped,'P from a Use button stops every simulation tick');
   // The owner's request after Gate 4: the bar's event line keeps its room, so a message coming or going never changes
   // the world's size. "Paused." is said, then clears while the world stays paused (nothing else is said meanwhile).
-  const worldHeight=()=>road.evaluate(()=>document.querySelector('#rt-board').getBoundingClientRect().height);
-  await road.waitForFunction(()=>document.querySelector('[data-role="eventLine"]')?.textContent==='Paused.');
-  const saying=await worldHeight();
-  assert.equal(await road.locator('[data-role="eventLine"]').getAttribute('title'),'Paused.','The event line shows its whole message on hover');
-  await road.waitForFunction(()=>document.querySelector('[data-role="eventLine"]')?.textContent==='',null,{timeout:15000});
-  assert.equal(await worldHeight(),saying,'The world keeps its size when the event line empties');
-  assert.equal(await road.locator('[data-role="eventLine"]').getAttribute('title'),null,'An empty event line has no tooltip');
+  await road.waitForFunction(()=>{const a=window.__lineSnaps,i=a.findIndex(x=>x.text==='Paused.');return i>=0&&a.slice(i+1).some(x=>x.text==='');},null,{timeout:15000})
+    .catch(async()=>assert.fail(`"Paused." is said, then clears: ${JSON.stringify(await road.evaluate(()=>window.__lineSnaps))}`));
+  const snaps=await road.evaluate(()=>window.__lineSnaps),said=snaps.find(x=>x.text==='Paused.'),cleared=snaps.slice(snaps.indexOf(said)+1).find(x=>x.text==='');
+  const saying=said.height;
+  assert.equal(said.title,'Paused.','The event line shows its whole message on hover');
+  assert.equal(cleared.height,saying,'The world keeps its size when the event line empties');
+  assert.equal(cleared.title,null,'An empty event line has no tooltip');
   evidence.checks.push({name:'The event line keeps its room: the world keeps its size as a message comes and goes',pass:true,worldHeight:saying});
   await road.keyboard.press('KeyP');await road.waitForFunction(t=>window.__realtime.world().tick>t,stopped);
   await pause(road);await road.click('[data-role="listButton"]');
@@ -195,8 +200,8 @@ try{
     await field.locator('.rt-toolbox > summary').click();await layout(field,`chapter-v-controls-${suffix}`);
     await field.locator('.rt-toolbox > summary').click();
     // Release 12: the horizon is a glance held on H, and a 3D view: this 2D view says so and keeps its layout.
-    await field.locator('#rt-board').focus();await field.keyboard.down('KeyH');
-    await field.waitForFunction(()=>/horizon is a 3D view/.test(document.querySelector('[data-role="eventLine"]')?.textContent??''));
+    const said=await watchEventLine(field);await field.locator('#rt-board').focus();await field.keyboard.down('KeyH');
+    await said(/horizon is a 3D view/);
     await layout(field,`chapter-v-horizon-${suffix}`);await field.keyboard.up('KeyH');
     if(suffix==='desktop'){
       const stopped=await tick(field);await field.locator('#rt-board').focus();await field.keyboard.press('KeyI');

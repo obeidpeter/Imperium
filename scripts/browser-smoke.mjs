@@ -26,7 +26,7 @@ import {access} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {gunzipSync} from 'node:zlib';
 import {serveRequest} from './serve.mjs';
-import {closePanel,closedBy,menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions} from './ui-smoke-navigation.mjs';
+import {closePanel,closedBy,menuCommand,revealControl,settingsCommand,settingsPage,verifyCampPanelTransitions,throttleCpu,watchEventLine} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {runProgressionCampaign} from './progression-autoplay.mjs';
 import {runCommandCampaign,protectCoalition} from './command-autoplay.mjs';
@@ -82,7 +82,7 @@ const {chromium}=await playwright();
 const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
 const problems=[],contexts=new Set();
 async function open(options={}){
-  const context=await browser.newContext({viewport:{width:1280,height:900},...options}),page=await context.newPage();contexts.add(context);
+  const context=await browser.newContext({viewport:{width:1280,height:900},...options}),page=await context.newPage();await throttleCpu(page);contexts.add(context);
   page.setDefaultTimeout(240000);
   page.on('pageerror',error=>problems.push(`page error: ${error.message}`));
   page.on('console',message=>{if(message.type()==='error')problems.push(`console error: ${message.text()}`);});
@@ -667,13 +667,13 @@ async function campExitDeparture(){
     const exit=await page.evaluate(()=>window.__realtime.world().objects.find(o=>o.kind==='exit'));
     assert.equal(exit?.name,'The drill yard','The first camp’s way out leads to the drill');
     const used=()=>page.evaluate(()=>window.__realtime.world().objects.find(o=>o.kind==='exit').at??null);
-    assert.equal((await useExit(page)).ok,true,'The soldier walks to the way out');
+    const said=await watchEventLine(page);assert.equal((await useExit(page)).ok,true,'The soldier walks to the way out');
     await page.waitForFunction(()=>/^The gate sentry: “/.test(document.querySelector('#announcement')?.textContent??''),null,{timeout:300000})
       .catch(async()=>assert.fail(`The sentry says what is missing: ${await where(page)}`));
     assert.match(await text(page,'#announcement'),/decision/,'The departure check is the sentry’s line');
     // Polish after Gate 4: shown, not only announced. The full-screen camp has no site header to put a page message
     // under, so the bar's event line says it; at this width it is whole on its line.
-    assert.match(await text(page,'[data-role="eventLine"]'),/^The gate sentry: “.*decision/,'The sentry’s words show on the bar');
+    await said(/^The gate sentry: “.*decision/).catch(error=>assert.fail(`The sentry’s words show on the bar: ${error.message}`));
     assert.equal(await page.locator('[data-role="eventMore"]').isHidden(),true,'Whole on its line, the message needs no More');
     // Walking there recorded his first visit to the drill field (a save of its own). From where he stands now, the way
     // out is used again: the refusal itself saves and changes nothing.
@@ -699,7 +699,7 @@ async function campExitDeparture(){
       opened=await page.locator('[data-role="eventMore"]').getAttribute('aria-expanded')==='true';
     }
     assert.ok(opened,'More opens the whole message, within three uses of the way out');
-    assert.match(await text(page,'[data-role="eventFull"]'),/^The gate sentry: “.*”$/,'More opens the whole message');
+    assert.match(await text(page,'[data-role="eventFullText"]'),/^The gate sentry: “.*”$/,'More opens the whole message');
     await page.click('[data-role="eventMore"]');assert.equal(await page.locator('[data-role="eventFull"]').isHidden(),true,'A second press closes it');
     // Polish after Gate 4, at the owner's request: a message cut short stays while it is held, by More's focus or by the
     // pointer on its line, and goes a moment (1.5 s) after it is let go. The close leaves More focused under the pointer;
@@ -716,6 +716,20 @@ async function campExitDeparture(){
     await page.mouse.move(worldAt.x,worldAt.y);
     await page.waitForFunction(()=>document.querySelector('[data-role="eventLine"]')?.textContent==='',null,{timeout:30000})
       .catch(async()=>assert.fail(`Let go, the words go: ${await words()}`));
+    // Polish after Gate 4: the bar keeps its last messages. With the line empty, a click on it lists the earlier ones,
+    // newest first, and Esc closes them without opening the Menu; from the keyboard the line is a button while it has
+    // any to show, and Enter opens them.
+    await page.click('[data-role="eventLine"]');
+    await page.waitForSelector('[data-role="eventFull"]:not([hidden])',{timeout:30000}).catch(async()=>assert.fail(`A click on the empty line lists the earlier messages: ${await words()}`));
+    assert.equal(await page.locator('[data-role="eventFullText"]').isHidden(),true,'Nothing on the line, nothing above the earlier messages');
+    assert.equal(await page.evaluate(()=>document.activeElement?.id),'rt-board','A click on the line leaves the keys with the world');
+    assert.match(await text(page,'[data-role="eventEarlierList"] li'),/^The gate sentry: “.*decision/,'The sentry’s words are the latest of the earlier messages');
+    await page.keyboard.press('Escape');assert.equal(await page.locator('[data-role="eventFull"]').isHidden(),true,'Esc closes them');
+    assert.equal(await page.locator('#modal[open]').count(),0,'Esc closing them opens no Menu');
+    assert.equal(await page.locator('[data-role="eventLine"]').getAttribute('role'),'button','The line is a button while it has earlier messages');
+    await page.locator('[data-role="eventLine"]').focus();await page.keyboard.press('Enter');
+    assert.equal(await page.locator('[data-role="eventFull"]').isHidden(),false,'Enter on the line opens them');
+    await page.keyboard.press('Escape');assert.equal(await page.locator('[data-role="eventFull"]').isHidden(),true);
     // A click on the strip's text puts the focus on the page around the world: the keys are still the world's.
     const strip=await page.evaluate(()=>{const bar=document.querySelector('.world-camp-bar'),r=bar.getBoundingClientRect();
       for(let x=r.left+8;x<r.right-8;x+=12){const el=document.elementFromPoint(x,r.top+r.height/2);if(el&&!el.closest('button,a,input,select,summary,canvas')&&el.textContent.trim())return {x,y:r.top+r.height/2};}return null;});
@@ -747,7 +761,7 @@ async function campExitDeparture(){
     await page.waitForSelector('.area-card',{state:'detached',timeout:30000}).catch(()=>assert.fail(`${view}: the card goes`));
     await page.context().close();
   }
-  console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words, shown on the bar (whole with More on a phone, and held while focused or pointed at), and changes nothing; the keys still work after a click on the strip; Chapter II’s road out marches to the causeway with a card, in 2D (no names overlapping) and 3D');
+  console.log('ok - camp way out: the first camp’s drill yard refuses in the sentry’s words, shown on the bar (whole with More on a phone, held while focused or pointed at, and listed again once gone), and changes nothing; the keys still work after a click on the strip; Chapter II’s road out marches to the causeway with a card, in 2D (no names overlapping) and 3D');
 }
 // Release 14: the field after a victory. Chapter III's station, won from New Game by the legal-command bot and not yet
 // recorded (realtime-autoplay.mjs), restored through Import. The result offers to walk the field; walked, the fallen
@@ -981,10 +995,10 @@ async function chamberHearing(){
   // rendered position after that layout (and any document scroll), just as a player does.
   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
   const doc=await document.boundingBox(),drop=await tribunalPoint();
-  await page.mouse.move(doc.x+doc.width/2,doc.y+12);await page.mouse.down();await page.mouse.move(doc.x+doc.width/2-30,doc.y+30,{steps:4});
+  const said=await watchEventLine(page);await page.mouse.move(doc.x+doc.width/2,doc.y+12);await page.mouse.down();await page.mouse.move(doc.x+doc.width/2-30,doc.y+30,{steps:4});
   await page.mouse.move(drop.x,drop.y+10,{steps:12});await page.mouse.up();await chamberIdle(page);
   await page.waitForFunction(()=>window.__chamber.unit('hero').acted,null,{timeout:30000}).catch(()=>assert.fail('A document dropped on the tribunal is presented'));
-  assert.match(await text(page,'[data-role="eventLine"]'),/One speech;/,'The rules record the documented case');
+  await said(/One speech;/).catch(error=>assert.fail(`The rules record the documented case: ${error.message}`));
   await page.context().close();
   console.log('ok - chamber hearing: the Motion panel invokes a precedent, the pack’s documents show each member’s exact change, and a document dragged onto the tribunal is presented');
 }

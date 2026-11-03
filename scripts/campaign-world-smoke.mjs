@@ -14,7 +14,7 @@ import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {resolve} from 'node:path';
 import {serveRequest} from './serve.mjs';
-import {menuCommand,revealControl,closePanel} from './ui-smoke-navigation.mjs';
+import {menuCommand,revealControl,closePanel,throttleCpu} from './ui-smoke-navigation.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
 import * as G from '../src/core/game.js';
 import {BATTLE_STRUCTURES} from '../src/data/battle-structures.js';
@@ -60,7 +60,7 @@ async function changingCamera(page,view,before){
 try{
   for(const [id,weather,quality]of cases){
     // Balanced draws far more in software rendering than Performance.
-    const wait=quality==='balanced'?240000:120000,context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();page.setDefaultTimeout(wait);
+    const wait=quality==='balanced'?240000:120000,context=await browser.newContext({viewport:{width:1280,height:900}}),page=await context.newPage();await throttleCpu(page);page.setDefaultTimeout(wait);
     activePage=page;activeCondition={id,phase:'restore'};
     page.on('pageerror',e=>report.errors.push(`${id}: ${e.message}`));
     page.on('console',m=>{if(m.type()==='error')report.errors.push(`${id}: ${m.text().slice(0,500)}`);});

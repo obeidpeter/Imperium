@@ -655,14 +655,18 @@ over it.
   the ability bar (or a squad's command card). Under the message line a
   second line says what just happened: a blow, a pause, a refusal. It
   keeps its room when it has nothing to say, so the world never changes
-  size. A message too long for it ends in an ellipsis: **More** at its
-  end, or a tap on the line, opens the whole of it over the world until
-  you close it (**More** again, or **Esc**), and pointing at it shows it
-  too. Such a message also stays while the pointer rests on it or on
-  **More**, or while **More** has the focus, and goes a moment after you
-  let go. A message from the game itself, such as the gate sentry's
-  word, a save in progress or "Chronicle restored", is said on the same
-  line.
+  size. A longer message stays longer, up to eight seconds. A message
+  too long for the line ends in an ellipsis: **More** at its end, or a
+  tap on the line, opens the whole of it over the world until you close
+  it (**More** again, or **Esc**), and pointing at it shows it too. Such
+  a message also stays while the pointer rests on it or on **More**, or
+  while **More** has the focus, and goes a moment after you let go. The
+  line keeps what it has said: opened, it lists the last five messages
+  under **Earlier**, newest first, and a new one joins it at the top.
+  Once the line is empty, a click or tap on it, or **Enter** on it from
+  the keyboard, opens them. A message from the game itself, such as the
+  gate sentry's word, a save in progress or "Chronicle restored", is
+  said on the same line; **Paused** and **Resumed** are not kept.
 
   The keys stay the world's wherever you click outside a control: on the
   strip's text or the bar's, they still pause, label and walk.
@@ -690,7 +694,7 @@ over it.
 | **A**   | Decorations and titles                                                                                    |
 | **O**   | Settings                                                                                                  |
 | **?**   | How to play, the in-game help                                                                             |
-| **Esc** | Closes the open panel; with none open, a message opened whole or **Target details**, then clears your target or squad selection, and then opens the **Menu** |
+| **Esc** | Closes the open panel; with none open, a message opened whole (or the earlier messages) or **Target details**, then clears your target or squad selection, and then opens the **Menu** |
 
 Opening a panel pauses the world, unless you turn off **Pause in
 panels**. Conversations, the chronicle and the Menu always pause it.
@@ -778,7 +782,7 @@ has loot; otherwise it is cleared. No new enemy is chosen automatically.
 | **Y**                   | In a Contest, yield the floor and end the hour                                                                                                                                                                                                              |
 | **B**                   | Raise the war cry, shown in the message line. It changes nothing in the rules; your companions answer it.                                                                                                                                                   |
 | **F2**                  | Quick save                                                                                                                                                                                                                                                  |
-| **Esc**                 | Each press clears one thing: the open panel, then a message opened whole or **Target details**, then the current target, then the squad selection; with nothing left, it opens the Menu. In full screen, the browser uses the first press to leave full screen.                                                |
+| **Esc**                 | Each press clears one thing: the open panel, then a message opened whole (or the earlier messages) or **Target details**, then the current target, then the squad selection; with nothing left, it opens the Menu. In full screen, the browser uses the first press to leave full screen.                                                |
 | **F**                   | Follow the soldier you control, and bring the view back to him                                                                                                                                                                                                |
 | **Z**                   | The whole field, and back                                                                                                                                                                                                                                     |
 | **H** (hold, 3D)        | Glance at the horizon while the key is held                                                                                                                                                                                                                   |

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,revealAbility} from '../src/ui/realtime-hud.js';
+import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,earlierMessages,EVENT_READING,messageTime,rememberMessage,revealAbility} from '../src/ui/realtime-hud.js';
 import {FIELD_ORDER,TIME} from '../src/data/realtime-rules.js';
 import {fieldMarkup} from '../src/ui/realtime-view.js';
 import {DEFAULT_KEYMAP} from '../src/ui/action-map.js';
@@ -120,3 +120,32 @@ test('help, mission details and logs start collapsed; required warnings and prim
   assert.ok(html.indexOf('data-role="timeControls"')>html.indexOf('data-role="controlOptions"'));
   assert.match(html,/data-role="closeListButton">Close/);assert.match(html,/data-close-disclosure>Close help/);
 });
+
+// Polish after Gate 4: a message's time on the bar's event line grows with its length, and the bar keeps its last
+// messages so one that went by can be read again.
+test('a longer message stays longer on the bar, never less than its given time and at most eight seconds',()=>{
+  assert.equal(messageTime('Paused.'),2600,'A short message keeps the usual 2.6 s');
+  assert.equal(messageTime('x'.repeat(70)),4150,'Seventy characters, about twelve words, stay about 4 s');
+  assert.equal(messageTime('x'.repeat(400)),EVENT_READING.most,'However long, at most 8 s');
+  assert.equal(messageTime('The gate sentry: “Not yet.”',6500),6500,'The page’s own messages keep their 6.5 s');
+  assert.equal(messageTime('x'.repeat(150),6500),7750,'A long page message stays as long as it takes to read');
+  for(let n=0;n<300;n+=7)assert.ok(messageTime('x'.repeat(n+1))>=messageTime('x'.repeat(n)),'Never shorter for a longer message');
+});
+test('the bar keeps its last six messages, a repeat kept once with its count, and lists five earlier ones newest first',()=>{
+  let recent=[];
+  for(const text of ['One','Two','Two','Three','Four','Five','Six','Seven'])recent=rememberMessage(recent,text,{warning:text==='Three'});
+  assert.deepEqual(recent.map(m=>m.text),['Two','Three','Four','Five','Six','Seven'],'At most six are kept, the oldest going first');
+  assert.equal(recent[0].count,2,'Said twice in a row, a message is kept once with its count');
+  assert.equal(recent[1].warning,true);assert.equal(rememberMessage(recent,''),recent,'Nothing said, nothing kept');
+  assert.deepEqual(earlierMessages(recent,'Seven').map(m=>m.text),['Six','Five','Four','Three','Two'],'Under the message on the line: the five before it, newest first');
+  assert.deepEqual(earlierMessages(recent,'').map(m=>m.text),['Seven','Six','Five','Four','Three'],'With the line empty: the last five');
+  assert.deepEqual(earlierMessages(recent,'Paused.').map(m=>m.text),['Seven','Six','Five','Four','Three'],'A message not kept leaves the last five as they were');
+  assert.deepEqual(earlierMessages([],''),[]);
+});
+test('the bar has room for a message opened whole with its earlier ones, and the line opens it',()=>{
+  const html=fieldMarkup({state:G.newGame('Marcellus',275,{featureEdition:35,progression:true}),keymap:DEFAULT_KEYMAP,kind:'camp'});
+  for(const role of ['eventLine','eventMore','eventFull','eventFullText','eventEarlier','eventEarlierList'])assert.match(html,new RegExp(`data-role="${role}"`),role);
+  assert.match(html,/id="rt-event-full" data-role="eventFull"[^>]*hidden/,'Closed at first');
+  assert.match(html,/data-role="eventEarlier"[^>]*hidden><p class="rt-event-earlier-title">Earlier<\/p><ol data-role="eventEarlierList"><\/ol>/);
+});
+
