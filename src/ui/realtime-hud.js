@@ -102,7 +102,10 @@ export function rememberMessage(recent,text,{warning=false,keep=6}={}){
   return next.slice(-keep);
 }
 // What the bar lists under "Earlier": the kept messages other than the one on the line now, newest first, at most five.
+// The one on the line is the newest kept with its words, though not always the newest kept: news held back behind a
+// casualty (realtime-assistance.js feedbackCanReplace) is kept after it.
 export function earlierMessages(recent,current='',{shown=5}={}){
-  const before=current&&recent.at(-1)?.text===current?recent.slice(0,-1):recent;
+  let at=-1;if(current)for(let i=recent.length-1;i>=0;i--)if(recent[i].text===current){at=i;break;}
+  const before=at<0?recent:[...recent.slice(0,at),...recent.slice(at+1)];
   return before.slice(-shown).reverse();
 }

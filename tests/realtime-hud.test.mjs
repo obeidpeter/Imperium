@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,earlierMessages,EVENT_READING,messageTime,rememberMessage,revealAbility} from '../src/ui/realtime-hud.js';
+import {feedbackCanReplace} from '../src/ui/realtime-assistance.js';
 import {FIELD_ORDER,TIME} from '../src/data/realtime-rules.js';
 import {fieldMarkup} from '../src/ui/realtime-view.js';
 import {DEFAULT_KEYMAP} from '../src/ui/action-map.js';
@@ -141,6 +142,19 @@ test('the bar keeps its last six messages, a repeat kept once with its count, an
   assert.deepEqual(earlierMessages(recent,'').map(m=>m.text),['Seven','Six','Five','Four','Three'],'With the line empty: the last five');
   assert.deepEqual(earlierMessages(recent,'Paused.').map(m=>m.text),['Seven','Six','Five','Four','Three'],'A message not kept leaves the last five as they were');
   assert.deepEqual(earlierMessages([],''),[]);
+});
+test('news held back behind a casualty is listed earlier, and the casualty on the line is not listed twice',()=>{
+  // As the field's say does (realtime-field.js): keep the message, then put it on the line only if it may replace
+  // what is there (feedbackCanReplace). A routine blow after a casualty is kept but stays off the line.
+  let recent=[],line=null;
+  const say=(text,{source='simulation',priority=0,now})=>{recent=rememberMessage(recent,text);
+    if(feedbackCanReplace(line,{source,priority},now))line={text,until:now+6500,priority};};
+  say('First squad is cut down.',{priority:3,now:0});say('You hit a raider: 4.',{now:500});say('A raider hits you: 3.',{priority:1,now:900});
+  assert.equal(line.text,'First squad is cut down.');
+  assert.deepEqual(earlierMessages(recent,line.text).map(m=>m.text),['A raider hits you: 3.','You hit a raider: 4.'],'The blows held back, newest first, without the casualty');
+  // Said again later, the same words are listed for their earlier saying, not for the one on the line.
+  recent=['A','B','A'].reduce((kept,text)=>rememberMessage(kept,text),[]);
+  assert.deepEqual(earlierMessages(recent,'A').map(m=>m.text),['B','A']);
 });
 test('the bar has room for a message opened whole with its earlier ones, and the line opens it',()=>{
   const html=fieldMarkup({state:G.newGame('Marcellus',275,{featureEdition:35,progression:true}),keymap:DEFAULT_KEYMAP,kind:'camp'});

@@ -68,7 +68,7 @@ try{
     await row.locator('[data-review-action="replace"]').click();await page.locator('[data-role="commandList"]').waitFor({state:'visible'});
     assert.equal(await page.locator('input[name="rt-list-actor"]:checked').inputValue(),squad,'Replace selects the correct squad');
     const advance=page.locator('[data-role="listOptions"] li').filter({hasText:'Advance to the objective marker'}).first();
-    await advance.getByRole('button',{name:'Advance to the objective marker',exact:true}).click();await page.locator('[data-role="closeListButton"]').click();
+    await advance.getByRole('button',{name:'Use: Advance to the objective marker',exact:true}).click();await page.locator('[data-role="closeListButton"]').click();
     await page.locator('[data-role="orderReviewButton"]').click();assert.match(await row.textContent(),/Advance.*Position/s);
     await row.locator('[data-review-action="hold"]').click();assert.match(await row.textContent(),/Queued.*Hold/s);
     const focus=await page.evaluate(()=>{
