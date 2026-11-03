@@ -1349,3 +1349,15 @@ Each prompt, request body, Tripo task, raw digest and the parameters Tripo repor
 | hamata | `item-hamata-b` | 2 | `48989c9f-766d-4bf7-b2bc-f121660a6f68` | 2x3 | upright | rejected | plate shoulder guards like a segmented cuirass's |
 | gladius | `item-gladius` | 2 | `79355df7-36c3-4896-9f91-272ac20699fe` | 1x3 | long | rejected | a medieval cross-hilted sword |
 | hasta | `item-hasta` | 2 | `c4005a4b-8bb2-4e3e-b7b4-b3921a031ba2` | 1x4 | long | rejected | an iron shaft |
+
+## Steam achievement icons · 3 November 2026
+
+The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.
+
+- **Chapters:** a square crop of the chapter's painting (`assets/scenes/`), with the chapter's numeral drawn in code. Chapters that share a painting are cropped at different places.
+- **Errand titles, the finale's routes, the torc and the spear of honour:** an item picture from `assets/items/item-atlas.webp`, on a coloured ground. Swords and spears lie across the diagonal.
+- **The other five decorations** (the civic, rampart and mural crowns, the armlets and the medals): insignia drawn in code, as the game has no pictures of them.
+- **Finishing on Veteran:** the emperor's portrait. **Finishing under Iron discipline:** the oath's lead seal.
+
+They carry the rights of the files they are made from, which [the asset manifest](asset-manifest.json) records. The frame, numerals and drawn insignia are the project's own code. The numerals use the renderer's serif font (DejaVu Serif on the Linux runner); no font file is added. The icons are uploaded to Steam, and the game does not ship them.
+

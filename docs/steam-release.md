@@ -40,7 +40,7 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
 ## Steam features (S3, once you have the App ID)
 
 - [ ] **The App ID in the app.** Set `"steamAppId"` in `desktop/package.json` to it (I can do this when you send it). Steam then runs inside the app.
-- [ ] **The achievements.** Enter the 35 from [steam-achievements.md](steam-achievements.md) in Steamworks, each with its API name, name, description and the hidden flag. Their icons follow in S3.
+- [ ] **The achievements.** Enter the 35 from [steam-achievements.md](steam-achievements.md) in Steamworks, each with its API name, name, description and the hidden flag. Upload each one's icon and locked icon from `desktop/steam/achievement-icons/` (64 × 64 JPEG; if Steamworks asks for another size, tell me and I'll remake them).
 - [ ] **Cloud saves.** Turn on Steam Auto-Cloud with the path in [desktop.md](desktop.md#steam-s3).
 - [ ] **The first upload.**
   - Put the App ID and depot ID in `desktop/steam/`.

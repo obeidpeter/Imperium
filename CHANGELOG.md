@@ -2,6 +2,17 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Steam, third package, second part: the achievement icons ([the list](docs/steam-achievements.md))
+
+- **The 35 achievement icons** are made from the game's own art, with nothing new generated: each in `desktop/steam/achievement-icons/` as a 64 × 64 JPEG with a greyed locked copy, ready to upload in Steamworks.
+  - **Chapters:** each chapter's painting, with its numeral.
+  - **Titles, the finale's routes, the torc and the spear of honour:** item pictures, with swords and spears set across the diagonal so they fill the square.
+  - **The other five decorations:** insignia drawn in code (the civic, rampart and mural crowns, the armlets and the medals).
+  - **The two finishes:** the emperor's portrait and the oath seal.
+- `node scripts/steam-achievement-icons.mjs` remakes them in headless Chromium and writes a review sheet to `tests/visual-results/steam-icons/`. `--size=` makes another size if Steamworks asks for one.
+- [docs/steam-achievements.md](docs/steam-achievements.md) now names each icon's source, and [the art record](docs/art-generation.md#steam-achievement-icons--3-november-2026) its provenance.
+- A test checks that every achievement has both icons at 64 × 64, from files the game ships, and that no two icons share a picture.
+
 ### Steam, third package, first part: achievements and the Steam link ([plan](docs/steam-plan.md), [the list](docs/steam-achievements.md), [the app](docs/desktop.md#steam-s3))
 
 The owner approved the achievements on 3 November: all 35, with English names, and the 24 tied to Chapters IV–XII hidden on Steam until earned. Steam itself switches on once there is an App ID; until then the app runs exactly as before.

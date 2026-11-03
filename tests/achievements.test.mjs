@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile,readdir} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
 import {createRequire} from 'node:module';
 import * as G from '../src/core/game.js';
 import {CHAPTERS} from '../src/data/campaign.js';
@@ -11,6 +12,7 @@ import {ACHIEVEMENTS} from '../src/data/achievements.js';
 import {earnedAchievements} from '../src/core/achievements.js';
 import {reportAchievements} from '../src/ui/platform.js';
 import {steamAchievementsSheet} from '../scripts/steam-achievements.mjs';
+import {iconSpec} from '../scripts/steam-achievement-icons.mjs';
 
 // Steam achievements (the Steam plan, S3): the owner's 35, with English names and those tied to Chapters IV–XII hidden.
 // They are read from what a chronicle records, never granted, and the desktop app reports them to Steam.
@@ -87,4 +89,30 @@ test('the desktop app reports what the chronicle has earned, and nothing elsewhe
   const steam=createRequire(import.meta.url)('../desktop/steam.cjs');
   assert.equal(process.env.IMPERIUM_STEAM_APP_ID,undefined);
   assert.deepEqual(steam.start(),{available:false,reason:'No Steam App ID is set.'});assert.deepEqual(steam.unlock(['ACH_CHAPTER_01']),{available:false,unlocked:[]});
+});
+
+// A JPEG's size, from its frame header.
+function jpegSize(bytes){
+  assert.ok(bytes[0]===0xff&&bytes[1]===0xd8,'a JPEG');
+  for(let i=2;i<bytes.length;){
+    if(bytes[i]!==0xff){i++;continue;}
+    const marker=bytes[i+1];
+    if(marker>=0xc0&&marker<=0xcf&&![0xc4,0xc8,0xcc].includes(marker))return {width:bytes.readUInt16BE(i+7),height:bytes.readUInt16BE(i+5)};
+    i+=2+bytes.readUInt16BE(i+2);
+  }
+  return null;
+}
+
+test('every achievement has its icon and locked copy for Steamworks, from the game’s own art: run node scripts/steam-achievement-icons.mjs',async()=>{
+  const dir=new URL('../desktop/steam/achievement-icons/',import.meta.url),files=(await readdir(dir)).sort();
+  assert.deepEqual(files,ACHIEVEMENTS.flatMap(a=>[`${a.id}.jpg`,`${a.id}_locked.jpg`]).sort(),'one icon and one locked copy each, and nothing else');
+  for(const file of files)assert.deepEqual(jpegSize(await readFile(new URL(file,dir))),{width:64,height:64},file);
+  const specs=ACHIEVEMENTS.map(iconSpec);
+  for(const [i,spec] of specs.entries()){
+    if(spec.src)assert.ok(existsSync(new URL(`../${spec.src.slice(2)}`,import.meta.url)),`${ACHIEVEMENTS[i].id}: ${spec.src} ships with the game`);
+    if(spec.kind==='item')assert.ok(Array.isArray(spec.cell),`${ACHIEVEMENTS[i].id}: ${spec.item} is in the item atlas`);
+  }
+  const pictures=specs.filter(s=>s.kind==='item').map(s=>s.cell.join(','));
+  assert.equal(new Set(pictures).size,pictures.length,'no two icons share an item picture');
+  assert.equal(new Set(specs.filter(s=>s.kind==='scene').map(s=>`${s.src}@${s.x}`)).size,12,'each chapter its own view');
 });

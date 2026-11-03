@@ -56,7 +56,7 @@ For development:
 
 ## Steam (S3)
 
-- **Achievements.** The 35 achievements are data (`src/data/achievements.js`). [docs/steam-achievements.md](steam-achievements.md) lists them for entering in Steamworks, and `node scripts/steam-achievements.mjs` regenerates it.
+- **Achievements.** The 35 achievements are data (`src/data/achievements.js`). [docs/steam-achievements.md](steam-achievements.md) lists them for entering in Steamworks, and `node scripts/steam-achievements.mjs` regenerates it. Their icons are in `desktop/steam/achievement-icons/`; `node scripts/steam-achievement-icons.mjs` remakes them.
   - `earnedAchievements(state)` (`src/core/achievements.js`) reads them from what the chronicle records. It changes nothing and never grants anything, and a Practice replay earns none.
   - The page reports them through the bridge after each save, restore and load (`reportAchievements`, `src/ui/platform.js`). Steam unlocks the ones it does not have yet, so a chronicle brought from the browser or the demo unlocks what it has already earned.
 - **The Steam link,** `desktop/steam.cjs`, uses [steamworks.js](https://github.com/ceifa/steamworks.js) 0.4.0 (MIT). It runs only with a Steam App ID: `"steamAppId"` in `desktop/package.json` (null until the owner has one), or `IMPERIUM_STEAM_APP_ID` for development.
