@@ -8,7 +8,7 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {isAbsolute} from 'node:path';
 import {serveRequest} from './serve.mjs';
 import {runCommandCampaign} from './command-autoplay.mjs';
-import {closePanel,menuCommand,openCampList,revealControl} from './ui-smoke-navigation.mjs';
+import {closePanel,menuCommand,openCampList,revealControl,throttleCpu,watchEventLine} from './ui-smoke-navigation.mjs';
 import * as Game from '../src/core/game.js';
 import {COMPANY_ACTIVITIES} from '../src/data/company-activities.js';
 
@@ -41,7 +41,7 @@ const report={method:'Automated Chromium, legal checkpoint imports, visible UI c
 // vote row, is the tightest. See docs/fullscreen-release12-report.md.
 const WORLD_SHARE=Object.freeze({desktop:.6,phone:.5,smallPhone:.38,largeText:.3});
 async function prepare(viewport,id,{scale=1,encounter=false}={}){
-  const context=await browser.newContext({viewport}),page=await context.newPage();page.setDefaultTimeout(30000);
+  const context=await browser.newContext({viewport}),page=await context.newPage();await throttleCpu(page);page.setDefaultTimeout(30000);
   page.on('pageerror',error=>report.errors.push(error.message));
   page.on('console',message=>{if(message.type()==='error')report.errors.push(message.text());});
   await page.goto(base);await menuCommand(page,'settings');
@@ -90,7 +90,7 @@ async function measure(page,label,{camp=false,desktop=false,scale=1}={}){
     assert.equal(await page.evaluate(()=>window.__realtime.world().tick),tick,'A camera key never advances a paused simulation');
     assert.equal(await page.evaluate(()=>document.activeElement?.id),'rt-board','The scene keeps the keys');
   }
-  await page.keyboard.down('h');await page.waitForFunction(()=>/horizon is a 3D view/.test(document.querySelector('[data-role="eventLine"]')?.textContent??''));
+  const said=await watchEventLine(page);await page.keyboard.down('h');await said(/horizon is a 3D view/);
   await page.keyboard.up('h');assert.equal(await page.evaluate(()=>window.__chamber.stage().cameraView),'follow','the 2D view stays on the soldier');
   if(camp){
     await (await revealControl(page,'#camp-company-stories [data-cmd="conversation"][data-id^="company-story:"]')).click();

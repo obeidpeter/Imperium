@@ -18,7 +18,7 @@ import {DEFAULT_KEYMAP,actionFor,actionLabel,firstKeyLabel,learnKey} from '../ui
 import {targetReadout} from '../ui/realtime-target-readout.js';
 import {fieldShortcutAllowed} from '../ui/realtime-shortcuts.js';
 import {missionReadout} from '../ui/realtime-mission-readout.js';
-import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,revealAbility} from '../ui/realtime-hud.js';
+import {abilityGroups,bindHudDisclosures,chamberReadoutKey,compactChamberReadout,compactMissionReadout,earlierMessages,messageTime,rememberMessage,revealAbility} from '../ui/realtime-hud.js';
 import {fieldNotice,missionAbilities,missionAbilityHint,oathNote,opportunityReadout} from '../ui/field-experience.js';
 import {oathForecast} from '../core/realtime/mission.js';
 import {commandSoundCue} from '../ui/adaptive-score.js';
@@ -86,28 +86,51 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
   const sceneEncounter=()=>stageEncounter(base,world,{appearance:appearance(),wayOut});
   // The bar's event line keeps one line of room (realtime.css): a message too long for it ends in an ellipsis, the whole
   // of it is the line's tooltip, and More (or a tap on the line) opens it whole over the world until it is closed.
-  // A message cut short is also held while a mouse or pen rests on its line or on More, or while More has the focus
-  // (Polish after Gate 4, at the owner's request): its time runs out only once it is let go, and then it stays a moment
-  // more (1.5 s), as after closing it whole. A finger's tap opens it whole instead.
-  let eventOpen=false;const eventPointer={line:false,more:false};
-  const eventHeld=()=>!!dom.eventLine?.hasAttribute('data-cut')&&(eventPointer.line||eventPointer.more||(!!dom.eventMore&&document.activeElement===dom.eventMore));
+  // A message cut short is also held while a mouse or pen rests on its line or on More, or while More or the line has
+  // the focus (Polish after Gate 4, at the owner's request): its time runs out only once it is let go, and then it stays
+  // a moment more (1.5 s), as after closing it whole. A finger's tap opens it whole instead.
+  // The bar keeps its last messages too (rememberMessage): opened, the view lists up to five earlier ones under the
+  // message on the line, and a click or tap on the line opens them. While it has anything to open, the line is a button
+  // the keyboard reaches as well; open, the view takes a new message at its top instead of closing.
+  let eventOpen=false,recent=[];const eventPointer={line:false,more:false};
+  const earlier=()=>earlierMessages(recent,dom.eventLine?.textContent??'');
+  const eventOpenable=()=>!!dom.eventLine?.hasAttribute('data-cut')||earlier().length>0;
+  const eventHeld=()=>!!dom.eventLine?.hasAttribute('data-cut')&&(eventPointer.line||eventPointer.more||(!!dom.eventMore&&document.activeElement===dom.eventMore)||document.activeElement===dom.eventLine);
   const expireEvent=now=>{
     if(!eventMessage||eventOpen)return;
     if(eventHeld()){eventMessage.until=Math.max(eventMessage.until,now+1500);return;}
     if(now>eventMessage.until){eventMessage=null;showEvent('');}
   };
+  const renderEventFull=()=>{
+    const current=dom.eventLine?.textContent??'',list=earlier();
+    if(dom.eventFullText){dom.eventFullText.textContent=current;dom.eventFullText.hidden=!current;}
+    if(dom.eventEarlier)dom.eventEarlier.hidden=!list.length;
+    dom.eventEarlierList?.replaceChildren(...list.map(m=>{const li=document.createElement('li');li.textContent=m.count>1?`${m.text} (×${m.count})`:m.text;
+      li.classList.toggle('warning',m.warning);return li;}));
+  };
+  const syncEventLine=()=>{
+    const line=dom.eventLine;if(!line)return;const openable=eventOpenable();line.toggleAttribute('data-openable',openable);
+    if(!openable){for(const name of ['tabindex','role','aria-controls','aria-expanded','aria-label'])line.removeAttribute(name);return;}
+    line.tabIndex=0;line.setAttribute('role','button');line.setAttribute('aria-controls','rt-event-full');line.setAttribute('aria-expanded',String(eventOpen));
+    if(line.textContent)line.removeAttribute('aria-label');else line.setAttribute('aria-label','Earlier messages');
+  };
   const openEvent=open=>{
-    eventOpen=!!open&&!!dom.eventLine?.textContent;if(dom.eventFull){dom.eventFull.hidden=!eventOpen;dom.eventFull.textContent=eventOpen?dom.eventLine.textContent:'';}
-    dom.eventMore?.setAttribute('aria-expanded',String(eventOpen));
+    eventOpen=!!open&&(!!dom.eventLine?.textContent||earlier().length>0);
+    if(dom.eventFull){dom.eventFull.hidden=!eventOpen;if(eventOpen)renderEventFull();}
+    dom.eventMore?.setAttribute('aria-expanded',String(eventOpen));syncEventLine();
     // Closed, a message held open gets a moment more before it clears.
     if(!eventOpen&&eventMessage)eventMessage.until=Math.max(eventMessage.until,performance.now()+1500);
   };
   const showEvent=text=>{
-    const line=dom.eventLine;if(!line)return;line.textContent=text;if(text)line.title=text;else line.removeAttribute('title');openEvent(false);
+    const line=dom.eventLine;if(!line)return;line.textContent=text;if(text)line.title=text;else line.removeAttribute('title');
     const cut=!!text&&line.scrollWidth>line.clientWidth+1;line.toggleAttribute('data-cut',cut);if(dom.eventMore)dom.eventMore.hidden=!cut;
+    if(eventOpen)renderEventFull();syncEventLine();
   };
-  const say=(text,{warning=false,announce=false,ms=2600}={})=>{
-    eventMessage={text,until:performance.now()+ms,warning};if(dom.eventLine){showEvent(text);dom.eventLine.classList.toggle('warning',warning);}
+  // A message stays its time, longer if it takes longer to read (messageTime); `keep:false` leaves it out of the
+  // earlier messages (Paused and Resumed, which the Pause button shows anyway).
+  const say=(text,{warning=false,announce=false,ms=2600,keep=true}={})=>{
+    eventMessage={text,until:performance.now()+messageTime(text,ms),warning};if(keep)recent=rememberMessage(recent,text,{warning});
+    if(dom.eventLine){showEvent(text);dom.eventLine.classList.toggle('warning',warning);}
     if(announce&&dom.announcer)dom.announcer.textContent=text;
   };
   const message=(text,warning=false)=>{const line=dom.messageLine;if(!line)return;if(line.textContent!==text)line.textContent=text;line.classList.toggle('warning',warning);};
@@ -686,7 +709,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     // The player's choice stands: a key can arrive before a closed panel's close event is handled, and that
     // event must not then resume a pause the player chose (nor cut short a round played with N).
     pausedFor=null;
-    const pause=!clock.paused||stepping(clock);setPaused(clock,pause);say(pause?'Paused.':'Resumed.',{announce:true});showPlanned();
+    const pause=!clock.paused||stepping(clock);setPaused(clock,pause);say(pause?'Paused.':'Resumed.',{announce:true,keep:false});showPlanned();
     if(pause){seen.paused=true;saveResume('pause');}else resumePending=true;
   }
   function saveResume(reason){if(world.status==='active')callbacks.onSave?.(world,reason);}
@@ -736,7 +759,9 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
     const click=(el,fn)=>{if(el)el.onclick=()=>{fn();canvas.focus({preventScroll:true});};};
     // More keeps the focus, so a second press closes what the first opened.
     if(dom.eventMore)dom.eventMore.onclick=()=>openEvent(!eventOpen);
-    if(dom.eventLine)dom.eventLine.onclick=()=>{if(dom.eventLine.hasAttribute('data-cut'))openEvent(!eventOpen);};
+    // A click or tap on the line hands the keys back to the world, as the bar's buttons do; Tab still reaches it.
+    if(dom.eventLine){dom.eventLine.onclick=()=>{if(eventOpenable())openEvent(!eventOpen);canvas.focus({preventScroll:true});};
+      dom.eventLine.onkeydown=e=>{if((e.key==='Enter'||e.key===' ')&&eventOpenable()){e.preventDefault();openEvent(!eventOpen);}};}
     if(dom.eventFull)dom.eventFull.onclick=()=>openEvent(false);
     for(const [key,el] of [['line',dom.eventLine],['more',dom.eventMore]]){if(!el)continue;
       el.onpointerenter=e=>{if(e.pointerType!=='touch')eventPointer[key]=true;};el.onpointerleave=()=>{eventPointer[key]=false;};}
@@ -819,7 +844,7 @@ export function createRealtimeField({dom,world:initial,base:initialBase,options=
       pausedFor=null;resumePending=false;lastNow=0;lessonKey=null;listKey='';listActor=null;threatKey='';intentionsShown=false;marks={};marksKey='{}';wayOut=null;wayOutKey='null';seen.paused=false;seen.slowed=false;
       Object.assign(clock,createClock({speed:clock.speed}));orderReview.close({focus:false});toggleList(false);
       for(const role of ['eventLine','messageLine','targetLine','announcer','missionWarning','deadlineLine','orderStatus']){write(dom[role],'');dom[role]?.classList.remove('warning');}
-      showEvent('');
+      recent=[];openEvent(false);showEvent('');
       canvas.dataset.cursor='walk';applyOptions();buildParty();buildAbilityBar();renderLog();squads=makeSquads();squads?.reset();chamber?.reset();disarmAdvance();showDeployment();rescueBriefing();
       if(stage){stage.sync(sceneEncounter());stage.rebuildRemains?.();resetPresenter();firstView();}updateHud(performance.now());resumeResult();
     },

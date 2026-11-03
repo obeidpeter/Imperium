@@ -635,7 +635,17 @@ html[data-world="full"] .rt-hud .rt-message-lines>.rt-event-more{position:absolu
   font-size:.72rem;line-height:1.35;background:var(--rt-panel);color:var(--rt-focus);border:1px solid var(--rt-line);border-radius:.3rem}
 html[data-world="full"] .rt-hud .rt-message-lines>.rt-event-more:focus-visible{outline:3px solid var(--rt-focus);outline-offset:1px}
 html[data-world="full"] .rt-hud .rt-message-lines>.rt-event-full{position:absolute;z-index:8;inset-inline:0;inset-block-end:calc(100% + .45rem);margin:0;white-space:normal;
-  background:var(--rt-panel);border:1px solid var(--rt-line);border-radius:.4rem;padding:.5rem .7rem;box-shadow:0 -.4rem 1.4rem #0009;font-size:.83rem;cursor:pointer}
+  background:var(--rt-panel);border:1px solid var(--rt-line);border-radius:.4rem;padding:.5rem .7rem;box-shadow:0 -.4rem 1.4rem #0009;font-size:.83rem;cursor:pointer;
+  max-block-size:min(55vh,22rem);overflow:auto}
+/* The line opens the view whenever it has a message cut short or earlier messages (after Gate 4); the view lists up to
+   five earlier ones under the message on the line, newest first, and scrolls within itself at large text sizes. */
+html[data-world="full"] .rt-hud .rt-message-lines>.rt-event[data-openable]{cursor:pointer}
+html[data-world="full"] .rt-hud .rt-message-lines>.rt-event:focus-visible{outline:2px solid var(--rt-focus);outline-offset:-2px}
+.rt-event-full p{margin:0}
+.rt-event-full>p:not([hidden])+.rt-event-earlier{margin-block-start:.45rem;padding-block-start:.35rem;border-block-start:1px solid var(--rt-line)}
+.rt-event-earlier-title{font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--rt-muted)}
+.rt-event-earlier ol{margin:.15rem 0 0;padding-inline-start:1.2rem;color:var(--rt-muted)}
+.rt-event-earlier li.warning{color:#ffc4b5}
 @container (min-width:761px){
   html[data-world="full"] .rt-hud>.rt-ability-area{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .4rem}
   html[data-world="full"] .rt-hud>.rt-ability-area>.rt-ability-bar{flex:0 1 auto;flex-basis:auto}
