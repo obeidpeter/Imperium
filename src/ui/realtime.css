@@ -706,6 +706,12 @@ html[data-world="full"] .rt-unit-dock .rt-squad-area{display:flex;flex-wrap:wrap
 html[data-world="full"] .rt-unit-dock .rt-squads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));inline-size:100%;overflow:visible;gap:.25rem}
 html[data-world="full"] .rt-field .rt-standard{inline-size:auto;min-inline-size:0;grid-template-columns:auto minmax(0,1fr);justify-items:stretch;align-content:start;flex:initial}
 html[data-world="full"] .rt-standard-name{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* The flag belongs beside all three card rows. Spanning only name/strength
+   stretched those rows and made a two-row roster steal the short desktop's world. */
+@container(min-width:761px){
+  html[data-world="full"] .rt-field .rt-standard{padding-block:.1rem}
+  html[data-world="full"] .rt-standard-flag{grid-row:1/span 3}
+}
 .rt-standard-status{grid-column:2;display:block;min-inline-size:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.66rem;line-height:1.25;color:var(--rt-muted);font-weight:400}
 .rt-standard.shaken .rt-standard-status,.rt-standard.broken .rt-standard-status{color:#ffd0a6}
 .rt-camera-controls{position:absolute;z-index:3;inset-inline-end:.6rem;inset-block-end:.6rem;display:flex;flex-wrap:wrap;gap:.3rem;max-inline-size:calc(100% - 1.2rem)}
@@ -716,10 +722,21 @@ html[data-world="full"] .rt-standard-name{display:block;white-space:nowrap;overf
 .rt-action-search input::placeholder{color:#b6b7a8}
 .rt-action-search input:focus-visible{outline:2px solid var(--rt-focus);outline-offset:2px}
 @container(max-width:760px){
-  html[data-world="full"] .rt-hud>.rt-unit-dock{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible}
-  html[data-world="full"] .rt-unit-dock .rt-party{max-inline-size:100%;overflow-x:auto}
-  html[data-world="full"] .rt-unit-dock .rt-squads{grid-template-columns:repeat(2,minmax(0,1fr))}
-  html[data-world="full"] .rt-field .rt-standard{padding:.2rem .3rem;gap:.1rem .3rem;min-block-size:2.75rem}
+  /* Resume already exposes the paused state. Keep its duplicate badge for
+     assistive technology without wrapping the nearby Review orders control. */
+  html[data-world="full"] .rt-top .rt-time{flex:0 0 auto;flex-wrap:nowrap}
+  html[data-world="full"] .rt-time .rt-paused{position:absolute;inline-size:1px;block-size:1px;padding:0;margin:-1px;
+    overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+  html[data-world="full"] .rt-field>.rt-hud{padding-block:.15rem}
+  html[data-world="full"] .rt-hud>.rt-message-area{padding-block:.15rem}
+  /* Keep every squad readable without charging another row when it is selected.
+     Soldier controls shares the party's row; only spacing contracts on phones. */
+  html[data-world="full"] .rt-hud>.rt-unit-dock{display:grid;grid-template-columns:minmax(0,1fr) auto;overflow:visible;padding-block:0;gap:.1rem .3rem}
+  html[data-world="full"] .rt-unit-dock .rt-party{grid-area:1/1;max-inline-size:100%;overflow-x:auto;padding-block:.1rem}
+  html[data-world="full"] .rt-unit-dock .rt-squad-area{display:contents}
+  html[data-world="full"] .rt-unit-dock .rt-clear{grid-area:1/2;padding-block:.15rem}
+  html[data-world="full"] .rt-unit-dock .rt-squads{grid-area:2/1/3/-1;grid-template-columns:repeat(2,minmax(0,1fr));padding-block:.1rem}
+  html[data-world="full"] .rt-field .rt-standard{padding:.1rem .3rem;gap:.1rem .3rem;min-block-size:2.75rem}
   html[data-world="full"] .rt-standard-flag{inline-size:1rem;font-size:.75rem}
   html[data-world="full"] :is(.rt-standard-name,.rt-standard-status){font-size:calc(.75rem * var(--text-scale,1))}
   /* Keep utility controls on the action row so readable squad cards leave room for the world. */

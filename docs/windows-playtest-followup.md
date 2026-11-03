@@ -259,3 +259,22 @@ unchanged; the check now selects the action's accessible name. The same harness
 also checks that retry advice is visible initially and can be folded and
 reopened, instead of reading its text after inadvertently closing it. No game
 behavior, timeouts or acceptance limits changed in this follow-up.
+
+The next CI run passed nine of ten jobs, including both complete Chromium smoke
+groups and the twelve-chapter benchmark, but caught a real HUD height regression
+at 1,280 × 720: Chapter V's world was 418 pixels high against the existing
+432-pixel minimum. The squad flag now spans the complete three-line card, and
+desktop card spacing is tighter. Narrow layouts keep the duplicate pause badge
+accessible without forcing the time controls onto another row, use less empty
+HUD spacing, and place Soldier controls beside the party when a squad is
+selected. Text sizes and 44-pixel phone targets are preserved. The unchanged
+geometry probe on build `8fb1b6553cba` measured 440 pixels on desktop, 453 on the
+390-pixel phone, 339 at 200% text, and 247 on the 360 × 640 phone; all meet the
+original world-share requirements. All three selected-phone probes also pass:
+the Soldier controls target remains 44 pixels high and selection adds no extra
+row or document scrolling. The 16 focused interface/HUD tests pass.
+The complete real-time polish suite passes all 39 checks on this same build,
+with no browser page or console errors.
+The full immersive-interface suite also passes all 20 camp, field and council
+cases, including camera controls, company stories and 200% text, with no browser
+errors and unchanged world-share, no-overlap and no-page-scroll assertions.
