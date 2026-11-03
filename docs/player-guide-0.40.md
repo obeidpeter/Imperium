@@ -1876,12 +1876,38 @@ well.
 - On iPhone, add the game to the Home Screen from Safari's Share menu.
   Browser storage can still be cleared, so keep a save code.
 
+## The desktop app
+
+The desktop app for Windows is the same game, with these differences:
+
+- **Every chapter is installed**, so nothing downloads and Settings has
+  no offline section: its last category is **Saves**.
+
+- **Your chronicle is a file** on your computer, in the game's own
+  folder: **%APPDATA%\Imperium\saves** on Windows. Each save writes it, and
+  the copy before it is kept beside it. If the file cannot be written,
+  the game says so and keeps the save in its own store; export a save
+  code to be safe.
+
+- **Menu → Quit to desktop** saves first, then closes the game. Closing
+  the window does the same. If the save fails, you choose between
+  quitting anyway and playing on.
+
+- **The game starts full-screen.** **F11** or **Alt+Enter** switches
+  between full screen and a window, as does **Settings → Graphics →
+  Window → Fullscreen**. The game remembers your choice and the window's
+  size. **Esc** still opens the Menu.
+
+- **To bring a chronicle from the browser**, export its save code there
+  and import it in the app (**Menu → Settings → Saves → Import save
+  code**), as between any two devices.
+
 # Settings reference
 
 Open the **Menu** (**Esc**) and choose **Settings**. The world is paused
 while the Menu is open, and changes save automatically. Settings has five
 categories: **Readability**, **Controls**, **Graphics**, **Sound** and
-**Saves & offline**.
+**Saves & offline** (**Saves** in the desktop app).
 
 ## Readability
 
@@ -1940,6 +1966,7 @@ measurements under **Performance diagnostics**.
 | Combat close-ups           | On by default: the camera briefly closes in on critical blows.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | Battle remains             | On by default: the fallen, spent missiles and trodden ground stay on the 3D field until the encounter ends. Presentation only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | Run performance check      | Measures this device in the current 3D battle in about a minute (each quality, three camera views), recommends a quality and can save the results as a file. Nothing is sent anywhere; Esc or Cancel stops it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Fullscreen                 | In the desktop app only, under **Window**: full screen or a window. **F11** and **Alt+Enter** switch it too. |
 
 ## Sound
 
@@ -1962,7 +1989,8 @@ measurements under **Performance diagnostics**.
 - **Recover older progress** lists the last three checkpoints or replaced
   chronicles.
 
-- **Download all chapters** and **Retry chapter download**.
+- **Download all chapters** and **Retry chapter download**. The desktop
+  app installs every chapter, so it has neither.
 
 - **New game & local data** holds **Start a new game** and **Privacy &
   local data**, which explains what the game keeps on your device. There
