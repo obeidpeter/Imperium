@@ -161,10 +161,19 @@ try{
     await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen().then(v=>!v));
     await page.keyboard.press('Alt+Enter');
     await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen());
-    await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].minimize());
-    assert.equal(await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isMinimized()),true);
-    await app.evaluate(({BrowserWindow})=>{const win=BrowserWindow.getAllWindows()[0];win.restore();win.focus();});
-    assert.equal(await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isMinimized()),false);
+    await app.evaluate(async({BrowserWindow})=>{
+      const win=BrowserWindow.getAllWindows()[0];
+      // Window managers acknowledge these requests asynchronously. Poll in
+      // Electron's main process: a minimized renderer need not keep drawing.
+      const waitFor=async minimized=>{
+        const deadline=Date.now()+10000;
+        while(win.isMinimized()!==minimized){
+          if(Date.now()>=deadline)throw Error(`Window did not ${minimized?'minimize':'restore'}`);
+          await new Promise(resolve=>setTimeout(resolve,25));
+        }
+      };
+      win.minimize();await waitFor(true);win.restore();await waitFor(false);win.focus();
+    });
     report.checks.push('F11 and Alt+Enter toggle native fullscreen; the packaged window survives minimize and restore');
     await app.close();
   }

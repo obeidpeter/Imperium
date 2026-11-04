@@ -14,7 +14,7 @@ npm run package:win            # (in desktop/) the Windows app folder, desktop/o
 npm run package:linux          # (in desktop/) the Linux one, desktop/out/linux-unpacked/
 ```
 
-From the root, `npm run smoke:desktop` checks the app through its interface. `DESKTOP_APP=packaged npm run smoke:desktop` checks the packaged app instead. On Linux without a display, run it under `xvfb-run -a`.
+From the root, `npm run smoke:desktop` checks the app through its interface. `DESKTOP_APP=packaged npm run smoke:desktop` checks the packaged app instead. On Linux without a display, install `xvfb`, `openbox` and `x11-utils`, then use `DESKTOP_APP=packaged xvfb-run -a bash scripts/desktop-smoke-linux.sh`. The helper starts Openbox, waits for its window-manager registration and stops it after the check. Xvfb alone has no window manager to acknowledge minimize/restore requests; the check waits for both actual state changes in Electron's main process.
 
 CI's `desktop` job packages the app on Linux and Windows and runs that check on the packaged app. Each push to main keeps the Windows app folder as an artifact, `imperium-windows`, for a week. It is unsigned, so Windows may warn before opening it.
 

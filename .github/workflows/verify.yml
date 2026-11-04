@@ -312,9 +312,19 @@ jobs:
       - if: matrix.os != 'windows-latest'
         working-directory: desktop/out/linux-unpacked
         run: sudo chown root:root chrome-sandbox && sudo chmod 4755 chrome-sandbox
+      - name: Install a window manager for native minimize and restore
+        if: matrix.os != 'windows-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y openbox x11-utils
       - name: The packaged app, through its visible interface
         shell: bash
-        run: ${{ matrix.os != 'windows-latest' && 'xvfb-run -a' || '' }} npm run smoke:desktop
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            xvfb-run -a bash scripts/desktop-smoke-linux.sh
+          else
+            npm run smoke:desktop
+          fi
         env:
           DESKTOP_APP: packaged
       - uses: actions/upload-artifact@v7
