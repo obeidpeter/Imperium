@@ -2,6 +2,21 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Steam, fourth package, third part: Steam's two icons, drafted ([the record](docs/steam-store-art.md#the-icons))
+
+Drafts of the two icons Steamworks asks for under Community and client icons. Both are the game's own emblem, `icon.svg`, drawn at Steam's sizes:
+
+- **The shortcut icon,** the one Steam puts on the player's desktop: a 256 × 256 PNG, with the emblem's rounded corners on transparency. By the reports of Valve's page, Steam makes the Windows `.ico` from it.
+- **The app icon:** a 184 × 184 JPEG, with its corners filled with the emblem's own red, since a JPEG has no transparency.
+
+They are in `desktop/steam/icons/`. `node scripts/steam-store-art.mjs` draws them with the store's images and adds them to the review sheet, and a test checks their sizes and the shortcut icon's transparency. They are for upload to Steamworks and are not part of the game's build.
+
+**Checked:**
+- **Automated tests:** `npm test`.
+- **The icons,** looked at over grey.
+
+**Not checked:** the sizes in Steamworks. This session cannot reach Valve's partner site; they come from search excerpts of its community and client icons page.
+
 ### Steam, fourth package, second part: the store's and the library's images, drafted ([the record](docs/steam-store-art.md))
 
 Drafts of the nine images Steamworks asks for under Store assets and Library assets, for the owner to review. They are made from the game's own art; nothing is generated.

@@ -8,7 +8,9 @@
 // --render renders the three again; without it, the renders already kept are used: the hero in desktop/steam/store-art/,
 // and the two capsules' renders, before their name is drawn, in art-source/store-art/. Each image is written at the
 // exact pixel size Steamworks asks for, with a review sheet in tests/visual-results/steam-store-art/ (not committed).
-// The sizes are Steam's as reported; check them in Steamworks before uploading (docs/steam-store-art.md).
+// Steam's two icons go to desktop/steam/icons/: the shortcut icon and the app icon, the game's own emblem (icon.svg)
+// drawn at their sizes. The sizes are Steam's as reported; check them in Steamworks before uploading
+// (docs/steam-store-art.md).
 // Needs Playwright like the other review scripts (PLAYWRIGHT_MODULE). Draws in headless Chromium's 2D canvas; the renders
 // use its software WebGL, which takes several minutes.
 import assert from 'node:assert/strict';
@@ -19,6 +21,7 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {serveRequest} from './serve.mjs';
 
 const root=fileURLToPath(new URL('..',import.meta.url)),out=join(root,'desktop/steam/store-art'),renders=join(root,'art-source/store-art'),review=join(root,'tests/visual-results/steam-store-art');
+const iconsOut=join(root,'desktop/steam/icons');
 export const NAME={title:'IMPERIUM',subtitle:'FROM RECRUIT TO EMPEROR'};
 export const PAINTING={src:'./assets/scenes/frontier-oath.webp',width:832,height:467};
 export const FONT='art-source/fonts/cinzel/cinzel-variable.ttf';
@@ -48,14 +51,23 @@ export const STORE_ART=[
   {id:'library_hero',slot:'Library: hero (no text)',width:3840,height:1240,render:HERO},
   {id:'library_logo',slot:'Library: logo (transparent)',width:1280,height:null,png:true,name:{x:.5,y:0,width:.94}},
 ];
+// Steam's community and client icons, as Valve's asset page is reported: the shortcut icon on the player's desktop,
+// 256 × 256 (Steam makes the Windows .ico from the PNG), and the app icon, a 184 × 184 JPEG. Both are icon.svg drawn
+// at their size. The shortcut icon keeps the emblem's rounded corners on transparency; a JPEG has none, so the app icon
+// fills its corners with the emblem's own red.
+export const ICONS=[
+  {id:'shortcut_icon',slot:'Shortcut icon',width:256,height:256,png:true},
+  {id:'app_icon',slot:'App icon',width:184,height:184,fill:'#682a26'},
+];
 /** How far an image enlarges the painting: above about 1.5 it softens. A render is made at its own size. */
 export const enlargement=a=>a.crop?Math.max(a.width/a.crop[2],a.height/a.crop[3]):a.render?1:0;
 export const fileName=a=>`${a.id}.${a.png?'png':'jpg'}`;
 /** Where a render is kept: the hero is its own final image; a capsule's render waits for its name in art-source/. */
 export const renderFile=a=>a.name?`art-source/store-art/${a.id}-render.jpg`:`desktop/steam/store-art/${fileName(a)}`;
 
-// In the page: draws every image, the logo and the review sheet, as data URLs. The renders come in made.
-function drawArt(specs,{font,painting,name,rendered}){
+// In the page (icon.svg): draws every image, the logo, the icons and the review sheet, as data URLs. The renders come in
+// made.
+function drawArt(specs,{font,painting,name,rendered,icons}){
   return (async()=>{
     const face=new FontFace('Cinzel',Uint8Array.from(atob(font),c=>c.charCodeAt(0)).buffer,{weight:'400 900'});await face.load();document.fonts.add(face);
     const load=async src=>{const img=new Image();img.src=src;await img.decode();return img;};
@@ -102,18 +114,28 @@ function drawArt(specs,{font,painting,name,rendered}){
       }
       images.push({data:c.toDataURL(a.png?'image/png':'image/jpeg',0.92),width:c.width,height:c.height,canvas:c});
     }
-    // The review sheet: every image over a mid grey (so the logo's transparency shows), the hero across the top with
-    // the logo over it as Steam places it by default, the rest at most 520 pixels tall.
+    // The icons: the emblem drawn at each one's size, over its fill where it has one.
+    const emblem=await load('./icon.svg');
+    const drawnIcons=icons.map(a=>{
+      const c=canvas(a.width,a.height),x=c.getContext('2d');x.imageSmoothingQuality='high';
+      if(a.fill){x.fillStyle=a.fill;x.fillRect(0,0,a.width,a.height);}
+      x.drawImage(emblem,0,0,a.width,a.height);
+      return {data:c.toDataURL(a.png?'image/png':'image/jpeg',0.95),width:c.width,height:c.height,canvas:c};
+    });
+    // The review sheet: every image over a mid grey (so the logo's and the shortcut icon's transparency shows), the hero
+    // across the top with the logo over it as Steam places it by default, the rest at most 520 pixels tall, then the icons.
+    const shown=[...specs.map((a,i)=>({slot:a.slot,im:images[i]})),...icons.map((a,i)=>({slot:a.slot,im:drawnIcons[i]}))];
     const W=1840,gap=24,heroIndex=specs.findIndex(a=>a.render&&!a.name),logoIndex=specs.findIndex(a=>a.height===null);
     const heroW=W-gap*2,heroH=heroW*specs[heroIndex].height/specs[heroIndex].width;let y=gap+heroH+46,x=gap,lineH=0;const placed=[];
-    for(const [i,a] of specs.entries()){if(i===heroIndex)continue;const im=images[i],s=Math.min(1,520/im.height,(W-gap*2)/im.width),w=im.width*s,h=im.height*s;
+    for(const [i,{im}] of shown.entries()){if(i===heroIndex)continue;const s=Math.min(1,520/im.height,(W-gap*2)/im.width),w=im.width*s,h=im.height*s;
       if(x+w>W-gap){y+=lineH+46;x=gap;lineH=0;}placed.push({i,x,y,w,h});x+=w+gap;lineH=Math.max(lineH,h);}
     const sheet=canvas(W,y+lineH+60),sx=sheet.getContext('2d');sx.fillStyle='#4a4741';sx.fillRect(0,0,sheet.width,sheet.height);
-    const caption=(i,px,py)=>{sx.fillStyle='#f3ead6';sx.font='15px sans-serif';sx.fillText(`${specs[i].slot} · ${images[i].width} × ${images[i].height}`,px,py);};
+    const caption=(i,px,py)=>{sx.fillStyle='#f3ead6';sx.font='15px sans-serif';sx.fillText(`${shown[i].slot} · ${shown[i].im.width} × ${shown[i].im.height}`,px,py);};
     sx.drawImage(images[heroIndex].canvas,gap,gap,heroW,heroH);
     const logo=images[logoIndex].canvas,lw=heroW*0.3;sx.drawImage(logo,gap+heroW*0.04,gap+heroH*0.55,lw,lw*logo.height/logo.width);caption(heroIndex,gap,gap+heroH+20);
-    for(const p of placed){sx.drawImage(images[p.i].canvas,p.x,p.y,p.w,p.h);caption(p.i,p.x,p.y+p.h+20);}
-    return {images:images.map(({data,width,height})=>({data,width,height})),sheet:sheet.toDataURL('image/png')};
+    for(const p of placed){sx.drawImage(shown[p.i].im.canvas,p.x,p.y,p.w,p.h);caption(p.i,p.x,p.y+p.h+20);}
+    const plain=list=>list.map(({data,width,height})=>({data,width,height}));
+    return {images:plain(images),icons:plain(drawnIcons),sheet:sheet.toDataURL('image/png')};
   })();
 }
 
@@ -180,13 +202,17 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
     }
     const page=await browser.newPage();await page.goto(`${base}/icon.svg`);
     const rendered={};for(const a of made)rendered[a.id]=`data:image/jpeg;base64,${(await readFile(join(root,renderFile(a)))).toString('base64')}`;
-    const drawn=await page.evaluate(`(${drawArt})(${JSON.stringify(STORE_ART)},${JSON.stringify({font,painting:PAINTING.src,name:NAME,rendered})})`);
+    const drawn=await page.evaluate(`(${drawArt})(${JSON.stringify(STORE_ART)},${JSON.stringify({font,painting:PAINTING.src,name:NAME,rendered,icons:ICONS})})`);
     const bytes=d=>Buffer.from(d.slice(d.indexOf(',')+1),'base64');
     for(const [i,a] of STORE_ART.entries()){
       if(a.render&&!a.name)continue;const {width,height,data}=drawn.images[i];
       assert.equal(width,a.width,a.id);if(a.height)assert.equal(height,a.height,a.id);await writeFile(join(out,fileName(a)),bytes(data));
     }
+    await mkdir(iconsOut,{recursive:true});
+    for(const [i,a] of ICONS.entries()){
+      const {width,height,data}=drawn.icons[i];assert.deepEqual([width,height],[a.width,a.height],a.id);await writeFile(join(iconsOut,fileName(a)),bytes(data));
+    }
     await mkdir(review,{recursive:true});await writeFile(join(review,'review-sheet.png'),bytes(drawn.sheet));
-    console.log(`Wrote ${STORE_ART.length} images to desktop/steam/store-art/ and a review sheet to tests/visual-results/steam-store-art/.`);
+    console.log(`Wrote ${STORE_ART.length} images to desktop/steam/store-art/, ${ICONS.length} icons to desktop/steam/icons/ and a review sheet to tests/visual-results/steam-store-art/.`);
   }finally{await browser.close();server.close();}
 }
