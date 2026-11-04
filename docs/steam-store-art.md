@@ -18,7 +18,7 @@ The sizes come from Valve's [graphical assets page](https://partner.steamgames.c
 | `library_hero.jpg` | Library: hero | 3840 × 1240 | A render of the game's 3D view of the finale, before the Aurelian Walls, with no text | Rendered at its own size |
 | `library_logo.png` | Library: logo | 1280 wide, on transparency | The name alone | Drawn at its own size |
 
-The painting enlarges well up to about 1.5×. Above that, in the vertical capsule and the library capsule, it is softer but holds at the sizes Steam shows them. That judgement is the owner's; the [review sheet](#reviewing-them) shows all nine together.
+The painting enlarges well up to about 1.5×. Above that, in the vertical capsule and the library capsule, it is softer but holds at the sizes Steam shows them. That judgement is the owner's; the review sheet the script writes, `tests/visual-results/steam-store-art/review-sheet.png`, shows all nine together.
 
 ## How they are made
 
