@@ -82,6 +82,10 @@ const KIND_ORDER=Object.keys(KINDS);
 const tripoVersions=list=>[...new Set(list.flatMap(a=>String(a.source.method).match(/\b(?:H\d\.\d|v\d\.\d)(?=[\s-])/g)??[]))].sort();
 const voices=list=>[...new Set(list.map(a=>a.source.voice).filter(Boolean))];
 const listed=names=>names.length<2?names.join(''):`${names.slice(0,-1).join(', ')} and ${names.at(-1)}`;
+// Face and hair paint restored with OpenAI image generation from the game's own model renders (save-camp-art-refinements.md).
+const repainted=asset=>/^Project-generated/.test(asset?.source?.surfaceRepair?.paint??'');
+const COUNT_WORDS=['no','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+const count=n=>COUNT_WORDS[n]??n.toLocaleString('en-GB'),plural=(n,word)=>`${word}${n===1?'':'s'}`;
 
 export function aiInventory(manifest){
   const byPath=new Map(manifest.assets.map(a=>[a.path,a])),rows=new Map(),unsorted=[];
@@ -94,14 +98,15 @@ export function aiInventory(manifest){
   }
   const all=[...rows.values()].sort((a,b)=>KIND_ORDER.indexOf(a.kind)-KIND_ORDER.indexOf(b.kind)||a.index-b.index).map(r=>{
     let tool=KINDS[r.kind].tool;
-    if(r.kind==='model'){const v=tripoVersions(r.assets);tool=`Tripo text-to-model${v.length?` (${v.join(', ')})`:''}${r.assets.some(a=>/auto-rig/.test(a.source.method))?' and Tripo’s auto-rig':''}`;if(r.assets.some(a=>a.source.surfaceRepair?.paint?.startsWith('Project-generated')))tool+='; OpenAI image generation restored five face textures from the project’s own renders';}
+    if(r.kind==='model'){const v=tripoVersions(r.assets);tool=`Tripo text-to-model${v.length?` (${v.join(', ')})`:''}${r.assets.some(a=>/auto-rig/.test(a.source.method))?' and Tripo’s auto-rig':''}`;const faces=r.assets.filter(repainted).length;if(faces)tool+=`; OpenAI image generation restored ${count(faces)} ${plural(faces,'face texture')} from the project’s own renders`;}
     if(r.kind==='voice'){const v=voices(r.assets);if(v.length)tool+=`, with the provider’s voices ${listed(v)}`;}
     const models=r.assets.reduce((n,a)=>n+(Array.isArray(a.source.models)?a.source.models.length:0),0);
     return {kind:r.kind,what:r.what,then:KINDS[r.kind].then??r.then,tool,files:r.assets.length,models};
   });
   const made=all.filter(r=>KINDS[r.kind].ai);
   return {made,without:all.filter(r=>!KINDS[r.kind].ai),unsorted,total:manifest.assets.length,
-    aiFiles:made.reduce((n,r)=>n+r.files,0),development:(manifest.developmentAssets??[]).length,runtimePolicy:manifest.runtimePolicy};
+    aiFiles:made.reduce((n,r)=>n+r.files,0),faceRestorations:manifest.assets.filter(repainted).length,
+    development:(manifest.developmentAssets??[]).length,runtimePolicy:manifest.runtimePolicy};
 }
 
 // The text for Steam's store page: a sentence for each kind of AI-made content the game ships, so a new kind adds
@@ -109,7 +114,7 @@ export function aiInventory(manifest){
 const STORE_LINES=[
   ['illustration','Art: the story paintings, character portraits, 2D figures and some surface textures were generated with OpenAI’s image generation from original prompts written for this game, then cropped, packed and compressed for it.'],
   ['depth','An AI depth-estimation model made depth maps of the paintings, which give them their slight movement.'],
-  ['model','3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed. Five character face textures were restored with OpenAI image generation from the game’s own model renders and baked in Blender.'],
+  ['model','3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed.'],
   ['music','Music: the music tracks were generated with Google’s Lyria, through Runway.'],
   ['sound','Sound: the ambience and the combat and footstep sounds were generated with Runway; the interface’s short cues are made by the game’s code.'],
   ['voice','Voices: the voiced briefings are AI voices from ElevenLabs’ catalogue (through Runway), reading lines written for the game; no voice was cloned from a recording.'],
@@ -119,6 +124,9 @@ export function storeText(inventory){
   // The depth maps belong to the paintings: their sentence joins the art line when there is one.
   for(const [kind,line] of STORE_LINES.filter(([kind])=>kinds.has(kind)))
     if(kind==='depth'&&kinds.has('illustration'))bullets[0]+=` ${line}`;else bullets.push(`- ${line}`);
+  // The restored faces belong to the models' line; their number comes from the manifest.
+  const faces=inventory.faceRestorations??0,models=bullets.findIndex(line=>line.startsWith('- 3D models:'));
+  if(faces&&models>=0){const n=count(faces);bullets[models]+=` ${n[0].toUpperCase()+n.slice(1)} character ${plural(faces,'face texture')} ${faces===1?'was':'were'} restored with OpenAI image generation from the game’s own model renders and baked in Blender.`;}
   return ['This game was made with the help of generative AI tools. Everything described here was made before release: nothing is generated while you play, and the game connects to no AI service.','',
     ...bullets,
     '- Writing and code: the story, dialogue and in-game help, and the game’s code, were written with AI assistants (OpenAI Codex and Anthropic’s Claude) under the developer’s direction and review.','',
@@ -142,7 +150,9 @@ export function steamAiDisclosureSheet(manifest){
     `${text.length.toLocaleString('en-GB')} characters.`,'',
     '## What it rests on: the files made with AI','',
     ...table(['What','Files','Made with','Then'],inv.made.map(r=>[r.what,filesCell(r),r.tool,r.then])),'',
-    'The manifest records that no third-party image, model or recording was given to a generator. One generation, a supplementary cast sheet, was shown the project’s own first generated atlas ([the art record](art-generation.md)).','',
+    `The manifest records that no third-party image, model or recording was given to a generator. ${inv.faceRestorations
+      ?`Some generations were shown the project’s own art: a supplementary cast sheet was shown its first generated atlas ([the art record](art-generation.md)), and each of the ${count(inv.faceRestorations)} face ${plural(inv.faceRestorations,'restoration')} was given a render of the game’s own model ([the art record](art-generation.md#character-face-restorations--4-november-2026)).`
+      :'One generation, a supplementary cast sheet, was shown the project’s own first generated atlas ([the art record](art-generation.md)).'}`,'',
     '## Made without AI','',
     ...table(['What','Files','Made with'],inv.without.map(r=>[r.what,filesCell(r),r.tool])),'',
     'What the game draws in code as it runs is made without AI too: the interface, maps, overlays and insignia, and the interface’s sound cues. The 3D terrain and scenery, the 2D board and the code-built figures that stand in when a generated body is missing are drawn in code as well, but painted with textures and pictures from the two tables, generated and CC0 alike.','',

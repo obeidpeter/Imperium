@@ -52,6 +52,18 @@ test('the store page’s disclosure names every kind of AI-made content the game
   assert.ok(!storeText(without).includes('ElevenLabs'),'a kind that is gone takes its sentence with it');
 });
 
+test('the faces restored with OpenAI image generation are counted from the manifest, never written in',()=>{
+  const restored=manifest.assets.filter(a=>/^Project-generated/.test(a.source?.surfaceRepair?.paint??'')),inv=aiInventory(manifest);
+  assert.ok(restored.length>0&&restored.every(a=>a.path.startsWith('assets/models/characters/')),'the manifest records restored character faces');
+  assert.equal(inv.faceRestorations,restored.length);
+  const word=['no','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'][restored.length]??String(restored.length);
+  assert.ok(storeText(inv).includes(`${word[0].toUpperCase()+word.slice(1)} character face texture`),'the store text names their number');
+  const sheet=steamAiDisclosureSheet(manifest);
+  assert.ok(sheet.includes(`restored ${word} face texture`),'the inventory names it too');
+  assert.ok(sheet.includes(`each of the ${word} face restoration`),'and that each was shown a render of the game’s own model');
+  assert.ok(!storeText({...inv,faceRestorations:0}).includes('character face texture'),'no restored faces, no sentence');
+});
+
 test('the store page’s short description fits Steam’s limit, as plain text',()=>{
   const short=block('Short description');
   assert.ok(short.length<=300,`${short.length} characters`);
