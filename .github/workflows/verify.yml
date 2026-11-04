@@ -334,6 +334,7 @@ jobs:
           path: |
             tests/visual-results/desktop/report.json
             tests/visual-results/desktop/relaunch.png
+            tests/visual-results/desktop-openbox.log
           retention-days: 14
       # The Windows app folder, to try on a PC, from main's runs only (it is about 130 MB compressed). It is unsigned,
       # so Windows may warn before opening it.

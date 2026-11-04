@@ -161,6 +161,14 @@ try{
     await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen().then(v=>!v));
     await page.keyboard.press('Alt+Enter');
     await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen());
+    if(process.platform==='linux'){
+      // Chromium's X11Window::OnXWindowStateChanged retains browser fullscreen
+      // while iconified, so Electron's isMinimized() is not reliable there.
+      // Check native minimize/restore in windowed mode; fullscreen was checked
+      // separately above. Windows also covers minimizing from fullscreen.
+      await page.keyboard.press('F11');
+      await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen().then(v=>!v));
+    }
     await app.evaluate(async({BrowserWindow})=>{
       const win=BrowserWindow.getAllWindows()[0];
       // Window managers acknowledge these requests asynchronously. Poll in
@@ -174,7 +182,11 @@ try{
       };
       win.minimize();await waitFor(true);win.restore();await waitFor(false);win.focus();
     });
-    report.checks.push('F11 and Alt+Enter toggle native fullscreen; the packaged window survives minimize and restore');
+    await page.locator('[data-cmd="settings"]').first().click();
+    await page.locator('#modal[open]').waitFor();
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(()=>!document.querySelector('#modal[open]'));
+    report.checks.push(`F11 and Alt+Enter toggle native fullscreen; the packaged window survives minimize and restore ${process.platform==='linux'?'in windowed mode':'from fullscreen'}, and Settings remains interactive`);
     await app.close();
   }
   assert.deepEqual(report.requests,[],'No request leaves app://imperium');
