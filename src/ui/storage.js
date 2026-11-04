@@ -8,6 +8,8 @@ const unavailable=()=>Object.assign(new Error('Safe browser storage is unavailab
 const fileUnavailable=()=>Object.assign(new Error('The save file could not be written. Progress is kept in the app; export a save code to keep a copy.'),{code:'SAVE_FILE_UNAVAILABLE'});
 const fileUnreadable=()=>Object.assign(new Error('The save file cannot be read right now. It has not been replaced. Your local progress is kept; try saving again or export a save code.'),{code:'SAVE_FILE_UNAVAILABLE'});
 const fileChanged=()=>Object.assign(new Error('The save file changed outside the game. Your local progress is kept. Reopen the game to load the file and review both copies in recovery records.'),{code:'SAVE_FILE_UNAVAILABLE'});
+// A startup read failed with no file base on record: nothing shows whether the file changed, only that it was not checked.
+const fileUnchecked=()=>Object.assign(new Error('The save file could not be read when the game started, so it has not been checked against your progress or replaced. Your local progress is kept. Reopen the game to load the file and review both copies in recovery records.'),{code:'SAVE_FILE_UNAVAILABLE'});
 function checksum(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(16);}
 function rawObject(raw){try{return typeof raw==='string'?JSON.parse(raw):raw;}catch{return null;}}
 function unpack(raw){try{const e=rawObject(raw);if(!e||e.format!==1||typeof e.payload!=='string'||e.checksum!==checksum(e.payload))return null;return {...e,state:deserialize(e.payload)};}catch{return null;}}
@@ -90,7 +92,8 @@ export function createSaveStore(options={}){
     if(disk.kind==='error')throw fileUnreadable();
     // A failed startup read has not adopted the file. Retry only against the last known base;
     // otherwise reopening must reconcile it and keep the local alternative before any replacement.
-    if(deferredFileBase!==undefined&&(deferredFileBase===null||!['valid','missing'].includes(disk.kind)||deferredFileBase!==fingerprint(disk.envelope)))throw fileChanged();
+    if(deferredFileBase===null)throw fileUnchecked();
+    if(deferredFileBase!==undefined&&(!['valid','missing'].includes(disk.kind)||deferredFileBase!==fingerprint(disk.envelope)))throw fileChanged();
     if(observedFile!==undefined&&disk.raw!==observedFile)throw fileChanged();
     if(disk.kind==='invalid'&&!await preserveFile(disk.raw))throw fileUnreadable();
     const text=fileText(envelope);

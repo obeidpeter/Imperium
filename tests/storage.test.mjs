@@ -373,6 +373,21 @@ test('DESK-07 read errors do not masquerade as missing files at load or save',as
   assert.deepEqual((await createSaveStore(env.options).loadLocal()).state,state,'Local progress is still durable');
 }));
 
+test('DESK-07b a startup read error with no file base on record says the file was not checked, not that it changed',async()=>withPlatform(async env=>{
+  // Local progress saved before the app had a file (so it records no file base), then a file the first read cannot open.
+  const state=newGame('Unchecked');await createSaveStore(env.options).saveLocal(state);
+  const file=fakeFile('{"held":"by another program"}'),writes=file.writes,old=file.text;
+  const failing={...file.mirror,read:async()=>{throw Error('sharing violation');}};
+  const desk=createSaveStore({...env.options,mirror:failing}),loaded=await desk.loadLocal();
+  assert.equal(loaded.state.name,'Unchecked');assert.match(loaded.fileProblem,/cannot be read/);
+  // The file is readable again but was never checked: saving still refuses to replace it, and says why.
+  const readable=createSaveStore({...env.options,mirror:failing});await readable.loadLocal();
+  failing.read=file.mirror.read;
+  await assert.rejects(readable.saveLocal(state),error=>error.code==='SAVE_FILE_UNAVAILABLE'&&/could not be read when the game started/.test(error.message)&&!/changed outside/.test(error.message));
+  assert.equal(file.text,old);assert.equal(file.writes,writes,'The unchecked file is never replaced');
+  assert.deepEqual((await createSaveStore(env.options).loadLocal()).state,state,'Local progress is still durable');
+}));
+
 test('DESK-08 a changed cloud file preserves even a same-checkpoint local alternative through further saves',async()=>withPlatform(async env=>{
   const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror}),state=newGame();
   await desk.saveLocal(state);const cloud=file.text;

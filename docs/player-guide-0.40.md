@@ -1889,6 +1889,14 @@ The desktop app for Windows is the same game, with these differences:
   the game says so and keeps the save in its own store; export a save
   code to be safe.
 
+- **Progress that did not reach the file is not lost.** The next launch
+  writes it to the file, as long as the file has not changed in the
+  meantime. If the file did change outside the game, for example through
+  Steam Cloud from another computer, the game loads the file and keeps
+  this computer's progress as a recovery record: **Menu → Settings →
+  Saves → Recover older progress**. While the file cannot be read, the
+  game does not replace it.
+
 - **Menu → Quit to desktop** saves first, then closes the game. Closing
   the window does the same. If the save fails, you choose between
   quitting anyway and playing on.
