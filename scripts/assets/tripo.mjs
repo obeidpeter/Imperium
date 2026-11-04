@@ -1,123 +1,188 @@
-// Generates a model with Tripo for a request in art-source/models/requests/,
-// saves the raw GLB in art-source/models/raw/ (gitignored) and records the
-// task, the parameters Tripo used, the date, the credits spent and the raw
-// file's digest in the request file. Every generate run spends credits.
-//
-// Authentication comes from the cloud environment's network secret for
-// api.tripo3d.ai: the agent proxy adds the Authorization header, so this
-// script never sees the key. Elsewhere, TRIPO_API_KEY is sent instead.
-//
-// A character is then rigged with Tripo's biped auto-rig (rig): the rig check
-// is free, the rig costs credits, and the rigged GLB is saved beside the raw one.
-//
-//   node scripts/assets/tripo.mjs balance
-//   node scripts/assets/tripo.mjs generate art-source/models/requests/<id>.json
-//   node scripts/assets/tripo.mjs resume art-source/models/requests/<id>.json
-//   node scripts/assets/tripo.mjs rig art-source/models/requests/<id>.json
+// Development-only Tripo workflow. No task creation is retried automatically.
+// See docs/tripo-v3-migration.md for approvals, recovery and historical records.
 import {spawnSync} from 'node:child_process';
-import {createHash} from 'node:crypto';
-import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {createHash,randomUUID} from 'node:crypto';
+import {mkdir,open,readFile,rename,unlink} from 'node:fs/promises';
+import {basename,dirname,resolve,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {createTripoClient,generationRequest,rigRequest,modelOutput,taskCredits,taskId,TRIPO_API} from './tripo-client.mjs';
 
-// Node's built-in fetch ignores HTTPS_PROXY unless NODE_USE_ENV_PROXY is set at start-up.
-if((process.env.HTTPS_PROXY||process.env.https_proxy)&&process.env.NODE_USE_ENV_PROXY!=='1'){
-  const run=spawnSync(process.execPath,[fileURLToPath(import.meta.url),...process.argv.slice(2)],{stdio:'inherit',env:{...process.env,NODE_USE_ENV_PROXY:'1',NODE_NO_WARNINGS:'1'}});
-  process.exit(run.status??1);
-}
-
-const API='https://api.tripo3d.ai/v2/openapi',root=new URL('../../',import.meta.url);
-const key=process.env.TRIPO_API_KEY,FINAL=['success','failed','cancelled','banned','expired','unknown'];
-async function call(path,{method='GET',body}={}){
-  const response=await fetch(API+path,{method,headers:{'content-type':'application/json',...(key?{authorization:`Bearer ${key}`}:{})},body:body&&JSON.stringify(body)});
-  const reply=await response.json().catch(()=>({}));
-  if(!response.ok||reply.code!==0)throw new Error(`Tripo ${method} ${path}: HTTP ${response.status}, code ${reply.code??'?'}. ${reply.message??''} ${reply.suggestion??''}`.trim());
-  return reply.data;
-}
-const balance=async()=>(await call('/user/balance')).balance;
-const sleep=ms=>new Promise(done=>setTimeout(done,ms));
-
-async function download(url,path){
-  let response;
-  try{response=await fetch(url);}catch(error){throw new Error(`Could not download from ${new URL(url).host} (${error.cause?.code??error.message}). If the network policy blocks that host, allow it in the environment's network settings.`);}
-  if(!response.ok)throw new Error(`Download from ${new URL(url).host} failed: HTTP ${response.status}.`);
-  const bytes=Buffer.from(await response.arrayBuffer());await writeFile(new URL(path,root),bytes);return bytes;
-}
-
+const ROOT=fileURLToPath(new URL('../../',import.meta.url));
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
-const save=(file,request)=>writeFile(file,JSON.stringify(request,null,2)+'\n');
+const usage='Usage: node scripts/assets/tripo.mjs balance | task <task-id> | generate <request.json> [--dry-run | --allow-paid] | resume <request.json> | rig <request.json> [--dry-run | --allow-paid] | rig-check <request.json> | resume-rig <request.json>';
 
-// Polls a task to its end. A task still running after 20 minutes can be picked up again later.
-async function settle(id,label){
-  const started=Date.now();let task,failures=0;
-  for(;;){
-    // A gateway error while polling (HTTP 5xx) is retried; the task itself carries on.
-    try{task=await call(`/task/${id}`);failures=0;}catch(error){if(!/HTTP 5\d\d/.test(error.message)||++failures>5)throw error;await sleep(5000*failures);continue;}
-    process.stdout.write(`\r${label}: ${task.status} ${task.progress??0}%   `);
-    if(FINAL.includes(task.status))break;
-    if(Date.now()-started>20*60000)throw new Error(`Task ${id} is still ${task.status} after 20 minutes; run the same command later.`);
-    await sleep(5000);
-  }
-  process.stdout.write('\n');
-  if(task.status!=='success')throw new Error(`Task ${id} ended ${task.status}.`);
-  return task;
+async function optionalRead(file){
+  try{return await readFile(file);}catch(error){if(error.code==='ENOENT')return null;throw error;}
 }
 
-async function finish(file,request){
-  const id=request.provenance.taskId,task=await settle(id,request.id);
-  const output=task.output??{},field=['pbr_model','model','base_model'].find(k=>output[k]);
-  if(!field)throw new Error(`Task ${id} succeeded without a model link: ${Object.keys(output).join(', ')}`);
-  await mkdir(new URL('art-source/models/raw/',root),{recursive:true});
-  const raw=`art-source/models/raw/${request.id}.glb`,bytes=await download(output[field],raw);
+// A crash must leave old JSON or new JSON, never a truncated task record.
+async function atomicWrite(file,bytes){
+  const temp=`${file}.${randomUUID()}.tmp`;
+  let handle;
+  try{
+    handle=await open(temp,'wx');await handle.writeFile(bytes);await handle.sync();await handle.close();handle=null;
+    await rename(temp,file);
+  }finally{if(handle)await handle.close();await unlink(temp).catch(error=>{if(error.code!=='ENOENT')throw error;});}
+}
+const save=(file,request)=>atomicWrite(file,JSON.stringify(request,null,2)+'\n');
+
+async function withLock(file,operation){
+  const lock=`${file}.tripo.lock`;let handle;
+  try{handle=await open(lock,'wx');}
+  catch(error){if(error.code==='EEXIST')throw new Error('This request is locked by another run or an interrupted run. Check the task record and stop any active run before manually removing its .tripo.lock file.');throw error;}
+  try{await handle.writeFile(JSON.stringify({pid:process.pid,startedAt:new Date().toISOString()}));await handle.sync();return await operation();}
+  finally{await handle.close();await unlink(lock);}
+}
+
+function freshRecord(record,label){
+  if(record?.taskId)throw new Error(`${label} already has task ${record.taskId}; use resume (or resume-rig). Never clear its task ID to generate again.`);
+  if(record?.submission)throw new Error(`${label} has an unresolved submission. Reconcile it in Tripo and recover the existing task ID before continuing; it may already have been charged.`);
+  if(record?.rawSha256||record?.rejectedAttempts?.length||record?.requestBody)throw new Error(`${label} has historical generation evidence. Preserve it and prepare a separately approved request with a new asset ID.`);
+}
+
+function rawPath(root,record,id,rigged=false){
+  const relative=record.raw??`art-source/models/raw/${id}${rigged?'-rigged':''}.glb`;
+  const dir=resolve(root,'art-source/models/raw'),file=resolve(root,relative);
+  if(!file.startsWith(dir+sep)||!file.toLowerCase().endsWith('.glb'))throw new Error('Recorded raw model path must stay inside art-source/models/raw and end in .glb.');
+  return {relative,file};
+}
+
+function checkGlb(bytes){
+  if(bytes.length<12||bytes.toString('ascii',0,4)!=='glTF'||bytes.readUInt32LE(4)!==2||bytes.readUInt32LE(8)!==bytes.length){
+    throw new Error('Tripo returned an invalid GLB. No raw asset or recorded hash was replaced; keep the task ID for recovery.');
+  }
+}
+
+async function finish(file,request,record,{root,client,log,now,saveRequest},rigged=false){
+  const raw=rawPath(root,record,request.id,rigged),existing=await optionalRead(raw.file);
+  // Recovery of a finished asset is non-mutating and works offline.
+  if(existing&&record.rawSha256){
+    if(digest(existing)!==record.rawSha256)throw new Error('Existing raw model does not match its recorded SHA-256. Preserve both for investigation; no file was overwritten.');
+    log({id:request.id,task:record.taskId,raw:raw.relative,sha256:record.rawSha256,recovery:'already verified locally'});return;
+  }
+  const task=await client.settle(taskId(record.taskId),`${request.id}${rigged?' rig':''}`);
+  if(task.type&&task.type!==(rigged?'animate_rig':request.generator?.task))throw new Error('Recorded task has the wrong operation type. Verify the recovered ID; no model was downloaded.');
+  const output=modelOutput(task),bytes=await client.download(output.url),hash=digest(bytes);
+  checkGlb(bytes);
+  if(record.rawSha256&&record.rawSha256!==hash)throw new Error('Downloaded model does not match the historical SHA-256. No asset or task record was overwritten.');
+  if(existing&&digest(existing)!==hash)throw new Error('A different raw model already exists at the output path. No asset or task record was overwritten.');
+  await mkdir(dirname(raw.file),{recursive:true});
+  if(!existing)await atomicWrite(raw.file,bytes);
+  // Old task downloads must not rewrite dates, charges, models or review status.
+  if(record.rawSha256){
+    log({id:request.id,task:record.taskId,raw:raw.relative,sha256:hash,recovery:'restored; historical record unchanged'});return;
+  }
   let preview=null;
-  if(output.rendered_image){preview=`art-source/models/raw/${request.id}-tripo-render${new URL(output.rendered_image).pathname.match(/\.\w+$/)?.[0]??'.png'}`;await download(output.rendered_image,preview).catch(()=>{preview=null;});}
-  // The task reports its own charge; the balance difference is exact only for one task at a time.
-  // Concurrent requests share a balance. Never attribute another task's charge
-  // to this asset; batch callers reconcile the final wallet delta separately.
-  const reported=Number.isFinite(task.consumed_credit),batch=request.provenance.creditAccounting==='batch';
-  const spent=reported?task.consumed_credit:batch||request.provenance.balanceBefore===undefined?null:request.provenance.balanceBefore-await balance();
-  Object.assign(request.provenance,{status:task.status,generatedAt:new Date().toISOString(),output:field,raw,rawBytes:bytes.length,rawSha256:digest(bytes),
-    tripoInput:task.input??null,modelVersion:task.input?.model_version??task.model_version??null,creditsSpent:spent,creditSource:reported?'task.consumed_credit':batch?'batch reconciliation required':'sequential wallet delta',tripoRender:preview});
-  request.status='generated: awaiting review';
-  await save(file,request);
-  console.log(JSON.stringify({id:request.id,task:id,raw,bytes:bytes.length,modelVersion:request.provenance.modelVersion,creditsSpent:spent},null,2));
-}
-
-// Rigs a generated character; a recorded rig task is resumed rather than paid for again.
-async function rig(file,request){
-  const p=request.provenance;
-  if(!p?.taskId||!p.rawSha256)throw new Error(`${request.id} has no generated model to rig.`);
-  if(!p.rig?.taskId){
-    const check=await settle((await call('/task',{method:'POST',body:{type:'animate_prerigcheck',original_model_task_id:p.taskId}})).task_id,`${request.id} rig check`);
-    if(!check.output?.riggable)throw new Error(`Tripo cannot rig ${request.id}: ${JSON.stringify(check.output)}`);
-    const before=await balance(),body={type:'animate_rig',original_model_task_id:p.taskId,out_format:'glb',...(request.generator.rig??{})};
-    const {task_id}=await call('/task',{method:'POST',body});
-    p.rig={check:check.output,taskId:task_id,requestedAt:new Date().toISOString(),balanceBefore:before,requestBody:body};
-    await save(file,request);
+  if(output.preview&&!rigged){
+    try{
+      const ext=new URL(output.preview).pathname.match(/\.(png|jpe?g|webp)$/i)?.[0]??'.png';
+      preview=`art-source/models/raw/${request.id}-tripo-render${ext}`;
+      await atomicWrite(resolve(root,preview),await client.download(output.preview));
+    }catch{preview=null;}
   }
-  const task=await settle(p.rig.taskId,`${request.id} rig`),output=task.output??{},field=['model','pbr_model','base_model'].find(k=>output[k]);
-  if(!field)throw new Error(`Rig task ${p.rig.taskId} succeeded without a model link: ${Object.keys(output).join(', ')}`);
-  const raw=`art-source/models/raw/${request.id}-rigged.glb`,bytes=await download(output[field],raw);
-  const spent=Number.isFinite(task.consumed_credit)?task.consumed_credit:p.rig.balanceBefore-await balance();
-  Object.assign(p.rig,{status:task.status,generatedAt:new Date().toISOString(),output:field,raw,rawBytes:bytes.length,rawSha256:digest(bytes),tripoInput:task.input??null,creditsSpent:spent});
-  await save(file,request);
-  console.log(JSON.stringify({id:request.id,task:p.rig.taskId,raw,bytes:bytes.length,creditsSpent:spent},null,2));
+  const reportedModel=task.model??task.model_version??task.input?.model??task.input?.model_version;
+  const requestedModel=record.requestBody?.model??record.requestBody?.model_version;
+  const credits=taskCredits(task);
+  // Missing V3 metadata must not erase evidence recorded by an interrupted V2 run.
+  Object.assign(record,{
+    status:task.status,generatedAt:record.generatedAt??now(),output:output.field,raw:raw.relative,rawBytes:bytes.length,rawSha256:hash,
+    tripoInput:record.tripoInput??task.input??null,
+    modelVersion:record.modelVersion??reportedModel??requestedModel??null,
+    modelVersionSource:record.modelVersion!=null?(record.modelVersionSource??'historical record'):reportedModel?'task response':requestedModel?'submitted request':'not reported',
+    creditsSpent:record.creditsSpent??credits.creditsSpent,creditSource:record.creditsSpent!=null?(record.creditSource??'historical record'):credits.creditSource,
+    tripoCreatedAt:task.created_at??null,tripoCompletedAt:task.completed_at??null,
+    ...(rigged?{}:{tripoRender:record.tripoRender??preview})
+  });
+  if(!rigged)request.status='generated: awaiting review';
+  await saveRequest(file,request);
+  log({id:request.id,task:record.taskId,raw:raw.relative,sha256:hash,modelVersion:record.modelVersion,creditsSpent:record.creditsSpent});
 }
 
-const [command,path]=process.argv.slice(2);
-if(command==='balance'){console.log(JSON.stringify(await call('/user/balance')));process.exit(0);}
-if(!['generate','resume','rig'].includes(command)||!path){console.error('Usage: node scripts/assets/tripo.mjs balance | generate <request.json> | resume <request.json> | rig <request.json>');process.exit(2);}
-const file=new URL(path,`file://${process.cwd()}/`),request=JSON.parse(await readFile(file,'utf8'));
-try{
-  if(command==='rig'){await rig(file,request);process.exit(0);}
-  if(command==='generate'){
-    if(request.provenance?.taskId)throw new Error(`${request.id} already has task ${request.provenance.taskId}; use resume, or clear taskId to pay for a new one.`);
-    // Tripo refuses a longer prompt (HTTP 400, code 1004) without charging; say so before asking.
-    if(request.generator.prompt.length>1024)throw new Error(`${request.id}: its prompt has ${request.generator.prompt.length} characters; Tripo takes at most 1,024.`);
-    const before=await balance(),body={type:request.generator.task,prompt:request.generator.prompt,...(request.generator.options??{})};
-    const {task_id}=await call('/task',{method:'POST',body});
-    // Record the task at once, so an interrupted run resumes instead of paying again.
-    request.provenance={...request.provenance,taskId:task_id,requestedAt:new Date().toISOString(),balanceBefore:before,requestBody:body};
-    await save(file,request);
-  }else if(!request.provenance?.taskId)throw new Error(`${request.id} has no task to resume.`);
-  await finish(file,request);
-}catch(error){console.error(error.message);process.exit(1);}
+async function submit(file,request,record,wire,{client,now,saveRequest},paid){
+  freshRecord(record,request.id);
+  const account=paid?await client.balance():null;
+  Object.assign(record,{apiVersion:3,apiBase:TRIPO_API,endpoint:wire.endpoint,requestedAt:now(),requestBody:wire.body,
+    ...(account?{balanceBefore:account.balance,balanceSnapshotBefore:account}:{}),
+    submission:{id:randomUUID(),state:'pending',requestSha256:digest(JSON.stringify(wire.body))}});
+  // Persist BEFORE the POST. A lost response or disk error blocks a second POST,
+  // even if the service never returned a task ID.
+  await saveRequest(file,request);
+  let id;
+  try{id=await client.create(wire);}
+  catch(error){record.submission.state='uncertain';await saveRequest(file,request);throw error;}
+  record.taskId=id;record.submission.state='accepted';
+  try{await saveRequest(file,request);}
+  catch{throw new Error(`Tripo accepted task ${id}, but saving its ID failed. Recover this exact ID into the pending record; do not generate again.`);}
+  return id;
+}
+
+async function rigCheck(file,request,ctx){
+  const p=request.provenance;
+  if(!p?.taskId||!p.rawSha256)throw new Error('No generated, hashed model is available for rigging.');
+  if(p.rig?.check?.riggable!==undefined)return p.rig.check;
+  const record=p.rigCheck??={};
+  if(!record.taskId)await submit(file,request,record,{endpoint:'/animations/rig-check',body:{input:taskId(p.taskId)}},ctx,false);
+  if(record.status==='success'&&typeof record.output?.riggable==='boolean')return record.output;
+  const task=await ctx.client.settle(record.taskId,`${request.id} rig check`);
+  if(task.type&&task.type!=='animate_prerigcheck')throw new Error('Recorded rig-check task has the wrong operation type; no paid rig was submitted.');
+  if(typeof task.output?.riggable!=='boolean')throw new Error('Tripo rig check omitted the riggable result; no paid rig was submitted.');
+  Object.assign(record,{status:task.status,output:task.output,...taskCredits(task)});
+  await ctx.saveRequest(file,request);return record.output;
+}
+
+export async function runTripo(args,{root=ROOT,client=createTripoClient(),log=value=>console.log(JSON.stringify(value,null,2)),now=()=>new Date().toISOString(),saveRequest=save}={}){
+  const command=args[0],flags=args.filter(arg=>arg.startsWith('--')),positional=args.slice(1).filter(arg=>!arg.startsWith('--'));
+  if(flags.some(flag=>!['--dry-run','--allow-paid'].includes(flag))||new Set(flags).size!==flags.length)throw new Error(usage);
+  const dry=flags.includes('--dry-run'),paid=flags.includes('--allow-paid');
+  if((flags.length&&!['generate','rig'].includes(command))||(dry&&paid))throw new Error(usage);
+  const ctx={root,client,log,now,saveRequest};
+  if(command==='balance'&&!positional.length){log(await client.balance());return;}
+  if(command==='task'&&positional.length===1){
+    const task=await client.task(taskId(positional[0]));
+    log({taskId:task.task_id,status:task.status,progress:task.progress??null,type:task.type??null,...taskCredits(task),modelVersion:task.model??task.model_version??task.input?.model??task.input?.model_version??null,createdAt:task.created_at??null,completedAt:task.completed_at??null,hasModelUrl:!!(task.output?.model_url??task.output?.pbr_model??task.output?.model??task.output?.base_model),errorCode:task.error_code??null});return;
+  }
+  if(!['generate','resume','rig','rig-check','resume-rig'].includes(command)||positional.length!==1)throw new Error(usage);
+  const file=resolve(positional[0]);
+  const operate=async()=>{
+    const request=JSON.parse(await readFile(file,'utf8'));
+    if(typeof request.id!=='string'||!/^[a-z0-9][a-z0-9-]*$/.test(request.id)||basename(file)!==`${request.id}.json`)throw new Error('Request filename must match its lowercase, hyphenated asset ID.');
+    if(request.provenance!==undefined&&(!request.provenance||typeof request.provenance!=='object'||Array.isArray(request.provenance)))throw new Error('provenance must be an object.');
+    const p=request.provenance??={};
+    if(command==='resume'||command==='resume-rig'){
+      const record=command==='resume-rig'?p.rig:p;
+      if(!record?.taskId)throw new Error('No recorded task to resume. If a submission is pending, reconcile it first; recovery never creates a replacement.');
+      return finish(file,request,record,ctx,command==='resume-rig');
+    }
+    if(command==='rig-check'){log(await rigCheck(file,request,ctx));return;}
+    if(command==='rig'&&p.rig?.taskId){
+      if(dry){log({operation:'resume-rig',taskId:p.rig.taskId,paid:false});return;}
+      return finish(file,request,p.rig,ctx,true);
+    }
+    freshRecord(command==='rig'?p.rig:p,request.id);
+    const wire=command==='rig'?rigRequest(request):generationRequest(request);
+    if(command==='rig'&&!p.rawSha256)throw new Error('No generated, hashed model is available for rigging.');
+    if(dry){log({apiBase:TRIPO_API,...wire,paid:true,submitted:false});return;}
+    if(!paid)throw new Error('Creating this task spends Tripo credits. Review --dry-run, obtain approval for this request, then pass --allow-paid. Nothing was submitted.');
+    if(command==='generate'){
+      await submit(file,request,p,wire,ctx,true);return finish(file,request,p,ctx);
+    }
+    const check=await rigCheck(file,request,ctx);
+    if(!check.riggable)throw new Error('Tripo reports this model is not riggable; no paid rig was submitted.');
+    if(check.rig_type&&check.rig_type!==wire.body.rig_type)throw new Error(`Rig check recommends ${check.rig_type}, but the request selects ${wire.body.rig_type}; review before paying.`);
+    const record=p.rig??={};
+    record.check=check;
+    await submit(file,request,record,wire,ctx,true);return finish(file,request,record,ctx,true);
+  };
+  return dry?operate():withLock(file,operate);
+}
+
+if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
+  // Node's built-in fetch needs opt-in to use the environment's proxy.
+  if((process.env.HTTPS_PROXY||process.env.https_proxy)&&process.env.NODE_USE_ENV_PROXY!=='1'){
+    const child=spawnSync(process.execPath,[fileURLToPath(import.meta.url),...process.argv.slice(2)],{stdio:'inherit',env:{...process.env,NODE_USE_ENV_PROXY:'1'}});
+    process.exitCode=child.status??1;
+  }else{
+    try{await runTripo(process.argv.slice(2),{client:createTripoClient({onProgress:({label,status,progress})=>console.error(`${label}: ${status} ${progress}%`)})});}
+    catch(error){console.error(error.message);process.exitCode=1;}
+  }
+}
