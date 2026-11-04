@@ -40,20 +40,36 @@ const outside=url=>!/^(app:\/\/imperium\/|data:|blob:|about:blank|devtools:)/.te
 const env={...process.env,IMPERIUM_USER_DATA:userData,...(packaged?{}:{IMPERIUM_GAME_DIR:gameDir})};
 const liveApps=[];
 async function waitForFullscreen(app,page,expected){
-  await page.waitForFunction(wanted=>window.imperiumDesktop.window.isFullscreen().then(value=>value===wanted),expected);
-  if(process.platform!=='linux')return;
-  // On X11, Electron updates its requested state before the window manager
-  // acknowledges it. Do not race the next toggle/minimize against that request.
-  const handle=await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].getNativeWindowHandle().toString('hex'));
-  const id=`0x${Buffer.from(handle,'hex').readUInt32LE().toString(16)}`,deadline=Date.now()+10000;
+  // waitForFunction treats a Promise as truthy before it resolves. Await the
+  // bridge result explicitly so false cannot accidentally pass the assertion.
+  const deadline=Date.now()+10000;
+  const handle=process.platform==='linux'?await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].getNativeWindowHandle().toString('hex')):null;
+  const id=handle?`0x${Buffer.from(handle,'hex').readUInt32LE().toString(16)}`:null;
   for(;;){
-    const native=spawnSync('xprop',['-id',id,'_NET_WM_STATE'],{encoding:'utf8',timeout:5000});
-    assert.equal(native.status,0,`Read X11 window state: ${native.error?.message||native.stderr}`);
+    const bridge=await page.evaluate(()=>window.imperiumDesktop.window.isFullscreen());
     const fullscreen=await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isFullScreen());
-    if(native.stdout.includes('_NET_WM_STATE_FULLSCREEN')===expected&&fullscreen===expected)return;
-    if(Date.now()>=deadline)throw Error(`Fullscreen did not settle to ${expected}: Electron=${fullscreen}; ${native.stdout}`);
+    // On X11, also wait for the window manager to acknowledge the request.
+    const native=id?spawnSync('xprop',['-id',id,'_NET_WM_STATE'],{encoding:'utf8',timeout:5000}):null;
+    if(native)assert.equal(native.status,0,`Read X11 window state: ${native.error?.message||native.stderr}`);
+    if(bridge===expected&&fullscreen===expected&&(!native||native.stdout.includes('_NET_WM_STATE_FULLSCREEN')===expected))return;
+    if(Date.now()>=deadline)throw Error(`Fullscreen did not settle to ${expected}: bridge=${bridge}, Electron=${fullscreen}; ${native?.stdout??''}`);
     await new Promise(resolve=>setTimeout(resolve,25));
   }
+}
+async function nativeShortcut(app,keyCode,modifiers=[]){
+  // CDP page.keyboard bypasses Electron's before-input-event handler. Send real
+  // Electron input to the focused window, without calling the toggle directly.
+  await app.evaluate(async({BrowserWindow},shortcut)=>{
+    const win=BrowserWindow.getAllWindows()[0],deadline=Date.now()+10000;
+    win.focus();
+    while(!win.isFocused()){
+      if(Date.now()>=deadline)throw Error('The native window did not take keyboard focus');
+      await new Promise(resolve=>setTimeout(resolve,25));
+    }
+    win.webContents.focus();
+    win.webContents.sendInputEvent({type:'keyDown',...shortcut});
+    win.webContents.sendInputEvent({type:'keyUp',...shortcut});
+  },{keyCode,modifiers});
 }
 async function launch(label){
   let app;
@@ -189,16 +205,16 @@ try{
     const conflict=await page.evaluate(async()=>{try{await window.saveRegression.saveLocal(window.regressionState);return null;}catch(e){return e.message;}});
     assert.match(conflict,/changed outside the game/);assert.equal(readFileSync(file,'utf8'),saved);
     report.checks.push('if the unreadable file changed externally, retry keeps both local progress and the external file');
-    await page.keyboard.press('F11');
+    await nativeShortcut(app,'F11');
     await waitForFullscreen(app,page,false);
-    await page.keyboard.press('Alt+Enter');
+    await nativeShortcut(app,'Enter',['alt']);
     await waitForFullscreen(app,page,true);
     if(process.platform==='linux'){
       // Chromium's X11Window::OnXWindowStateChanged retains browser fullscreen
       // while iconified, so Electron's isMinimized() is not reliable there.
       // Check native minimize/restore in windowed mode; fullscreen was checked
       // separately above. Windows also covers minimizing from fullscreen.
-      await page.keyboard.press('F11');
+      await nativeShortcut(app,'F11');
       await waitForFullscreen(app,page,false);
     }
     await app.evaluate(async({BrowserWindow})=>{
