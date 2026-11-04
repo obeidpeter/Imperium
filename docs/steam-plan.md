@@ -11,7 +11,7 @@ Each package's changelog entry records what it actually delivered and measured. 
 | S1 | The desktop app | done ([changelog](../CHANGELOG.md), [the app](desktop.md)); a real Windows PC not yet checked |
 | S2 | The web demo | done ([changelog](../CHANGELOG.md)); publishing it is the owner's step |
 | S3 | Steamworks | built: the 35 achievements, their icons and the Steam link ([changelog](../CHANGELOG.md), [the list](steam-achievements.md)); the live checks need the App ID and the owner's PC |
-| S4 | The store and the release | planned; after 0.40.0 and the owner's Gate 4 sign-off |
+| S4 | The store and the release | the drafts begun: [the store text](steam-store-text.md) and [the AI disclosure](steam-ai-disclosure.md); the art, trailer and release after 0.40.0 and the owner's Gate 4 sign-off |
 
 ## Context
 

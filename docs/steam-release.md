@@ -25,7 +25,7 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
 | Three.js and its decoders | MIT and Apache 2.0 | The licence texts ship with the game, and the credits link them. | None. |
 | Electron and Chromium (desktop only) | MIT and others | Their licences ship in the app folder. | None. |
 
-- **Steam's content survey** asks about AI-generated content. These records are what the disclosure will draw on: AI-generated 3D models, illustrations, music, sound and voices, all made before release, with none generated during play. A draft of the disclosure text comes with S4.
+- **Steam's content survey** asks about AI-generated content. These records are what the disclosure draws on: AI-generated 3D models, illustrations, music, sound and voices, all made before release, with none generated during play. The draft is in [steam-ai-disclosure.md](steam-ai-disclosure.md), generated from the manifest.
 - **The game's own code** has no licence chosen (`docs/LICENSE-NOTICES.md`). For a commercial release that is the owner's decision: by default all rights are reserved.
 - **Out-of-date records** for the owner to review: `README.md` (the owner's) still says horses use original geometry, and `docs/LICENSE-NOTICES.md` and `docs/3d-art-provenance.md` predate the Tripo models. The in-game credits were corrected in S1.
 
@@ -51,11 +51,13 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
 ## Later (S4, after 0.40.0 and Gate 4)
 
 - [ ] **The store page:**
-  - the text, drafted from the guide;
+  - the text: edit the draft in [steam-store-text.md](steam-store-text.md), then paste it, with its languages, tags, features and requirements;
   - capsule and library images, at the sizes Steamworks lists;
   - at least five screenshots;
   - a trailer.
-- [ ] **The content survey,** including the AI disclosure.
+- [ ] **The content survey:**
+  - the AI section, from [steam-ai-disclosure.md](steam-ai-disclosure.md): confirm its line on writing and code, which rests on the project's history rather than the manifest;
+  - the other questions, from what the game shows ([the store text](steam-store-text.md#the-content-survey-beyond-ai)).
 - [ ] **The price and release date.**
 - [ ] **A Coming Soon page,** public for at least two weeks before release.
 - [ ] **Your device checks,** through a private Steam beta branch on your Windows PC:
