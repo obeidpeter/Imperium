@@ -54,7 +54,7 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
   - the text: edit the draft in [steam-store-text.md](steam-store-text.md), then paste it, with its languages, tags, features and requirements;
   - capsule and library images: drafted in `desktop/steam/store-art/` ([steam-store-art.md](steam-store-art.md)). Check their sizes and the name in Steamworks, then upload them;
   - the shortcut icon and the app icon, under Community and client icons: drafted in `desktop/steam/icons/` from the game's emblem ([steam-store-art.md](steam-store-art.md#the-icons)). Check their sizes in Steamworks, then upload them;
-  - at least five screenshots;
+  - at least five screenshots: drafted in `desktop/steam/screenshots/` from the game itself ([steam-store-art.md](steam-store-art.md#the-screenshots-drafts)). Choose and order them, and take them again after 0.40.0 with `node scripts/steam-screenshots.mjs`;
   - a trailer.
 - [ ] **The content survey:**
   - the AI section, from [steam-ai-disclosure.md](steam-ai-disclosure.md). Its line on writing and code rests on the project's history rather than the manifest, and you confirmed it on 4 November;

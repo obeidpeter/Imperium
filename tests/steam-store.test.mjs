@@ -7,6 +7,7 @@ import {ITEMS} from '../src/data/items.js';
 import {ACHIEVEMENTS} from '../src/data/achievements.js';
 import {KINDS,sourceKind,aiInventory,storeText,steamAiDisclosureSheet} from '../scripts/steam-ai-disclosure.mjs';
 import {STORE_ART,ICONS,HERO,TALL,RENDER_SCENE,fileName,renderFile,enlargement} from '../scripts/steam-store-art.mjs';
+import {SCREENSHOTS,SIZE,SCREENSHOTS_DIR,RECORD,fileName as screenshotFile} from '../scripts/steam-screenshots.mjs';
 
 // The Steam store drafts (the Steam plan, S4): the AI-content disclosure, generated from the asset manifest, and the
 // store page's text, written from the guide. Both stay true to the game: these checks fail when it changes under them.
@@ -125,6 +126,20 @@ test('Steam’s two icons are the game’s emblem at Steam’s sizes: run node s
   assert.deepEqual([shortcut.width,shortcut.height],[256,256],'the shortcut icon, 256 × 256');
   assert.equal(shortcut.colourType,6,'the shortcut icon keeps its transparent corners');
   assert.deepEqual(jpegSize(await readFile(new URL('app_icon.jpg',dir))),{width:184,height:184},'the app icon, a 184 × 184 JPEG');
+});
+
+test('the draft screenshots are at least five, each 1920 × 1080 and taken from the game: run node scripts/steam-screenshots.mjs',async()=>{
+  assert.ok(SCREENSHOTS.length>=5,'Steam asks for at least five');
+  assert.deepEqual(SIZE,{width:1920,height:1080});
+  const dir=new URL(`../${SCREENSHOTS_DIR}/`,import.meta.url);
+  assert.deepEqual((await readdir(dir)).sort(),SCREENSHOTS.map(screenshotFile).sort(),'one file for each screenshot, and no other');
+  for(const s of SCREENSHOTS)assert.deepEqual(jpegSize(await readFile(new URL(screenshotFile(s),dir))),SIZE,s.id);
+  const encounters=new Set(CHAPTERS.flatMap(c=>c.encounters.map(e=>e.id)));
+  assert.ok(SCREENSHOTS.every(s=>s.moment.promotion?CHAPTERS.some(c=>c.id===s.moment.promotion):encounters.has(s.moment.fight??s.moment.contest??s.moment.camp)),
+    'every moment is one the campaign reaches');
+  const record=JSON.parse(await readFile(new URL(`../${RECORD}`,import.meta.url),'utf8'));
+  assert.deepEqual(record.screenshots.map(r=>r.id),SCREENSHOTS.map(s=>s.id),'the record names every screenshot, in order');
+  assert.ok(record.screenshots.every(r=>r.captured.quality==='high'&&/^[0-9a-f]{64}$/.test(r.saveSha256)),'each was taken at High quality, from a recorded save');
 });
 
 test('the renders the capsules are drawn from are kept, at their images’ sizes, so the name can be drawn again without rendering',async()=>{

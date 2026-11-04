@@ -47,24 +47,53 @@ The painting enlarges well up to about 1.5×. Above that, in the page background
     - The two capsules' renders are kept before their name is drawn, in `art-source/store-art/`, so the name can be drawn again without rendering.
 - **The review sheet** is `tests/visual-results/steam-store-art/review-sheet.png`, not committed. It places the logo over the hero where Steam puts it by default, at the bottom left.
 
+## The screenshots: drafts
+
+Steam asks for at least five screenshots, at 1920 × 1080 by the same reports. These are taken from the game itself, with its interface as the player sees it. They show the game as it stands before 0.40.0, so take them again after the owner's Gate 4 sign-off, once what they show is final.
+
+| File in `desktop/steam/screenshots/` | What it shows |
+| --- | --- |
+| `01-river-crossing.jpg` | Chapter VIII: the legion forcing the ford at the far bank, paused mid-fight |
+| `02-finale.jpg` | Chapter XII: the road to the purple, before the Aurelian Walls and Rome, with the held H's glance at the horizon |
+| `03-curia.jpg` | Chapter XI: the Senate's Contest as it opens, walked in the Curia |
+| `04-cavalry.jpg` | Chapter IX: the turning cavalry, paused mid-fight |
+| `05-camp.jpg` | Chapter V: the fortress camp before the red river gate, with the glance at its landmark |
+| `06-kit.jpg` | The soldier's kit in Chapter X's camp: the inventory, with his gladius chosen |
+| `07-promotion.jpg` | Chapter VI: the promotion to praefectus legionis, with the chapter's painting |
+
+- **The moments** are reached from New Game by legal commands. `node scripts/steam-screenshots.mjs` plays the campaign with the real-time bot as the engaged reference player (seed 275, Standard), which takes about fifteen seconds:
+  - a camp is kept as the chronicle stands there, and a promotion as the chapter's last encounter is recorded;
+  - a Contest opens from its camp once the chapter's decision is taken, the one the bot takes;
+  - a battle is kept mid-fight, as the game keeps one when play pauses: a resume point, at the second within the shot's window when the most of the soldier's side are fighting within 22 metres of him;
+  - a battle's weather is drawn from the campaign's seed. Seed 275's finale is fought in mist, so the finale is taken from seed 276's campaign, whose day is clear. The script checks each battle's weather.
+- **The shots** are taken in the desktop build (run `npm run build:desktop` first), in headless Chromium:
+  - each save code is restored through the game's own Restore dialog;
+  - the page has the player's own settings: real time, the 3D view at High quality, coaching off;
+  - each shot is framed with the game's own controls: Pause, the − key's zoom, the held H's glance at the horizon, the bar's Kit button;
+  - nothing is injected into the page, and no label is hidden.
+- **Software rendering.** A frame takes several seconds in software WebGL, so after thirty frames the game steps its quality down on its own, as it would on a slow PC. On a page with a 3D world the script then chooses High in Settings, as a player would. The world stays built at High throughout, so nothing is rebuilt. The script checks that each shot was taken at High from start to finish, without page errors, and with the fight paused.
+- **The record,** `docs/evidence/steam-screenshots.json`, names each shot's chapter, encounter and moment, the SHA-256 digest of its save, its camera and the build it was taken in.
+- **The time:** a few minutes a shot. `--only 01-river-crossing,05-camp` takes some of them again.
+
 ## Steam's rules to check in Steamworks
 
 These are as reported; Steamworks' own pages decide.
 
-- **Exact sizes,** as above, the icons' included. A test (`tests/steam-store.test.mjs`) fails while a file is missing or not at its size.
+- **Exact sizes,** as above, the icons' and screenshots' included. A test (`tests/steam-store.test.mjs`) fails while a file is missing or not at its size.
 - **Capsules** carry the game's artwork and its name, and nothing else: no review quotes, awards, prices, discounts or "new".
 - **The library hero** carries no text or logo. Steam places the library logo over it, and Steamworks sets where. The hero's lower left is kept quiet for it.
 - **The library logo** is a PNG with transparency, 1280 pixels wide or 720 tall at most.
 - **The page background** is optional, and Steam darkens it further.
-- **Screenshots:** at least five, 1920 × 1080, captured from the game after 0.40.0.
+- **Screenshots:** at least five, 1920 × 1080, of the game itself: drafted above, to take again after 0.40.0.
 
 ## AI and rights
 
-- **The AI disclosure.** The painted images are made from an AI-generated painting. The three renders show the game's AI-generated figures and horses with its own Blender-built walls and code-built kit. The store page's AI disclosure covers both, through its art and 3D-model lines ([the draft](steam-ai-disclosure.md)).
+- **The AI disclosure.** The painted images are made from an AI-generated painting. The three renders show the game's AI-generated figures and horses with its own Blender-built walls and code-built kit. The screenshots show the game as it plays, with its generated paintings, portraits, figures and item pictures. The store page's AI disclosure covers all of them, through its art and 3D-model lines ([the draft](steam-ai-disclosure.md)). The icons are the project's own emblem, drawn in code.
 - **The rights** are those of the sources, recorded in the [licence notices](LICENSE-NOTICES.md). Cinzel's licence allows the lettering in these images.
 
 ## Still to do
 
 - **The owner's review:** composition and name. The store name is still to decide.
 - **Sizes and rules:** to check in Steamworks.
-- **Screenshots and the trailer:** after 0.40.0 and the owner's Gate 4 sign-off.
+- **The screenshots:** the owner's choice and order. Steam shows the first ones most. Take them again after 0.40.0 and the owner's Gate 4 sign-off.
+- **The trailer:** after 0.40.0 and the Gate 4 sign-off.
