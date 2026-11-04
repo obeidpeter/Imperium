@@ -2,6 +2,47 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The README, the licence records and the manifest's rights notice brought up to date
+
+The owner asked for it. The README no longer describes 0.40's game as turn-based, browser-first or made of original horses:
+
+- **What the game is.** Battles and Contests play in real time with pause, or in turns. The planned release puts the full game on Steam as a Windows desktop app and Chapters I–III on the web as a free demo; neither is published yet.
+- **What 0.40 adds since its five phases:**
+  - the worlds and gameplay plan's camps, modelled worlds, generated cast and horses, missions and full-screen world;
+  - the desktop app, the demo, the achievements, and the drafts of the store text and AI disclosure.
+- **The 0.37 section** notes that the horses and the named cast have since gained generated bodies of their own.
+- **Building.** The download limits are today's 18 and 28 MB, with their history. The demo and desktop builds are described, and how to publish the demo on its own origin.
+- **Saving.** The paths through **Menu → Settings → Saves & offline** replace the old Pause entries, and the desktop app's save file and its recovery are described.
+- **Project map and checks.** The real-time core, the controls model, the achievements, the platform boundary, `desktop/` and the demo's file list are in the project map, and the demo and desktop browser checks are listed.
+
+The two licence records had stopped before the generated models:
+
+- **`docs/LICENSE-NOTICES.md`** now says, kind by kind, where each shipped file comes from and on what terms:
+  - the OpenAI images and the five restored faces;
+  - the Tripo models, with the paid-account terms the owner confirmed on 20 October;
+  - the Blender kits and panoramas;
+  - MakeHuman and the Poly Haven textures, which now ship;
+  - the audio's generators: Lyria, Runway's sound effects and ElevenLabs;
+  - the captures and icons;
+  - Three.js and its decoders, with their licence files;
+  - the desktop app's Electron, Chromium, steamworks.js and Steamworks API library;
+  - the achievement icons.
+
+  Counts are left to the AI-content inventory, which a test keeps in step with the manifest.
+- **`docs/3d-art-provenance.md`** no longer says that every model is written in code. It names the four kinds of 3D content (code-built, generated with Tripo, built in Blender, CC0) and lists the models added since 0.36. The code-built record, the colour maps and the Three.js hashes are kept, and still match the shipped files.
+- **The asset manifest's `rightsNotice`** was out of date. It gave old counts for some kinds of file (51 artworks, two captures, sixteen character bodies) and left out others: the horses, landmarks, rocks, trees, panoramas, ground textures and item pictures. It now names each source without counts:
+  - OpenAI image generation, with the five restored faces;
+  - Tripo, with the owner's paid-account terms;
+  - Lyria, Runway's sound effects and ElevenLabs;
+  - MiDaS;
+  - the project's Blender scripts;
+  - MakeHuman and Poly Haven;
+  - the icons and captures.
+
+  It points to the notices for the terms, and to the generated inventory for the counts. Nothing reads it, and the file entries are unchanged.
+- **`docs/steam-release.md`** no longer lists any of these records as out of date.
+- **The code and text were written with AI,** as the owner confirmed on 4 November. The AI disclosure draft (`scripts/steam-ai-disclosure.mjs`, regenerated), the licence notices and the release checklist no longer leave it for the owner to confirm.
+
 ### Desktop saves: an accurate message, and the guide says what is recovered
 
 - **An unchecked file is not "changed".** Sometimes the desktop app cannot read the save file when it starts and has no record of the file's last version. It still refuses to replace the file. It no longer says the file "changed outside the game", which nothing showed. It says the file could not be read when the game started, so it has not been checked against the player's progress or replaced (`src/ui/storage.js`). A test covers it.

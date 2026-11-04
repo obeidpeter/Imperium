@@ -27,7 +27,7 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
 
 - **Steam's content survey** asks about AI-generated content. These records are what the disclosure draws on: AI-generated 3D models, illustrations, music, sound and voices, all made before release, with none generated during play. The draft is in [steam-ai-disclosure.md](steam-ai-disclosure.md), generated from the manifest.
 - **The game's own code** has no licence chosen (`docs/LICENSE-NOTICES.md`). For a commercial release that is the owner's decision: by default all rights are reserved.
-- **Out-of-date records** for the owner to review: `README.md` (the owner's) still says horses use original geometry, and `docs/LICENSE-NOTICES.md` and `docs/3d-art-provenance.md` predate the Tripo models. The in-game credits were corrected in S1.
+- **Records brought up to date:** the in-game credits in S1. On 4 November: `README.md`, [the licence notices](LICENSE-NOTICES.md), [the 3D provenance record](3d-art-provenance.md) and the asset manifest's `rightsNotice` summary.
 
 ## The free web demo (S2, built; publishing is yours)
 
@@ -56,7 +56,7 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
   - at least five screenshots;
   - a trailer.
 - [ ] **The content survey:**
-  - the AI section, from [steam-ai-disclosure.md](steam-ai-disclosure.md): confirm its line on writing and code, which rests on the project's history rather than the manifest;
+  - the AI section, from [steam-ai-disclosure.md](steam-ai-disclosure.md). Its line on writing and code rests on the project's history rather than the manifest, and you confirmed it on 4 November;
   - the other questions, from what the game shows ([the store text](steam-store-text.md#the-content-survey-beyond-ai)).
 - [ ] **The price and release date.**
 - [ ] **A Coming Soon page,** public for at least two weeks before release.
