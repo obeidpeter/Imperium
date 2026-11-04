@@ -1361,3 +1361,13 @@ The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 
 
 They carry the rights of the files they are made from, which [the asset manifest](asset-manifest.json) records. The frame, numerals and drawn insignia are the project's own code. The numerals use the renderer's serif font (DejaVu Serif on the Linux runner); no font file is added. The icons are uploaded to Steam, and the game does not ship them.
 
+## Character face restorations · 4 November 2026
+
+The face and hair paint of five generated characters was restored with OpenAI's built-in image tool (`image_gen`): the recruit (Marcellus), Aelia, Severianus, Paullus and Theon. The full account, with before-and-after comparisons and the checks, is in [the change notes](save-camp-art-refinements.md).
+
+- **Input:** for each character, a frontal, unlit, orthographic render of the game's own bundled model on a grey ground. No photograph, other person's likeness or third-party image was supplied.
+- **Prompt:** one shared base prompt asks for an identity-preserving albedo restoration that keeps every feature at its pixel position, and one sentence names each subject. Both are kept verbatim in `art-source/characters/surface-repair/prompts.json`, beside the references, the generated projection paint and the baked atlases. The build leaves that folder out.
+- **Into the game:** Blender 5.2.2 LTS (`scripts/assets/bake-character-face.py`) projected the reviewed paint back onto the same mesh, into the model's original atlas. `scripts/assets/repair-character-surfaces.mjs` then wrote the model, with that albedo as KTX2 UASTC with mipmaps. Positions, UVs, skin weights, skeletons and contact anchors are unchanged.
+- **Rejected:** whole-atlas repaints, which moved facial features, and ETC1S compression, which lost the restored detail.
+- **Records:** each of the five models' entries in [the asset manifest](asset-manifest.json) gains a `surfaceRepair` record, naming the previous file's SHA-256 and size, the tools and its report (`art-source/models/reports/char-<id>-surface-repair.json`). The original Tripo tasks, prompts, charges and licence records stay as they were.
+- **Rights:** as for the game's other OpenAI images, no exclusive copyright or licence ownership is asserted. [Steam's AI disclosure](steam-ai-disclosure.md) names the restorations, and [the owner's checklist](steam-release.md#rights-for-a-commercial-release) counts them with the illustrations.

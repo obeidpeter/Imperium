@@ -2,6 +2,51 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Follow-ups to #73 and #74
+
+- **A damaged chronicle at load** again says where its data is kept: "The unreadable data stays on this device; Settings can download it." #74's new load messages had dropped the sentence.
+- **Steam's AI disclosure** counts the faces restored with OpenAI image generation from the asset manifest, instead of a number written into its script. It also says that each restoration was shown a render of the game's own model.
+- **Records:**
+  - the art record describes the face restorations ([docs/art-generation.md](docs/art-generation.md#character-face-restorations--4-november-2026));
+  - the owner's rights table counts them with the illustrations;
+  - CLAUDE.md gives Tripo's V3 authentication and paid-task guard, and the Linux desktop check's Openbox helper.
+
+### Save recovery, camp entrances and character surfaces ([#74](https://github.com/obeidpeter/Imperium/pull/74), [the change notes](docs/save-camp-art-refinements.md))
+
+The owner's pull request, merged on 4 November.
+
+- **Desktop saves:**
+  - Each local save records the file version it was based on. After a failed file write, a relaunch recovers the newer local progress over its unchanged file and writes it back.
+  - A file changed outside the game is loaded, and the local copy is kept as a recovery record.
+  - Only a missing file counts as absent. Any other read error stops file writes, without replacing the file, until it is readable and matches again.
+  - Writes run one at a time and compare the file they expect before an atomic replace, keeping the previous copy. A corrupt file is preserved, and a valid previous copy can recover an empty profile.
+  - Quit no longer reports success for a save held only in memory or in conflict.
+- **Camps:** frontages, worn paths and the kept-clear approach follow each camp's real gate in all twelve chapters: Chapter VI's from the west, VII's from the east, the others' from the south. The low camp camera stays in front of moved walls. Rules, navigation and interactions are unchanged.
+- **Characters:**
+  - five faces are restored with OpenAI image generation from renders of their own models;
+  - the eleven named men's distant heads are rebuilt from their detailed heads;
+  - three civilians' neck gaps are closed with a skinned bridge.
+
+  The thirteen models grow by 1.76 MB, and the per-chapter download ceiling rises from 24 MB to 26 MB. The largest chapter is about 25.4 MB.
+- **Desktop checks:**
+  - native F11 and Alt+Enter, with the fullscreen result awaited;
+  - real disk faults, a relaunch and an external change on the packaged app;
+  - Openbox under Xvfb on Linux, for minimize and restore (`scripts/desktop-smoke-linux.sh`).
+
+### The Tripo pipeline on V3 ([#73](https://github.com/obeidpeter/Imperium/pull/73), [the migration guide](docs/tripo-v3-migration.md))
+
+The owner's pull request, merged on 4 November. It changes development tooling only: the game and its shipped models are unchanged.
+
+- `scripts/assets/tripo-client.mjs` uses Tripo's V3 API at `openapi.tripo3d.ai/v3`, since Tripo retired V2 on 1 November.
+  - New requests are pinned to current models: geometry `v3.1-20260211`, textures `v3.0-20250812`, and the biped rig `v1.0-20240301` that the Blender binder expects.
+  - Models Tripo is retiring are refused.
+- **Spending:** a paid task needs `--allow-paid`, after a `--dry-run` that makes no request. Each submission is saved before it is sent, under a lock and with atomic writes, and creation is never retried automatically.
+- **Recovery** (`resume`, `resume-rig`, `task` and the free `rig-check`) restores a raw file only when its hash matches the record. Completed records stay byte for byte as they were.
+- **Authentication:** `TRIPO_API_KEY`, or an approved proxy secret on `openapi.tripo3d.ai` with `TRIPO_PROXY_AUTH=1`. A secret scoped to the old `api.tripo3d.ai` no longer authenticates.
+- **Checked:**
+  - 52 offline tests (`tests/tripo.test.mjs`);
+  - a live, read-only check of the balance and two historical tasks, whose models matched their recorded hashes.
+
 ### The page no longer calls the game turn-based
 
 - **The page's description** (`index.html`), which search results and shared links show, now reads "A Roman tactical chronicle in real time with pause", as 0.40 plays. The free demo's build still writes its own description.

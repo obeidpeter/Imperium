@@ -53,7 +53,7 @@ No third-party art, photographs or voice recordings were given to any generator.
 | Voiced briefings | 4 | ElevenLabs v3 (`eleven_v3`), through Runway, with the provider’s voices Elias, Kirk, Clint and Marlene | Used as generated, without edits; the words are the game’s own lines |
 | Depth maps of the story paintings | 8 | MiDaS v2.1 small (MIT), a depth-estimation model run offline | Estimated from the paintings, to move their layers |
 
-The manifest records that no third-party image, model or recording was given to a generator. One generation, a supplementary cast sheet, was shown the project’s own first generated atlas ([the art record](art-generation.md)).
+The manifest records that no third-party image, model or recording was given to a generator. Some generations were shown the project’s own art: a supplementary cast sheet was shown its first generated atlas ([the art record](art-generation.md)), and each of the five face restorations was given a render of the game’s own model ([the art record](art-generation.md#character-face-restorations--4-november-2026)).
 
 ## Made without AI
 

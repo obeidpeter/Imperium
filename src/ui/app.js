@@ -1767,7 +1767,9 @@ subscribeSaveChanges(()=>{if(state&&!memoryOnly){saveConflict=true;saveProblem='
   'or export this tab’s progress.';lastSaved='';render();announce(saveProblem);}});
 const loaded=await loadLocal();state=loaded.state;if(pastDemo(state,demo)){heldChronicle=state;state=null;}
 saveProblem=loaded.fileProblem||'';lastPersisted=state&&!saveProblem?JSON.stringify(state):'';render();reportAchievements(state);
-if(loaded.error||loaded.fileProblem||loaded.warning)toast(loaded.error||loaded.fileProblem||loaded.warning);
+// A damaged chronicle is preserved, never deleted: say where it is kept.
+if(loaded.error)toast(loaded.error+' The unreadable data stays on this device; Settings can download it.');
+else if(loaded.fileProblem||loaded.warning)toast(loaded.fileProblem||loaded.warning);
 try{preservedUnreadable=(await listUnreadableSaves()).length;}catch{preservedUnreadable=0;}
 // The web build's offline cache. The desktop app has every file installed and Steam updates it (platform.js).
 if(usesOfflineCache()&&'serviceWorker'in navigator){
