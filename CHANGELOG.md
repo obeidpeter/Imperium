@@ -2,6 +2,19 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The README brought up to date
+
+The owner asked for it. The README no longer describes 0.40's game as turn-based, browser-first or made of original horses:
+
+- **What the game is.** Battles and Contests play in real time with pause, or in turns. The planned release puts the full game on Steam as a Windows desktop app and Chapters I–III on the web as a free demo; neither is published yet.
+- **What 0.40 adds since its five phases:**
+  - the worlds and gameplay plan's camps, modelled worlds, generated cast and horses, missions and full-screen world;
+  - the desktop app, the demo, the achievements, and the drafts of the store text and AI disclosure.
+- **The 0.37 section** notes that the horses and the named cast have since gained generated bodies of their own. `docs/steam-release.md` no longer lists the README as out of date.
+- **Building.** The download limits are today's 18 and 28 MB, with their history. The demo and desktop builds are described, and how to publish the demo on its own origin.
+- **Saving.** The paths through **Menu → Settings → Saves & offline** replace the old Pause entries, and the desktop app's save file and its recovery are described.
+- **Project map and checks.** The real-time core, the controls model, the achievements, the platform boundary, `desktop/` and the demo's file list are in the project map, and the demo and desktop browser checks are listed.
+
 ### Desktop saves: an accurate message, and the guide says what is recovered
 
 - **An unchecked file is not "changed".** Sometimes the desktop app cannot read the save file when it starts and has no record of the file's last version. It still refuses to replace the file. It no longer says the file "changed outside the game", which nothing showed. It says the file could not be read when the game started, so it has not been checked against the player's progress or replaced (`src/ui/storage.js`). A test covers it.

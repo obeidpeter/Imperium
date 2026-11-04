@@ -10,9 +10,23 @@ The player guide for 0.40 is the specification ([player-guide-0.40.md](docs/play
 - **Difficulty, every setting of the guide** with key remapping, and the guide itself as the in-game Controls & rules (**?**).
 - **Chronicles saved before 0.40** load exactly as saved, choose their soldier's training once and receive the training points of the chapters they completed.
 - **The real-time arena** ([`showcase/arena.html`](showcase/arena.html)): a Legionary against three raiders, the first real-time fight.
-- **A deterministic simulation** ([`src/core/realtime/`](src/core/realtime)) stepped at 20 Hz, its rules as data, replayed identically at every speed, with pauses and through save and load. Its timing is in Settings → Run performance check.
+- **A deterministic simulation** ([`src/core/realtime/`](src/core/realtime)) stepped at 20 Hz, its rules as data, replayed identically at every speed, with pauses and through save and load. Its timing is in **Menu → Settings → Graphics → Performance diagnostics → Run performance check**.
 
-Gate 4 still needs a person's play-through on Story and on Standard, the manual accessibility checks, and phone and desktop measurements.
+Since the five phases, the [worlds and gameplay plan](docs/worlds-and-gameplay-plan.md) has rebuilt the worlds around them (each release is in the [changelog](CHANGELOG.md)):
+
+- **Living camps.** In real time, every chapter's camp is a place of its own with the story's people in it, errands that pay in training, a trader, Bassus the armourer and chests to open. You leave it on foot by the road to the next encounter, and after a victory you can walk the field.
+- **Modelled worlds.** Ground, sky, light, water and fortifications; the regions' trees and stones on Balanced and High; each chapter's landmarks and camp life; and the story's great buildings, built in Blender, among them the Curia and the Aurelian Walls.
+- **The cast in person.** The named men, the chamber's members, the camp's staff and the horses wear generated bodies, made with Tripo and processed in Blender, and the finale has a moving crowd. The code-built figures and the drawn horse remain the fallback.
+- **Battles.** Six battles are missions of their own, in real time and in turns, two of them against the enemy's siege works. In real time the enemies are harder and less predictable, and your horse has two orders of its own: Charge and Feigned retreat.
+- **The screen.** In real time the world fills the window, with a bar along the bottom, a fixed isometric camera, and a full-screen inventory with item pictures.
+
+For Steam ([the Steam plan](docs/steam-plan.md) and the [owner's checklist](docs/steam-release.md)):
+
+- **The desktop app** ([docs/desktop.md](docs/desktop.md)) is the same game in an Electron window, Windows first. It saves to a file on the computer, which Steam Cloud can sync; its Menu has **Quit to desktop**, and Settings has **Fullscreen**. Its 35 achievements and the Steam overlay wait for the game's Steam App ID.
+- **The free web demo** is Chapters I–III. A demo chronicle carries over to the full game by save code: the desktop app's first title page offers **Import a chronicle from the browser**. Publishing the demo is the owner's step.
+- **The store page's text and the AI-content disclosure** are drafted for the owner to edit ([the store text](docs/steam-store-text.md), [the disclosure](docs/steam-ai-disclosure.md)). The disclosure is generated from the asset manifest.
+
+Gate 4 still needs a person's play-through on Story and on Standard ([the checklist](docs/gate4-playthrough.md)), the manual accessibility checks, and phone and desktop measurements. CI checks the desktop app on Linux and Windows runners; it has not yet been tried on a real Windows PC or with Steam.
 
 To try the arena, run `npm run dev` and open `http://127.0.0.1:4173/showcase/arena.html`. To measure it on a phone on the same trusted network, run `npm run build`, then `HOST=0.0.0.0 npm run preview` (this serves only the production build), and open the computer's address on port 4173 at `/showcase/arena.html`.
 
@@ -31,7 +45,7 @@ Model images decode off the main thread. In the software benchmark, nothing comp
 
 ## Version 0.37 — generated character bodies
 
-Every soldier, rider and civilian in the battles and ceremonies now wears a detailed body generated with Tripo and bound in Blender to the game's own skeleton: Roman recruits, legionaries, archers, a centurion and a commander, and Gothic, Persian and Palmyrene warriors, archers and riders, sixteen in all. The game's own animation, hands, weapons, shields, cloaks, insignia and horses stay as they were, and the protagonist's armour still changes with his command. Senate figures keep their togas, whose trims name their bloc. Each chapter downloads only the bodies its figures wear; Chapter I's download limit rises to 10 MB. See the [changelog](CHANGELOG.md) and the [asset pipeline](docs/asset-pipeline.md).
+Every soldier, rider and civilian in the battles and ceremonies now wears a detailed body generated with Tripo and bound in Blender to the game's own skeleton: Roman recruits, legionaries, archers, a centurion and a commander, and Gothic, Persian and Palmyrene warriors, archers and riders, sixteen in all. The game's own animation, hands, weapons, shields, cloaks, insignia and horses stay as they were, and the protagonist's armour still changes with his command. (The horses and the named cast gained generated bodies of their own during 0.40's development; see above.) Senate figures keep their togas, whose trims name their bloc. Each chapter downloads only the bodies its figures wear; Chapter I's download limit rises to 10 MB. See the [changelog](CHANGELOG.md) and the [asset pipeline](docs/asset-pipeline.md).
 
 ## Version 0.36 — the first generated scenery
 
@@ -53,9 +67,9 @@ The image below records the preceding 0.34 benchmark.
 
 *Actual version 0.34 gameplay at a legally reached Chapter V checkpoint, using Sculpted figures, Balanced quality and the Horizon camera. Captured in software-rendered Chromium.*
 
-A free, browser-first tactical chronicle set in the Roman third-century crisis. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**, including battles and political Contests.
+A tactical chronicle set in the Roman third-century crisis, for the browser and, as a Windows desktop app, for Steam. Begin as a Danube recruit around AD 250, earn military commands, govern a province, enter the Senate, and contest the succession after Aurelian’s death. The campaign contains **12 chapters and 25 playable encounters**: 19 battles and 6 political Contests. The planned release puts the full game on Steam and Chapters I–III on the web as a free demo ([the Steam plan](docs/steam-plan.md)). Neither is published yet.
 
-The game combines original prose and locally bundled painted artwork with three-dimensional battlefields and political chambers, plus an optional 2D tactical view. Movement, gestures and tactical effects animate committed actions while the rules remain turn-based. It requires no account, backend, runtime art service or paid assets. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
+The game combines original prose and locally bundled painted artwork with three-dimensional battlefields, camps and political chambers, plus an optional 2D tactical view. Battles and Contests play in real time with pause, or in turns if you choose. The rules are deterministic either way. The game needs no account or backend of its own and no runtime art service: nothing is generated while you play. The 3D view uses locally bundled Three.js; campaign rules remain dependency-free and run in both a browser and Node.js.
 
 ## Version 0.34 — Chapter V benchmark and twelve-chapter command campaign
 
@@ -269,7 +283,7 @@ Use Node.js 20 or later. Open a terminal in the project directory. There is no `
 node scripts/serve.mjs
 ```
 
-Open the address printed by the server, normally `http://127.0.0.1:4173`. Choose **Play now** to start, or **Continue your chronicle** if a local save exists. The first chapter teaches the controls. [Playing instructions](docs/PLAYING.md) cover commands, voting, advancement, and saving.
+Open the address printed by the server, normally `http://127.0.0.1:4173`. Choose **Play now** to start, or **Continue your chronicle** if a local save exists. The first chapter teaches the controls. The [0.40 player guide](docs/player-guide-0.40.md), also in the game as **Controls & rules** (**?**), covers real-time play; the [playing instructions](docs/PLAYING.md) cover the turn-based controls, voting, advancement and saving as of 0.38. To run the desktop app instead, see [docs/desktop.md](docs/desktop.md).
 
 Use the local server instead of opening `index.html` directly: native JavaScript modules require an HTTP origin. This source preview does not generate the production offline cache.
 
@@ -282,7 +296,12 @@ node scripts/serve.mjs dist
 
 The equivalent commands are `npm run build` and `npm run preview`. The output is **`dist/`**, a plain static folder of HTML, CSS, JavaScript, manifest, icons, and a generated service worker. Build from the project root. The builder safely replaces the generated `dist` directory; source and local browser saves are separate from it.
 
-The build writes `dist/build-report.json` with startup, chapter I, per-chapter and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects initial-shell estimates above 2,000,000 bytes, shell plus chapter I for the 3D view above 16,000,000 (8,000,000 before 0.37, then 10,000,000, then 12,000,000 until the worlds and gameplay plan), shell plus any one chapter with its 2D art above 24,000,000 (14,000,000 until the worlds and gameplay plan), or the complete campaign above 80,000,000 (24,000,000 before the asset foundation, then 50,000,000). All include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download.
+The build writes `dist/build-report.json` with startup, chapter I, per-chapter and full-campaign asset counts, byte totals, compressed estimates, and the configured address. It rejects initial-shell estimates above 2,000,000 bytes, shell plus chapter I for the 3D view above 18,000,000 (8,000,000 before 0.37, then 10,000,000, then 12,000,000 until the worlds and gameplay plan, then 16,000,000 until 4 November 2026), shell plus any one chapter with its 2D art above 28,000,000 (14,000,000 until the worlds and gameplay plan, then 24,000,000 until [#74](https://github.com/obeidpeter/Imperium/pull/74), then 26,000,000 until 4 November 2026), or the complete campaign above 80,000,000 (24,000,000 before the asset foundation, then 50,000,000). All include the worker. This is a build-budget check, not a measurement of a particular phone’s actual download. The [asset pipeline](docs/asset-pipeline.md#budgets) records each limit's history and what each release used.
+
+The same source builds two other outputs:
+
+- `npm run build:demo` writes **`dist-demo/`**, the free web demo of Chapters I–III, held to the same limits. It leaves out the files only Chapters IV–XII use. Its last screen links to the full game's store page when built with `STORE_URL`; without it, it says the full game is coming to Steam. `npm run preview:demo` serves it.
+- `npm run build:desktop` writes **`dist-desktop/`**, the game for the desktop app, with no service worker, offline packs or install manifest. The download limits do not apply to it, since the app installs every file at once. `desktop/` packages it with Electron ([docs/desktop.md](docs/desktop.md)).
 
 ## Replit static deployment
 
@@ -307,14 +326,17 @@ Replace the example with the domain you own. With `SITE_URL` unset, relative URL
 
 Keeping the same public origin when changing hosting preserves the browser address to which saves and installs belong. Changing the address does not automatically migrate browser storage; portable save codes provide a manual transfer route.
 
+To publish the free demo instead, use the build command `node scripts/build.mjs --edition demo` and the public directory `dist-demo`. Give it an origin of its own: two builds on one origin share its saves, and each one's service worker replaces the other's offline caches ([the owner's checklist](docs/steam-release.md)).
+
 ## Saving, offline play, and sharing
 
 - Actions autosave through an IndexedDB transaction, with a localStorage mirror where available. Concurrent tabs use a checked sequence; a stale tab must explicitly load the latest chronicle to continue. If IndexedDB is unavailable, localStorage saving requires Web Locks. Unsafe writes fail closed while in-memory play and export remain available.
-- **Pause → Recover an earlier checkpoint** previews and restores one of the last three distinct checkpoints or replaced chronicles. The displaced current save joins that recovery history.
-- **Pause → Copy a save code** exports a checked portable save, including the active encounter checkpoint. Restore validates the code before asking to replace the current campaign.
+- **Menu → Settings → Saves & offline → Recover older progress** previews and restores one of the last three distinct checkpoints or replaced chronicles. The displaced current save joins that recovery history.
+- **Export save code**, on the same page, exports a checked portable save, including the active encounter checkpoint. **Import save code** validates the code before asking to replace the current campaign.
+- In the desktop app, every save is also written to a file, `saves/campaign.json` in the app's folder (`%APPDATA%\Imperium` on Windows), which Steam Cloud can sync. Progress that did not reach the file is written to it at the next launch. A file changed outside the game, for example by Steam Cloud from another computer, is loaded, and this computer's progress is kept under **Recover older progress** ([docs/desktop.md](docs/desktop.md)).
 - Retry restores the entire encounter-start snapshot, including the random seed and staged promises. Rewards are committed when the result is recorded, once per encounter.
 - The first save requests persistent browser storage. A browser may decline that request, so keep a save code independently.
-- The production service worker first caches the shell and opening artwork. Every chapter requests its own artwork plus the shared 3D renderer and materials; shared cached files are reused. Suitable connections may prefetch the next chapter. **This chapter is ready offline** covers the current chapter only. To keep the whole campaign and standalone study, choose **Pause → Download all chapters for offline play** and wait for **All chapters available offline**. Pause also provides a retry for missing chapter resources. A new edition activates after old tabs close, preserving the current encounter. HTTPS or a local secure-context exception is required for browser service workers.
+- The production service worker first caches the shell and opening artwork. Every chapter requests its own artwork plus the shared 3D renderer and materials; shared cached files are reused. Suitable connections may prefetch the next chapter. **This chapter is ready offline** covers the current chapter only. To keep the whole campaign and standalone study, choose **Download all chapters** (Menu → Settings → Saves & offline) and wait for **All chapters available offline**. The same page offers **Retry chapter download** for missing chapter resources. A new version of the site activates after old tabs close, preserving the current encounter. HTTPS or a local secure-context exception is required for browser service workers. The desktop app has no service worker: every chapter is installed with it.
 - On iPhone, Safari’s **Share → Add to Home Screen** provides the installation path. Real-device installation, long-term storage retention, and platform share menus require device testing.
 - The ending can create a PNG reign card with the ruler’s name, broad choices, accession route, and configured game link. It omits character fates. Download and device sharing happen only on the player’s action.
 
@@ -323,6 +345,9 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | Path | Responsibility |
 | --- | --- |
 | `src/core/game.js` | Campaign state, advancement, milestone locks, transactions, save validation, finale forecast |
+| `src/core/realtime/` / `src/data/realtime-rules.js` | The 0.40 real-time simulation: a fixed 20 Hz tick, Commands queued for the next tick, named random streams and exact snapshots, with its rules as data |
+| `src/core/controls-model.js` | Which encounters play in real time and which in turns |
+| `src/core/achievements.js` / `src/data/achievements.js` | The 35 Steam achievements, read from the chronicle by a pure function that never grants anything |
 | `src/core/battle.js` | Tactical rules, objectives, AI, command capacity, formations, confrontation routes |
 | `src/core/contest.js` | Political grid rules, votes, Resolve, stance, cooldowns, promises, rival speakers |
 | `src/data/battle-balance.js` / `contest-balance.js` | Standard combat tuning, formation effects, bloc affinities and rival priorities |
@@ -356,12 +381,15 @@ Keeping the same public origin when changing hosting preserves the browser addre
 | `src/showcase/campaign-scene-profile.js` / `stage-readout.js` | Campaign scene identity, military/civic labels and mission markers |
 | `showcase/` / `src/showcase/main.js` / `session.js` | Optional standalone frontier study and its isolated in-memory battle |
 | `vendor/three/` | Locally bundled Three.js 0.186.1 modules and their unchanged MIT license; its glTF, KTX2 and meshopt addons (`addons/PROVENANCE.md`) |
-| `src/ui/storage.js` | Browser save envelopes, mirrored storage, conflict handling, portable codes |
+| `src/ui/storage.js` | Save envelopes in browser storage and, in the desktop app, its save file; mirrored storage, conflict handling, recovery, portable codes |
+| `src/ui/platform.js` | Everything that differs between the web site and the desktop app (the offline cache, save files, Quit, fullscreen, wording), and the demo's edition |
+| `desktop/` | The desktop app for Steam (Electron), a separate package: its window, the `app://imperium` origin, the save files and Steam ([docs/desktop.md](docs/desktop.md)) |
 | `src/ui/audio.js` | Optional browser-generated sound effects |
 | `src/ui/styles.css` / `interface.css` | Shared tokens, responsive website and panels, focus states, status treatments, and reduced-motion presentation |
 | `src/ui/site-media.js` | Optional supporting website captures, loaded on request or suitable connections |
-| `src/config.js` | Source defaults; the builder supplies production `SITE_URL` and version configuration |
-| `scripts/build.mjs` / `scripts/serve.mjs` | Dependency-free static builder and local preview server |
+| `src/config.js` | Source defaults; the builder supplies the production `SITE_URL`, version, platform and edition |
+| `scripts/build.mjs` / `scripts/serve.mjs` | Dependency-free static builder (web, demo and desktop) and local preview server |
+| `scripts/edition.mjs` | The files the demo build leaves out |
 | `scripts/autoplay.mjs` | Full campaign runner using legal gameplay commands from New Game |
 | `scripts/progression-autoplay.mjs` | Legal new-progression routes, branch/specialist/agreement coverage and exact retries |
 | `scripts/political-diagnostics.mjs` | Explicitly injected political scenario comparisons using legal commands; separate from full-campaign evidence |
@@ -383,7 +411,11 @@ node scripts/verify-assets.mjs
 # optional, development only (needs Playwright and a browser):
 node scripts/visual-regression.mjs --record   # then later: node scripts/visual-regression.mjs
 npm run build && npm run smoke                 # drive the production build in headless Chromium
+npm run build:demo && npm run smoke:demo       # the free web demo
+npm run build:desktop && (cd desktop && npm ci) && npm run smoke:desktop   # the desktop app (Electron; see docs/desktop.md)
 ```
+
+The [contributor guide](CLAUDE.md) lists every command and browser check, including those CI runs on each pull request.
 
 `npm test` automatically runs `scripts/prepare-tests.mjs` first. It sequentially generates the legal campaign checkpoints, graphics scenes, graphics action cases and all-chapter 3D review checkpoints, then starts the tests. Generated `tests/fixtures/` files are excluded from the source archive and repository; their generators and the fixed `tests/compatibility/` inputs are included. For a direct `node --test` invocation on a fresh source copy, run `node scripts/prepare-tests.mjs` first.
 
@@ -395,8 +427,8 @@ Commands and implemented checks are not proof of a particular result. See the [v
 
 ## Scope and design choices
 
-This implementation uses native JavaScript modules, Canvas/WebGL, and a small custom static builder instead of the larger TypeScript/framework stack discussed in the Word reference documents. The pasted build brief governs this delivery. The rules remain directly executable under Node; the campaign and standalone study use locally bundled Three.js, while the tactical alternative uses Canvas. Every runtime asset ships with the static game. There is no backend, monetization, multiplayer service, or native Android/iOS shell in this version.
+This implementation uses native JavaScript modules, Canvas/WebGL, and a small custom static builder instead of the larger TypeScript/framework stack discussed in the Word reference documents. The pasted build brief governs this delivery. The rules remain directly executable under Node; the campaign and standalone study use locally bundled Three.js, while the tactical alternative uses Canvas. Every runtime asset ships with the game. The web build has no backend, accounts, payment, advertising, analytics or multiplayer service, and there is no native Android/iOS shell. The desktop app wraps the same game in Electron for Steam; Steam's integrations live only in `desktop/`, and the web build stays static ([the Steam plan](docs/steam-plan.md)).
 
 The whole campaign is present, including the two final milestone locks, three campaign meters, obligations, cast absence branches, four main confrontation forms plus costly backing, and the accession bookend. The historical career is a disclosed composite; battle units and chamber votes are gameplay abstractions.
 
-The **90–150 minute** campaign length is a design target, not a validated completion-time claim. Human enjoyment and pacing tests, a complete physical-device touch pass, iOS/Android installation and offline checks, and the live custom-domain deployment remain work to validate. Consult the verification report for narrower automated and browser-interface evidence.
+The **90–150 minute** campaign length is a design target, not a validated completion-time claim. Human enjoyment and pacing tests, a complete physical-device touch pass, iOS/Android installation and offline checks, the desktop app on a real Windows PC with Steam, and the live custom-domain deployment remain work to validate. Consult the verification report for narrower automated and browser-interface evidence.
