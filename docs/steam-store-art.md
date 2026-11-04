@@ -11,26 +11,29 @@ The sizes come from Valve's [graphical assets page](https://partner.steamgames.c
 | `header_capsule.jpg` | Store: header capsule | 920 × 430 | The oath painting, with the name | 1.11× |
 | `small_capsule.jpg` | Store: small capsule | 462 × 174 | The oath painting, with the title alone | 0.56× (reduced) |
 | `main_capsule.jpg` | Store: main capsule | 1232 × 706 | The oath painting, with the name | 1.51× |
-| `vertical_capsule.jpg` | Store: vertical capsule | 748 × 896 | The recruit, from the oath painting, with the name | 1.92× |
+| `vertical_capsule.jpg` | Store: vertical capsule | 748 × 896 | A render of the game's finale, the formations before the walls, with the name | Rendered at its own size |
 | `page_background.jpg` | Store: page background | 1438 × 810 | The oath painting, darkened and softened | 1.73× |
-| `library_capsule.jpg` | Library: capsule | 600 × 900 | The recruit, from the oath painting, with the name | 1.93× |
+| `library_capsule.jpg` | Library: capsule | 600 × 900 | A render of the game's finale, the formations before the walls, with the name | Rendered at its own size |
 | `library_header.jpg` | Library: header | 920 × 430 | As the header capsule | 1.11× |
 | `library_hero.jpg` | Library: hero | 3840 × 1240 | A render of the game's 3D view of the finale, before the Aurelian Walls, with no text | Rendered at its own size |
 | `library_logo.png` | Library: logo | 1280 wide, on transparency | The name alone | Drawn at its own size |
 
-The painting enlarges well up to about 1.5×. Above that, in the vertical capsule and the library capsule, it is softer but holds at the sizes Steam shows them. That judgement is the owner's; the review sheet the script writes, `tests/visual-results/steam-store-art/review-sheet.png`, shows all nine together.
+The painting enlarges well up to about 1.5×. Above that, in the page background, it softens, which suits a background that Steam darkens anyway. The two tall formats would have needed it nearly doubled, so they are rendered from the game instead, at the owner's request. The review sheet the script writes, `tests/visual-results/steam-store-art/review-sheet.png`, shows all nine together.
 
 ## How they are made
 
 - **The painting** is `assets/scenes/frontier-oath.webp` (832 × 467), the game's key art and the landing page's. It shows the recruit above the Danube camp at sunrise. It was generated with OpenAI's image generation for this project ([the art record](art-generation.md)). Its painted shadows stay as painted; only a dark gradient is laid over the part where the name goes, so it reads.
 - **The name**, "IMPERIUM" over "From Recruit to Emperor", is set in **Cinzel**, a typeface of Roman capitals by Natanael Gama, under the SIL Open Font License 1.1. The font file is kept for the script only, with its licence and a source record, in `art-source/fonts/cinzel/`. The game does not ship it. Change the name in one place, `NAME` in the script, once the store name is decided ([the owner's checklist](steam-release.md)).
 - **The emblem** between the two bronze rules is the star of the game's own `icon.svg`, drawn in code.
-- **The library hero** is the game itself, not a painting:
-  - **What is drawn:** the 3D stage of the finale (Chapter XII, the confrontation), drawn by the game's own renderer at High quality and at the full 3840 × 1240.
+- **The library hero, the vertical capsule and the library capsule** are the game itself, not a painting:
+  - **What is drawn:** the 3D stage of the finale (Chapter XII, the confrontation), drawn by the game's own renderer at High quality, each image at its own full size. The stage is built once, then framed for each.
   - **Where it starts:** the encounter's legally reached start checkpoint, `ch12-confrontation` in `tests/fixtures/campaign-3d.json`. It comes from New Game by legal commands, the checkpoints the 3D review harness uses; nothing is posed or injected.
-  - **The view:** the Horizon camera, drawn in to four fifths of its distance so that a near slab of stone drops out of the frame. The names over the figures are hidden. Rendering leaves the checkpoint unchanged, which the script checks.
+  - **The view:** the Horizon camera, drawn in to four fifths of its distance so that a near slab of stone drops out of the frame. For the two tall capsules, the camera's target moves 10 metres across the field. That centres the formations before the walls and towers, and keeps the slab out of the taller frame, which shows more of the near ground. The names over the figures are hidden. Rendering leaves the checkpoint unchanged, which the script checks.
   - **What it shows:** the Aurelian Walls and their gate, built in Blender by the project's own scripts; the armies in their generated bodies with the game's own kit; Rome on the hill behind.
-  - **How it is rendered:** in headless Chromium's software WebGL, which takes several minutes. `node scripts/steam-store-art.mjs --hero` renders it again; without `--hero` the script keeps the hero it has.
+  - **How they are rendered:** in headless Chromium's software WebGL, which takes several minutes.
+    - `node scripts/steam-store-art.mjs --render` renders all three again; without `--render` the script keeps the renders it has.
+    - The hero is its own final image.
+    - The two capsules' renders are kept before their name is drawn, in `art-source/store-art/`, so the name can be drawn again without rendering.
 - **The review sheet** is `tests/visual-results/steam-store-art/review-sheet.png`, not committed. It places the logo over the hero where Steam puts it by default, at the bottom left.
 
 ## Steam's rules to check in Steamworks
@@ -46,7 +49,7 @@ These are as reported; Steamworks' own pages decide.
 
 ## AI and rights
 
-- **The AI disclosure.** The painted images are made from an AI-generated painting. The hero shows the game's AI-generated figures and horses with its own Blender-built walls and code-built kit. The store page's AI disclosure covers both, through its art and 3D-model lines ([the draft](steam-ai-disclosure.md)).
+- **The AI disclosure.** The painted images are made from an AI-generated painting. The three renders show the game's AI-generated figures and horses with its own Blender-built walls and code-built kit. The store page's AI disclosure covers both, through its art and 3D-model lines ([the draft](steam-ai-disclosure.md)).
 - **The rights** are those of the sources, recorded in the [licence notices](LICENSE-NOTICES.md). Cinzel's licence allows the lettering in these images.
 
 ## Still to do
@@ -54,4 +57,3 @@ These are as reported; Steamworks' own pages decide.
 - **The owner's review:** composition and name. The store name is still to decide.
 - **Sizes and rules:** to check in Steamworks.
 - **Screenshots and the trailer:** after 0.40.0 and the owner's Gate 4 sign-off.
-- **Sharper portrait images, if wanted.** The vertical capsule and the library capsule could be rendered from the game like the hero, or drawn from new key art at a higher resolution, which would need a costed proposal first.

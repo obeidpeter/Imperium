@@ -6,7 +6,7 @@ import {DECORATIONS,TITLES} from '../src/data/soldier.js';
 import {ITEMS} from '../src/data/items.js';
 import {ACHIEVEMENTS} from '../src/data/achievements.js';
 import {KINDS,sourceKind,aiInventory,storeText,steamAiDisclosureSheet} from '../scripts/steam-ai-disclosure.mjs';
-import {STORE_ART,HERO,fileName,enlargement} from '../scripts/steam-store-art.mjs';
+import {STORE_ART,HERO,TALL,RENDER_SCENE,fileName,renderFile,enlargement} from '../scripts/steam-store-art.mjs';
 
 // The Steam store drafts (the Steam plan, S4): the AI-content disclosure, generated from the asset manifest, and the
 // store page's text, written from the guide. Both stay true to the game: these checks fail when it changes under them.
@@ -111,8 +111,14 @@ test('the store’s and the library’s images for Steamworks are each at Steam�
 
 test('every capsule and header carries the name, the library hero none, and no painted image enlarges the painting twice over',()=>{
   assert.ok(STORE_ART.filter(a=>/capsule|header/.test(a.id)).every(a=>a.name),'the name on every capsule and header');
-  const hero=STORE_ART.find(a=>a.id==='library_hero');
+  const hero=STORE_ART.find(a=>a.id==='library_hero'),tall=STORE_ART.filter(a=>['vertical_capsule','library_capsule'].includes(a.id));
   assert.ok(hero.render===HERO&&!hero.name,'the library hero is a render of the game, without text');
-  assert.ok(CHAPTERS.flatMap(c=>c.encounters).some(e=>e.id===HERO.scene),'the hero is rendered from an encounter the campaign plays');
+  assert.ok(tall.length===2&&tall.every(a=>a.render===TALL&&a.name),'the two tall capsules are renders of the game, with the name');
+  assert.ok(CHAPTERS.flatMap(c=>c.encounters).some(e=>e.id===RENDER_SCENE),'the renders show an encounter the campaign plays');
   for(const a of STORE_ART.filter(a=>a.crop))assert.ok(enlargement(a)<2,`${a.id}: ${enlargement(a).toFixed(2)}×`);
+});
+
+test('the renders the capsules are drawn from are kept, at their images’ sizes, so the name can be drawn again without rendering',async()=>{
+  for(const a of STORE_ART.filter(a=>a.render&&a.name))
+    assert.deepEqual(jpegSize(await readFile(new URL(`../${renderFile(a)}`,import.meta.url))),{width:a.width,height:a.height},renderFile(a));
 });

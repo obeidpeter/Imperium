@@ -6,24 +6,26 @@
 
 Drafts of the nine images Steamworks asks for under Store assets and Library assets, for the owner to review. They are made from the game's own art; nothing is generated.
 
-- **Seven are drawn from the oath painting,** the landing page's key art of the recruit above the Danube camp. They carry the name "IMPERIUM, From Recruit to Emperor", set in Cinzel under the SIL Open Font License, with the emblem of `icon.svg`:
-  - the header, small, main and vertical capsules;
+- **Five are drawn from the oath painting,** the landing page's key art of the recruit above the Danube camp:
+  - the header, small and main capsules;
   - the page background;
-  - the library's capsule and header.
+  - the library's header.
 
-  The painting is enlarged at most 1.93×, in the two portrait formats.
-- **The library hero is a render of the game.** It shows Chapter XII's finale before the Aurelian Walls, drawn by the game's own 3D stage:
-  - at its full 3840 × 1240;
-  - at High quality, from the encounter's legally reached start checkpoint;
-  - from the Horizon camera, drawn in, with the names hidden and no text.
+  The painting is enlarged at most 1.73×, in the page background.
+- **Three are renders of the game.** They show Chapter XII's finale before the Aurelian Walls, drawn by the game's own 3D stage:
+  - the library hero, at its full 3840 × 1240, with no text;
+  - the vertical capsule and the library capsule, at the owner's request: the formations before the walls, with the name.
+
+  Each is rendered at its own full size and High quality, from the encounter's legally reached start checkpoint, through the Horizon camera with the names hidden.
+- **The name,** "IMPERIUM, From Recruit to Emperor", is set in Cinzel under the SIL Open Font License, with the emblem of `icon.svg`. It is on every capsule and header.
 - **The library logo** is the name alone, on transparency, 1280 pixels wide.
 - **The files:**
   - the images are in `desktop/steam/store-art/`, at Steam's sizes as reported (to check in Steamworks);
-  - `node scripts/steam-store-art.mjs` remakes them, and `--hero` renders the hero again;
+  - `node scripts/steam-store-art.mjs` remakes them, and `--render` renders the three again. The two capsules' renders are kept before their name is drawn, in `art-source/store-art/`;
   - the font file and its licence are in `art-source/fonts/cinzel/`, a development file the game does not ship.
 - **The records:**
   - the release checklist, the Steam plan and the licence notices say where the images are and what they are made from;
-  - the AI disclosure draft says the painted images are AI-generated art and the hero shows the game's generated models.
+  - the AI disclosure draft says the painted images are AI-generated art and the renders show the game's generated models.
 
 **Checked:**
 - **Automated tests:** `npm test`, whose store tests check every image's size and the logo's transparency.
