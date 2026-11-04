@@ -376,7 +376,7 @@ export function createPanels(context){
   function showCredits(){
     const {showModal,desktopApp}=context();
     showModal('Art & credits',`<div class="panel-lead"><p class="eyebrow">AN ORIGINAL ROMAN CHRONICLE</p>`+
-      `<p>Imperium brings together an original fictional career, deterministic turn-based play, and locally bundled painted artwork.</p>`+
+      `<p>Imperium brings together an original fictional career, deterministic tactical play in real time with pause or in turns, and locally bundled painted artwork.</p>`+
       `</div>${section('Illustration & visual design','<p>Character portraits, settings, and unit atlases were generated for this project with OpenAI’s '+
       'image-generation tool, then prepared and compressed as local assets. No third-party source imagery was supplied. Historical references informed the '+
       'direction; their images were not copied.</p><p>No exclusive copyright or third-party licence ownership is asserted for the generated images. Detailed '+
