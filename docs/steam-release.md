@@ -53,6 +53,7 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
 - [ ] **The store page:**
   - the text: edit the draft in [steam-store-text.md](steam-store-text.md), then paste it, with its languages, tags, features and requirements;
   - capsule and library images: drafted in `desktop/steam/store-art/` ([steam-store-art.md](steam-store-art.md)). Check their sizes and the name in Steamworks, then upload them;
+  - the shortcut icon and the app icon, under Community and client icons: drafted in `desktop/steam/icons/` from the game's emblem ([steam-store-art.md](steam-store-art.md#the-icons)). Check their sizes in Steamworks, then upload them;
   - at least five screenshots;
   - a trailer.
 - [ ] **The content survey:**

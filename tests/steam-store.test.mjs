@@ -6,7 +6,7 @@ import {DECORATIONS,TITLES} from '../src/data/soldier.js';
 import {ITEMS} from '../src/data/items.js';
 import {ACHIEVEMENTS} from '../src/data/achievements.js';
 import {KINDS,sourceKind,aiInventory,storeText,steamAiDisclosureSheet} from '../scripts/steam-ai-disclosure.mjs';
-import {STORE_ART,HERO,TALL,RENDER_SCENE,fileName,renderFile,enlargement} from '../scripts/steam-store-art.mjs';
+import {STORE_ART,ICONS,HERO,TALL,RENDER_SCENE,fileName,renderFile,enlargement} from '../scripts/steam-store-art.mjs';
 
 // The Steam store drafts (the Steam plan, S4): the AI-content disclosure, generated from the asset manifest, and the
 // store page's text, written from the guide. Both stay true to the game: these checks fail when it changes under them.
@@ -116,6 +116,15 @@ test('every capsule and header carries the name, the library hero none, and no p
   assert.ok(tall.length===2&&tall.every(a=>a.render===TALL&&a.name),'the two tall capsules are renders of the game, with the name');
   assert.ok(CHAPTERS.flatMap(c=>c.encounters).some(e=>e.id===RENDER_SCENE),'the renders show an encounter the campaign plays');
   for(const a of STORE_ART.filter(a=>a.crop))assert.ok(enlargement(a)<2,`${a.id}: ${enlargement(a).toFixed(2)}×`);
+});
+
+test('Steam’s two icons are the game’s emblem at Steam’s sizes: run node scripts/steam-store-art.mjs',async()=>{
+  const dir=new URL('../desktop/steam/icons/',import.meta.url);
+  assert.deepEqual((await readdir(dir)).sort(),ICONS.map(fileName).sort(),'one file for each icon, and no other');
+  const shortcut=pngHeader(await readFile(new URL('shortcut_icon.png',dir)));
+  assert.deepEqual([shortcut.width,shortcut.height],[256,256],'the shortcut icon, 256 × 256');
+  assert.equal(shortcut.colourType,6,'the shortcut icon keeps its transparent corners');
+  assert.deepEqual(jpegSize(await readFile(new URL('app_icon.jpg',dir))),{width:184,height:184},'the app icon, a 184 × 184 JPEG');
 });
 
 test('the renders the capsules are drawn from are kept, at their images’ sizes, so the name can be drawn again without rendering',async()=>{

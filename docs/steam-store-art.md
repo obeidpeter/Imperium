@@ -1,8 +1,8 @@
 # The Steam store's and library's images: the drafts
 
-These are the drafts of the images Steamworks asks for under **Store assets** and **Library assets** ([the Steam plan](steam-plan.md), S4). `node scripts/steam-store-art.mjs` makes them from the game's own art, with nothing generated, into `desktop/steam/store-art/`. They are for the owner to review before uploading. The screenshots and the trailer come after 0.40.0, once the game they show is final.
+These are the drafts of the images Steamworks asks for under **Store assets** and **Library assets**, and of the two icons it asks for under **Community and client icons** ([the Steam plan](steam-plan.md), S4). `node scripts/steam-store-art.mjs` makes them from the game's own art, with nothing generated, into `desktop/steam/store-art/` and `desktop/steam/icons/`. They are for the owner to review before uploading. The screenshots and the trailer come after 0.40.0, once the game they show is final.
 
-The sizes come from Valve's [graphical assets page](https://partner.steamgames.com/doc/store/assets), as quoted in search results, and from guides that agree with it. This session could not open Valve's partner site itself. **Check each size in Steamworks before uploading.** Developers report that Steamworks sorts an upload by its pixel size and refuses one that is off by a pixel.
+The sizes come from Valve's [graphical assets page](https://partner.steamgames.com/doc/store/assets) and its [community and client icons page](https://partner.steamgames.com/doc/store/assets/community), as quoted in search results, and from guides that agree with them. This session could not open Valve's partner site itself. **Check each size in Steamworks before uploading.** Developers report that Steamworks sorts an upload by its pixel size and refuses one that is off by a pixel.
 
 ## The images
 
@@ -18,7 +18,18 @@ The sizes come from Valve's [graphical assets page](https://partner.steamgames.c
 | `library_hero.jpg` | Library: hero | 3840 × 1240 | A render of the game's 3D view of the finale, before the Aurelian Walls, with no text | Rendered at its own size |
 | `library_logo.png` | Library: logo | 1280 wide, on transparency | The name alone | Drawn at its own size |
 
-The painting enlarges well up to about 1.5×. Above that, in the page background, it softens, which suits a background that Steam darkens anyway. The two tall formats would have needed it nearly doubled, so they are rendered from the game instead, at the owner's request. The review sheet the script writes, `tests/visual-results/steam-store-art/review-sheet.png`, shows all nine together.
+The painting enlarges well up to about 1.5×. Above that, in the page background, it softens, which suits a background that Steam darkens anyway. The two tall formats would have needed it nearly doubled, so they are rendered from the game instead, at the owner's request. The review sheet the script writes, `tests/visual-results/steam-store-art/review-sheet.png`, shows all nine together, with the two icons.
+
+## The icons
+
+| File in `desktop/steam/icons/` | Steamworks slot | Size | Made from |
+| --- | --- | --- | --- |
+| `shortcut_icon.png` | Shortcut icon | 256 × 256, on transparency | The game's emblem, `icon.svg`, with its rounded corners |
+| `app_icon.jpg` | App icon | 184 × 184 | The same emblem, its corners filled with its own red, since a JPEG has no transparency |
+
+- **The emblem** is the game's own icon: the star over the standard, drawn by the project in code, not AI-generated ([the licence notices](LICENSE-NOTICES.md)). Each icon draws it at its own size from the vector file.
+- **The shortcut icon** is the one Steam puts on the player's desktop. By the same reports, Steam makes the Windows `.ico` from a PNG, and also accepts 512 × 512.
+- **A Mac icon** (ICNS) is asked for only for macOS shortcuts. The game is Windows first, so there is none yet.
 
 ## How they are made
 
@@ -40,7 +51,7 @@ The painting enlarges well up to about 1.5×. Above that, in the page background
 
 These are as reported; Steamworks' own pages decide.
 
-- **Exact sizes,** as above. A test (`tests/steam-store.test.mjs`) fails while a file is missing or not at its size.
+- **Exact sizes,** as above, the icons' included. A test (`tests/steam-store.test.mjs`) fails while a file is missing or not at its size.
 - **Capsules** carry the game's artwork and its name, and nothing else: no review quotes, awards, prices, discounts or "new".
 - **The library hero** carries no text or logo. Steam places the library logo over it, and Steamworks sets where. The hero's lower left is kept quiet for it.
 - **The library logo** is a PNG with transparency, 1280 pixels wide or 720 tall at most.
