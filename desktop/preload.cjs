@@ -7,7 +7,8 @@ let quitRequest=0;
 contextBridge.exposeInMainWorld('imperiumDesktop',Object.freeze({
   version:1,
   // The chronicle's save file: read(name) resolves to its text or null; write(name,text) resolves once it is on disk.
-  saves:Object.freeze({read:name=>ipcRenderer.invoke('saves:read',name),write:(name,text)=>ipcRenderer.invoke('saves:write',name,text)}),
+  saves:Object.freeze({read:name=>ipcRenderer.invoke('saves:read',name),readPrevious:name=>ipcRenderer.invoke('saves:read',name,true),
+    write:(name,text,options)=>ipcRenderer.invoke('saves:write',name,text,options)}),
   // The Menu's Quit: the window closes after the page has answered a quit request.
   quit:()=>ipcRenderer.send('app:quit'),
   // When the window is closing, handler() runs; the page answers quitReady(saved) once its save has settled.

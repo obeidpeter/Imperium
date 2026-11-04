@@ -44,9 +44,26 @@ const plans={
   'ch11-camp':['roman-archive-court','The Roman archive and petitioners courtyard','south','north','camp',.32,.66],
   'ch12-camp':['roman-command-court','The command courtyard beneath the Roman walls','south','north','camp',.32,.66]
 };
+/** The same gate the soldier uses, projected to its nearest boundary. Coordinates
+ * are centred presentation metres; no navigation cell or interaction is moved. */
+export function campEntrance(encounter,tileSize=2.5){
+  if(!/-camp$/.test(encounter.id))return null;
+  const gate=encounter.campPresentation?.interactions?.find(p=>p.id==='gate')??encounter.campPresentation?.places?.find(p=>p.id==='gate');
+  if(!gate||!Number.isFinite(gate.x)||!Number.isFinite(gate.z))return null;
+  const hx=encounter.width*tileSize/2,hz=encounter.height*tileSize/2;
+  const edge=[['south',hz-gate.z],['north',hz+gate.z],['east',hx-gate.x],['west',hx+gate.x]].sort((a,b)=>a[1]-b[1])[0][0];
+  const exit=encounter.campPresentation.interactions?.find(p=>p.kind==='exit');
+  // A drill or council door belongs inside camp. Only the road beyond the gate
+  // refines its lane; a distant interior interaction cannot redirect the frontage.
+  const nearExit=exit&&Math.hypot(exit.x-gate.x,exit.z-gate.z)<6?exit:gate;
+  return {edge,x:edge==='east'?hx:edge==='west'?-hx:Math.max(-hx+1,Math.min(hx-1,nearExit.x)),
+    z:edge==='south'?hz:edge==='north'?-hz:Math.max(-hz+1,Math.min(hz-1,nearExit.z))};
+}
 export function getEncounterStaging(encounter={}, {chapter=1,civic=encounter.kind==='contest',training=false}={}){
   const record=plans[encounter.id]??(training?plans['ch1-training']:plans[`ch${chapter}-${civic?'council':'road'}`])??[civic?'audience-court':'field-approach',civic?'The audience court':'The field approach',civic?'south':'west',civic?'north':'east',civic?'council':'checkpoint',.65,.68];
-  const [key,title,entranceEdge,landmarkEdge,form,yaw,pitch]=record;
+  const [key,title,plannedEntrance,plannedLandmark,form,yaw,pitch]=record;
+  const entrance=campEntrance(encounter),entranceEdge=entrance?.edge??plannedEntrance;
+  const landmarkEdge=entrance?({north:'south',south:'north',east:'west',west:'east'}[entrance.edge]):plannedLandmark;
   // Look along the approach toward the destination. An east-side camera
   // looked away from the eastern fortress, leaving only scattered props.
   const bearing=!civic&&!training?({east:-1.05,west:1.05,north:.32,south:2.8}[landmarkEdge]??yaw):yaw;
@@ -58,7 +75,8 @@ export function getEncounterStaging(encounter={}, {chapter=1,civic=encounter.kin
 export function stagingEdge(encounter,edge,tileSize=2.5,offset=0){
   const width=encounter.width,height=encounter.height,values=[];
   for(let y=0;y<height;y++)for(let x=0;x<width;x++)if(terrainAt(encounter,x,y)==='road'&&((edge==='west'&&x===0)||(edge==='east'&&x===width-1)||(edge==='north'&&y===0)||(edge==='south'&&y===height-1))){const p=gridToWorld({x,y},encounter,tileSize);values.push(edge==='west'||edge==='east'?p.z:p.x);}
-  const along=values.length?values.sort((a,b)=>Math.abs(a)-Math.abs(b)||a-b)[0]:0,hx=width*tileSize/2,hz=height*tileSize/2;
+  const entrance=campEntrance(encounter,tileSize),lane=entrance?.edge===edge?entrance:null;
+  const along=lane?(edge==='west'||edge==='east'?lane.z:lane.x):values.length?values.sort((a,b)=>Math.abs(a)-Math.abs(b)||a-b)[0]:0,hx=width*tileSize/2,hz=height*tileSize/2;
   return edge==='west'?{x:-hx-offset,z:along,angle:-Math.PI/2}:edge==='east'?{x:hx+offset,z:along,angle:Math.PI/2}:edge==='north'?{x:along,z:-hz-offset,angle:Math.PI}:{x:along,z:hz+offset,angle:0};
 }
 export function stagingRouteWeight(x,z,e,staging,tileSize=2.5){

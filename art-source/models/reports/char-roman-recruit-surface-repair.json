@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "inputSha256": "103f248e0d3d5e58ccc275208b1f4320c92ad05f63e8ee65eb4e2b7e3c85e79a",
+  "bytesBefore": 374204,
+  "paint": {
+    "source": "art-source/characters/surface-repair/roman-recruit-atlas.png",
+    "sourceSha256": "3ed1253408580e4fa34e2f16da951a5836266285bb980a8400da8b5c72b2a479",
+    "previousSha256": "e92028b1919503b337a947d08b7e6b8c6c1a88017c76acaecad15aec6d74cb93",
+    "sha256": "969ca9386a42300e3f789604712775db1d2f3f8d1be764a7131f0819ed542064",
+    "size": 1024,
+    "bytes": 492307,
+    "codec": "KTX2 UASTC / Zstandard",
+    "generatedSource": "art-source/characters/surface-repair/roman-recruit-projection-paint.png",
+    "generatedSourceSha256": "3178cb556c5bfbdae18f2f386703544f1dac7e25f12fa91775d0b312f7b08926",
+    "prompt": "art-source/characters/surface-repair/prompts.json",
+    "reference": "art-source/characters/surface-repair/roman-recruit-mesh-reference.png",
+    "referenceSha256": "bae8b44dfd088515b318b995daed6f8d191275b0caf827aca387b299db7baf37"
+  },
+  "uv": null,
+  "protectedGeometry": [
+    {
+      "name": "body",
+      "primitives": [
+        {
+          "indices": "e065fdc0b4915453301cbe4cf4b313016674507b33742b45d3a5888a267a6ed2",
+          "attributes": {
+            "POSITION": "6c1ecd0e907a219b3f3bdf02e79569ecf9a4365fc39da296da37d1fa93042a54",
+            "NORMAL": "85d58df6e67acf70aabdaca877356c531e43db0bd33f6d060d694ffa5ad5cfde",
+            "JOINTS_0": "b67fe2666b6095d300afce683c23db3ce8464fb3fbd35cff9ca5da8468c9ee2b",
+            "WEIGHTS_0": "5f15bac4a2eccf64e0752f7bb8f9b22099b6f72c19661c52c219af9981dc21c1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "body-overview",
+      "primitives": [
+        {
+          "indices": "b704bcb88bebb915c0c59360aa630a2b12de83e6eaf2b1e1f32e69923054f4f6",
+          "attributes": {
+            "POSITION": "1f7f602bbf49d83c8234974146ea59e86913c6762761862960d36b4372538f8d",
+            "NORMAL": "527502361ea074eae7e38841613f37e362c5a1fdc479eff6704d5edff5deeb44",
+            "COLOR_0": "80d063bb2689b0b6ba97c3f4c1c085fdddcd1a3d808995b5b2c1afcc9dd928f2",
+            "JOINTS_0": "0d9e60dbe58e3f064d2215235b6900c653eef62c23d4d146d1d704d2694a199a",
+            "WEIGHTS_0": "77bca7e534f1b878a2754254878f17edf17f345f2dabba06ed591b8f2ff489cb"
+          }
+        }
+      ]
+    }
+  ],
+  "texturesBefore": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 13106,
+      "sha256": "b7471da7f7be9592d94acb6cf92f5bded93ef71552ea1bb651c12cbb63182714"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 116136,
+      "sha256": "e92028b1919503b337a947d08b7e6b8c6c1a88017c76acaecad15aec6d74cb93"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 40694,
+      "sha256": "8eedb248cac53e289feb64a3097732fe2a23a34832a1660e2bc0fa1475aa5c1e"
+    }
+  ],
+  "outputGeometry": [
+    {
+      "name": "body",
+      "primitives": [
+        {
+          "indices": "e065fdc0b4915453301cbe4cf4b313016674507b33742b45d3a5888a267a6ed2",
+          "attributes": {
+            "POSITION": "6c1ecd0e907a219b3f3bdf02e79569ecf9a4365fc39da296da37d1fa93042a54",
+            "NORMAL": "85d58df6e67acf70aabdaca877356c531e43db0bd33f6d060d694ffa5ad5cfde",
+            "JOINTS_0": "b67fe2666b6095d300afce683c23db3ce8464fb3fbd35cff9ca5da8468c9ee2b",
+            "WEIGHTS_0": "5f15bac4a2eccf64e0752f7bb8f9b22099b6f72c19661c52c219af9981dc21c1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "body-overview",
+      "primitives": [
+        {
+          "indices": "b704bcb88bebb915c0c59360aa630a2b12de83e6eaf2b1e1f32e69923054f4f6",
+          "attributes": {
+            "POSITION": "1f7f602bbf49d83c8234974146ea59e86913c6762761862960d36b4372538f8d",
+            "NORMAL": "527502361ea074eae7e38841613f37e362c5a1fdc479eff6704d5edff5deeb44",
+            "COLOR_0": "80d063bb2689b0b6ba97c3f4c1c085fdddcd1a3d808995b5b2c1afcc9dd928f2",
+            "JOINTS_0": "0d9e60dbe58e3f064d2215235b6900c653eef62c23d4d146d1d704d2694a199a",
+            "WEIGHTS_0": "77bca7e534f1b878a2754254878f17edf17f345f2dabba06ed591b8f2ff489cb"
+          }
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 13106,
+      "sha256": "b7471da7f7be9592d94acb6cf92f5bded93ef71552ea1bb651c12cbb63182714"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 492307,
+      "sha256": "969ca9386a42300e3f789604712775db1d2f3f8d1be764a7131f0819ed542064"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 40694,
+      "sha256": "8eedb248cac53e289feb64a3097732fe2a23a34832a1660e2bc0fa1475aa5c1e"
+    }
+  ],
+  "sha256": "c637acae9d8147ee34e861a2f4f4be6c10664c35447516385f5a70693334675c",
+  "bytes": 750380
+}

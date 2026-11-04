@@ -12,7 +12,7 @@
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
-import {existsSync,readFileSync,readdirSync,rmSync,mkdirSync,writeFileSync} from 'node:fs';
+import {existsSync,readFileSync,readdirSync,rmSync,mkdirSync,writeFileSync,rmdirSync,renameSync} from 'node:fs';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {isAbsolute,join} from 'node:path';
 import {throttleCpu} from './ui-smoke-navigation.mjs';
@@ -38,6 +38,7 @@ const executable=packaged?packagedApp:electronPath,args=packaged?sandbox:[deskto
 const report={method:`Automated Electron (Playwright) on the ${packaged?'packaged app':'desktop build in the repository’s Electron'}, through the visible interface`,checks:[],requests:[],errors:[]};
 const outside=url=>!/^(app:\/\/imperium\/|data:|blob:|about:blank|devtools:)/.test(url);
 const env={...process.env,IMPERIUM_USER_DATA:userData,...(packaged?{}:{IMPERIUM_GAME_DIR:gameDir})};
+const liveApps=[];
 async function launch(label){
   let app;
   try{app=await pw._electron.launch({executablePath:executable,args,env});}
@@ -48,6 +49,7 @@ async function launch(label){
     const said=[run.error?.message,run.stdout,run.stderr].filter(Boolean).join('\n').split('\n').filter(line=>line.trim()).slice(-15).join('\n');
     throw new Error(`${label}: ${error.message}\nThe app, run by itself, said:\n${said||'(nothing)'}`);
   }
+  liveApps.push(app);
   const page=await app.firstWindow();page.setDefaultTimeout(60000);await throttleCpu(page);
   page.on('request',request=>{const url=request.url();if(outside(url))report.requests.push(`${label}: ${url}`);});
   page.on('pageerror',error=>report.errors.push(`${label}: ${error.message}`));
@@ -55,6 +57,17 @@ async function launch(label){
   return {app,page};
 }
 const closed=app=>new Promise(resolve=>app.process().once('exit',resolve));
+// Fault-injection uses a separate save name and namespace in the disposable test
+// profile. It never opens or changes the player's own chronicle.
+async function regressionStore(page,namespace='desktop-save-regression'){
+  return page.evaluate(async namespace=>{
+    const {createSaveStore}=await import('./src/ui/storage.js');
+    window.saveRegression?.close();
+    const files=window.imperiumDesktop.saves;
+    window.saveRegression=createSaveStore({namespace,mirror:{read:()=>files.read('regression'),readPrevious:()=>files.readPrevious('regression'),write:(text,options)=>files.write('regression',text,options)}});
+    const loaded=await window.saveRegression.loadLocal();window.regressionState=loaded.state;return loaded;
+  },namespace);
+}
 
 try{
   // 1. The app's own origin, bridge and wording.
@@ -110,9 +123,53 @@ try{
     assert.match(await page.locator('main').textContent(),new RegExp(report.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')),'The chronicle continues from its file');
     await page.screenshot({path:join(out,'relaunch.png')});
     report.checks.push('relaunched with only the save file, the title offers to continue the same chronicle');
+    await regressionStore(page);
+    await page.evaluate(async()=>{const G=await import('./src/core/game.js');window.regressionState=G.newGame('Desktop save regression');await window.saveRegression.saveLocal(window.regressionState);});
+    const file=join(userData,'saves','regression.json'),before=readFileSync(file,'utf8'),blocked=join(userData,'saves','regression.prev.json');
+    mkdirSync(blocked);
+    const failed=await page.evaluate(async()=>{const G=await import('./src/core/game.js');if(!G.soldierCommand(window.regressionState,{kind:'takeOff',place:'shield:0'}).ok)throw Error('Equipment command failed');try{await window.saveRegression.saveLocal(window.regressionState);return null;}catch(e){return e.code;}});
+    assert.equal(failed,'SAVE_FILE_UNAVAILABLE');assert.equal(readFileSync(file,'utf8'),before);
+    await app.close();rmdirSync(blocked);
+    report.checks.push('a real backup-file write failure preserves the previous disk save and retains the newer local equipment state');
+  }
+  {
+    const {app,page}=await launch('relaunch after failed save'),loaded=await regressionStore(page);
+    assert.equal(loaded.state.soldier.worn['shield:0'],undefined);assert.match(loaded.warning,/Recovered local progress/);
+    const file=join(userData,'saves','regression.json'),saved=readFileSync(file,'utf8');
+    assert.equal(JSON.parse(JSON.parse(saved).payload).soldier.worn['shield:0'],undefined);
+    report.checks.push('after a full app relaunch the newer local state wins over its unchanged old file and is written back safely');
+    const held=join(userData,'saves','regression-held.json');renameSync(file,held);mkdirSync(file);
+    try{
+      const unreadable=await regressionStore(page);assert.match(unreadable.fileProblem,/cannot be read/);
+      const code=await page.evaluate(async()=>{try{await window.saveRegression.saveLocal(window.regressionState);return null;}catch(e){return e.code;}});
+      assert.equal(code,'SAVE_FILE_UNAVAILABLE');assert.equal(readFileSync(held,'utf8'),saved);
+    }finally{rmdirSync(file);renameSync(held,file);}
+    report.checks.push('a real file-read error is surfaced without replacing the existing save');
+    await page.evaluate(()=>window.saveRegression.saveLocal(window.regressionState));
+    const retried=readFileSync(file,'utf8');assert.notEqual(retried,saved);
+    assert.equal(JSON.parse(retried).payload,JSON.parse(saved).payload);
+    report.checks.push('when the same file becomes readable again, saving resumes and acknowledges the new revision');
+    renameSync(file,held);mkdirSync(file);
+    try{assert.match((await regressionStore(page)).fileProblem,/cannot be read/);}
+    finally{rmdirSync(file);renameSync(held,file);}
+    // A valid external rollback while the read was blocked: it belongs to this disposable profile.
+    writeFileSync(file,saved);
+    const conflict=await page.evaluate(async()=>{try{await window.saveRegression.saveLocal(window.regressionState);return null;}catch(e){return e.message;}});
+    assert.match(conflict,/changed outside the game/);assert.equal(readFileSync(file,'utf8'),saved);
+    report.checks.push('if the unreadable file changed externally, retry keeps both local progress and the external file');
+    await page.keyboard.press('F11');
+    await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen().then(v=>!v));
+    await page.keyboard.press('Alt+Enter');
+    await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen());
+    await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].minimize());
+    assert.equal(await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isMinimized()),true);
+    await app.evaluate(({BrowserWindow})=>{const win=BrowserWindow.getAllWindows()[0];win.restore();win.focus();});
+    assert.equal(await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isMinimized()),false);
+    report.checks.push('F11 and Alt+Enter toggle native fullscreen; the packaged window survives minimize and restore');
     await app.close();
   }
   assert.deepEqual(report.requests,[],'No request leaves app://imperium');
   assert.deepEqual(report.errors,[],'No page errors');
-}finally{writeFileSync(join(out,'report.json'),JSON.stringify(report,null,2));}
+}catch(error){report.failure=String(error.stack??error);throw error;}
+finally{for(const app of liveApps)await app.close().catch(()=>{});writeFileSync(join(out,'report.json'),JSON.stringify(report,null,2));}
 console.log(JSON.stringify(report,null,2));

@@ -32,7 +32,8 @@ export function networkConnection(){
 export function desktopSaveMirror(){
   const saves=platformKind()==='desktop'?desktopBridge()?.saves:null;
   if(!saves||typeof saves.read!=='function'||typeof saves.write!=='function')return null;
-  return {read:()=>saves.read('campaign'),write:text=>saves.write('campaign',text)};
+  return {read:()=>saves.read('campaign'),readPrevious:()=>saves.readPrevious?.('campaign')??null,
+    write:(text,options)=>saves.write('campaign',text,options)};
 }
 
 // The edition (the Steam plan, S2): the free web demo plays the opening chapters and ends at the last one's promotion;

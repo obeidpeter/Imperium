@@ -27,12 +27,14 @@ test('sixteen refined bodies preserve paint, identity coordinates, contact weigh
   assert.equal(assets.length,16);
   let growth=0,addedTriangles=0;
   for(const asset of assets){
-    const bytes=await file(asset.path),report=JSON.parse(await file(asset.source.refinement.report)),gltf=await parseCharacter(bytes);
-    assert.equal(digest(bytes),report.sha256);assert.equal(bytes.length,report.bytes);assert.equal(asset.export.sha256,report.sha256);
+    const bytes=await file(asset.path),report=JSON.parse(await file(asset.source.refinement.report)),surface=asset.source.surfaceRepair?JSON.parse(await file(asset.source.surfaceRepair.report)):null,gltf=await parseCharacter(bytes);
+    if(surface)assert.equal(surface.inputSha256,report.sha256,'Surface repair follows the preserved refinement record');
+    assert.equal(digest(bytes),(surface??report).sha256);assert.equal(bytes.length,(surface??report).bytes);assert.equal(asset.export.sha256,(surface??report).sha256);
     growth+=report.bytes-report.bytesBefore;
     const jsonLength=bytes.readUInt32LE(12),json=JSON.parse(bytes.subarray(20,20+jsonLength).toString()),binStart=28+jsonLength;
-    assert.deepEqual(json.images.map(im=>{const v=json.bufferViews[im.bufferView],image=bytes.subarray(binStart+(v.byteOffset??0),binStart+(v.byteOffset??0)+v.byteLength);return {mimeType:im.mimeType,bytes:image.length,sha256:digest(image)};}),report.textures,'Original compressed image payloads survive byte for byte');
+    assert.deepEqual(json.images.map(im=>{const v=json.bufferViews[im.bufferView],image=bytes.subarray(binStart+(v.byteOffset??0),binStart+(v.byteOffset??0)+v.byteLength);return {mimeType:im.mimeType,bytes:image.length,sha256:digest(image)};}),(surface??report).textures,'Compressed image payloads match their current provenance record');
     for(const [i,m]of report.meshes.entries()){
+      if(surface?.overview?.mesh===m.mesh)continue; // Rebuilt low-detail topology is checked against its intact near source separately.
       const mesh=gltf.scene.getObjectByName(m.mesh),g=mesh.geometry,p=rows(g.attributes.position),normals=rows(g.attributes.normal),j=rows(g.attributes.skinIndex),w=rows(g.attributes.skinWeight),protectedSource=report.protectedGeometry[i];
       assert.equal(p.length,m.vertices);assert.equal(g.index.count/3,m.triangles);addedTriangles+=m.triangles-m.sourceTriangles;
       assert.equal(digest(p.slice(0,m.sourceVertices).map(([x,y])=>[x,y])),protectedSource.identityPlane);

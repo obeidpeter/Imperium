@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {gzipSync,gunzipSync} from 'node:zlib';
 import {readFileSync} from 'node:fs';
-import {newGame,choose,startEncounter,endTurn,serialize,deserialize} from '../src/core/game.js';
+import {newGame,choose,startEncounter,endTurn,serialize,deserialize,soldierCommand} from '../src/core/game.js';
 import {CONFIG} from '../src/config.js';
 import {createSaveStore,saveCode,restoreCode} from '../src/ui/storage.js';
 
@@ -344,4 +344,104 @@ test('DESK-05 a save file that cannot be written is reported, while the store ke
   await assert.rejects(desk.saveLocal(newGame('Written')),error=>error.code==='SAVE_FILE_UNAVAILABLE'&&/save file could not be written/.test(error.message));
   assert.equal((await createSaveStore(env.options).loadLocal()).state.name,'Written','The profile kept the save');
   file.fail=false;await desk.saveLocal(newGame('Written'));assert.equal(JSON.parse(file.text).payload,env.idb.payload,'The next save writes the file');
+}));
+
+for(const backend of ['both','idb','local'])test(`DESK-06 failed file writes survive relaunch within one checkpoint (${backend})`,async()=>withPlatform(async env=>{
+  env.localFails=backend==='idb';env.idbOpenFails=backend==='local';
+  const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror}),state=newGame();
+  await desk.saveLocal(state);const old=file.text;
+  assert.equal(soldierCommand(state,{kind:'takeOff',place:'shield:0'}).ok,true);
+  file.fail=true;await assert.rejects(desk.saveLocal(state),{code:'SAVE_FILE_UNAVAILABLE'});
+  assert.equal(file.text,old);file.fail=false;
+  const relaunched=createSaveStore({...env.options,mirror:file.mirror}),loaded=await relaunched.loadLocal();
+  assert.deepEqual(loaded.state,state,'The latest equipment state is retained, not replaced by the old file');
+  assert.match(loaded.warning,/Recovered local progress/);
+  assert.equal(JSON.parse(file.text).payload,serialize(state),'The failed write is safely retried');
+  assert.equal(JSON.parse(file.text).fileBase,undefined,'Local sync bookkeeping is not the cloud file');
+}));
+
+test('DESK-07 read errors do not masquerade as missing files at load or save',async()=>withPlatform(async env=>{
+  const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror}),state=newGame('Local');
+  await desk.saveLocal(state);const old=file.text,writes=file.writes;
+  const failing={...file.mirror,read:async()=>{throw Error('sharing violation');}};
+  const relaunched=createSaveStore({...env.options,mirror:failing}),loaded=await relaunched.loadLocal();
+  assert.equal(loaded.state.name,'Local');assert.match(loaded.fileProblem,/cannot be read/);
+  assert.equal(file.writes,writes);assert.equal(file.text,old);
+  soldierCommand(state,{kind:'takeOff',place:'shield:0'});
+  await assert.rejects(relaunched.saveLocal(state),{code:'SAVE_FILE_UNAVAILABLE'});
+  assert.equal(file.text,old);assert.equal(file.writes,writes);
+  assert.deepEqual((await createSaveStore(env.options).loadLocal()).state,state,'Local progress is still durable');
+}));
+
+test('DESK-08 a changed cloud file preserves even a same-checkpoint local alternative through further saves',async()=>withPlatform(async env=>{
+  const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror}),state=newGame();
+  await desk.saveLocal(state);const cloud=file.text;
+  soldierCommand(state,{kind:'takeOff',place:'shield:0'});await desk.saveLocal(state);
+  file.text=cloud;
+  const relaunched=createSaveStore({...env.options,mirror:file.mirror}),loaded=await relaunched.loadLocal();
+  assert.ok(loaded.state.soldier.worn['shield:0']);
+  let history=await relaunched.listRecoverySaves();assert.equal(history.length,1);
+  assert.match(history[0].source,/Local copy/);assert.deepEqual(await relaunched.readRecoverySave(history[0].id),state);
+  await relaunched.saveLocal(loaded.state);history=await relaunched.listRecoverySaves();
+  assert.deepEqual(await relaunched.readRecoverySave(history[0].id),state);
+}));
+
+test('DESK-09 a failed write followed by an unrelated cloud update keeps both versions',async()=>withPlatform(async env=>{
+  const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror}),state=newGame();
+  await desk.saveLocal(state);soldierCommand(state,{kind:'takeOff',place:'shield:0'});
+  file.fail=true;await assert.rejects(desk.saveLocal(state));file.fail=false;
+  // A distinct cloud writer, represented by a valid envelope from another isolated store.
+  const otherLocal=new Map(),other=createSaveStore({...env.options,indexedDB:null,localStorage:{getItem:k=>otherLocal.get(k),setItem:(k,v)=>otherLocal.set(k,v)},mirror:file.mirror});
+  await other.saveLocal(newGame('Other PC'));
+  const relaunched=createSaveStore({...env.options,mirror:file.mirror});
+  assert.equal((await relaunched.loadLocal()).state.name,'Other PC');
+  const history=await relaunched.listRecoverySaves();
+  assert.deepEqual(await relaunched.readRecoverySave(history.find(e=>e.source?.includes('Local')).id),state);
+}));
+
+test('DESK-10 a live external change is not overwritten by the next autosave',async()=>withPlatform(async env=>{
+  const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror}),state=newGame();
+  await desk.saveLocal(state);file.text='external edit';
+  await assert.rejects(desk.saveLocal(state),/changed outside the game/);assert.equal(file.text,'external edit');
+}));
+
+test('DESK-11 a valid previous file recovers an empty profile without rotating the corrupt primary over it',async()=>withPlatform(async env=>{
+  const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror}),state=newGame('Backup');
+  await desk.saveLocal(state);const backup=file.text;env.idb=null;env.local.clear();file.text='broken primary';
+  let options;const mirror={...file.mirror,readPrevious:async()=>backup,write:async(text,opts)=>{options=opts;await file.mirror.write(text);}};
+  const relaunched=createSaveStore({...env.options,mirror}),loaded=await relaunched.loadLocal();
+  assert.deepEqual(loaded.state,state);assert.match(loaded.warning,/previous save file/);assert.match(loaded.fileProblem,/damaged/);
+  assert.equal(file.text,'broken primary');
+  const preserved=await relaunched.listUnreadableSaves();assert.equal(await relaunched.readUnreadableSave(preserved[0].index),'broken primary');
+  await relaunched.saveLocal(state);assert.equal(options.keepPrevious,true);assert.equal(options.expected,'broken primary');
+}));
+
+test('DESK-12 missing-file write failures are surfaced during load',async()=>withPlatform(async env=>{
+  await createSaveStore(env.options).saveLocal(newGame());const file=fakeFile();file.fail=true;
+  const loaded=await createSaveStore({...env.options,mirror:file.mirror}).loadLocal();
+  assert.ok(loaded.state);assert.match(loaded.fileProblem,/could not be written/);
+}));
+
+for(const changed of [false,true])test(`DESK-13 after a startup read error, retry ${changed?'protects an external change':'writes to the unchanged file'}`,async()=>withPlatform(async env=>{
+  const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror}),state=newGame('Earlier file');
+  await desk.saveLocal(state);const rollback=file.text;
+  state.name='Local progress';await desk.saveLocal(state);
+  let blocked=true;
+  const mirror={...file.mirror,read:async()=>{if(blocked)throw Error('sharing violation');return file.text;}};
+  const relaunched=createSaveStore({...env.options,mirror});
+  assert.match((await relaunched.loadLocal()).fileProblem,/cannot be read/);
+  assert.ok(soldierCommand(state,{kind:'takeOff',place:'shield:0'}).ok);
+  await assert.rejects(relaunched.saveLocal(state),{code:'SAVE_FILE_UNAVAILABLE'});
+  blocked=false;if(changed)file.text=rollback;
+  if(changed){
+    await assert.rejects(relaunched.saveLocal(state),/changed outside the game/);
+    assert.equal(file.text,rollback,'The recovered external file is never overwritten');
+    assert.deepEqual((await createSaveStore(env.options).loadLocal()).state,state,'New local progress stays durable');
+    const reconciled=createSaveStore({...env.options,mirror:file.mirror});
+    assert.equal((await reconciled.loadLocal()).state.name,'Earlier file');
+    const local=(await reconciled.listRecoverySaves()).find(e=>e.source?.includes('Local'));
+    assert.ok(local);assert.deepEqual(await reconciled.readRecoverySave(local.id),state);
+  }else{
+    await relaunched.saveLocal(state);assert.equal(JSON.parse(file.text).payload,serialize(state));
+  }
 }));

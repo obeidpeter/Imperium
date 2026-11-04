@@ -33,9 +33,9 @@ For development:
   `src/ui/platform.js` is the game's side of it. The desktop build records `platform: 'desktop'`, and without the bridge a desktop build behaves as the web.
 - **Saves.** Every save is written through to `saves/campaign.json` in the app's folder: `%APPDATA%\Imperium` on Windows, `~/.config/Imperium` on Linux.
   - The write is atomic, and the previous copy is kept as `campaign.prev.json`.
-  - On the desktop the file is the chronicle. Loading adopts it when it differs from the app's own store, and keeps what it replaces as a recovery checkpoint (`src/ui/storage.js`).
+  - Loading reconciles the file with local progress. A failed local write is recovered when its old file is unchanged; an externally changed file is adopted with the displaced local state retained in recovery, even at the same checkpoint (`src/ui/storage.js`).
   - A file that cannot be written is reported, while the store keeps the save.
-  - An unreadable file is set aside for export, like any unreadable save.
+  - A temporary file-read error stops writes without replacing the file. A corrupt file is preserved for export, and a valid previous copy remains available for recovery. File writes compare the expected version before replacement.
   - A chronicle from the browser or the free demo comes by its save code: the first title page offers **Import a chronicle from the browser**.
 - **Closing.** When the window closes, the app asks the page to save first and closes on its answer. If the save failed, the player chooses between quitting anyway and keeping playing. The Menu's **Quit to desktop** closes the same way.
 - **The window.**

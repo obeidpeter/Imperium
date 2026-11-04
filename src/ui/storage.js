@@ -6,6 +6,8 @@ const HISTORY_LIMIT=3;
 const conflict=()=>Object.assign(new Error('A newer save exists in another tab. Reload or explicitly take over before continuing.'),{code:'SAVE_CONFLICT'});
 const unavailable=()=>Object.assign(new Error('Safe browser storage is unavailable. Continue in memory and export a save code to keep this chronicle.'),{code:'SAVE_UNAVAILABLE'});
 const fileUnavailable=()=>Object.assign(new Error('The save file could not be written. Progress is kept in the app; export a save code to keep a copy.'),{code:'SAVE_FILE_UNAVAILABLE'});
+const fileUnreadable=()=>Object.assign(new Error('The save file cannot be read right now. It has not been replaced. Your local progress is kept; try saving again or export a save code.'),{code:'SAVE_FILE_UNAVAILABLE'});
+const fileChanged=()=>Object.assign(new Error('The save file changed outside the game. Your local progress is kept. Reopen the game to load the file and review both copies in recovery records.'),{code:'SAVE_FILE_UNAVAILABLE'});
 function checksum(text){let h=2166136261;for(let i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(16);}
 function rawObject(raw){try{return typeof raw==='string'?JSON.parse(raw):raw;}catch{return null;}}
 function unpack(raw){try{const e=rawObject(raw);if(!e||e.format!==1||typeof e.payload!=='string'||e.checksum!==checksum(e.payload))return null;return {...e,state:deserialize(e.payload)};}catch{return null;}}
@@ -15,10 +17,12 @@ function fingerprint(e){return e?e.sequence+':'+e.checksum+':'+(e.writerId||'leg
 function checkpoint(state){return JSON.stringify([state.chapter,state.phase,state.encounterIndex,state.encounter?.id||null,state.encounter?.status||null,Object.entries(state.decisions).sort(),state.oath]);}
 function campaign(e){return e.campaignId||'legacy:'+e.state.seed+':'+e.state.name;}
 function recoveryId(e){return e.id||e.sequence+':'+e.checksum;}
-function historyKey(e){return campaign(e)+':'+(e.checkpoint||checkpoint(e.state));}
-function newest(values){return values.filter(Boolean).sort((a,b)=>b.sequence-a.sequence||String(b.savedAt||'').localeCompare(String(a.savedAt||'')))[0]||null;}
+function historyKey(e){return e.recoveryKey||campaign(e)+':'+(e.checkpoint||checkpoint(e.state));}
+function newest(values){return values.filter(Boolean).sort((a,b)=>b.sequence-a.sequence||String(b.savedAt||'').localeCompare(String(a.savedAt||''))||Number(b.fileBase===fingerprint(b))-Number(a.fileBase===fingerprint(a)))[0]||null;}
 function historyFrom(raw){const values=rawObject(raw)?.recovery;return Array.isArray(values)?values.slice(0,HISTORY_LIMIT).map(localEnvelope).filter(Boolean):[];}
-function mergedHistory(raws,extra=[],exclude=null){const candidates=[...extra,...raws.flatMap(historyFrom)].filter(Boolean).sort((a,b)=>b.sequence-a.sequence),seen=new Set(),result=[];for(const e of candidates){const key=historyKey(e);if(exclude&&(key===historyKey(exclude)||e.payload===exclude.payload)||seen.has(key))continue;seen.add(key);result.push(compact(e));if(result.length===HISTORY_LIMIT)break;}return result;}
+function mergedHistory(raws,extra=[],exclude=null){const candidates=[...extra,...raws.flatMap(historyFrom)].filter(Boolean).sort((a,b)=>Number(!!b.recoveryKey)-Number(!!a.recoveryKey)||b.sequence-a.sequence),seen=new Set(),payloads=new Set(),result=[];for(const e of candidates){const key=historyKey(e);if(exclude&&(key===historyKey(exclude)||e.payload===exclude.payload)||seen.has(key)||payloads.has(e.payload))continue;seen.add(key);payloads.add(e.payload);result.push(compact(e));if(result.length===HISTORY_LIMIT)break;}return result;}
+const fileRecovery=(e,kind)=>({...e,recoveryKey:`file:${fingerprint(e)}`,recoveryKind:kind});
+function fileText(envelope){const {fileBase,recoveryKey,recoveryKind,...saved}=envelope;return JSON.stringify(saved);}
 function safeGlobal(name){try{return globalThis[name];}catch{return undefined;}}
 // A stored record that no longer validates (damaged or from an incompatible
 // edition) is set aside before any write replaces it, never silently dropped.
@@ -38,8 +42,8 @@ export function createSaveStore(options={}){
   const nav='navigator'in options?options.navigator:safeGlobal('navigator');
   const Channel='BroadcastChannel'in options?options.BroadcastChannel:safeGlobal('BroadcastChannel');
   // The desktop app's save file (platform.js desktopSaveMirror): {read(), write(text)}, both async. The file is what
-  // Steam Cloud syncs and what a reinstall restores, so on the desktop it is the chronicle: loading adopts it when it
-  // differs from the store, keeping what it replaces as a recovery checkpoint, and every save writes it through.
+  // Steam Cloud syncs and what a reinstall restores. A changed file is adopted with a recovery copy; a newer
+  // pending local write wins against its unchanged file base. Every save attempts to write through.
   // The store itself (IndexedDB and localStorage in the app's own profile) keeps its locks, history and quarantine.
   const mirror='mirror'in options?options.mirror:null;
   const sessionId=globalThis.crypto?.randomUUID?.()||Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
@@ -47,12 +51,12 @@ export function createSaveStore(options={}){
   let useLocks=options.useWebLocks!==false&&typeof nav?.locks?.request==='function';
   const lockName=namespace?namespace+':save':'sacramentum-save';
   const channelName=namespace?namespace+':changes':'sacramentum-save-changes';
-  let dbPromise,sequence=0,observed='',campaignId=null,persistAsked=false,channel=null,closed=false;
+  let dbPromise,sequence=0,observed='',campaignId=null,persistAsked=false,channel=null,closed=false,observedFile,deferredFileBase;
   const listeners=new Set();
   function localRaw(){try{return ls?.getItem(key)||null;}catch{return null;}}
   const quarantineKey=key+'.unreadable';
   function localQuarantine(){try{return quarantined(JSON.parse(ls?.getItem(quarantineKey)||'[]'));}catch{return [];}}
-  function keepLocal(raw,source){if(!unreadable(raw))return;const list=withQuarantine(localQuarantine(),raw,source);try{const text=JSON.stringify(list);if(text.length<=QUARANTINE_LOCAL_LIMIT)ls?.setItem(quarantineKey,text);}catch{}}
+  function keepLocal(raw,source){if(!unreadable(raw))return true;const list=withQuarantine(localQuarantine(),raw,source);try{const text=JSON.stringify(list);if(ls&&text.length<=QUARANTINE_LOCAL_LIMIT){ls.setItem(quarantineKey,text);return true;}}catch{}return false;}
   async function database(){
     if(!idb||closed)return null;
     return dbPromise??=new Promise(resolve=>{try{
@@ -67,24 +71,82 @@ export function createSaveStore(options={}){
     return new Promise(resolve=>{try{const tx=db.transaction('saves'),r=tx.objectStore('saves').get('campaign');r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>resolve(null);tx.onabort=()=>resolve(null);}catch{dbPromise=null;resolve(null);}});
   }
   async function records(){return [localRaw(),await idbRaw()];}
-  async function mirrorRaw(){if(!mirror)return null;try{return await mirror.read()||null;}catch{return null;}}
-  async function writeMirror(envelope){if(!mirror)return true;try{await mirror.write(JSON.stringify(envelope));return true;}catch{return false;}}
+  async function mirrorRead(previous=false){
+    if(!mirror||(previous&&typeof mirror.readPrevious!=='function'))return {kind:'missing',raw:null};
+    try{const raw=await (previous?mirror.readPrevious():mirror.read());
+      if(raw===null||raw===undefined)return {kind:'missing',raw:null};
+      const envelope=localEnvelope(raw);return {kind:envelope?'valid':'invalid',raw,envelope};
+    }catch{return {kind:'error'};}
+  }
+  async function preserveFile(raw,source='file'){
+    const local=keepLocal(raw,source),db=await database();if(!db)return local;
+    const kept=await new Promise(resolve=>{try{const tx=db.transaction('saves','readwrite'),s=tx.objectStore('saves'),r=s.get('unreadable');
+      r.onsuccess=()=>s.put(withQuarantine(quarantined(r.result),raw,source),'unreadable');
+      tx.oncomplete=()=>resolve(true);tx.onabort=()=>resolve(false);tx.onerror=()=>{};
+    }catch{resolve(false);}});return kept||local;
+  }
+  async function writeMirror(envelope,disk){
+    if(!mirror)return true;
+    if(disk.kind==='error')throw fileUnreadable();
+    // A failed startup read has not adopted the file. Retry only against the last known base;
+    // otherwise reopening must reconcile it and keep the local alternative before any replacement.
+    if(deferredFileBase!==undefined&&(deferredFileBase===null||!['valid','missing'].includes(disk.kind)||deferredFileBase!==fingerprint(disk.envelope)))throw fileChanged();
+    if(observedFile!==undefined&&disk.raw!==observedFile)throw fileChanged();
+    if(disk.kind==='invalid'&&!await preserveFile(disk.raw))throw fileUnreadable();
+    const text=fileText(envelope);
+    try{await mirror.write(text,{expected:disk.raw,keepPrevious:disk.kind==='invalid'});observedFile=text;deferredFileBase=undefined;}catch{return false;}
+    await markFileSynced(envelope);return true;
+  }
+  async function markFileSynced(envelope){
+    // Acknowledge only this revision, without replacing a later save or its recovery records.
+    // Persisting the acknowledgement distinguishes a cloud rollback from a failed local write.
+    const expected=fingerprint(envelope),db=await database();
+    if(db)await new Promise(resolve=>{try{const tx=db.transaction('saves','readwrite'),s=tx.objectStore('saves'),r=s.get('campaign');
+      r.onsuccess=()=>{const current=localEnvelope(r.result);if(current&&fingerprint(current)===expected)s.put({...rawObject(r.result),fileBase:expected},'campaign');};
+      tx.oncomplete=()=>resolve();tx.onabort=()=>resolve();tx.onerror=()=>{};
+    }catch{resolve();}});
+    try{const raw=localRaw(),current=localEnvelope(raw);if(current&&fingerprint(current)===expected)ls?.setItem(key,JSON.stringify({...rawObject(raw),fileBase:expected}));}catch{}
+  }
   // Put an envelope as the store's current record as it is (adopting the file): no new sequence, writer or history.
   async function putEnvelope(envelope){
     const db=await database();
-    if(db)await new Promise(resolve=>{try{const tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(envelope,'campaign');tx.oncomplete=()=>resolve();tx.onabort=()=>resolve();}catch{resolve();}});
-    try{ls?.setItem(key,JSON.stringify(envelope));}catch{}
+    let kept=false;
+    if(db)kept=await new Promise(resolve=>{try{const tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(envelope,'campaign');tx.oncomplete=()=>resolve(true);tx.onabort=()=>resolve(false);tx.onerror=()=>{};}catch{resolve(false);}});
+    try{if(ls){ls.setItem(key,JSON.stringify(envelope));kept=true;}}catch{}
+    return kept;
   }
-  // The file wins when it differs from the store: Steam Cloud's copy, or a reinstall's. An unreadable file is set
-  // aside like any unreadable record. Returns whether the file existed.
+  // Reconcile file and local progress without mistaking a failed write for a cloud update.
+  // Corrupt files are set aside; temporary read errors leave the file untouched.
   async function adoptMirror(){
-    const raw=await mirrorRaw();if(!raw)return false;
-    const file=localEnvelope(raw);if(!file){keepLocal(raw,'file');return true;}
-    const raws=await records(),current=newest(raws.map(localEnvelope));
-    if(current&&fingerprint(current)===fingerprint(file))return true;
-    const {state:_state,...saved}=file;
-    await putEnvelope({...saved,recovery:mergedHistory([raw,...raws],current?[current]:[],file)});
-    return true;
+    if(!mirror)return {};
+    const disk=await mirrorRead(),raws=await records(),current=newest(raws.map(localEnvelope));
+    if(disk.kind==='error'){
+      if(observedFile===undefined&&deferredFileBase===undefined)deferredFileBase=current?.fileBase??null;
+      return {fileProblem:fileUnreadable().message};
+    }
+    observedFile=disk.raw;deferredFileBase=undefined;
+    const previous=await mirrorRead(true),backup=previous.envelope;
+    if(disk.kind==='invalid')await preserveFile(disk.raw);
+    if(previous.kind==='invalid')await preserveFile(previous.raw,'file backup');
+    const file=disk.envelope;
+    // A pending local write wins only against the exact file it was based on. A changed cloud file
+    // still wins, with the displaced local payload preserved even within the same checkpoint.
+    const pending=current&&typeof current.fileBase==='string'&&current.fileBase===fingerprint(file)&&fingerprint(current)!==fingerprint(file);
+    const selected=pending?current:file||current||backup;
+    if(!selected)return disk.kind==='invalid'?{fileProblem:'The save file is damaged or incompatible. Restore a save code or start a new chronicle; the original file is preserved.'}:{};
+    const alternatives=[];
+    if(file&&current&&selected===file&&file.payload!==current.payload)alternatives.push(fileRecovery(current,'Local copy before file recovery'));
+    if(backup&&backup.payload!==selected.payload)alternatives.push(fileRecovery(backup,'Previous save file'));
+    const {state:_state,...saved}=selected;
+    const adopted={...saved,recovery:mergedHistory([disk.raw,...raws],alternatives,selected)};
+    if(!await putEnvelope(adopted))return {fileProblem:'The save file could not be loaded into local storage. Its original copy has not been changed.'};
+    const warning=pending?'Recovered local progress that had not reached the save file.':!file&&selected===backup?'Recovered the previous save file.':alternatives.some(e=>e.recoveryKind.startsWith('Local'))?'Loaded the changed save file. Your other local progress is available in recovery records.':null;
+    if(disk.kind==='invalid')return {warning,fileProblem:'The current save file is damaged. Your recovered progress is available; the original will be preserved when you save.'};
+    if(pending||disk.kind==='missing'){
+      try{if(!await writeMirror(adopted,disk))return {warning,fileProblem:fileUnavailable().message};}
+      catch(error){return {warning,fileProblem:error.message};}
+    }
+    return {warning};
   }
   function adopt(e){sequence=e.sequence;observed=fingerprint(e);campaignId=campaign(e);}
   function listen(){
@@ -102,6 +164,7 @@ export function createSaveStore(options={}){
     const nextCampaign=settings.takeover===takeoverToken?campaign(current):freshCampaign?sessionId+':'+Date.now()+':'+(current?.sequence||0):(campaignId||campaign(current));
     const next={format:1,sequence:Math.max(sequence,current?.sequence||0,...raws.flatMap(historyFrom).map(e=>e.sequence))+1,
       checksum:checksum(payload),savedAt:new Date().toISOString(),payload,writerId:sessionId,campaignId:nextCampaign,checkpoint:checkpoint(state)};
+    if(mirror)next.fileBase=settings.fileBase??current?.fileBase??'';
     next.id=next.sequence+':'+next.checksum+':'+sessionId;
     const previous=raws.map(localEnvelope).filter(Boolean);
     // One representative per checkpoint, never three adjacent turn autosaves.
@@ -131,23 +194,27 @@ export function createSaveStore(options={}){
     });
   }
   async function loadLocal(){
-    const hadFile=await adoptMirror();
+    const fileStatus=await adoptMirror();
     const raws=await records(),current=newest(raws.map(localEnvelope)),recoveries=mergedHistory(raws);
-    // A chronicle the store has but the file lacks (the first launch with files, or a deleted file) is written out.
-    if(current&&mirror&&!hadFile){const {state:_state,...saved}=current;await writeMirror({...saved,recovery:mergedHistory(raws,[],current)});}
-    if(current){adopt(current);return {state:current.state,error:null,recoveryAvailable:recoveries.length};}
-    return {state:null,error:raws.some(Boolean)?'The current chronicle is damaged or incompatible. Review recovery checkpoints or restore a save code.':null,recoveryAvailable:recoveries.length};
+    if(current){adopt(current);return {state:current.state,error:null,recoveryAvailable:recoveries.length,...fileStatus};}
+    return {state:null,error:raws.some(Boolean)?'The current chronicle is damaged or incompatible. Review recovery checkpoints or restore a save code.':null,recoveryAvailable:recoveries.length,...fileStatus};
   }
   async function saveLocal(state,settings={}){
     // Capture and validate before asynchronous persistence; never mutate caller state.
     const payload=serialize(state);deserialize(payload);
     const write=async(locked=false)=>{
+      const disk=mirror?await mirrorRead():null;
+      const saveSettings={...settings};
+      // On a read failure retain the last known base, and save locally before reporting the file problem.
+      if(mirror&&deferredFileBase!==undefined){if(typeof deferredFileBase==='string')saveSettings.fileBase=deferredFileBase;}
+      else if(mirror&&disk.kind!=='error'&&(observedFile===undefined||observedFile===disk.raw))saveSettings.fileBase=fingerprint(disk.envelope);
+      else if(mirror&&observedFile!==undefined)saveSettings.fileBase=fingerprint(localEnvelope(observedFile));
       keepLocal(localRaw(),'localStorage');
-      let next=await atomicIDB(payload,settings);
+      let next=await atomicIDB(payload,saveSettings);
       if(!next){
         // localStorage has no cross-tab compare-and-swap. Never pretend it is safe without a lock.
         if(!locked)throw unavailable();
-        next=prepareEnvelope(payload,await records(),settings);
+        next=prepareEnvelope(payload,await records(),saveSettings);
         try{if(!ls)throw unavailable();ls.setItem(key,JSON.stringify(next));}catch{throw unavailable();}
       }else{
         // History and current payload are mirrored in one atomic localStorage value.
@@ -156,7 +223,7 @@ export function createSaveStore(options={}){
       adopt({...next,state:deserialize(next.payload)});broadcast(next);
       if(!persistAsked){persistAsked=true;try{nav?.storage?.persist?.().catch(()=>{});}catch{}}
       // The store has the save; the file must have it too, or Steam Cloud and a reinstall would not.
-      if(!await writeMirror(next))throw fileUnavailable();
+      if(!await writeMirror(next,disk))throw fileUnavailable();
       return next.savedAt;
     };
     if(!useLocks)return write(false);
@@ -166,7 +233,7 @@ export function createSaveStore(options={}){
   }
   async function listRecoverySaves(){
     const raws=await records(),current=newest(raws.map(localEnvelope));
-    return mergedHistory(raws).map(saved=>{const e=localEnvelope(saved);return {id:recoveryId(e),name:e.state.name,chapter:e.state.chapter,rank:e.state.rank,phase:e.state.phase,encounter:e.state.encounter?.title||null,savedAt:e.savedAt,sequence:e.sequence,currentSequence:current?.sequence||0};});
+    return mergedHistory(raws).map(saved=>{const e=localEnvelope(saved);return {id:recoveryId(e),name:e.state.name,chapter:e.state.chapter,rank:e.state.rank,phase:e.state.phase,encounter:e.state.encounter?.title||null,savedAt:e.savedAt,sequence:e.sequence,currentSequence:current?.sequence||0,source:e.recoveryKind||null};});
   }
   async function readRecoverySave(id){
     const saved=mergedHistory(await records()).find(e=>recoveryId(e)===id);

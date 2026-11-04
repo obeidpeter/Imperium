@@ -48,18 +48,7 @@ async function serveGame(request){
 
 // Saves: one JSON file per name, written atomically (a temporary file renamed over it) with the previous copy kept as
 // <name>.prev.json. The file is the chronicle on the desktop (src/ui/storage.js); Steam Cloud syncs <name>.json.
-const SAVE_NAME=/^[a-z0-9-]{1,40}$/,SAVE_LIMIT=16*1024*1024;
-const saveFile=name=>{if(!SAVE_NAME.test(String(name)))throw new Error('Invalid save name.');return path.join(savesDir(),`${name}.json`);};
-async function readSave(name){try{return await fsp.readFile(saveFile(name),'utf8');}catch(error){if(error.code==='ENOENT')return null;throw error;}}
-async function writeSave(name,text){
-  if(typeof text!=='string'||text.length>SAVE_LIMIT)throw new Error('Invalid save data.');
-  const file=saveFile(name),temporary=`${file}.${process.pid}.tmp`;
-  await fsp.mkdir(savesDir(),{recursive:true});
-  const handle=await fsp.open(temporary,'w');
-  try{await handle.writeFile(text,'utf8');await handle.sync();}finally{await handle.close();}
-  try{await fsp.copyFile(file,path.join(savesDir(),`${name}.prev.json`));}catch(error){if(error.code!=='ENOENT')throw error;}
-  await fsp.rename(temporary,file);
-}
+const saveFiles=require('./saves.cjs').createSaveFiles(savesDir);
 
 function windowState(){try{return JSON.parse(fs.readFileSync(windowStateFile(),'utf8'));}catch{return {fullscreen:true};}}
 function keepWindowState(win){
@@ -116,8 +105,8 @@ function createWindow(){
 
 // Only the game's window may use the bridge.
 const fromGame=event=>!!win&&event.sender===win.webContents&&event.senderFrame?.url?.startsWith(ORIGIN+'/');
-ipcMain.handle('saves:read',(event,name)=>{if(!fromGame(event))throw new Error('Refused.');return readSave(name);});
-ipcMain.handle('saves:write',(event,name,text)=>{if(!fromGame(event))throw new Error('Refused.');return writeSave(name,text);});
+ipcMain.handle('saves:read',(event,name,previous)=>{if(!fromGame(event))throw new Error('Refused.');return saveFiles.read(name,previous===true);});
+ipcMain.handle('saves:write',(event,name,text,options)=>{if(!fromGame(event))throw new Error('Refused.');return saveFiles.write(name,text,options);});
 ipcMain.handle('window:is-fullscreen',event=>fromGame(event)&&win.isFullScreen());
 ipcMain.handle('window:set-fullscreen',(event,value)=>{if(fromGame(event))win.setFullScreen(!!value);});
 ipcMain.on('app:quit',event=>{if(fromGame(event))win.close();});

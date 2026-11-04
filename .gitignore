@@ -26,4 +26,5 @@ art-source/panoramas/*.png
 __pycache__/
 # Local validation snapshots and logs; reviewed evidence belongs in docs/.
 work/command-camp-refinement/
+work/save-world-art/
 dist-demo/

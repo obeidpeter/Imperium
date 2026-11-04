@@ -5,6 +5,7 @@ import {actorBodyUrl} from '../ui/actor-body-catalog.js';
 import {clipBodyAtNeck,sculptGeneratedHead,generatedIdentityMaterial,fitGeneratedNeck,FOLLOWER_IDENTITY,setFollowerHead,IDENTITY_HEAD_BODY} from './generated-identity.js';
 import {castAgeing} from './actor-identity.js';
 import {aeliaFaceGeometry,aeliaFaceMaterial} from './generated-own-face.js';
+import {joinGeneratedNeck} from './generated-neck.js';
 
 // The game's joints a generated body is skinned to, named as bind-character.py
 // exports them; the rig itself repeats elbow, hand, knee and ankle on each side.
@@ -140,14 +141,19 @@ export function mountActorBody(group,body,{skeletons,identity=null,headBody=null
     // Both levels share one skin; the overview is exported with the same joint order.
     mesh.bind(skeleton);mesh.boundingSphere=new T.Sphere(new T.Vector3(0,1.2,0),2);return mesh;
   };
-  let worn=body;
+  let worn=body,joined=null;
+  if(body?.head&&headBody===body&&['cast-severianus','cast-paullus','cast-theon'].includes(body.id)){
+    joined=Object.fromEntries(['near','overview'].map(level=>[level,joinGeneratedNeck(body[level].geometry,body.head[level].geometry)]));
+    if(Object.values(joined).some(value=>!value)){for(const value of Object.values(joined))if(value){value.body.dispose();value.head.dispose();}joined=null;}
+    else for(const value of Object.values(joined)){geometries?.add(value.body);geometries?.add(value.head);}
+  }
   if(body?.id==='cast-aelia'&&identity?.key==='aelia'&&!headBody){
     worn=Object.fromEntries(['near','overview'].map(level=>{const geometry=aeliaFaceGeometry(body[level].geometry),material=aeliaFaceMaterial(body[level].material);geometries?.add(geometry);materials?.add(material);return [level,{...body[level],geometry,material}];}));
   }
   if(body&&headBody&&identity){
     // Every generated neck but the donor's own is seated under the shared head's.
     if(!headlessBodies.has(body))headlessBodies.set(body,Object.fromEntries(['near','overview'].map(level=>{const geometry=clipBodyAtNeck(body[level].geometry);if(body.id!==IDENTITY_HEAD_BODY)fitGeneratedNeck(geometry);return [level,{...body[level],geometry}];})));
-    worn=headlessBodies.get(body);
+    worn=joined?Object.fromEntries(['near','overview'].map(level=>[level,{...body[level],geometry:joined[level].body}])):headlessBodies.get(body);
   }
   const result={near:worn?skin(worn.near,'generated-body',false):null,overview:worn?skin(worn.overview,'generated-body-overview',true):null,heads:[]};
   // A senator's bloc trims, on his body's band (blocTrimGeometry): one mesh for each of their
@@ -166,7 +172,7 @@ export function mountActorBody(group,body,{skeletons,identity=null,headBody=null
     result[level==='near'?'near':'overview']=neck;
   }
   if(headBody&&identity)for(const level of ['near','overview']){
-    const geometry=sculptGeneratedHead(clipBodyAtNeck(heads[level].geometry,{above:true}),identity,{shape:!cast});geometry.translate(0,identityOffsetY,0);geometry.userData.identityOffsetY=identityOffsetY;geometries?.add(geometry);
+    const geometry=sculptGeneratedHead(joined?joined[level].head:clipBodyAtNeck(heads[level].geometry,{above:true}),identity,{shape:!cast});geometry.translate(0,identityOffsetY,0);geometry.userData.identityOffsetY=identityOffsetY;geometries?.add(geometry);
     const head=skin({...heads[level],geometry,material:headMaterial},`identity-head-${level}`,level==='overview');head.userData.identityHead=identity.key;head.userData.ownHead=cast;result.heads.push(head);
     if(level==='overview'&&(donor??headBody))setFollowerHead(head,neutralHead((donor??headBody).overview,identityOffsetY));
   }

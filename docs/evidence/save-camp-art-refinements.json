@@ -1,0 +1,254 @@
+{
+  "version": 1,
+  "validatedAt": "2026-11-04T14:52:59.411Z",
+  "baseCommit": "dc666025c600001d158bb5a04381f079fcf43aad",
+  "branch": "codex/save-world-art-refinements",
+  "publication": "Local implementation and validation snapshot recorded before GitHub publication.",
+  "environment": {
+    "platform": "Windows x64",
+    "node": "v24.22.1",
+    "electron": "45.2.1",
+    "chromium": "156.0.8078.80",
+    "blender": "5.2.2 LTS"
+  },
+  "changes": {
+    "saveRecovery": [
+      "failed write and relaunch",
+      "transient read failure",
+      "retry after an unreadable file changes externally",
+      "same-checkpoint recovery alternatives",
+      "corrupt primary and previous-file recovery",
+      "serialized compare-before-replace writes"
+    ],
+    "campChapters": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "paintedFaces": 5,
+    "repairedOverviewHeads": 11,
+    "repairedCivilianNecks": 3,
+    "tripoCreditsSpent": 0,
+    "credentialsChanged": false
+  },
+  "validation": {
+    "fullSuite": {
+      "pass": 1738,
+      "command": "node --test tests/*.test.mjs",
+      "tests": 1738,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "duration_ms": 236362.9557,
+      "log": "tests/visual-results/refinement-accepted-suite.log"
+    },
+    "chromiumSmoke": {
+      "pass": true,
+      "command": "node scripts/browser-smoke.mjs",
+      "scenarios": 25,
+      "errors": 0,
+      "log": "tests/visual-results/refinement-chromium-smoke.log"
+    },
+    "usability": {
+      "pass": true,
+      "checks": 15,
+      "build": "512b22b77532",
+      "report": "tests/visual-results/usability/report.json"
+    },
+    "twelveChapterBenchmark": {
+      "pass": true,
+      "build": "512b22b77532",
+      "chapters": 12,
+      "renderedScenes": 13,
+      "additionalChecks": 5,
+      "campaign": {
+        "rank": "Augustus",
+        "encounters": 25,
+        "completed": 12,
+        "exactRetries": 25
+      },
+      "report": "tests/visual-results/refinement-benchmark.json"
+    },
+    "campVisualReview": {
+      "pass": true,
+      "build": "7f65e0d09916",
+      "scope": "partial camera and asset diagnostic; not full release acceptance",
+      "fullAcceptance": false,
+      "chapters": [
+        5,
+        6,
+        7
+      ],
+      "camerasPerCamp": 3,
+      "report": "tests/visual-results/refinement-camp-acceptance/report.json",
+      "reviewedCaptures": [
+        "chapter-05-horizon.png",
+        "chapter-06-horizon.png",
+        "chapter-07-horizon.png"
+      ]
+    },
+    "packagedWindows": {
+      "pass": true,
+      "build": "c31b792deca6",
+      "checks": [
+        "the app opens on app://imperium with its bridge, no service worker (none possible on its origin) and no install manifest; without a Steam App ID, Steam is off and unlocks nothing",
+        "Settings: Fullscreen follows and sets the window; the saves page has no offline section",
+        "New Game reaches the first camp, and the save is written to saves/campaign.json (Aurelius Marcellus)",
+        "Quit to desktop closes the app",
+        "relaunched with only the save file, the title offers to continue the same chronicle",
+        "a real backup-file write failure preserves the previous disk save and retains the newer local equipment state",
+        "after a full app relaunch the newer local state wins over its unchanged old file and is written back safely",
+        "a real file-read error is surfaced without replacing the existing save",
+        "when the same file becomes readable again, saving resumes and acknowledges the new revision",
+        "if the unreadable file changed externally, retry keeps both local progress and the external file",
+        "F11 and Alt+Enter toggle native fullscreen; the packaged window survives minimize and restore"
+      ],
+      "errors": 0,
+      "externalRequests": 0,
+      "report": "tests/visual-results/desktop/report.json",
+      "log": "tests/visual-results/refinement-accepted-desktop-smoke.log",
+      "package": "desktop/out/win-unpacked/Imperium.exe",
+      "unsigned": true
+    },
+    "buildAndAssets": {
+      "pass": true,
+      "webLog": "tests/visual-results/refinement-accepted-build.log",
+      "desktopLog": "tests/visual-results/refinement-accepted-desktop-build.log",
+      "assetLog": "tests/visual-results/refinement-accepted-assets.log",
+      "characterAudit": "tests/visual-results/refinement-character-audit.log",
+      "parity": {
+        "pass": true,
+        "filesChecked": 579,
+        "sourceComparison": "Text uses the build script CRLF-to-LF normalization; binary assets compare exact SHA-256.",
+        "desktopEntryPoints": 4,
+        "webRevision": "7f65e0d09916",
+        "desktopRevision": "c31b792deca6",
+        "initialGzipBytes": 1045957,
+        "chapterOneGzipBytes": 15968036,
+        "largestChapterGzipBytes": 25384457,
+        "completeGzipBytes": 54954790,
+        "executable": "desktop/out/win-unpacked/Imperium.exe"
+      }
+    },
+    "artComparisons": [
+      "docs/images/save-camp-art-refinements/aelia-face-comparison.png",
+      "docs/images/save-camp-art-refinements/severianus-overview-comparison.png",
+      "docs/images/save-camp-art-refinements/chapter-v-clear-horizon.png"
+    ]
+  },
+  "validationBuildNotes": [
+    "The broad Chromium, usability and twelve-chapter checks ran before the final Aelia compression adjustment, desktop-only startup-read retry guard and camp-only low-camera clearance. They retain their original results and build identifiers.",
+    "The final full unit suite, asset checks, Chapters V–VII camera captures and packaged Windows regression use the accepted sources. Runtime and asset hashes match the final web build, desktop build and packaged game resources.",
+    "The Windows package was produced with electron-builder. After the camp camera correction its two loose renderer modules were refreshed from dist-desktop; final package/source parity and the packaged regression were then rerun."
+  ],
+  "assets": [
+    {
+      "id": "body-roman-recruit",
+      "path": "assets/models/characters/roman-recruit.glb",
+      "sha256": "c637acae9d8147ee34e861a2f4f4be6c10664c35447516385f5a70693334675c",
+      "bytes": 750380,
+      "report": "art-source/models/reports/char-roman-recruit-surface-repair.json"
+    },
+    {
+      "id": "body-cast-lucan",
+      "path": "assets/models/characters/cast-lucan.glb",
+      "sha256": "7a2251bf4a3113e01fd475d983bb04591de5451fe67f31753c29b6f662a3cbb6",
+      "bytes": 683652,
+      "report": "art-source/models/reports/char-cast-lucan-surface-repair.json"
+    },
+    {
+      "id": "body-cast-varro",
+      "path": "assets/models/characters/cast-varro.glb",
+      "sha256": "a8e172398481e858e864e814244afb1ff46cec8c211423d2a8d19187223f1f46",
+      "bytes": 687100,
+      "report": "art-source/models/reports/char-cast-varro-surface-repair.json"
+    },
+    {
+      "id": "body-cast-sabinus",
+      "path": "assets/models/characters/cast-sabinus.glb",
+      "sha256": "3f6cc4ac9f527738459680b657b4b358181d08fc4f0fdc54a6c46281140334aa",
+      "bytes": 720072,
+      "report": "art-source/models/reports/char-cast-sabinus-surface-repair.json"
+    },
+    {
+      "id": "body-cast-naso",
+      "path": "assets/models/characters/cast-naso.glb",
+      "sha256": "3b8ec7a6c734ca1369aada97b97c8752813f2890483782376587f162659b9c1c",
+      "bytes": 724180,
+      "report": "art-source/models/reports/char-cast-naso-surface-repair.json"
+    },
+    {
+      "id": "body-cast-felix",
+      "path": "assets/models/characters/cast-felix.glb",
+      "sha256": "1243160441581f688ce5f1543425da5c563b1f8f0021531aa5cdb0094ba8e0bf",
+      "bytes": 705172,
+      "report": "art-source/models/reports/char-cast-felix-surface-repair.json"
+    },
+    {
+      "id": "body-cast-brennus",
+      "path": "assets/models/characters/cast-brennus.glb",
+      "sha256": "4a7d76d55dc7a8cad60cc7a96555c0088f513f2aaff15184a5c658369383ecb8",
+      "bytes": 692208,
+      "report": "art-source/models/reports/char-cast-brennus-surface-repair.json"
+    },
+    {
+      "id": "body-cast-crispus",
+      "path": "assets/models/characters/cast-crispus.glb",
+      "sha256": "3cdf15c46dcea25593f3cc85a8f94738c0472b6b774f047a5c0b7220b7f493a7",
+      "bytes": 697180,
+      "report": "art-source/models/reports/char-cast-crispus-surface-repair.json"
+    },
+    {
+      "id": "body-cast-quintus",
+      "path": "assets/models/characters/cast-quintus.glb",
+      "sha256": "8a53b6800a8e29a7ad9c47bd535f965a17e98963643291f793457560196898f3",
+      "bytes": 428908,
+      "report": "art-source/models/reports/char-cast-quintus-surface-repair.json"
+    },
+    {
+      "id": "body-cast-severianus",
+      "path": "assets/models/characters/cast-severianus.glb",
+      "sha256": "cedc0aad29114dceb64516be0680ec8494f46d7fee38e1c6bdf7e327780111f8",
+      "bytes": 631556,
+      "report": "art-source/models/reports/char-cast-severianus-surface-repair.json"
+    },
+    {
+      "id": "body-cast-paullus",
+      "path": "assets/models/characters/cast-paullus.glb",
+      "sha256": "2bd3f6ab0fd12e3bcb70b127ca40adbf972302cc0ea5c5f5aa336d3778ebf5fa",
+      "bytes": 641392,
+      "report": "art-source/models/reports/char-cast-paullus-surface-repair.json"
+    },
+    {
+      "id": "body-cast-theon",
+      "path": "assets/models/characters/cast-theon.glb",
+      "sha256": "95a1847c761f3562b0dddedbd4200f0a44e6f60d63d1ab44df3920c8c7315c9b",
+      "bytes": 620784,
+      "report": "art-source/models/reports/char-cast-theon-surface-repair.json"
+    },
+    {
+      "id": "body-cast-aelia",
+      "path": "assets/models/characters/cast-aelia.glb",
+      "sha256": "84ab3baa6b389005e46d49ea1787c9fb4e3b31b3db1a37acc8b8f9d2eb25d97b",
+      "bytes": 885636,
+      "report": "art-source/models/reports/char-cast-aelia-surface-repair.json"
+    }
+  ],
+  "limits": [
+    "Browser graphics checks use software rendering, not a hardware frame-rate certification.",
+    "No physical-phone, first-time-player or live Steam account/overlay/cloud test.",
+    "The targeted camp review covers Chapters V–VII; all twelve camp layouts and low-camera clearances are covered by unit tests.",
+    "Some inherited eye/normal-map artifacts, coarse silhouettes and civilian neck colour boundaries remain.",
+    "Cross-process file changes can still race between the last comparison and atomic rename; conflicting copies are otherwise retained."
+  ]
+}
