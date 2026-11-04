@@ -27,7 +27,7 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
 
 - **Steam's content survey** asks about AI-generated content. These records are what the disclosure draws on: AI-generated 3D models, illustrations, music, sound and voices, all made before release, with none generated during play. The draft is in [steam-ai-disclosure.md](steam-ai-disclosure.md), generated from the manifest.
 - **The game's own code** has no licence chosen (`docs/LICENSE-NOTICES.md`). For a commercial release that is the owner's decision: by default all rights are reserved.
-- **Records brought up to date:** the in-game credits in S1, and on 4 November `README.md`, [the licence notices](LICENSE-NOTICES.md) and [the 3D provenance record](3d-art-provenance.md). Still out of date: the asset manifest's `rightsNotice`, a summary whose counts stop at earlier releases. Its entries for each file are current.
+- **Records brought up to date:** the in-game credits in S1. On 4 November: `README.md`, [the licence notices](LICENSE-NOTICES.md), [the 3D provenance record](3d-art-provenance.md) and the asset manifest's `rightsNotice` summary.
 
 ## The free web demo (S2, built; publishing is yours)
 

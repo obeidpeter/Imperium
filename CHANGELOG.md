@@ -2,7 +2,7 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
-### The README and the licence records brought up to date
+### The README, the licence records and the manifest's rights notice brought up to date
 
 The owner asked for it. The README no longer describes 0.40's game as turn-based, browser-first or made of original horses:
 
@@ -30,7 +30,17 @@ The two licence records had stopped before the generated models:
 
   Counts are left to the AI-content inventory, which a test keeps in step with the manifest.
 - **`docs/3d-art-provenance.md`** no longer says that every model is written in code. It names the four kinds of 3D content (code-built, generated with Tripo, built in Blender, CC0) and lists the models added since 0.36. The code-built record, the colour maps and the Three.js hashes are kept, and still match the shipped files.
-- **`docs/steam-release.md`** no longer lists these records as out of date. It lists the asset manifest's `rightsNotice` summary instead, whose counts stop at earlier releases.
+- **The asset manifest's `rightsNotice`** was out of date. It gave old counts for some kinds of file (51 artworks, two captures, sixteen character bodies) and left out others: the horses, landmarks, rocks, trees, panoramas, ground textures and item pictures. It now names each source without counts:
+  - OpenAI image generation, with the five restored faces;
+  - Tripo, with the owner's paid-account terms;
+  - Lyria, Runway's sound effects and ElevenLabs;
+  - MiDaS;
+  - the project's Blender scripts;
+  - MakeHuman and Poly Haven;
+  - the icons and captures.
+
+  It points to the notices for the terms, and to the generated inventory for the counts. Nothing reads it, and the file entries are unchanged.
+- **`docs/steam-release.md`** no longer lists any of these records as out of date.
 
 ### Desktop saves: an accurate message, and the guide says what is recovered
 
