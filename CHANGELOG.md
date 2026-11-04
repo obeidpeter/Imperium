@@ -2,6 +2,11 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Desktop saves: an accurate message, and the guide says what is recovered
+
+- **An unchecked file is not "changed".** Sometimes the desktop app cannot read the save file when it starts and has no record of the file's last version. It still refuses to replace the file. It no longer says the file "changed outside the game", which nothing showed. It says the file could not be read when the game started, so it has not been checked against the player's progress or replaced (`src/ui/storage.js`). A test covers it.
+- **The player guide and in-game help** say that progress which did not reach the file is written to it at the next launch, if the file has not changed meanwhile. A file changed outside the game, for example by Steam Cloud from another computer, is loaded. This computer's progress is then kept as a recovery record, under **Menu → Settings → Saves → Recover older progress**. While the file cannot be read, the game does not replace it.
+
 ### Follow-ups to #73 and #74
 
 - **Higher download limits,** at the owner's request: #74's larger recruit and Aelia models had left Chapter I's first download 32 KB under its limit.
