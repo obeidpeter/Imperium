@@ -67,6 +67,12 @@ async function launch(label){
   }
   liveApps.push(app);
   const page=await app.firstWindow();page.setDefaultTimeout(60000);await throttleCpu(page);
+  if(process.platform==='linux')await app.evaluate(({BrowserWindow})=>{
+    const win=BrowserWindow.getAllWindows()[0];win.smokeWindowTrace=[];
+    const record=event=>win.smokeWindowTrace.push({event,fullscreen:win.isFullScreen(),bounds:win.getBounds(),normal:win.getNormalBounds()});
+    for(const name of ['show','enter-full-screen','leave-full-screen','minimize','restore'])win.on(name,()=>record(name));
+    win.webContents.on('before-input-event',(_event,input)=>{if(input.key==='F11'||input.key==='Enter')record(`${input.type} ${input.key} alt=${input.alt} repeat=${input.isAutoRepeat}`);});
+  });
   page.on('request',request=>{const url=request.url();if(outside(url))report.requests.push(`${label}: ${url}`);});
   page.on('pageerror',error=>report.errors.push(`${label}: ${error.message}`));
   await page.waitForSelector('main');
@@ -221,7 +227,7 @@ try{
   if(process.platform==='linux'){
     report.linuxWindows=[];
     for(const app of liveApps){
-      const windows=await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows().map(win=>({handle:win.getNativeWindowHandle().toString('hex'),visible:win.isVisible(),fullscreen:win.isFullScreen(),minimized:win.isMinimized()}))).catch(()=>[]);
+      const windows=await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows().map(win=>({handle:win.getNativeWindowHandle().toString('hex'),visible:win.isVisible(),fullscreen:win.isFullScreen(),minimized:win.isMinimized(),trace:win.smokeWindowTrace}))).catch(()=>[]);
       for(const win of windows){
         const id=`0x${Buffer.from(win.handle,'hex').readUInt32LE().toString(16)}`;
         const properties=spawnSync('xprop',['-id',id,'WM_STATE','_NET_WM_STATE','_NET_WM_WINDOW_TYPE'],{encoding:'utf8',timeout:5000});
