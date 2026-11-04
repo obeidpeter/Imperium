@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile,readdir} from 'node:fs/promises';
 import {CHAPTERS} from '../src/data/campaign.js';
 import {DECORATIONS,TITLES} from '../src/data/soldier.js';
 import {ITEMS} from '../src/data/items.js';
 import {ACHIEVEMENTS} from '../src/data/achievements.js';
 import {KINDS,sourceKind,aiInventory,storeText,steamAiDisclosureSheet} from '../scripts/steam-ai-disclosure.mjs';
+import {STORE_ART,HERO,TALL,RENDER_SCENE,fileName,renderFile,enlargement} from '../scripts/steam-store-art.mjs';
 
 // The Steam store drafts (the Steam plan, S4): the AI-content disclosure, generated from the asset manifest, and the
 // store page's text, written from the guide. Both stay true to the game: these checks fail when it changes under them.
@@ -81,4 +82,43 @@ test('the store page’s About text has no links, and its numbers are the game�
   assert.ok(about.includes('over a hundred pieces of kit')&&Object.keys(ITEMS).length>100);
   assert.ok(about.includes(`${ACHIEVEMENTS.length} Steam achievements`));
   assert.match(CHAPTERS[0].year,/250/);assert.match(CHAPTERS.at(-1).year,/276/);assert.ok(about.includes('from AD 250 to 276'));
+});
+
+// A JPEG's size, from its frame header; a PNG's size and colour type, from its header chunk.
+function jpegSize(bytes){
+  assert.ok(bytes[0]===0xff&&bytes[1]===0xd8,'a JPEG');
+  for(let i=2;i<bytes.length;){
+    if(bytes[i]!==0xff){i++;continue;}
+    const marker=bytes[i+1];
+    if(marker>=0xc0&&marker<=0xcf&&![0xc4,0xc8,0xcc].includes(marker))return {width:bytes.readUInt16BE(i+7),height:bytes.readUInt16BE(i+5)};
+    i+=2+bytes.readUInt16BE(i+2);
+  }
+  return null;
+}
+const pngHeader=bytes=>{assert.equal(bytes.toString('latin1',1,4),'PNG','a PNG');return {width:bytes.readUInt32BE(16),height:bytes.readUInt32BE(20),colourType:bytes[25]};};
+
+test('the store’s and the library’s images for Steamworks are each at Steam’s size: run node scripts/steam-store-art.mjs',async()=>{
+  const dir=new URL('../desktop/steam/store-art/',import.meta.url);
+  assert.deepEqual((await readdir(dir)).sort(),STORE_ART.map(fileName).sort(),'one file for each image, and no other');
+  for(const a of STORE_ART){
+    const bytes=await readFile(new URL(fileName(a),dir));
+    if(a.png){
+      const {width,height,colourType}=pngHeader(bytes);
+      assert.equal(width,1280,a.id);assert.ok(height<=720,`${a.id}: 1280 wide and at most 720 tall`);assert.equal(colourType,6,`${a.id} keeps its transparency`);
+    }else assert.deepEqual(jpegSize(bytes),{width:a.width,height:a.height},a.id);
+  }
+});
+
+test('every capsule and header carries the name, the library hero none, and no painted image enlarges the painting twice over',()=>{
+  assert.ok(STORE_ART.filter(a=>/capsule|header/.test(a.id)).every(a=>a.name),'the name on every capsule and header');
+  const hero=STORE_ART.find(a=>a.id==='library_hero'),tall=STORE_ART.filter(a=>['vertical_capsule','library_capsule'].includes(a.id));
+  assert.ok(hero.render===HERO&&!hero.name,'the library hero is a render of the game, without text');
+  assert.ok(tall.length===2&&tall.every(a=>a.render===TALL&&a.name),'the two tall capsules are renders of the game, with the name');
+  assert.ok(CHAPTERS.flatMap(c=>c.encounters).some(e=>e.id===RENDER_SCENE),'the renders show an encounter the campaign plays');
+  for(const a of STORE_ART.filter(a=>a.crop))assert.ok(enlargement(a)<2,`${a.id}: ${enlargement(a).toFixed(2)}×`);
+});
+
+test('the renders the capsules are drawn from are kept, at their images’ sizes, so the name can be drawn again without rendering',async()=>{
+  for(const a of STORE_ART.filter(a=>a.render&&a.name))
+    assert.deepEqual(jpegSize(await readFile(new URL(`../${renderFile(a)}`,import.meta.url))),{width:a.width,height:a.height},renderFile(a));
 });

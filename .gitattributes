@@ -13,6 +13,7 @@
 *.ogg binary
 *.wav binary
 *.woff2 binary
+*.ttf binary
 *.ktx2 binary
 *.wasm binary
 *.blend binary
