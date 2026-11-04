@@ -1,4 +1,5 @@
 import {terrainAt,clamp,smooth} from './environment-layout.js';
+import {campEntrance} from './environment-staging.js';
 
 // Camp dressing uses the same immutable placement description as the model
 // loader. These are visual service courts, never new destinations or blockers.
@@ -64,7 +65,9 @@ export function createCampGroundSampler(e,{tileSize=2.5,props=[]}={}){
   }
   const routes=[],segments=new Map(),courts=places.map(p=>({...p,radius:p.id==='drill'?3.6:2.5}));
   const add=(a,b)=>{const key=[`${a.x},${a.z}`,`${b.x},${b.z}`].sort().join(':');if(!segments.has(key))segments.set(key,[a,b]);};
-  for(const place of places){
+  const entrance=campEntrance(e,tileSize),targets=[...places,...(e.campPresentation.interactions??[]).filter(p=>p.kind==='exit')];
+  if(entrance)targets.push({id:'entrance',x:Math.max(-hx+.1,Math.min(hx-.1,entrance.x)),z:Math.max(-hz+.1,Math.min(hz-.1,entrance.z))});
+  for(const place of targets){
     const c=cell(place),end=c.y*width+c.x;if(!Number.isFinite(dist[end]))continue;
     const nodes=[];let i=end;while(i>=0){nodes.push(point(i));if(i===start)break;i=prev[i];}
     nodes.reverse();for(let j=1;j<nodes.length;j++)add(nodes[j-1],nodes[j]);

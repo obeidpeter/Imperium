@@ -1744,7 +1744,9 @@ window.addEventListener('resize',()=>{stopMotion();requestAnimationFrame(()=>{pa
 // player before closing on a chronicle it could not save.
 async function saveBeforeQuit(){
   for(let waited=0;sessionGate.busy&&waited<8000;waited+=100)await new Promise(resolve=>setTimeout(resolve,100));
-  if(!state||state.archiveReplay||memoryOnly||saveConflict||JSON.stringify(state)===lastPersisted)return true;
+  if(!state||state.archiveReplay)return true;
+  if(memoryOnly||saveConflict)return false;
+  if(JSON.stringify(state)===lastPersisted&&!saveProblem)return true;
   try{const result=await sessionGate.run(()=>persist());return !!result?.ok;}catch{return false;}
 }
 if(desktop){
@@ -1763,8 +1765,10 @@ document.addEventListener('visibilitychange',()=>{
 });
 subscribeSaveChanges(()=>{if(state&&!memoryOnly){saveConflict=true;saveProblem='The chronicle changed in another tab. Load the latest save to continue here, '+
   'or export this tab’s progress.';lastSaved='';render();announce(saveProblem);}});
-const loaded=await loadLocal();state=loaded.state;if(pastDemo(state,demo)){heldChronicle=state;state=null;}lastPersisted=state?JSON.stringify(state):'';render();reportAchievements(state);if(loaded.error)toast(loaded.error+' The unreadable '+
-  'data stays on this device; Settings can download it.');try{preservedUnreadable=(await listUnreadableSaves()).length;}catch{preservedUnreadable=0;}
+const loaded=await loadLocal();state=loaded.state;if(pastDemo(state,demo)){heldChronicle=state;state=null;}
+saveProblem=loaded.fileProblem||'';lastPersisted=state&&!saveProblem?JSON.stringify(state):'';render();reportAchievements(state);
+if(loaded.error||loaded.fileProblem||loaded.warning)toast(loaded.error||loaded.fileProblem||loaded.warning);
+try{preservedUnreadable=(await listUnreadableSaves()).length;}catch{preservedUnreadable=0;}
 // The web build's offline cache. The desktop app has every file installed and Steam updates it (platform.js).
 if(usesOfflineCache()&&'serviceWorker'in navigator){
   navigator.serviceWorker.addEventListener('message',event=>{

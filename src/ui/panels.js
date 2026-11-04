@@ -439,11 +439,11 @@ export function createPanels(context){
     `<textarea id="save-code" spellcheck="false" readonly>${esc(code)}</textarea>`+
     `</div>${actions('<button class="primary" data-cmd="copy-code">Copy save code</button><button data-cmd="download-code">Download save text</button>')}`);}
   function showRecoveryRecords(entries){context().showModal('Recover an earlier chronicle',`<div class="panel-lead"><p class="eyebrow">THE LOCAL ARCHIVE</p>`+
-    `<p>The three most recent distinct checkpoints and replaced campaigns are kept on this device. Inspect a record before restoring it. Your current `+
+    `<p>Up to three checkpoints and recovery copies are kept on this device. Conflicting saves are preserved separately. Inspect a record before restoring it. Your current `+
     `chronicle will become a recovery record.</p></div>${entries.length?`<div class="recovery-list">${entries.map(entry=>`<article class="recovery-entry">`+
     `<p class="eyebrow">CHAPTER ${roman(entry.chapter)} · ${esc(entry.rank)}</p><h3>${esc(entry.name)}</h3>`+
     `<p>${esc(phaseLabel(entry.phase))}${entry.encounter?` · ${esc(entry.encounter)}`:''}</p>`+
-    `<p class="settings-description">Saved ${esc(new Date(entry.savedAt).toLocaleString())}</p>`+
+    `<p class="settings-description">${entry.source?esc(entry.source)+' · ':''}Saved ${esc(new Date(entry.savedAt).toLocaleString())}</p>`+
     `<button data-cmd="preview-recovery" data-id="${esc(entry.id)}" data-sequence="${esc(entry.currentSequence)}">Inspect this checkpoint</button>`+
     `</article>`).join('')}</div>`:empty('No earlier checkpoints yet. Records are created as your campaign advances and '+
     'when you replace a chronicle.')}${actions('<button data-cmd="restore">Restore a portable save code</button>'+

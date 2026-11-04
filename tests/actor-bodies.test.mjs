@@ -86,7 +86,11 @@ test('every body has its Tripo task, rig, licence, manifest entry and budget, an
     assert.ok(p.taskId&&p.rawSha256&&p.rig?.taskId&&p.rig?.rawSha256,`${id} records its Tripo generation and rig`);
     assert.match(p.licence,/full rights to use, modify, distribute and commercially exploit/);
     assert.ok(entry,`${id} has provenance in the asset manifest`);assert.equal(entry.source.taskId,p.taskId);assert.equal(entry.source.rigTaskId,p.rig.taskId);
-    const bytes=await file(actorBodyUrl(id)),info=await inspectModel(bytes),b=request.budget;
+    const bytes=await file(actorBodyUrl(id)),info=await inspectModel(bytes),b={...request.budget,...entry.source.surfaceRepair?.budget};
+    if(entry.source.surfaceRepair?.budget){
+      assert.equal(b.bytes,request.budget.bytes,'Surface repair retains the original byte ceiling');
+      assert.ok(b.overviewTriangles-request.budget.overviewTriangles<=800,'Correct UV seams add at most 800 distant-head triangles');
+    }
     assert.equal(info.bytes,entry.export.bytes);assert.equal(info.triangles,entry.export.triangles);
     assert.deepEqual(budgetProblems(info,{bytes:b.bytes,triangles:b.triangles+b.overviewTriangles,texture:b.texture,minHeight:b.minHeight,maxHeight:b.maxHeight}),[],id);
     // Shipped compressed (scripts/assets/compress.mjs): KTX2 textures and meshopt geometry over quantized vertices.

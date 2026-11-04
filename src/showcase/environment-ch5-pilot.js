@@ -1,5 +1,5 @@
 import * as T from '../../vendor/three/three.module.js';
-import {stagingEdge} from './environment-staging.js';
+import {stagingEdge,campEntrance} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {smooth} from './environment-layout.js';
 import {CH5_FORTRESS_LAYOUT} from '../ui/world-layouts.js';
@@ -55,7 +55,7 @@ export function chapterFivePilotHeight(base,e,tileSize=2.5){
 // hard-coded position can fall inside the larger map.
 export function getChapterFiveKitPlacements(e,{chapter=5,tileSize=2.5}={}){
   if(chapter!==5||!isChapterFivePilot(e))return [];
-  const layout=CH5_FORTRESS_LAYOUT,camp=e.id==='ch5-camp',edge=layout.edges[e.id]??layout.defaultEdge;
+  const layout=CH5_FORTRESS_LAYOUT,camp=e.id==='ch5-camp',edge=campEntrance(e,tileSize)?.edge??layout.edges[e.id]??layout.defaultEdge;
   // A value that differs between the courtyard and the battles.
   const pick=v=>v&&typeof v==='object'&&!Array.isArray(v)?(camp?v.camp:v.field):v;
   const anchor=stagingEdge(e,edge,tileSize,layout.inset),placements=[];
@@ -65,7 +65,7 @@ export function getChapterFiveKitPlacements(e,{chapter=5,tileSize=2.5}={}){
       key:`ch5-kit:${component}:${i}`,fallbackName:`ch5-kit-fallback:${component}:${i}`};
     placements.push(item);return item;
   };
-  const along=(edge==='east'?e.height:e.width)*tileSize;
+  const along=(edge==='east'||edge==='west'?e.height:e.width)*tileSize;
   for(const entry of layout.frontage){
     const wall=entry.wall;
     if(!wall){add(pick(entry.component),entry.x,entry.z,entry.yaw??0,[...(pick(entry.scale)??[1,1,1])]);continue;}

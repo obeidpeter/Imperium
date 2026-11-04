@@ -4,7 +4,7 @@
 // environment-ch5-pilot.js resolve the entries; their tests hold them to that.
 //
 // Regional entries place a kit piece against a board edge:
-// - `edge`: 'front' (a camp's north edge, or the encounter's landmark edge),
+// - `edge`: 'front' (a camp's actual entrance edge, or the encounter's landmark edge),
 //   'opposite' (the next edge round from it), 'back' (the edge behind it), or
 //   north, south, east or west;
 // - `along`: metres along that edge; `gap`: metres from the board edge to the

@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "inputSha256": "0cc557b820dc22f7f2e16dbe81ab0df6f56519ff2b2a9c8dfdb22302bd54dd95",
+  "bytesBefore": 437756,
+  "paint": {
+    "source": "art-source/characters/surface-repair/cast-aelia-atlas.png",
+    "sourceSha256": "d8d5e98476bf5869b88d70154ecc3eb3043f6c2ab4d4f3935f4ad7c66798124f",
+    "previousSha256": "3a775cea668ecc04e63c163c8c903e75a4c77a4cc6f19ad7ed8ed3f4b4a9a8c7",
+    "sha256": "bdde4ee7b59899da37bab70798a494ccf3326741cf72209d8da392d8da894706",
+    "size": 1024,
+    "bytes": 579248,
+    "codec": "KTX2 UASTC / Zstandard",
+    "generatedSource": "art-source/characters/surface-repair/cast-aelia-projection-paint.png",
+    "generatedSourceSha256": "3b5b3fc5bce0d8cf0f1e1fee38cf823cb84232cb3e9bfc531f7e89ffba381fda",
+    "prompt": "art-source/characters/surface-repair/prompts.json",
+    "reference": "art-source/characters/surface-repair/cast-aelia-mesh-reference.png",
+    "referenceSha256": "c009b6e36b5ca141aedb42254bc10ea5b2fa9214be92356a7639707778df4477",
+    "rdo": 2.5
+  },
+  "uv": null,
+  "protectedGeometry": [
+    {
+      "name": "body",
+      "primitives": [
+        {
+          "indices": "1a0f7c468e536144f4790cc46cdc28714e043db67c9d58eec44eeb5ec243a7e9",
+          "attributes": {
+            "POSITION": "7b9e9024e618a398419f0a6ef0ee7d209897a38f09d9c3e5473cb921b1021a3f",
+            "NORMAL": "45909ed922d52c93d1f8dabc5d259498a85924ebd048156ab48c08e45b3b075b",
+            "JOINTS_0": "50fac2a7a50a8e5054a783ca5e204f44345eccb7a0f265d6a2197a32dbbf6635",
+            "WEIGHTS_0": "403929a99d5a4762a1ee291b0315edf8194d697a10db6efd7b91d872ac55c816"
+          }
+        }
+      ]
+    },
+    {
+      "name": "body-overview",
+      "primitives": [
+        {
+          "indices": "ec93fa529da5d9d4f9d809fb8727cfde27f83a3d2d356307bc1985fa24fa0893",
+          "attributes": {
+            "POSITION": "79d402523428efcde7d75a3975dff7e19ef0f8436e39c944350892ff0cf4adeb",
+            "NORMAL": "25e48ef5411967194035b4ae4853b088e6054b519445993afb91e3e87e5d434a",
+            "COLOR_0": "8151b7a86fbbafae3c65c7d2cf2e708cec6494dde556b9fb3163ed148e0b4868",
+            "JOINTS_0": "637440cbdbef880b8c5f5a3f7701119e2a7cb3b4b368bf24f49346f3635c2007",
+            "WEIGHTS_0": "340b19eb866815dddad8da48e3117feb135fa3eecd7846840f4505cf75f29e99"
+          }
+        }
+      ]
+    }
+  ],
+  "texturesBefore": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 16068,
+      "sha256": "4a317779a860d130471cff03a4a73f09c74d6ba185f60e8862d9d64ee032f53e"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 131366,
+      "sha256": "3a775cea668ecc04e63c163c8c903e75a4c77a4cc6f19ad7ed8ed3f4b4a9a8c7"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 40202,
+      "sha256": "5b4f067ebd62e408800b98d17658bdee540b22d252dcecdf1ac93ac29eb28dae"
+    }
+  ],
+  "outputGeometry": [
+    {
+      "name": "body",
+      "primitives": [
+        {
+          "indices": "1a0f7c468e536144f4790cc46cdc28714e043db67c9d58eec44eeb5ec243a7e9",
+          "attributes": {
+            "POSITION": "7b9e9024e618a398419f0a6ef0ee7d209897a38f09d9c3e5473cb921b1021a3f",
+            "NORMAL": "45909ed922d52c93d1f8dabc5d259498a85924ebd048156ab48c08e45b3b075b",
+            "JOINTS_0": "50fac2a7a50a8e5054a783ca5e204f44345eccb7a0f265d6a2197a32dbbf6635",
+            "WEIGHTS_0": "403929a99d5a4762a1ee291b0315edf8194d697a10db6efd7b91d872ac55c816"
+          }
+        }
+      ]
+    },
+    {
+      "name": "body-overview",
+      "primitives": [
+        {
+          "indices": "ec93fa529da5d9d4f9d809fb8727cfde27f83a3d2d356307bc1985fa24fa0893",
+          "attributes": {
+            "POSITION": "79d402523428efcde7d75a3975dff7e19ef0f8436e39c944350892ff0cf4adeb",
+            "NORMAL": "25e48ef5411967194035b4ae4853b088e6054b519445993afb91e3e87e5d434a",
+            "COLOR_0": "8151b7a86fbbafae3c65c7d2cf2e708cec6494dde556b9fb3163ed148e0b4868",
+            "JOINTS_0": "637440cbdbef880b8c5f5a3f7701119e2a7cb3b4b368bf24f49346f3635c2007",
+            "WEIGHTS_0": "340b19eb866815dddad8da48e3117feb135fa3eecd7846840f4505cf75f29e99"
+          }
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 16068,
+      "sha256": "4a317779a860d130471cff03a4a73f09c74d6ba185f60e8862d9d64ee032f53e"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 579248,
+      "sha256": "bdde4ee7b59899da37bab70798a494ccf3326741cf72209d8da392d8da894706"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 40202,
+      "sha256": "5b4f067ebd62e408800b98d17658bdee540b22d252dcecdf1ac93ac29eb28dae"
+    }
+  ],
+  "sha256": "84ab3baa6b389005e46d49ea1787c9fb4e3b31b3db1a37acc8b8f9d2eb25d97b",
+  "bytes": 885636
+}

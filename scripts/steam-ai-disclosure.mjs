@@ -94,7 +94,7 @@ export function aiInventory(manifest){
   }
   const all=[...rows.values()].sort((a,b)=>KIND_ORDER.indexOf(a.kind)-KIND_ORDER.indexOf(b.kind)||a.index-b.index).map(r=>{
     let tool=KINDS[r.kind].tool;
-    if(r.kind==='model'){const v=tripoVersions(r.assets);tool=`Tripo text-to-model${v.length?` (${v.join(', ')})`:''}${r.assets.some(a=>/auto-rig/.test(a.source.method))?' and Tripo’s auto-rig':''}`;}
+    if(r.kind==='model'){const v=tripoVersions(r.assets);tool=`Tripo text-to-model${v.length?` (${v.join(', ')})`:''}${r.assets.some(a=>/auto-rig/.test(a.source.method))?' and Tripo’s auto-rig':''}`;if(r.assets.some(a=>a.source.surfaceRepair?.paint?.startsWith('Project-generated')))tool+='; OpenAI image generation restored five face textures from the project’s own renders';}
     if(r.kind==='voice'){const v=voices(r.assets);if(v.length)tool+=`, with the provider’s voices ${listed(v)}`;}
     const models=r.assets.reduce((n,a)=>n+(Array.isArray(a.source.models)?a.source.models.length:0),0);
     return {kind:r.kind,what:r.what,then:KINDS[r.kind].then??r.then,tool,files:r.assets.length,models};
@@ -109,7 +109,7 @@ export function aiInventory(manifest){
 const STORE_LINES=[
   ['illustration','Art: the story paintings, character portraits, 2D figures and some surface textures were generated with OpenAI’s image generation from original prompts written for this game, then cropped, packed and compressed for it.'],
   ['depth','An AI depth-estimation model made depth maps of the paintings, which give them their slight movement.'],
-  ['model','3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed.'],
+  ['model','3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed. Five character face textures were restored with OpenAI image generation from the game’s own model renders and baked in Blender.'],
   ['music','Music: the music tracks were generated with Google’s Lyria, through Runway.'],
   ['sound','Sound: the ambience and the combat and footstep sounds were generated with Runway; the interface’s short cues are made by the game’s code.'],
   ['voice','Voices: the voiced briefings are AI voices from ElevenLabs’ catalogue (through Runway), reading lines written for the game; no voice was cloned from a recording.'],

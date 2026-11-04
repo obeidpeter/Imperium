@@ -312,9 +312,19 @@ jobs:
       - if: matrix.os != 'windows-latest'
         working-directory: desktop/out/linux-unpacked
         run: sudo chown root:root chrome-sandbox && sudo chmod 4755 chrome-sandbox
+      - name: Install a window manager for native minimize and restore
+        if: matrix.os != 'windows-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y openbox x11-utils
       - name: The packaged app, through its visible interface
         shell: bash
-        run: ${{ matrix.os != 'windows-latest' && 'xvfb-run -a' || '' }} npm run smoke:desktop
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            xvfb-run -a bash scripts/desktop-smoke-linux.sh
+          else
+            npm run smoke:desktop
+          fi
         env:
           DESKTOP_APP: packaged
       - uses: actions/upload-artifact@v7
@@ -324,6 +334,7 @@ jobs:
           path: |
             tests/visual-results/desktop/report.json
             tests/visual-results/desktop/relaunch.png
+            tests/visual-results/desktop-openbox.log
           retention-days: 14
       # The Windows app folder, to try on a PC, from main's runs only (it is about 130 MB compressed). It is unsigned,
       # so Windows may warn before opening it.

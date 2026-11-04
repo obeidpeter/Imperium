@@ -29,6 +29,7 @@
       "main.cjs",
       "preload.cjs",
       "steam.cjs",
+      "saves.cjs",
       "package.json",
       "!node_modules/steamworks.js/dist/osx/**",
       "!node_modules/steamworks.js/dist/win64/*.lib"

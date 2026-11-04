@@ -17,7 +17,7 @@ Steam shows it under “AI Generated Content Disclosure”. Edit it freely, but 
 This game was made with the help of generative AI tools. Everything described here was made before release: nothing is generated while you play, and the game connects to no AI service.
 
 - Art: the story paintings, character portraits, 2D figures and some surface textures were generated with OpenAI’s image generation from original prompts written for this game, then cropped, packed and compressed for it. An AI depth-estimation model made depth maps of the paintings, which give them their slight movement.
-- 3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed.
+- 3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed. Five character face textures were restored with OpenAI image generation from the game’s own model renders and baked in Blender.
 - Music: the music tracks were generated with Google’s Lyria, through Runway.
 - Sound: the ambience and the combat and footstep sounds were generated with Runway; the interface’s short cues are made by the game’s code.
 - Voices: the voiced briefings are AI voices from ElevenLabs’ catalogue (through Runway), reading lines written for the game; no voice was cloned from a recording.
@@ -26,7 +26,7 @@ This game was made with the help of generative AI tools. Everything described he
 No third-party art, photographs or voice recordings were given to any generator. The building and fortification kits and the horizon panoramas were built in Blender by the game’s own scripts, the photographed ground textures and the skin textures come from CC0 libraries (Poly Haven and MakeHuman), and the interface is drawn by the game’s code: none of these was made with generative AI.
 ```
 
-1,758 characters.
+1,886 characters.
 
 ## What it rests on: the files made with AI
 
@@ -38,7 +38,7 @@ No third-party art, photographs or voice recordings were given to any generator.
 | 2D figures in action | 5 | OpenAI image generation (the built-in tool in the Codex app) | Cut out, packed into atlases and compressed |
 | 2D camp, ground and nature pictures | 3 | OpenAI image generation (the built-in tool in the Codex app) | Cut out, packed and compressed |
 | Surface textures | 10 | OpenAI image generation (the built-in tool in the Codex app) | Resized and compressed; some recompressed again |
-| Characters’ bodies | 35 | Tripo text-to-model (v3.0, v3.1) and Tripo’s auto-rig | Rigged by Tripo’s auto-rig, bound to the game’s own skeleton and motions, reduced and compressed |
+| Characters’ bodies | 35 | Tripo text-to-model (v3.0, v3.1) and Tripo’s auto-rig; OpenAI image generation restored five face textures from the project’s own renders | Rigged by Tripo’s auto-rig, bound to the game’s own skeleton and motions, reduced and compressed |
 | Horses | 3 | Tripo text-to-model (v3.1) | Bound to the game’s own horse rig and gaits, reduced and compressed |
 | Landmarks | 32 | Tripo text-to-model (H3.1) | Processed in Blender by the project’s scripts, then compressed |
 | Camp and town props | 30 | Tripo text-to-model (H3.1) | Processed in Blender by the project’s scripts, then compressed |

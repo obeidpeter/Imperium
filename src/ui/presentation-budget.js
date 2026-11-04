@@ -9,8 +9,9 @@ export const PRESENTATION_BUDGET=Object.freeze({
   // worlds and gameplay plan raised it from 12 MB for regional ground, trees and landmarks.
   chapterOneGzipBytes:16_000_000,
   // The shell plus any one chapter with its 2D art: a device's first visit there.
-  // Raised from 14 MB by the worlds and gameplay plan.
-  chapterGroupGzipBytes:24_000_000,
+  // 26 MB accommodates the five restored face atlases and seam-safe distant
+  // heads (+1.8 MB across the full asset inventory); startup stays unchanged.
+  chapterGroupGzipBytes:26_000_000,
   // Raised from 24 MB with the asset foundation (0.39), then from 50 MB by the
   // worlds and gameplay plan; shared kits and textures count once.
   completeGzipBytes:80_000_000,

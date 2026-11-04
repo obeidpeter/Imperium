@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "IMPERIUM",
   "artDirection": "Premium painted Roman chronicle: consistent aged identities, warm upper-left light, bronze and ivory, layered atmospheric settings",
-  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets. Nine 3D scenery models for Chapter V were generated with Tripo from text prompts on the owner's paid account, under which the owner holds full rights to use, modify, distribute and commercially exploit them and Tripo holds a royalty-free, non-exclusive licence to display them; their prompts, tasks and processing are recorded below. Sixteen character bodies were generated the same way and rigged with Tripo's auto-rig, then bound to the game's own skeleton; their prompts, tasks, rigs and processing are recorded below. The Chapter V sixteen-component fortress kit is original project-authored Blender geometry and procedural surface textures; its source and builder are retained. The approved regional rollout adds sixteen original-prompt Tripo props and five original Blender architecture kits (sixty components), with requests, exact task charges, sources and compression reports retained. The three fortification board kits (stone, mudbrick and timber, fourteen pieces each with a far level) are original project-authored Blender geometry and procedural surface textures; their builder, sources and compression reports are retained.",
+  "rightsNotice": "This manifest covers 51 project AI-generated artwork exports (including retained and mechanically optimized versions), two mechanical crops of actual browser gameplay, eight greyscale depth maps estimated offline from the project's own scene paintings with the MIT-licensed MiDaS v2.1 small model (model not bundled), three original code-native installed-app icons, fourteen original AI-generated audio files, two anatomical models and one short-hair model adapted from official MakeHuman CC0 sources, two mechanically reduced MakeHuman CC0 diffuse skin textures, and one matching CC0 alpha hair texture. No third-party source imagery or reference audio was supplied for the AI generation. CC0 anatomy and skin sources are separately identified, credited and licensed below. Provenance does not guarantee exclusive copyright, non-infringement or license ownership. Historical references inform design only; their images are not copied. Three development-only character handoff GLBs in art-source/, exported from the game's own character code over the same CC0 anatomy and excluded from the build, are listed separately under developmentAssets. Nine 3D scenery models for Chapter V were generated with Tripo from text prompts on the owner's paid account, under which the owner holds full rights to use, modify, distribute and commercially exploit them and Tripo holds a royalty-free, non-exclusive licence to display them; their prompts, tasks and processing are recorded below. Sixteen character bodies were generated the same way and rigged with Tripo's auto-rig, then bound to the game's own skeleton; their prompts, tasks, rigs and processing are recorded below. The Chapter V sixteen-component fortress kit is original project-authored Blender geometry and procedural surface textures; its source and builder are retained. The approved regional rollout adds sixteen original-prompt Tripo props and five original Blender architecture kits (sixty components), with requests, exact task charges, sources and compression reports retained. The three fortification board kits (stone, mudbrick and timber, fourteen pieces each with a far level) are original project-authored Blender geometry and procedural surface textures; their builder, sources and compression reports are retained. Five existing character models include OpenAI-generated face-paint restorations based only on the project’s own model renders, baked locally in Blender. Their source images, prompts, hashes and processing reports are retained in art-source/characters/surface-repair/ and art-source/models/reports/. Original Tripo task and licence records remain unchanged.",
   "runtimePolicy": "All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.",
   "assets": [
     {
@@ -5251,14 +5251,25 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-roman-recruit-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "103f248e0d3d5e58ccc275208b1f4320c92ad05f63e8ee65eb4e2b7e3c85e79a",
+          "previousBytes": 374204,
+          "paint": "Project-generated orthographic face paint, baked into the original UV atlas and compressed as KTX2 UASTC with mipmaps",
+          "overview": "Existing overview retained"
         }
       },
       "usage": "Chapter I recruits, and the protagonist in his own kit while unarmoured (the real-time views and the kit panel), with his helmet or cap fitted over its bare head; the game adds the practice kit. The existing head is also the persistent male cast donor: src/showcase/generated-identity.js clips the neck, preserves UVs and weights, and applies original bounded face/scalp silhouette sculpting and hairline uniforms. Crown, sweep, side volume and nape variants add no geometry, texture or shader variant; they are derivatives of this generated donor, not newly captured or independently sculpted heads.",
       "loading": "Deferred local GLB in the offline groups of every chapter (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 374204,
-        "sha256": "103f248e0d3d5e58ccc275208b1f4320c92ad05f63e8ee65eb4e2b7e3c85e79a",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S and restored UASTC albedo with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 750380,
+        "sha256": "c637acae9d8147ee34e861a2f4f4be6c10664c35447516385f5a70693334675c",
         "triangles": 14311,
         "nearTriangles": 11812,
         "overviewTriangles": 2499,
@@ -9846,15 +9857,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-lucan-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "4c5164ad11b9347d29cc354ef8e8a377f1296f68333322cdb8c9d9e9f9c14090",
+          "previousBytes": 654544,
+          "paint": "Existing paint retained",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3354,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Lucan, the protagonist's tent-mate, wherever he is drawn in his own kit: the game adds his helmet or cap, shield, weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Lucan himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 654544,
-        "sha256": "4c5164ad11b9347d29cc354ef8e8a377f1296f68333322cdb8c9d9e9f9c14090",
-        "triangles": 13197,
+        "bytes": 683652,
+        "sha256": "7a2251bf4a3113e01fd475d983bb04591de5451fe67f31753c29b6f662a3cbb6",
+        "triangles": 13651,
         "textures": 6,
         "textureEdge": 1024,
         "sizeMetres": {
@@ -9863,7 +9894,7 @@
           "depth": 0.394
         },
         "nearTriangles": 10755,
-        "overviewTriangles": 2442
+        "overviewTriangles": 2896
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -9972,15 +10003,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-varro-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "cad47914db13084cdcc4409f911a5b96ea713ed8af0ad44ee5adda33dab4b3a5",
+          "previousBytes": 656756,
+          "paint": "Existing paint retained",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3366,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Varro, the drill instructor, wherever he is drawn until his fate in Chapter VI: the game adds his helmet or cap, staff or weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, II, III, IV, V and VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Varro himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 656756,
-        "sha256": "cad47914db13084cdcc4409f911a5b96ea713ed8af0ad44ee5adda33dab4b3a5",
-        "triangles": 15232,
+        "bytes": 687100,
+        "sha256": "a8e172398481e858e864e814244afb1ff46cec8c211423d2a8d19187223f1f46",
+        "triangles": 15698,
         "textures": 6,
         "textureEdge": 1024,
         "sizeMetres": {
@@ -9989,7 +10040,7 @@
           "depth": 0.4285
         },
         "nearTriangles": 12425,
-        "overviewTriangles": 2807
+        "overviewTriangles": 3273
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10147,15 +10198,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-sabinus-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "be38f598668dc3b4efd77a6d78a2cfb7590a3383e3e3f3da30403c81514f286c",
+          "previousBytes": 690172,
+          "paint": "Existing paint retained",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3370,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Gaius Sabinus, the file-leader who stands in Lucan's place when Lucan leaves, wherever he is drawn in his own kit: the game adds his helmet or cap, shield, weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters II, III, IV, V, VI, VII, VIII, IX, X, XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Sabinus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 690172,
-        "sha256": "be38f598668dc3b4efd77a6d78a2cfb7590a3383e3e3f3da30403c81514f286c",
-        "triangles": 14739,
+        "bytes": 720072,
+        "sha256": "3f6cc4ac9f527738459680b657b4b358181d08fc4f0fdc54a6c46281140334aa",
+        "triangles": 15209,
         "textures": 6,
         "textureEdge": 1024,
         "sizeMetres": {
@@ -10164,7 +10235,7 @@
           "depth": 0.3792
         },
         "nearTriangles": 11990,
-        "overviewTriangles": 2749
+        "overviewTriangles": 3219
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10273,15 +10344,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-naso-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "ba9f8ac5a674f6c6dc2d494ac3d038eee07fb2b0d51ccf3f982c724f7d81d6e3",
+          "previousBytes": 694304,
+          "paint": "Existing paint retained",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3362,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Aulus Naso, the legionary file's shield-mate, wherever he is drawn in his own kit: the game adds his helmet or cap, shield, weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters II, III, IV, V, VI, VII, VIII, IX, X and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Naso himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 694304,
-        "sha256": "ba9f8ac5a674f6c6dc2d494ac3d038eee07fb2b0d51ccf3f982c724f7d81d6e3",
-        "triangles": 15363,
+        "bytes": 724180,
+        "sha256": "3b8ec7a6c734ca1369aada97b97c8752813f2890483782376587f162659b9c1c",
+        "triangles": 15825,
         "textures": 6,
         "textureEdge": 1024,
         "sizeMetres": {
@@ -10290,7 +10381,7 @@
           "depth": 0.3924
         },
         "nearTriangles": 12556,
-        "overviewTriangles": 2807
+        "overviewTriangles": 3269
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10399,15 +10490,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-felix-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "98a8a5b344afaa9d747e0610c0080cc7999e28f9f36538eddb6ce6e228615a44",
+          "previousBytes": 674776,
+          "paint": "Existing paint retained",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3366,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Marcus Felix, the company's archer and scout, wherever he is drawn in his own kit: the game adds his helmet or cap, bow, quiver, weapons and cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters III, IV, V, VI, VII, VIII, IX, X and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Felix himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 674776,
-        "sha256": "98a8a5b344afaa9d747e0610c0080cc7999e28f9f36538eddb6ce6e228615a44",
-        "triangles": 14054,
+        "bytes": 705172,
+        "sha256": "1243160441581f688ce5f1543425da5c563b1f8f0021531aa5cdb0094ba8e0bf",
+        "triangles": 14520,
         "textures": 6,
         "textureEdge": 1024,
         "sizeMetres": {
@@ -10416,7 +10527,7 @@
           "depth": 0.3798
         },
         "nearTriangles": 11431,
-        "overviewTriangles": 2623
+        "overviewTriangles": 3089
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10525,15 +10636,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-brennus-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "cfd7a5fbad13e5760ca16564570fe52729812598fa67cc49987bc3780cfac9a5",
+          "previousBytes": 660688,
+          "paint": "Existing paint retained",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3398,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Brennus, the explorator, in the camps of Chapters III and IV, in a scout's plain wool clothes: the game adds his cloak.",
       "loading": "Deferred local GLB in the offline groups of Chapters III and IV only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Brennus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 660688,
-        "sha256": "cfd7a5fbad13e5760ca16564570fe52729812598fa67cc49987bc3780cfac9a5",
-        "triangles": 15125,
+        "bytes": 692208,
+        "sha256": "4a7d76d55dc7a8cad60cc7a96555c0088f513f2aaff15184a5c658369383ecb8",
+        "triangles": 15623,
         "textures": 6,
         "textureEdge": 1024,
         "sizeMetres": {
@@ -10542,7 +10673,7 @@
           "depth": 0.3541
         },
         "nearTriangles": 12319,
-        "overviewTriangles": 2806
+        "overviewTriangles": 3304
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -10651,15 +10782,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-crispus-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "4d3ec1c4f3f556c547806acfc17f0d6bc1a2770b543c376490f9a9f7402654a6",
+          "previousBytes": 663788,
+          "paint": "Existing paint retained",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3436,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Crispus, the young tribune and the protagonist's rival, in the camps of Chapters III, IV, VII and XI, in an officer's tunic and belt: the game adds his cloak. In the chamber he keeps the procedural toga whose trims name his bloc.",
       "loading": "Deferred local GLB in the offline groups of Chapters III, IV, VII and XI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Crispus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 663788,
-        "sha256": "4d3ec1c4f3f556c547806acfc17f0d6bc1a2770b543c376490f9a9f7402654a6",
-        "triangles": 15006,
+        "bytes": 697180,
+        "sha256": "3cdf15c46dcea25593f3cc85a8f94738c0472b6b774f047a5c0b7220b7f493a7",
+        "triangles": 15542,
         "textures": 6,
         "textureEdge": 1024,
         "sizeMetres": {
@@ -10668,7 +10819,7 @@
           "depth": 0.3676
         },
         "nearTriangles": 12236,
-        "overviewTriangles": 2770
+        "overviewTriangles": 3306
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -14243,15 +14394,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-quintus-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "4cb4975655ae07c7fdb21dae79ce879389ffaa459f731ef10e2e9157927a92aa",
+          "previousBytes": 398940,
+          "paint": "Existing paint retained",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3360,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Signifer Quintus, who keeps the standards at the principia in the camps of Chapters I and IV and on the drill field in XII: his own face, hair and build, in a legionary's mail. In camp he is drawn bare-headed and unarmed, as the camp's people are. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
       "loading": "Deferred local GLB in the offline groups of Chapters I, IV and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Signifer Quintus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 398940,
-        "sha256": "4cb4975655ae07c7fdb21dae79ce879389ffaa459f731ef10e2e9157927a92aa",
-        "triangles": 14940,
+        "bytes": 428908,
+        "sha256": "8a53b6800a8e29a7ad9c47bd535f965a17e98963643291f793457560196898f3",
+        "triangles": 15400,
         "textures": 6,
         "textureEdge": 512,
         "sizeMetres": {
@@ -14260,7 +14431,7 @@
           "depth": 0.3701
         },
         "nearTriangles": 12134,
-        "overviewTriangles": 2806
+        "overviewTriangles": 3266
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -14369,15 +14540,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-severianus-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "4d736a368396273e7a24a9f4026a702839dc3044c0579a4e8bc66dd3c45dea57",
+          "previousBytes": 393112,
+          "paint": "Project-generated orthographic face paint, baked into the original UV atlas and compressed as KTX2 UASTC with mipmaps",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3368,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Marcus Aurelius Severianus, the equestrian patron whose favours follow the soldier's career, in the camps of Chapters VI to XI, and in XII's court when he backs the soldier: his own face, hair and build, in a rich civilian's striped tunic. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
       "loading": "Deferred local GLB in the offline groups of Chapters VI, VII, VIII, IX, X, XI and XII (including his conditional support appearance) (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Severianus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 393112,
-        "sha256": "4d736a368396273e7a24a9f4026a702839dc3044c0579a4e8bc66dd3c45dea57",
-        "triangles": 13747,
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S and restored UASTC albedo with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 631556,
+        "sha256": "cedc0aad29114dceb64516be0680ec8494f46d7fee38e1c6bdf7e327780111f8",
+        "triangles": 14215,
         "textures": 6,
         "textureEdge": 512,
         "sizeMetres": {
@@ -14386,7 +14577,7 @@
           "depth": 0.4392
         },
         "nearTriangles": 11172,
-        "overviewTriangles": 2575
+        "overviewTriangles": 3043
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -14495,15 +14686,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-paullus-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "5c26d609f7fe134118b27b6790c5d2838490b7e4a9c13beafffbc705640f9788",
+          "previousBytes": 415608,
+          "paint": "Project-generated orthographic face paint, baked into the original UV atlas and compressed as KTX2 UASTC with mipmaps",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3382,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Lucius Cassius Paullus, the elder senator who speaks for the soldier in Rome, in the camps of Chapters XI and XII: his own face, hair and build, in a toga over a senator's broad-striped tunic. In the Senate's chamber the named keep the game's own toga. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
       "loading": "Deferred local GLB in the offline groups of Chapters XI and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Paullus himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 415608,
-        "sha256": "5c26d609f7fe134118b27b6790c5d2838490b7e4a9c13beafffbc705640f9788",
-        "triangles": 15070,
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S and restored UASTC albedo with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 641392,
+        "sha256": "2bd3f6ab0fd12e3bcb70b127ca40adbf972302cc0ea5c5f5aa336d3778ebf5fa",
+        "triangles": 15552,
         "textures": 6,
         "textureEdge": 512,
         "sizeMetres": {
@@ -14512,7 +14723,7 @@
           "depth": 0.4339
         },
         "nearTriangles": 12298,
-        "overviewTriangles": 2772
+        "overviewTriangles": 3254
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -14621,15 +14832,35 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-theon-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "a1060bde3839f626d98c0f80f436ee6a10c740e4a5e3de890eadf83335f6b52c",
+          "previousBytes": 396336,
+          "paint": "Project-generated orthographic face paint, baked into the original UV atlas and compressed as KTX2 UASTC with mipmaps",
+          "overview": "Meshopt reduction of the intact near head, locking UV island borders",
+          "budget": {
+            "triangles": 12500,
+            "overviewTriangles": 3358,
+            "texture": 1024,
+            "bytes": 900000,
+            "heightMetres": 1.8,
+            "minHeight": 1.6,
+            "maxHeight": 2
+          }
         }
       },
       "usage": "Theon of Nicomedia, the rhetor who teaches the order and delivery of a speech, in the camps of Chapters VII, X and XI: his own face, hair and build, in a Greek teacher's tunic and mantle. His body's maps and his head's are a level below the release 6 cast's (512-pixel colour, 256-pixel detail), as he stands only in camps and his chapters' downloads are near their limit.",
       "loading": "Deferred local GLB in the offline groups of Chapters VII, X and XI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Theon himself, by who he is rather than his kit (src/ui/actor-body-catalog.js), at every quality. He keeps the shared head's sculpted face and the procedural figure until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 396336,
-        "sha256": "a1060bde3839f626d98c0f80f436ee6a10c740e4a5e3de890eadf83335f6b52c",
-        "triangles": 14852,
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: his body (body, body-overview) and his head (cast-head, cast-head-overview), with KTX2 textures (Basis Universal ETC1S and restored UASTC albedo with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 620784,
+        "sha256": "95a1847c761f3562b0dddedbd4200f0a44e6f60d63d1ab44df3920c8c7315c9b",
+        "triangles": 15310,
         "textures": 6,
         "textureEdge": 512,
         "sizeMetres": {
@@ -14638,7 +14869,7 @@
           "depth": 0.3658
         },
         "nearTriangles": 12101,
-        "overviewTriangles": 2751
+        "overviewTriangles": 3209
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     },
@@ -14687,14 +14918,25 @@
           "geometry": "Bounded face relief and anatomical shoulder-weight fairing; hero/Aelia near faces use conforming local edge subdivision, Aelia also receives a bridged long-robe weighting pass",
           "textures": "Original KTX2 payloads and all original UV samples retained; new face samples use barycentric interpolation, no rebake or quality reduction",
           "verification": "docs/character-art-refinement.md"
+        },
+        "surfaceRepair": {
+          "tool": "scripts/assets/repair-character-surfaces.mjs",
+          "bake": "scripts/assets/bake-character-face.py",
+          "blenderVersion": "5.2.2 LTS",
+          "report": "art-source/models/reports/char-cast-aelia-surface-repair.json",
+          "verification": "docs/save-camp-art-refinements.md",
+          "previousSha256": "0cc557b820dc22f7f2e16dbe81ab0df6f56519ff2b2a9c8dfdb22302bd54dd95",
+          "previousBytes": 437756,
+          "paint": "Project-generated orthographic face paint, baked into the original UV atlas and compressed as KTX2 UASTC with mipmaps",
+          "overview": "Existing overview retained"
         }
       },
       "usage": "Aelia Dacia, who speaks for the settlers' households in Dacia, in the camps of Chapters VIII, X and XII: her own face, hair and build, in a provincial matron's tunic, stola and mantle.",
       "loading": "Deferred local GLB in the offline groups of Chapters VIII, X and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for Aelia herself, by who she is rather than her kit (src/ui/actor-body-catalog.js), at every quality. She keeps the procedural woman's figure until the model loads, or if it fails.",
       "export": {
-        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: her body with her own head (body, body-overview), with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 437756,
-        "sha256": "0cc557b820dc22f7f2e16dbe81ab0df6f56519ff2b2a9c8dfdb22302bd54dd95",
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose: her body with her own head (body, body-overview), with KTX2 textures (Basis Universal ETC1S and restored UASTC albedo with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 885636,
+        "sha256": "84ab3baa6b389005e46d49ea1787c9fb4e3b31b3db1a37acc8b8f9d2eb25d97b",
         "triangles": 14539,
         "textures": 3,
         "textureEdge": 1024,
@@ -14974,7 +15216,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-11-02T08:54:36.095Z",
+  "updatedAt": "2026-11-04T00:00:00.000Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -14982,7 +15224,7 @@
     "compressedInitialBuildBytes": 2000000,
     "compressedChapterOneBuildBytes": 16000000,
     "compressedCompleteBuildBytes": 80000000,
-    "compressedChapterGroupBuildBytes": 24000000
+    "compressedChapterGroupBuildBytes": 26000000
   },
   "assetCounts": {
     "tactical": 6,
@@ -15002,7 +15244,7 @@
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 56278137,
-  "totalModelBytes": 40974659,
+  "totalBundledAssetBytes": 58035373,
+  "totalModelBytes": 42731895,
   "derivedGeometryBytes": 47428
 }

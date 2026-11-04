@@ -90,6 +90,12 @@ export const stageCamera={
     this.baseTarget.set(0,2.7,0);this.orbit.distance=Math.max(28,this.overviewDistance());
   },
   liveHorizonDistance(){return clamp(24/Math.max(.7,this.camera.aspect),20,34);},
+  campHorizonDistance(target,orbit){
+    if(this.cameraView!=='horizon'||!/-camp$/.test(this.encounter?.id??''))return orbit.distance;
+    // A gate now stands on the real approach. Keep a low glance inside its
+    // frontage instead of putting the camera through a tower or curtain wall.
+    return clearOfBoxes(this.environment?.group?.userData.precinctStructures,target,orbit,{margin:.8,least:.75});
+  },
   // The bearing that looks from `from` toward the chapter's nearest landmark on the horizon (environment-horizon.js),
   // or the field's own bearing where the horizon has none.
   glanceYaw(from){

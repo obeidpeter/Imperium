@@ -12,7 +12,7 @@
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
 import {createRequire} from 'node:module';
-import {existsSync,readFileSync,readdirSync,rmSync,mkdirSync,writeFileSync} from 'node:fs';
+import {existsSync,readFileSync,readdirSync,rmSync,mkdirSync,writeFileSync,rmdirSync,renameSync} from 'node:fs';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {isAbsolute,join} from 'node:path';
 import {throttleCpu} from './ui-smoke-navigation.mjs';
@@ -38,6 +38,39 @@ const executable=packaged?packagedApp:electronPath,args=packaged?sandbox:[deskto
 const report={method:`Automated Electron (Playwright) on the ${packaged?'packaged app':'desktop build in the repository’s Electron'}, through the visible interface`,checks:[],requests:[],errors:[]};
 const outside=url=>!/^(app:\/\/imperium\/|data:|blob:|about:blank|devtools:)/.test(url);
 const env={...process.env,IMPERIUM_USER_DATA:userData,...(packaged?{}:{IMPERIUM_GAME_DIR:gameDir})};
+const liveApps=[];
+async function waitForFullscreen(app,page,expected){
+  // waitForFunction treats a Promise as truthy before it resolves. Await the
+  // bridge result explicitly so false cannot accidentally pass the assertion.
+  const deadline=Date.now()+10000;
+  const handle=process.platform==='linux'?await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].getNativeWindowHandle().toString('hex')):null;
+  const id=handle?`0x${Buffer.from(handle,'hex').readUInt32LE().toString(16)}`:null;
+  for(;;){
+    const bridge=await page.evaluate(()=>window.imperiumDesktop.window.isFullscreen());
+    const fullscreen=await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isFullScreen());
+    // On X11, also wait for the window manager to acknowledge the request.
+    const native=id?spawnSync('xprop',['-id',id,'_NET_WM_STATE'],{encoding:'utf8',timeout:5000}):null;
+    if(native)assert.equal(native.status,0,`Read X11 window state: ${native.error?.message||native.stderr}`);
+    if(bridge===expected&&fullscreen===expected&&(!native||native.stdout.includes('_NET_WM_STATE_FULLSCREEN')===expected))return;
+    if(Date.now()>=deadline)throw Error(`Fullscreen did not settle to ${expected}: bridge=${bridge}, Electron=${fullscreen}; ${native?.stdout??''}`);
+    await new Promise(resolve=>setTimeout(resolve,25));
+  }
+}
+async function nativeShortcut(app,keyCode,modifiers=[]){
+  // CDP page.keyboard bypasses Electron's before-input-event handler. Send real
+  // Electron input to the focused window, without calling the toggle directly.
+  await app.evaluate(async({BrowserWindow},shortcut)=>{
+    const win=BrowserWindow.getAllWindows()[0],deadline=Date.now()+10000;
+    win.focus();
+    while(!win.isFocused()){
+      if(Date.now()>=deadline)throw Error('The native window did not take keyboard focus');
+      await new Promise(resolve=>setTimeout(resolve,25));
+    }
+    win.webContents.focus();
+    win.webContents.sendInputEvent({type:'keyDown',...shortcut});
+    win.webContents.sendInputEvent({type:'keyUp',...shortcut});
+  },{keyCode,modifiers});
+}
 async function launch(label){
   let app;
   try{app=await pw._electron.launch({executablePath:executable,args,env});}
@@ -48,13 +81,41 @@ async function launch(label){
     const said=[run.error?.message,run.stdout,run.stderr].filter(Boolean).join('\n').split('\n').filter(line=>line.trim()).slice(-15).join('\n');
     throw new Error(`${label}: ${error.message}\nThe app, run by itself, said:\n${said||'(nothing)'}`);
   }
+  liveApps.push(app);
   const page=await app.firstWindow();page.setDefaultTimeout(60000);await throttleCpu(page);
+  if(process.platform==='linux')await app.evaluate(({BrowserWindow})=>{
+    const win=BrowserWindow.getAllWindows()[0];win.smokeWindowTrace=[];
+    const record=event=>win.smokeWindowTrace.push({event,fullscreen:win.isFullScreen(),bounds:win.getBounds(),normal:win.getNormalBounds()});
+    for(const name of ['show','enter-full-screen','leave-full-screen','minimize','restore'])win.on(name,()=>record(name));
+    win.webContents.on('before-input-event',(_event,input)=>{if(input.key==='F11'||input.key==='Enter')record(`${input.type} ${input.key} alt=${input.alt} repeat=${input.isAutoRepeat}`);});
+  });
   page.on('request',request=>{const url=request.url();if(outside(url))report.requests.push(`${label}: ${url}`);});
   page.on('pageerror',error=>report.errors.push(`${label}: ${error.message}`));
   await page.waitForSelector('main');
+  // The DOM can be ready while the app is still waiting for its first painted
+  // frame before showing the native window. Native window checks need both.
+  await app.evaluate(async({BrowserWindow})=>{
+    const deadline=Date.now()+60000;
+    while(!BrowserWindow.getAllWindows()[0]?.isVisible()){
+      if(Date.now()>=deadline)throw Error('The game loaded but its native window was not shown');
+      await new Promise(resolve=>setTimeout(resolve,25));
+    }
+  });
+  await waitForFullscreen(app,page,await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isFullScreen()));
   return {app,page};
 }
 const closed=app=>new Promise(resolve=>app.process().once('exit',resolve));
+// Fault-injection uses a separate save name and namespace in the disposable test
+// profile. It never opens or changes the player's own chronicle.
+async function regressionStore(page,namespace='desktop-save-regression'){
+  return page.evaluate(async namespace=>{
+    const {createSaveStore}=await import('./src/ui/storage.js');
+    window.saveRegression?.close();
+    const files=window.imperiumDesktop.saves;
+    window.saveRegression=createSaveStore({namespace,mirror:{read:()=>files.read('regression'),readPrevious:()=>files.readPrevious('regression'),write:(text,options)=>files.write('regression',text,options)}});
+    const loaded=await window.saveRegression.loadLocal();window.regressionState=loaded.state;return loaded;
+  },namespace);
+}
 
 try{
   // 1. The app's own origin, bridge and wording.
@@ -78,8 +139,8 @@ try{
     const box=page.locator('#desktop-fullscreen');await box.waitFor();
     const before=await page.evaluate(()=>window.imperiumDesktop.window.isFullscreen());
     assert.equal(await box.isChecked(),before,'The setting shows the window’s state');
-    await box.click();await page.waitForFunction(was=>window.imperiumDesktop.window.isFullscreen().then(now=>now!==was),before);
-    await box.click();await page.waitForFunction(was=>window.imperiumDesktop.window.isFullscreen().then(now=>now===was),before);
+    await box.click();await waitForFullscreen(app,page,!before);
+    await box.click();await waitForFullscreen(app,page,before);
     await page.locator('[data-cmd="settings-section"][data-id="saves"]').click();
     assert.equal(await page.locator('#settings-offline-status').count(),0,'No offline section');
     assert.match(await page.locator('#settings-saves').textContent(),/Progress saves on this computer/);
@@ -110,9 +171,88 @@ try{
     assert.match(await page.locator('main').textContent(),new RegExp(report.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')),'The chronicle continues from its file');
     await page.screenshot({path:join(out,'relaunch.png')});
     report.checks.push('relaunched with only the save file, the title offers to continue the same chronicle');
+    await regressionStore(page);
+    await page.evaluate(async()=>{const G=await import('./src/core/game.js');window.regressionState=G.newGame('Desktop save regression');await window.saveRegression.saveLocal(window.regressionState);});
+    const file=join(userData,'saves','regression.json'),before=readFileSync(file,'utf8'),blocked=join(userData,'saves','regression.prev.json');
+    mkdirSync(blocked);
+    const failed=await page.evaluate(async()=>{const G=await import('./src/core/game.js');if(!G.soldierCommand(window.regressionState,{kind:'takeOff',place:'shield:0'}).ok)throw Error('Equipment command failed');try{await window.saveRegression.saveLocal(window.regressionState);return null;}catch(e){return e.code;}});
+    assert.equal(failed,'SAVE_FILE_UNAVAILABLE');assert.equal(readFileSync(file,'utf8'),before);
+    await app.close();rmdirSync(blocked);
+    report.checks.push('a real backup-file write failure preserves the previous disk save and retains the newer local equipment state');
+  }
+  {
+    const {app,page}=await launch('relaunch after failed save'),loaded=await regressionStore(page);
+    assert.equal(loaded.state.soldier.worn['shield:0'],undefined);assert.match(loaded.warning,/Recovered local progress/);
+    const file=join(userData,'saves','regression.json'),saved=readFileSync(file,'utf8');
+    assert.equal(JSON.parse(JSON.parse(saved).payload).soldier.worn['shield:0'],undefined);
+    report.checks.push('after a full app relaunch the newer local state wins over its unchanged old file and is written back safely');
+    const held=join(userData,'saves','regression-held.json');renameSync(file,held);mkdirSync(file);
+    try{
+      const unreadable=await regressionStore(page);assert.match(unreadable.fileProblem,/cannot be read/);
+      const code=await page.evaluate(async()=>{try{await window.saveRegression.saveLocal(window.regressionState);return null;}catch(e){return e.code;}});
+      assert.equal(code,'SAVE_FILE_UNAVAILABLE');assert.equal(readFileSync(held,'utf8'),saved);
+    }finally{rmdirSync(file);renameSync(held,file);}
+    report.checks.push('a real file-read error is surfaced without replacing the existing save');
+    await page.evaluate(()=>window.saveRegression.saveLocal(window.regressionState));
+    const retried=readFileSync(file,'utf8');assert.notEqual(retried,saved);
+    assert.equal(JSON.parse(retried).payload,JSON.parse(saved).payload);
+    report.checks.push('when the same file becomes readable again, saving resumes and acknowledges the new revision');
+    renameSync(file,held);mkdirSync(file);
+    try{assert.match((await regressionStore(page)).fileProblem,/cannot be read/);}
+    finally{rmdirSync(file);renameSync(held,file);}
+    // A valid external rollback while the read was blocked: it belongs to this disposable profile.
+    writeFileSync(file,saved);
+    const conflict=await page.evaluate(async()=>{try{await window.saveRegression.saveLocal(window.regressionState);return null;}catch(e){return e.message;}});
+    assert.match(conflict,/changed outside the game/);assert.equal(readFileSync(file,'utf8'),saved);
+    report.checks.push('if the unreadable file changed externally, retry keeps both local progress and the external file');
+    await nativeShortcut(app,'F11');
+    await waitForFullscreen(app,page,false);
+    await nativeShortcut(app,'Enter',['alt']);
+    await waitForFullscreen(app,page,true);
+    if(process.platform==='linux'){
+      // Chromium's X11Window::OnXWindowStateChanged retains browser fullscreen
+      // while iconified, so Electron's isMinimized() is not reliable there.
+      // Check native minimize/restore in windowed mode; fullscreen was checked
+      // separately above. Windows also covers minimizing from fullscreen.
+      await nativeShortcut(app,'F11');
+      await waitForFullscreen(app,page,false);
+    }
+    await app.evaluate(async({BrowserWindow})=>{
+      const win=BrowserWindow.getAllWindows()[0];
+      // Window managers acknowledge these requests asynchronously. Poll in
+      // Electron's main process: a minimized renderer need not keep drawing.
+      const waitFor=async minimized=>{
+        const deadline=Date.now()+10000;
+        while(win.isMinimized()!==minimized){
+          if(Date.now()>=deadline)throw Error(`Window did not ${minimized?'minimize':'restore'}: ${JSON.stringify({visible:win.isVisible(),focused:win.isFocused(),fullscreen:win.isFullScreen(),minimized:win.isMinimized()})}`);
+          await new Promise(resolve=>setTimeout(resolve,25));
+        }
+      };
+      win.minimize();await waitFor(true);win.restore();await waitFor(false);win.focus();
+    });
+    await page.locator('[data-cmd="settings"]').first().click();
+    await page.locator('#modal[open]').waitFor();
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(()=>!document.querySelector('#modal[open]'));
+    report.checks.push(`F11 and Alt+Enter toggle native fullscreen; the packaged window survives minimize and restore ${process.platform==='linux'?'in windowed mode':'from fullscreen'}, and Settings remains interactive`);
     await app.close();
   }
   assert.deepEqual(report.requests,[],'No request leaves app://imperium');
   assert.deepEqual(report.errors,[],'No page errors');
-}finally{writeFileSync(join(out,'report.json'),JSON.stringify(report,null,2));}
+}catch(error){
+  if(process.platform==='linux'){
+    report.linuxWindows=[];
+    for(const app of liveApps){
+      const windows=await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows().map(win=>({handle:win.getNativeWindowHandle().toString('hex'),visible:win.isVisible(),fullscreen:win.isFullScreen(),minimized:win.isMinimized(),trace:win.smokeWindowTrace}))).catch(()=>[]);
+      for(const win of windows){
+        const id=`0x${Buffer.from(win.handle,'hex').readUInt32LE().toString(16)}`;
+        const properties=spawnSync('xprop',['-id',id,'WM_STATE','_NET_WM_STATE','_NET_WM_WINDOW_TYPE'],{encoding:'utf8',timeout:5000});
+        report.linuxWindows.push({...win,properties:properties.stdout,error:properties.error?.message||properties.stderr});
+      }
+    }
+    console.error(JSON.stringify({linuxWindows:report.linuxWindows},null,2));
+  }
+  report.failure=String(error.stack??error);throw error;
+}
+finally{for(const app of liveApps)await app.close().catch(()=>{});writeFileSync(join(out,'report.json'),JSON.stringify(report,null,2));}
 console.log(JSON.stringify(report,null,2));

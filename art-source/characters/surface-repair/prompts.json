@@ -1,0 +1,13 @@
+{
+  "tool": "OpenAI built-in image_gen",
+  "date": "2026-11-04",
+  "basePrompt": "Use case: identity-preserve texture restoration. Restore the supplied frontal unlit 3D character reference into a detailed naturalistic game face-paint projection. It will be projected straight back onto exactly the same mesh. CRITICAL: preserve the exact square canvas, head size and position, silhouette, pose, neck, clothing and background. Do not zoom, crop, turn the head, move either eye, change facial proportions, or change the person's age or identity. Eyes, eyebrows, nose tip, nostrils and mouth must remain at precisely their original pixel locations. Fix the smeared painted anatomy into coherent natural eyes and lips at those locations. Remove triangular colour patches, give skin smooth natural diffuse colour with subtle pores, and give the existing hair fine individually defined strands while retaining its silhouette and hairline. Use completely flat even diffuse lighting with no new shadows, highlights, photographic depth of field or relighting. This is albedo paint, not a portrait lit for photography. Keep the uniform grey background and all original clothing. Neutral expression, mouth closed, eyes forward. Return only the restored square image.",
+  "subjects": {
+    "roman-recruit": "This is Marcellus, a young adult Roman recruit.",
+    "cast-aelia": "This is Aelia, a Roman woman.",
+    "cast-severianus": "This is Severianus, a middle-aged Roman man with grey curly hair.",
+    "cast-paullus": "This is Paullus, an older balding Roman man with grey hair.",
+    "cast-theon": "This is Theon, a middle-aged Roman man with dark grey beard and hair."
+  },
+  "note": "Orthographic references rendered from the project's existing bundled models. No external reference person, Tripo calls, new rig or paid Tripo generation. Final acceptance is based on the in-engine compressed export, not the source portrait."
+}

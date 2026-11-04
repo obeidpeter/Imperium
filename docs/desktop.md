@@ -14,7 +14,9 @@ npm run package:win            # (in desktop/) the Windows app folder, desktop/o
 npm run package:linux          # (in desktop/) the Linux one, desktop/out/linux-unpacked/
 ```
 
-From the root, `npm run smoke:desktop` checks the app through its interface. `DESKTOP_APP=packaged npm run smoke:desktop` checks the packaged app instead. On Linux without a display, run it under `xvfb-run -a`.
+From the root, `npm run smoke:desktop` checks the app through its interface. `DESKTOP_APP=packaged npm run smoke:desktop` checks the packaged app instead. On Linux without a display, install `xvfb`, `openbox` and `x11-utils`, then use `DESKTOP_APP=packaged xvfb-run -a bash scripts/desktop-smoke-linux.sh`. The helper starts Openbox, waits for its window-manager registration and stops it after the check. Xvfb alone has no window manager to acknowledge minimize/restore requests; the check waits for both actual state changes in Electron's main process.
+
+Fullscreen toggles are checked on both platforms using native Electron keyboard input, which reaches the app's `before-input-event` shortcut handler. The test explicitly awaits the bridge's result before comparing it; a Promise-returning `waitForFunction` predicate can pass without its resolved value being true. On Linux, the test also waits for the window manager's `_NET_WM_STATE` acknowledgement before issuing another window command; Electron can report its requested state before X11 finishes the transition. Minimize/restore is checked from fullscreen on Windows and from windowed mode on Linux, followed by opening and closing Settings. Chromium's [X11 window state handler](https://github.com/chromium/chromium/blob/main/ui/ozone/platform/x11/x11_window.cc) can retain browser fullscreen while iconified, so Electron's `isMinimized()` is not a reliable assertion in that Linux state. Linux fullscreen minimize/restore and Wayland remain real-desktop checks outside this Xvfb test.
 
 CI's `desktop` job packages the app on Linux and Windows and runs that check on the packaged app. Each push to main keeps the Windows app folder as an artifact, `imperium-windows`, for a week. It is unsigned, so Windows may warn before opening it.
 
@@ -33,9 +35,9 @@ For development:
   `src/ui/platform.js` is the game's side of it. The desktop build records `platform: 'desktop'`, and without the bridge a desktop build behaves as the web.
 - **Saves.** Every save is written through to `saves/campaign.json` in the app's folder: `%APPDATA%\Imperium` on Windows, `~/.config/Imperium` on Linux.
   - The write is atomic, and the previous copy is kept as `campaign.prev.json`.
-  - On the desktop the file is the chronicle. Loading adopts it when it differs from the app's own store, and keeps what it replaces as a recovery checkpoint (`src/ui/storage.js`).
+  - Loading reconciles the file with local progress. A failed local write is recovered when its old file is unchanged; an externally changed file is adopted with the displaced local state retained in recovery, even at the same checkpoint (`src/ui/storage.js`).
   - A file that cannot be written is reported, while the store keeps the save.
-  - An unreadable file is set aside for export, like any unreadable save.
+  - A temporary file-read error stops writes without replacing the file. A corrupt file is preserved for export, and a valid previous copy remains available for recovery. File writes compare the expected version before replacement.
   - A chronicle from the browser or the free demo comes by its save code: the first title page offers **Import a chronicle from the browser**.
 - **Closing.** When the window closes, the app asks the page to save first and closes on its answer. If the save failed, the player chooses between quitting anyway and keeping playing. The Menu's **Quit to desktop** closes the same way.
 - **The window.**

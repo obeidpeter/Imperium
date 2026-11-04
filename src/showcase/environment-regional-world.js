@@ -1,7 +1,7 @@
 import * as T from '../../vendor/three/three.module.js';
 import {REGIONAL_KIT_COMPONENTS} from './regional-kit-components.js';
 import {CH5_KIT_COMPONENTS,isChapterFivePilot} from './environment-ch5-pilot.js';
-import {stagingEdge,getEncounterStaging} from './environment-staging.js';
+import {stagingEdge,getEncounterStaging,campEntrance} from './environment-staging.js';
 import {batchStaticEnvironment} from './environment-batching.js';
 import {curiaPropSpot} from './environment-curia.js';
 import {terrainAt,distantRiverCentre} from './environment-layout.js';
@@ -30,7 +30,9 @@ export function regionalPlacementBounds(p){
 export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=2.5,withoutGate=false}={}){
   if(chapter!==regionalChapter(e)||!hasRegionalWorld(e)||!Number.isInteger(e.width)||!Number.isInteger(e.height))return [];
   const kit=REGIONAL_WORLD_KITS[chapter],plan=REGIONAL_PLANS[chapter],staging=getEncounterStaging(e,{chapter,civic:e.kind==='contest'}),camp=e.id===`ch${chapter}-camp`,civic=e.kind==='contest';
-  const front=camp?'north':staging.landmarkEdge,edges={front,opposite:front==='east'?'north':'east',back:front==='east'?'south':'west'},out=[];
+  const entrance=campEntrance(e,tileSize),front=entrance?.edge??(camp?'north':staging.landmarkEdge),
+    ring=['north','east','south','west'],rotate=edge=>ring[(ring.indexOf(edge)+ring.indexOf(front))%4],
+    edges=entrance?{front,opposite:rotate('east'),back:rotate('west')}:{front,opposite:front==='east'?'north':'east',back:front==='east'?'south':'west'},out=[];
   const add=(component,edge,along,gap=1.7,yaw=0,scale=[1,1,1],id=kit)=>{
     const dims=regionalComponentDimensions(id,component);if(!dims)throw new Error(`Missing regional component ${id}/${component}`);
     const depth=Math.abs(Math.cos(yaw))*dims[2]*scale[2]+Math.abs(Math.sin(yaw))*dims[0]*scale[0];
@@ -43,7 +45,7 @@ export function getRegionalKitPlacements(e,{chapter=regionalChapter(e),tileSize=
   const place=entry=>{
     if(entry.camp&&!camp||entry.gate&&withoutGate)return;
     const {beside}=entry,along=beside?beside.side*((width(beside.slot)+width(entry.slot))/2+beside.spacing):entry.along;
-    add(entry.component??plan[entry.slot],edges[entry.edge]??entry.edge,along,entry.gap,entry.yaw??0,[...(entry.scale??[1,1,1])],entry.kit??kit);
+    add(entry.component??plan[entry.slot],edges[entry.edge]??(entrance?rotate(entry.edge):entry.edge),along,entry.gap,entry.yaw??0,[...(entry.scale??[1,1,1])],entry.kit??kit);
   };
   const layout=civic&&chapter>=10?REGIONAL_HEARINGS[chapter]:ENCOUNTER_LAYOUTS[e.id]??[...(REGIONAL_COMPOSITIONS[chapter]?.entries??REGIONAL_FRONTAGE),...(REGIONAL_CHAPTER_EXTRAS[chapter]??[])];
   for(const entry of layout)place(entry);
@@ -77,6 +79,9 @@ export function regionalPropPlacements(e,{chapter=regionalChapter(e),tileSize=2.
   const life=e.kind==='contest'?[]:Object.entries(LIFE_PROP_CHAPTERS);
   const ids=[...Object.entries(REGIONAL_PROP_CHAPTERS),...Object.entries(REGIONAL_REUSED_PROP_CHAPTERS),...life].filter(([,chapters])=>chapters.includes(chapter)).map(([id])=>id);
   const pads=regionalServicePads(e,tileSize),used=new Set(),hx=e.width*tileSize/2,hz=e.height*tileSize/2,occupied=getRegionalKitPlacements(e,{chapter,tileSize}).map(regionalPlacementBounds);
+  const entrance=campEntrance(e,tileSize);
+  if(entrance){const {x,z,edge}=entrance,side=edge==='east'||edge==='west',dx=side?Math.sign(x)*14:0,dz=side?0:Math.sign(z)*14;
+    occupied.push({minX:Math.min(x,x+dx)-1.8,maxX:Math.max(x,x+dx)+1.8,minZ:Math.min(z,z+dz)-1.8,maxZ:Math.max(z,z+dz)+1.8});}
   const intersects=(a,b)=>a.maxX>b.minX&&a.minX<b.maxX&&a.maxZ>b.minZ&&a.minZ<b.maxZ;
   return ids.map((id,i)=>{
     const kind=padKindFor(id),pad=id==='river-ferry'||LIFE_PROP_CHAPTERS[id]?null:pads.find(p=>p.id===kind&&!used.has(p.id));
