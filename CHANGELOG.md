@@ -4,6 +4,14 @@
 
 ### Follow-ups to #73 and #74
 
+- **Higher download limits,** at the owner's request: #74's larger recruit and Aelia models had left Chapter I's first download 32 KB under its limit.
+
+  | Limit | Was | Now | Used |
+  | --- | --- | --- | --- |
+  | Chapter I, 3D view | 16 MB | 18 MB | 15.97 MB |
+  | Any one chapter, with its 2D art | 26 MB | 28 MB | 25.38 MB (Chapter XII) |
+
+  The 2 MB first load (the requirements' own limit) and the 80 MB complete campaign are unchanged. The desktop app, which installs every chapter, is not subject to them. [The asset pipeline](docs/asset-pipeline.md) records the new limits and today's sizes.
 - **A damaged chronicle at load** again says where its data is kept: "The unreadable data stays on this device; Settings can download it." #74's new load messages had dropped the sentence.
 - **Steam's AI disclosure** counts the faces restored with OpenAI image generation from the asset manifest, instead of a number written into its script. It also says that each restoration was shown a render of the game's own model.
 - **Records:**
