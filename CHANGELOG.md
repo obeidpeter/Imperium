@@ -2,6 +2,11 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The page no longer calls the game turn-based
+
+- **The page's description** (`index.html`), which search results and shared links show, now reads "A Roman tactical chronicle in real time with pause", as 0.40 plays. The free demo's build still writes its own description.
+- **Art & credits** opens with "deterministic tactical play in real time with pause or in turns", the two ways New Game offers.
+
 ### Steam, fourth package, first part: the store page's text and the AI disclosure, drafted ([the plan](docs/steam-plan.md))
 
 Drafts for the owner to edit before entering them in Steamworks. The rest of S4 (store art, trailer, release) still waits for 0.40.0 and the owner's Gate 4 sign-off.
