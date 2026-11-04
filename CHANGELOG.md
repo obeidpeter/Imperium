@@ -2,6 +2,30 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Steam, fourth package, first part: the store page's text and the AI disclosure, drafted ([the plan](docs/steam-plan.md))
+
+Drafts for the owner to edit before entering them in Steamworks. The rest of S4 (store art, trailer, release) still waits for 0.40.0 and the owner's Gate 4 sign-off.
+
+- **[The store page's text](docs/steam-store-text.md)**, drawn from the player guide:
+  - the working title;
+  - a short description of 269 characters (Steam's reported limit is 300);
+  - *About This Game* in Steam's markup, with no links, since Steam has allowed none there since September 2024;
+  - languages, genres and tags, Steam features and controls;
+  - the Windows requirements, measured where they can be and marked for the owner's device check where they cannot;
+  - what the game shows, for the content survey's other questions.
+
+  A test checks the short description's length, the absence of links and every number in the text against the game's data.
+- **[The AI disclosure](docs/steam-ai-disclosure.md)**, generated from the asset manifest by `node scripts/steam-ai-disclosure.mjs`:
+  - the two answers: made with AI before release, yes; generated while the game runs, no;
+  - the text for the store page, a sentence for each kind of AI-made content the game ships;
+  - the inventory: 192 of the 227 shipped files made with AI tools, sorted by what they are, what made them and what was done after. That is 54 illustrations; 112 Tripo models, the item pictures rendered from 35 more and the finale's crowd reduced from one; two tree kits with generated leaf cards; 14 audio files; and 8 depth maps;
+  - what was made without AI;
+  - what lies beyond the shipped files: the writing and code (the owner to confirm), the achievement icons and the store art to come.
+
+  A test fails while the draft differs from the manifest, and while a shipped file's source fits none of the script's kinds. A new tool, or a generated file where there was none, therefore never goes unlisted.
+- **Not checked against Steam itself:** the session could not reach Valve's partner site, so Steam's limits and rules here come from reports (the September 2024 description rules, the January 2026 rewrite of the AI section). The drafts say so where they rely on them.
+- **Docs:** the owner's checklist links both drafts, the plan's status and CLAUDE.md name them.
+
 ### Steam, third package, second part: the achievement icons ([the list](docs/steam-achievements.md))
 
 - **The 35 achievement icons** are made from the game's own art, with nothing new generated: each in `desktop/steam/achievement-icons/` as a 64 × 64 JPEG with a greyed locked copy, ready to upload in Steamworks.
