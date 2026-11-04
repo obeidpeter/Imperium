@@ -39,6 +39,22 @@ const report={method:`Automated Electron (Playwright) on the ${packaged?'package
 const outside=url=>!/^(app:\/\/imperium\/|data:|blob:|about:blank|devtools:)/.test(url);
 const env={...process.env,IMPERIUM_USER_DATA:userData,...(packaged?{}:{IMPERIUM_GAME_DIR:gameDir})};
 const liveApps=[];
+async function waitForFullscreen(app,page,expected){
+  await page.waitForFunction(wanted=>window.imperiumDesktop.window.isFullscreen().then(value=>value===wanted),expected);
+  if(process.platform!=='linux')return;
+  // On X11, Electron updates its requested state before the window manager
+  // acknowledges it. Do not race the next toggle/minimize against that request.
+  const handle=await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].getNativeWindowHandle().toString('hex'));
+  const id=`0x${Buffer.from(handle,'hex').readUInt32LE().toString(16)}`,deadline=Date.now()+10000;
+  for(;;){
+    const native=spawnSync('xprop',['-id',id,'_NET_WM_STATE'],{encoding:'utf8',timeout:5000});
+    assert.equal(native.status,0,`Read X11 window state: ${native.error?.message||native.stderr}`);
+    const fullscreen=await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isFullScreen());
+    if(native.stdout.includes('_NET_WM_STATE_FULLSCREEN')===expected&&fullscreen===expected)return;
+    if(Date.now()>=deadline)throw Error(`Fullscreen did not settle to ${expected}: Electron=${fullscreen}; ${native.stdout}`);
+    await new Promise(resolve=>setTimeout(resolve,25));
+  }
+}
 async function launch(label){
   let app;
   try{app=await pw._electron.launch({executablePath:executable,args,env});}
@@ -63,6 +79,7 @@ async function launch(label){
       await new Promise(resolve=>setTimeout(resolve,25));
     }
   });
+  await waitForFullscreen(app,page,await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows()[0].isFullScreen()));
   return {app,page};
 }
 const closed=app=>new Promise(resolve=>app.process().once('exit',resolve));
@@ -100,8 +117,8 @@ try{
     const box=page.locator('#desktop-fullscreen');await box.waitFor();
     const before=await page.evaluate(()=>window.imperiumDesktop.window.isFullscreen());
     assert.equal(await box.isChecked(),before,'The setting shows the window’s state');
-    await box.click();await page.waitForFunction(was=>window.imperiumDesktop.window.isFullscreen().then(now=>now!==was),before);
-    await box.click();await page.waitForFunction(was=>window.imperiumDesktop.window.isFullscreen().then(now=>now===was),before);
+    await box.click();await waitForFullscreen(app,page,!before);
+    await box.click();await waitForFullscreen(app,page,before);
     await page.locator('[data-cmd="settings-section"][data-id="saves"]').click();
     assert.equal(await page.locator('#settings-offline-status').count(),0,'No offline section');
     assert.match(await page.locator('#settings-saves').textContent(),/Progress saves on this computer/);
@@ -167,16 +184,16 @@ try{
     assert.match(conflict,/changed outside the game/);assert.equal(readFileSync(file,'utf8'),saved);
     report.checks.push('if the unreadable file changed externally, retry keeps both local progress and the external file');
     await page.keyboard.press('F11');
-    await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen().then(v=>!v));
+    await waitForFullscreen(app,page,false);
     await page.keyboard.press('Alt+Enter');
-    await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen());
+    await waitForFullscreen(app,page,true);
     if(process.platform==='linux'){
       // Chromium's X11Window::OnXWindowStateChanged retains browser fullscreen
       // while iconified, so Electron's isMinimized() is not reliable there.
       // Check native minimize/restore in windowed mode; fullscreen was checked
       // separately above. Windows also covers minimizing from fullscreen.
       await page.keyboard.press('F11');
-      await page.waitForFunction(()=>window.imperiumDesktop.window.isFullscreen().then(v=>!v));
+      await waitForFullscreen(app,page,false);
     }
     await app.evaluate(async({BrowserWindow})=>{
       const win=BrowserWindow.getAllWindows()[0];
