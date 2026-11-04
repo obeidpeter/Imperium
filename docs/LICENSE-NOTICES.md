@@ -119,7 +119,7 @@ The Steam achievement icons in `desktop/steam/achievement-icons/` are for upload
 
 ## The game's own source and text
 
-The source and narrative were prepared for this Imperium build. The project's history records them written with AI coding assistants (OpenAI Codex and Anthropic's Claude) under the owner's direction and review. The [AI disclosure draft](steam-ai-disclosure.md#beyond-the-shipped-files) leaves this for the owner to confirm.
+The source and narrative were prepared for this Imperium build. They were written with AI coding assistants (OpenAI Codex and Anthropic's Claude) under the owner's direction and review. The project's history records this, and the owner confirmed it on 4 November 2026 ([the AI disclosure draft](steam-ai-disclosure.md#beyond-the-shipped-files)).
 
 No source-code distribution licence or copyright-holder declaration has been chosen. Publishing or selling the game does not by itself grant a licence to redistribute its source. The repository owner should choose the appropriate licence before any public source release. This notice does not assert ownership or invent a licence grant.
 

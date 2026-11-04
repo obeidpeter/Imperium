@@ -56,7 +56,7 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
   - at least five screenshots;
   - a trailer.
 - [ ] **The content survey:**
-  - the AI section, from [steam-ai-disclosure.md](steam-ai-disclosure.md): confirm its line on writing and code, which rests on the project's history rather than the manifest;
+  - the AI section, from [steam-ai-disclosure.md](steam-ai-disclosure.md). Its line on writing and code rests on the project's history rather than the manifest, and you confirmed it on 4 November;
   - the other questions, from what the game shows ([the store text](steam-store-text.md#the-content-survey-beyond-ai)).
 - [ ] **The price and release date.**
 - [ ] **A Coming Soon page,** public for at least two weeks before release.

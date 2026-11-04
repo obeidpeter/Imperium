@@ -41,6 +41,7 @@ The two licence records had stopped before the generated models:
 
   It points to the notices for the terms, and to the generated inventory for the counts. Nothing reads it, and the file entries are unchanged.
 - **`docs/steam-release.md`** no longer lists any of these records as out of date.
+- **The code and text were written with AI,** as the owner confirmed on 4 November. The AI disclosure draft (`scripts/steam-ai-disclosure.mjs`, regenerated), the licence notices and the release checklist no longer leave it for the owner to confirm.
 
 ### Desktop saves: an accurate message, and the guide says what is recovered
 
