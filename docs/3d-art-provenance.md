@@ -1,8 +1,17 @@
 # Campaign and frontier study: 3D art and dependency provenance
 
-The campaign's 3D battle/chamber views and the optional isolated frontier study share real Three.js geometry and the campaign's legal commands and authored terrain. Geometry, character rigs and animation poses are written in this repository; no third-party character model, animation clip, motion-capture library or environment kit is imported. See the [project notices](LICENSE-NOTICES.md) for the project's existing rights qualifications. This record adds no separate license grant or claim of exclusive ownership for original or AI-generated work.
+The campaign's 3D battle, camp and chamber views and the optional isolated frontier study share real Three.js geometry and the campaign's legal commands and authored terrain. Since 0.36 they combine four kinds of 3D content:
 
-## Original geometry and materials
+- **Code-built.** Geometry, character rigs, animation clips and materials written in this repository ([below](#code-built-geometry-and-materials)). They are the base of every scene, and the fallback wherever a model is missing or a quality tier leaves it out.
+- **Generated with Tripo** from text prompts: most figures and the horses, props, landmarks, rocks and Chapter V's scenery. The figures are bound to the game's own skeleton and play its own clips ([below](#generated-blender-built-and-cc0-models)).
+- **Built in Blender** by the project's own scripts: the building, fortification and board kits, the tree kits and the horizon panoramas.
+- **CC0 sources:** MakeHuman anatomy, skin and hair, and Poly Haven textures.
+
+No motion capture, purchased character pack or third-party environment kit is used. Every shipped file is in the [asset manifest](asset-manifest.json). The [asset pipeline](asset-pipeline.md) describes how the models are made, checked and placed, and [the art record](art-generation.md) gives their prompts and generations. See the [project notices](LICENSE-NOTICES.md) for the rights qualifications of each source. This record adds no separate license grant or claim of exclusive ownership for original or AI-generated work.
+
+## Code-built geometry and materials
+
+This section records the code-built base, release by release up to 0.30; later releases changed some of it. The code-built figures, horses and scenery stand in for the generated and Blender-built models of the [next section](#generated-blender-built-and-cc0-models) wherever those are missing.
 
 `src/showcase/actors.js` constructs shaped clothing, faces, limbs, armor, shields and weapons from generated mesh profiles and curves. `actor-pose.js` supplies joint rotations for the action poses. `actor-kit.js` distinguishes faction, career stage, civic speakers/voters and escorts; `actor-horse.js` constructs the mounted horse/rider rig. Civic figures and escorts are unarmed; the military kits distinguish Roman, Gothic, Persian and Palmyrene presentation. These are hierarchical procedural rigs, not downloaded character assets or skeletal motion-capture animation. Equipment, insignia and regional settings are simplified historical stylizations, not claims to exact uniforms or reconstruction of a particular archaeological site or individual.
 
@@ -32,7 +41,7 @@ Version 0.29 adds no image, model or audio file to the 3D view, apart from the r
 - **Painted Tabula** (`campaign-map.js`): an SVG map whose land outline, rivers and theatre coordinates are the earlier schematic ones, now with filter-based washes.
 - **Ceremony tableaux** (`ceremony.js`): figures and boards from the existing actor and environment code.
 
-The painted (HD-2D) figure style reuses the existing generated 2D unit atlases and animation sheets, whose provenance is already recorded in `asset-manifest.json` and `art-generation.md`. Bloc trim colours, formation layouts and stance poses are presentation conventions of the game, not historical claims about the Senate's dress.
+The painted (HD-2D) figure style reuses the existing generated 2D unit atlases and animation sheets. Their provenance is already recorded in `asset-manifest.json` and `art-generation.md`. Bloc trim colours, formation layouts and stance poses are presentation conventions of the game, not historical claims about the Senate's dress.
 
 Version 0.30 adds no image, model or audio file to the 3D view. Its additions are code-built and original to this repository:
 - **Battle remains** (`battle-remains.js`): fallen figures are the existing actors, posed in a collapse and skinned once on the CPU; spent shafts are a small code-built arrow; ground wear is drawn at runtime on a canvas.
@@ -41,6 +50,27 @@ Version 0.30 adds no image, model or audio file to the 3D view. Its additions ar
 - **Baked occlusion** (`environment-baked-occlusion.js`): a data texture computed from the scene's own geometry.
 
 The 2D story paintings gain eight greyscale depth maps (`assets/scenes/depth/`), estimated offline from the project's own shipped paintings with the MIT-licensed MiDaS v2.1 small model. They are recorded in `asset-manifest.json` and `art-generation.md`; the model itself is not bundled. Bloc letters, trim shapes and colours are presentation conventions of the game, not historical claims.
+
+## Generated, Blender-built and CC0 models
+
+From 0.36 the 3D views also load models made outside the game's code. The manifest records each file: its prompt or builder, its generation task or source sets, its processing and its digest. The [AI-content inventory](steam-ai-disclosure.md), generated from the manifest, counts them by kind. In order:
+
+- **0.36:** Chapter V's supply-camp props, the first models generated with Tripo, refined in Blender.
+- **0.37:** sixteen character bodies generated with Tripo and rigged by its auto-rig, then bound in Blender to the game's own skeleton. Every clip, hand, weapon, shield, cloak and insignia stayed the game's own.
+- **During 0.40's development** ([the worlds and gameplay plan](worlds-and-gameplay-plan.md), and the [changelog](../CHANGELOG.md) for each step):
+  - your soldier's own generated body;
+  - the compression of models and textures to KTX2 and meshopt (the asset foundation);
+  - Chapter V's fortress kit and the regional camps' architecture kits, built in Blender, with regional props generated with Tripo;
+  - CC0 ground textures from Poly Haven, and horizon panoramas rendered in Blender (release 2);
+  - fortification board kits in stone, mudbrick and timber, built in Blender (release 4);
+  - rock kits reduced in Blender from twelve generated rocks, and tree kits built in Blender with CC0 bark and plant textures from Poly Haven. Two of the tree kits use leaf cards cut from the generated foliage texture (release 5);
+  - generated bodies for the named cast, the chamber's members, the camp's staff and the horses, which keep the game's horse rig and gaits. The finale's distant crowd is reduced from one generated figure and plays baked clips of the game's own animation (release 6);
+  - five more camp figures, generated with Tripo (release 8);
+  - each chapter's landmarks and camp life, generated with Tripo, and the Curia and the Aurelian Walls, built in Blender (release 9);
+  - the inventory's item pictures, rendered in Blender from generated models that are not shipped themselves (release 13);
+  - five character face textures restored with OpenAI image generation from renders of the game's own models, and baked in Blender (4 November 2026; [the art record](art-generation.md#character-face-restorations--4-november-2026)).
+
+The generated models came from original text prompts only: no third-party image, model or recording was given to the generator. The Blender kits use no external images or models, and their builders, sources and reports are retained in the repository. The generated models' terms, as the owner confirmed them, are in the [project notices](LICENSE-NOTICES.md#ai-generated-3d-models). None of the Blender kits, horses, figures or landmarks is presented as an archaeological reconstruction of a particular site, uniform or individual.
 
 ## Generated material colour maps
 
@@ -56,7 +86,7 @@ Export divided the master into three equal 724-pixel-wide cells, then encoded th
 | `assets/showcase/stone.webp` | `[724, 0, 1448, 724]` | 261,528 | `07aa0fec0850a2a5003a3cbe3643bafb0a4592a21bdbe617c03d2c1cde5b78c8` |
 | `assets/showcase/timber.webp` | `[1448, 0, 2172, 724]` | 196,884 | `bc6b1c9fa3186e482cda8b3ce573e70c494c1984052e1d920899df1eee5f98b8` |
 
-All three runtime images remain 724 × 724 pixels. They are loaded from local module-relative URLs and interpreted as sRGB colour textures. Procedural fallback surfaces remain available if a texture fails to load. Provenance establishes the production process; it does not guarantee exclusive copyright, non-infringement or third-party rights. The [asset manifest](asset-manifest.json) records these files alongside the campaign artwork.
+All three runtime images remain 724 × 724 pixels. Their mechanical recompressions, `earth-v017.webp`, `stone-v017.webp` and `timber-v017.webp`, are recorded in the manifest with no creative edit, and the three files above still ship unchanged. They are loaded from local module-relative URLs and interpreted as sRGB colour textures. Procedural fallback surfaces remain available if a texture fails to load. Provenance establishes the production process; it does not guarantee exclusive copyright, non-infringement or third-party rights. The [asset manifest](asset-manifest.json) records these files alongside the campaign artwork.
 
 ## Three.js distribution
 
@@ -70,6 +100,8 @@ The following three files are byte-for-byte copies from that package. They are l
 | `vendor/three/three.core.js` | `build/three.core.js` | 1,458,113 | `9edde002b066a9a05676a6127f67735b62baf399bdea529f2f7e31657da769e6` |
 | `vendor/three/LICENSE` | `LICENSE` | 1,081 | `8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc` |
 
+The KTX2 and meshopt decoders that the game's model loader bundles from the same release are recorded, with each file's published SHA-256 and its licence, in [vendor/three/addons/PROVENANCE.md](../vendor/three/addons/PROVENANCE.md).
+
 ## Scope of checks
 
-The environment's Node tests construct real Three.js geometry without a WebGL context, check finite vertex and instance data, upward road geometry, complete vertex-colour inputs, bounded quality-dependent instance counts, unchanged encounter input, and explicit resource disposal. The isolated session tests replay a complete legally won battle from a fresh session and check byte-for-byte equality; rejected previews and spent or invalid commands preserve state. These checks do not establish visual quality, GPU performance, physical-device support, screen-reader usability or photorealism. Browser observations belong in the release verification report.
+The environment's Node tests construct real Three.js geometry without a WebGL context, check finite vertex and instance data, upward road geometry, complete vertex-colour inputs, bounded quality-dependent instance counts, unchanged encounter input, and explicit resource disposal. The isolated session tests replay a complete legally won battle from a fresh session and check byte-for-byte equality; rejected previews and spent or invalid commands preserve state. `node scripts/verify-assets.mjs` checks every shipped file's byte count and SHA-256 against the manifest. Before a processed model joins the game, `npm run asset:check` checks it against its triangle, byte, texture and material budget ([the asset pipeline](asset-pipeline.md)). These checks do not establish visual quality, GPU performance, physical-device support, screen-reader usability or photorealism. Browser observations belong in the release verification report.

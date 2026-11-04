@@ -2,7 +2,7 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
-### The README brought up to date
+### The README and the licence records brought up to date
 
 The owner asked for it. The README no longer describes 0.40's game as turn-based, browser-first or made of original horses:
 
@@ -10,10 +10,27 @@ The owner asked for it. The README no longer describes 0.40's game as turn-based
 - **What 0.40 adds since its five phases:**
   - the worlds and gameplay plan's camps, modelled worlds, generated cast and horses, missions and full-screen world;
   - the desktop app, the demo, the achievements, and the drafts of the store text and AI disclosure.
-- **The 0.37 section** notes that the horses and the named cast have since gained generated bodies of their own. `docs/steam-release.md` no longer lists the README as out of date.
+- **The 0.37 section** notes that the horses and the named cast have since gained generated bodies of their own.
 - **Building.** The download limits are today's 18 and 28 MB, with their history. The demo and desktop builds are described, and how to publish the demo on its own origin.
 - **Saving.** The paths through **Menu → Settings → Saves & offline** replace the old Pause entries, and the desktop app's save file and its recovery are described.
 - **Project map and checks.** The real-time core, the controls model, the achievements, the platform boundary, `desktop/` and the demo's file list are in the project map, and the demo and desktop browser checks are listed.
+
+The two licence records had stopped before the generated models:
+
+- **`docs/LICENSE-NOTICES.md`** now says, kind by kind, where each shipped file comes from and on what terms:
+  - the OpenAI images and the five restored faces;
+  - the Tripo models, with the paid-account terms the owner confirmed on 20 October;
+  - the Blender kits and panoramas;
+  - MakeHuman and the Poly Haven textures, which now ship;
+  - the audio's generators: Lyria, Runway's sound effects and ElevenLabs;
+  - the captures and icons;
+  - Three.js and its decoders, with their licence files;
+  - the desktop app's Electron, Chromium, steamworks.js and Steamworks API library;
+  - the achievement icons.
+
+  Counts are left to the AI-content inventory, which a test keeps in step with the manifest.
+- **`docs/3d-art-provenance.md`** no longer says that every model is written in code. It names the four kinds of 3D content (code-built, generated with Tripo, built in Blender, CC0) and lists the models added since 0.36. The code-built record, the colour maps and the Three.js hashes are kept, and still match the shipped files.
+- **`docs/steam-release.md`** no longer lists these records as out of date. It lists the asset manifest's `rightsNotice` summary instead, whose counts stop at earlier releases.
 
 ### Desktop saves: an accurate message, and the guide says what is recovered
 
