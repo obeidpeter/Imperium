@@ -54,6 +54,15 @@ async function launch(label){
   page.on('request',request=>{const url=request.url();if(outside(url))report.requests.push(`${label}: ${url}`);});
   page.on('pageerror',error=>report.errors.push(`${label}: ${error.message}`));
   await page.waitForSelector('main');
+  // The DOM can be ready while the app is still waiting for its first painted
+  // frame before showing the native window. Native window checks need both.
+  await app.evaluate(async({BrowserWindow})=>{
+    const deadline=Date.now()+60000;
+    while(!BrowserWindow.getAllWindows()[0]?.isVisible()){
+      if(Date.now()>=deadline)throw Error('The game loaded but its native window was not shown');
+      await new Promise(resolve=>setTimeout(resolve,25));
+    }
+  });
   return {app,page};
 }
 const closed=app=>new Promise(resolve=>app.process().once('exit',resolve));
@@ -176,7 +185,7 @@ try{
       const waitFor=async minimized=>{
         const deadline=Date.now()+10000;
         while(win.isMinimized()!==minimized){
-          if(Date.now()>=deadline)throw Error(`Window did not ${minimized?'minimize':'restore'}`);
+          if(Date.now()>=deadline)throw Error(`Window did not ${minimized?'minimize':'restore'}: ${JSON.stringify({visible:win.isVisible(),focused:win.isFocused(),fullscreen:win.isFullScreen(),minimized:win.isMinimized()})}`);
           await new Promise(resolve=>setTimeout(resolve,25));
         }
       };
@@ -191,6 +200,20 @@ try{
   }
   assert.deepEqual(report.requests,[],'No request leaves app://imperium');
   assert.deepEqual(report.errors,[],'No page errors');
-}catch(error){report.failure=String(error.stack??error);throw error;}
+}catch(error){
+  if(process.platform==='linux'){
+    report.linuxWindows=[];
+    for(const app of liveApps){
+      const windows=await app.evaluate(({BrowserWindow})=>BrowserWindow.getAllWindows().map(win=>({handle:win.getNativeWindowHandle().toString('hex'),visible:win.isVisible(),fullscreen:win.isFullScreen(),minimized:win.isMinimized()}))).catch(()=>[]);
+      for(const win of windows){
+        const id=`0x${Buffer.from(win.handle,'hex').readUInt32LE().toString(16)}`;
+        const properties=spawnSync('xprop',['-id',id,'WM_STATE','_NET_WM_STATE','_NET_WM_WINDOW_TYPE'],{encoding:'utf8',timeout:5000});
+        report.linuxWindows.push({...win,properties:properties.stdout,error:properties.error?.message||properties.stderr});
+      }
+    }
+    console.error(JSON.stringify({linuxWindows:report.linuxWindows},null,2));
+  }
+  report.failure=String(error.stack??error);throw error;
+}
 finally{for(const app of liveApps)await app.close().catch(()=>{});writeFileSync(join(out,'report.json'),JSON.stringify(report,null,2));}
 console.log(JSON.stringify(report,null,2));
