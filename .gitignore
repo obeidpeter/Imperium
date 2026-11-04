@@ -13,6 +13,9 @@ tests/visual-results/
 # Raw generator downloads (for example Tripo GLBs): provenance, digests and
 # processed models are committed; the raw files stay local. docs/asset-pipeline.md
 art-source/models/raw/
+# In-progress Tripo request locks and atomic-write scratch files.
+art-source/models/requests/*.json.tripo.lock
+art-source/models/requests/*.json.*.tmp
 # CC0 downloads: the records in art-source/cc0/ keep their sources and digests.
 art-source/cc0/raw/
 # Panorama renders: their reports (seed, settings, digest) reproduce them.

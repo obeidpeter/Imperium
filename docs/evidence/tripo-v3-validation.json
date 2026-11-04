@@ -1,0 +1,55 @@
+{
+  "validatedOn": "2026-11-04",
+  "baseCommit": "112509dcb4a75fdc476635f8becba7bb4252410a",
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "authentication": "Existing Windows encrypted key, loaded only for the child process; credential store unchanged",
+  "accountCheck": {
+    "authenticated": true,
+    "availableBalanceUnchanged": true,
+    "frozenBalanceUnchanged": true
+  },
+  "legacyTaskRecovery": [
+    {
+      "kind": "generation",
+      "requestFile": "art-source/models/requests/char-camp-capsarius.json",
+      "taskId": "4ba61fec-b221-460e-93c0-4072c5490722",
+      "status": "success",
+      "modelVersion": "v3.1-20260211",
+      "historicalCreditsConsumed": 20,
+      "downloadBytes": 44601328,
+      "sha256": "d7ad0cac16a2424485937bc5521f2a500a18b3300553a5ac8c489b804c3b9bd6",
+      "matchesRecordedHash": true
+    },
+    {
+      "kind": "rig",
+      "requestFile": "art-source/models/requests/char-camp-capsarius.json",
+      "taskId": "72b45b3e-b9df-45a9-949b-5305866deb5e",
+      "status": "success",
+      "modelVersion": "v1.0-20240301",
+      "historicalCreditsConsumed": 25,
+      "downloadBytes": 59614420,
+      "sha256": "6dff1876ad70eb35098f71bba5c71e49d791914c45b9f391d5a2eb279b0fe168",
+      "matchesRecordedHash": true
+    }
+  ],
+  "freeRigCheck": {
+    "endpoint": "/animations/rig-check",
+    "input": "4ba61fec-b221-460e-93c0-4072c5490722",
+    "taskId": "b27d9dcd-a74c-4cd0-9e86-487485fd4b74",
+    "status": "success",
+    "riggable": true,
+    "rigType": "biped",
+    "creditsConsumed": 0,
+    "recordLocation": "Ignored temporary copy; original request file unchanged"
+  },
+  "paidTasksCreated": 0,
+  "creditsSpentOnValidation": 0,
+  "historicalRequestFilesChanged": 0,
+  "runtimeAssetsChanged": 0,
+  "limitations": [
+    "Paid V3 generation and paid rig creation were validated with mocks only.",
+    "No new artwork or newer rig skeleton was generated or reviewed in Blender.",
+    "Legacy recovery was verified for the two sampled tasks, not every historical task.",
+    "Proxy-injected authentication was mocked; live checks used the existing Windows key."
+  ]
+}
