@@ -2,6 +2,22 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Save recovery, equipment controls and battlefield readability
+
+- Damaged IndexedDB saves wait for both reads before archiving and replacement. The Node double now rejects reading an unfinished request, as Chromium does.
+- Unreadable local saves are archived in IndexedDB when the local archive is too large or full. If neither archive can retain them, replacement is refused. Adopting a desktop file also preserves unreadable profile records first.
+- The promotion's oath seal sits above the portrait and never intercepts input, leaving the right-turn control accessible. PR #81's retained preview caption is preserved.
+- Ordinary line, wedge, column and loose formations have more room between files; the close shield wall is retained. Exposed paving is lower, chipped and irregular at the margins, across the shared chapter renderer.
+- The desktop equipment view gives more width and height to the soldier and makes worn-item names easier to read; the narrow and enlarged-text list layouts remain available.
+- The enlarged desktop canvas has an explicit CSS height and does not flex, so selecting an item cannot feed its renderer-owned drawing-buffer dimensions back into layout and resize the preview.
+- Steam screenshot files and their evidence are committed one shot at a time, with image hashes, a recovery journal and a single-writer lock. `--recover` completes an interrupted commit without new captures.
+- Stale capture locks fail closed. After confirming no capture process is running, remove only the lock and run `--recover`; automatic lock reclamation could let two simultaneous recovery processes write together.
+- `npm run smoke:recovery` checks native browser save repair, archive failure, the promotion control at three widths, and equipment layout. It runs with the usability CI checks. Fault injection is labelled separately from native storage and interface checks.
+
+Checked on Windows: `npm run verify` passes (1,757 tests, campaign autoplays, production build and runtime asset audits); the nine recovery/readability checks pass in Chrome. The packaged Windows app passes its desktop smoke test on retry after an early process closure; a separate diagnostic launch also succeeds. Four additional legal real-time runs complete Chapters I–XII (Standard seed 1; Veteran seeds 1–3), and Veteran seed 8 exercises an outright council win while seed 2 exercises patron-backed recovery. Wider spacing changes some earlier battle outcomes, so the council regression uses those two seeds. The existing warning about stale development-only character handoff GLBs remains; those exports are excluded from the game build.
+
+The complete usability suite also passes on the stable production build (15 checks, no browser errors). Its first run passed the interactions but recorded a script-loading 404 while `verify` was regenerating the same build directory; the repeat ran without a concurrent build and without relaxing assertions. The twelve-chapter visual benchmark passes all five checks, captures 13 encounters including both Chapter V scenes, and reports no browser errors. The packaged Windows smoke test passes all 11 checks. Browser layout checks emulate phone widths; these are not physical-phone or first-time-player results.
+
 ### Fix: the soldier's figure no longer says "Preparing the model…" once he is drawn
 
 On a promotion page, after a Settings change, the soldier's figure said "Preparing the model…" again and kept saying it, although he was drawn. The page is updated in place around the figure. Each update put back the caption the figure starts with, while the figure, already drawn on the same canvas, had nothing new to say. The profile card of the turn-based camp and the accession show the same figure through the same code.

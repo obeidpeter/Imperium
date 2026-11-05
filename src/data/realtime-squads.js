@@ -98,7 +98,9 @@ export const FORMATIONS=freeze({
   wedge:freeze({name:'Wedge',march:1}),
   column:freeze({name:'Column',march:1})});
 // Metres between neighbours in each formation; a column marches two abreast.
-export const SPACING=freeze({line:1.1,'shield-wall':.8,wedge:1.1,column:1.2,loose:1.6});
+// Room between ordinary files keeps shields and silhouettes distinct. The
+// shield wall deliberately remains close; columns still fit narrow routes.
+export const SPACING=freeze({line:1.25,'shield-wall':.8,wedge:1.25,column:1.3,loose:1.8});
 // A held order braces its squad after a whole round.
 export const HOLD_BRACE_TICKS=200;
 // Deployment (guide "Deployment"): from Chapter VII a battle opens paused and the

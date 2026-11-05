@@ -21,6 +21,7 @@ import {isAbsolute,join} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import * as G from '../src/core/game.js';
 import {runRealtimeCampaign,playRealtime} from './realtime-autoplay.mjs';
+import {readScreenshotRecord,recoverScreenshots,writeScreenshot,withCaptureLock} from './steam-capture-records.mjs';
 
 const root=fileURLToPath(new URL('..',import.meta.url));
 export const SIZE={width:1920,height:1080};
@@ -197,13 +198,20 @@ async function take(browser,base,moment,{settings,navigation}){
   }finally{await context.close();}
 }
 
-if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
+async function main(){
+  const recovered=await recoverScreenshots(root);
+  if(process.argv.includes('--recover')){console.log(recovered?'Recovered the interrupted screenshot and its record.':'No interrupted screenshot to recover.');return;}
   const arg=name=>{const i=process.argv.indexOf(`--${name}`);return i<0?null:process.argv[i+1];};
   const only=arg('only')?.split(',')??null,shots=only?SCREENSHOTS.filter(s=>only.includes(s.id)):SCREENSHOTS;
+  assert.ok(!only||only.every(id=>SCREENSHOTS.some(s=>s.id===id)),'--only contains an unknown screenshot');
   assert.ok(shots.length,'--only names no screenshot');
   const dist=join(root,'dist-desktop');
   await access(join(dist,'index.html')).catch(()=>{throw new Error('Build the desktop edition first: npm run build:desktop');});
   const build=JSON.parse(await readFile(join(dist,'build-report.json'),'utf8'));
+  assert.equal(build.target,'desktop','Capture the desktop build');
+  let record=await readScreenshotRecord(root)??{method:'From New Game by legal commands: the real-time campaign bot with the engaged reference player. '+
+    'Each save is restored through the desktop build’s Restore dialog in Chromium, at High quality, and framed with the game’s controls. Drafts, to take again after 0.40.0.',
+    campaign:CAMPAIGN,size:SIZE,screenshots:[]};
   let pw;for(const p of [process.env.PLAYWRIGHT_MODULE,'playwright'].filter(Boolean))try{const m=await import(isAbsolute(p)?pathToFileURL(p).href:p);pw=m.chromium?m:m.default;break;}catch{}
   assert.ok(pw?.chromium,'Set PLAYWRIGHT_MODULE to an installed Playwright.');
   const {serveRequest}=await import('./serve.mjs'),navigation=await import('./ui-smoke-navigation.mjs');
@@ -212,18 +220,16 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
   const server=http.createServer((req,res)=>serveRequest(req,res,dist));await new Promise(done=>server.listen(0,'127.0.0.1',done));
   const browser=await pw.chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
   const settings={controlsModel:'realtime',controlsChosen:true,battleView:'3d',quality:'high',qualityChoice:'high',adaptiveResolution:false,coach:false};
-  const recordPath=join(root,RECORD),previous=await readFile(recordPath,'utf8').then(JSON.parse,()=>null);
-  const kept=new Map((previous?.screenshots??[]).map(r=>[r.id,r]));
   try{
     await mkdir(join(root,SCREENSHOTS_DIR),{recursive:true});
     for(const moment of moments){
       const t=Date.now(),{image,seen}=await take(browser,`http://127.0.0.1:${server.address().port}/`,moment,{settings,navigation});
-      await writeFile(join(root,SCREENSHOTS_DIR,fileName(moment.shot)),image);
-      kept.set(moment.shot.id,{id:moment.shot.id,file:`${SCREENSHOTS_DIR}/${fileName(moment.shot)}`,caption:moment.shot.caption,chapter:moment.chapter,
+      const entry={id:moment.shot.id,file:`${SCREENSHOTS_DIR}/${fileName(moment.shot)}`,caption:moment.shot.caption,chapter:moment.chapter,
         encounter:moment.encounter,seed:moment.seed,weather:moment.weather,moment:moment.shot.moment.fight?`mid-fight, tick ${moment.tick} (${moment.action.engaged} of the soldier's side fighting within 22 m)`
           :moment.shot.moment.contest?'the Contest as it opens':moment.shot.moment.promotion?'the promotion ceremony at the chapter\'s end':'the camp before the encounter',
         saveSha256:createHash('sha256').update(moment.code).digest('hex'),frame:moment.shot.frame,
-        captured:{quality:seen.quality,view:seen.view,paused:seen.paused,tick:seen.tick,build:build.revision}});
+        captured:{quality:seen.quality,view:seen.view,paused:seen.paused,tick:seen.tick,build:build.revision}};
+      record=await writeScreenshot(root,record,entry,image);
       console.log(`${moment.shot.id}: Chapter ${moment.chapter}, ${moment.encounter}${moment.tick===null?'':` at tick ${moment.tick}`}, ${seen.view??'no 3D'} view, ${seen.quality}, ${((Date.now()-t)/1000).toFixed(0)} s.`);
     }
     // The contact sheet: every screenshot at a third of its size, in Steam's order, with its caption.
@@ -239,10 +245,6 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
     const review=join(root,'tests/visual-results/steam-screenshots');await mkdir(review,{recursive:true});
     await writeFile(join(review,'contact-sheet.png'),Buffer.from(sheet.slice(sheet.indexOf(',')+1),'base64'));
   }finally{await browser.close();server.close();}
-  const record={method:'From New Game by legal commands: the real-time campaign bot (scripts/realtime-autoplay.mjs) with the engaged reference player '+
-    '(scripts/kit-policy.mjs). A battle is kept mid-fight as a resume point (Game.saveRealtime). Each save code is restored through the Restore dialog of '+
-    'the desktop build in headless Chromium (software WebGL), at High quality, and framed with the game\'s own controls. Drafts, to take again after 0.40.0.',
-    campaign:CAMPAIGN,size:SIZE,screenshots:SCREENSHOTS.map(s=>kept.get(s.id)).filter(Boolean)};
-  await mkdir(join(root,'docs/evidence'),{recursive:true});await writeFile(recordPath,JSON.stringify(record,null,2)+'\n');
   console.log(`Wrote ${moments.length} screenshots to ${SCREENSHOTS_DIR}/ and the record to ${RECORD}.`);
 }
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)await withCaptureLock(root,main);

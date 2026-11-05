@@ -75,11 +75,12 @@ test('Time and pace follow the difficulty until the player changes them, and the
 });
 
 test('on Veteran the calibration bot gets past Chapter VII’s council: with a Contest policy that wins, or else the patron-backed re-run',()=>{
-  // Seed 1: a policy wins the vote outright. Seed 2: every policy loses it by a vote, so the
+  // Seed 8: a policy wins the vote outright. Seed 2: every policy loses it by a vote, so the
   // bot takes the game's own recovery after a lost Contest, with its supplies and debt. Which
   // seed needs the backing follows the earlier battles' outcomes (seed 8 until release 4, 10
-  // until release 11, when the reference player began equipping himself).
-  for(const [seed,backed]of [[1,false],[2,true]]){
+  // until release 11, when the reference player began equipping himself). The wider formations
+  // change earlier battle results: seed 1 now needs backing, while seed 8 wins outright.
+  for(const [seed,backed]of [[8,false],[2,true]]){
     const council=[];
     // Release 11: a Veteran player equips himself (kit-policy.mjs); the recruit's kit alone falls to the champions.
     const {state}=runRealtimeCampaign({seed,difficulty:'veteran',throughChapter:7,retries:2,play:playBattle,kit:'engaged',

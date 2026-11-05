@@ -28,3 +28,10 @@ __pycache__/
 work/command-camp-refinement/
 work/save-world-art/
 dist-demo/
+
+# Recoverable Steam captures: never stage unfinished image/evidence pairs.
+desktop/steam/screenshots/*.pending
+desktop/steam/screenshots/*.tmp
+docs/evidence/steam-screenshots.json.pending
+docs/evidence/steam-screenshots.json.lock
+docs/evidence/steam-screenshots.json.*.tmp

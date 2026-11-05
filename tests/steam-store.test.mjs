@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,readdir} from 'node:fs/promises';
+import {imageDigest} from '../scripts/steam-capture-records.mjs';
 import {CHAPTERS} from '../src/data/campaign.js';
 import {DECORATIONS,TITLES} from '../src/data/soldier.js';
 import {ITEMS} from '../src/data/items.js';
@@ -140,6 +141,7 @@ test('the draft screenshots are at least five, each 1920 × 1080 and taken from 
   const record=JSON.parse(await readFile(new URL(`../${RECORD}`,import.meta.url),'utf8'));
   assert.deepEqual(record.screenshots.map(r=>r.id),SCREENSHOTS.map(s=>s.id),'the record names every screenshot, in order');
   assert.ok(record.screenshots.every(r=>r.captured.quality==='high'&&/^[0-9a-f]{64}$/.test(r.saveSha256)),'each was taken at High quality, from a recorded save');
+  for(const r of record.screenshots){const bytes=await readFile(new URL(`../${r.file}`,import.meta.url));assert.equal(r.imageSha256,imageDigest(bytes),`${r.id}: image and evidence match`);assert.equal(r.imageBytes,bytes.length);}
 });
 
 test('the renders the capsules are drawn from are kept, at their images’ sizes, so the name can be drawn again without rendering',async()=>{

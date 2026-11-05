@@ -24,6 +24,7 @@
     "smoke:errands": "node scripts/errand-guidance-smoke.mjs",
     "check:windows": "node scripts/windows-device-check.mjs",
     "smoke:usability": "node scripts/usability-smoke.mjs",
+    "smoke:recovery": "node scripts/recovery-readability-smoke.mjs",
     "smoke:navigation": "node scripts/playtest-navigation-smoke.mjs",
     "smoke:desktop": "node scripts/desktop-smoke.mjs",
     "smoke:demo": "node scripts/demo-smoke.mjs",
