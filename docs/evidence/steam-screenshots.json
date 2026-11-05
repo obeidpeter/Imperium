@@ -34,7 +34,9 @@
         "paused": true,
         "tick": 352,
         "build": "527c57b4cb0c"
-      }
+      },
+      "imageSha256": "f4f770b85c47f732ecc7f3b1e5610562901f8a5ac513a185a6f32090498f2321",
+      "imageBytes": 414284
     },
     {
       "id": "02-finale",
@@ -60,7 +62,9 @@
         "paused": true,
         "tick": 253,
         "build": "527c57b4cb0c"
-      }
+      },
+      "imageSha256": "ee48f639cb5b90fe8909e722e7becc167157b65835bf26fa01d7a3f34f68b85c",
+      "imageBytes": 411068
     },
     {
       "id": "03-curia",
@@ -79,7 +83,9 @@
         "paused": false,
         "tick": 68,
         "build": "527c57b4cb0c"
-      }
+      },
+      "imageSha256": "4e74db9b2cb381b533a88fd422d05ac3b6296a526bea218d9ec6b226169e7762",
+      "imageBytes": 411060
     },
     {
       "id": "04-cavalry",
@@ -105,7 +111,9 @@
         "paused": true,
         "tick": 512,
         "build": "527c57b4cb0c"
-      }
+      },
+      "imageSha256": "dab245fba396857341de2e5a6f21b4340b4fbb5d0f548ca56540fe73e2fe14bb",
+      "imageBytes": 465113
     },
     {
       "id": "05-camp",
@@ -128,7 +136,9 @@
         "paused": false,
         "tick": 186,
         "build": "527c57b4cb0c"
-      }
+      },
+      "imageSha256": "2caabccaf52d8bd8e7a86217e4a9c7c033c280959ef946fe88fa9bafd2d575aa",
+      "imageBytes": 413591
     },
     {
       "id": "06-kit",
@@ -155,7 +165,9 @@
         "paused": true,
         "tick": 136,
         "build": "527c57b4cb0c"
-      }
+      },
+      "imageSha256": "276d3e6113fa543d7d0e60ec9f57d7a12122438fab3bfea7bab334fb755ea0c9",
+      "imageBytes": 132899
     },
     {
       "id": "07-promotion",
@@ -174,7 +186,9 @@
         "paused": null,
         "tick": null,
         "build": "527c57b4cb0c"
-      }
+      },
+      "imageSha256": "8a67ee31e1e512a8d7a14896e18ea8a50eb0de63c4253095fb5b2419475cae57",
+      "imageBytes": 188622
     }
   ]
 }

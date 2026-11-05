@@ -31,7 +31,7 @@ test('Pilot paving reduces distant joint density without extra draw batches or o
     for(const slab of slabs){
       assert.ok(Math.abs(slab.rotation[1])<=.006,'small yaw preserves separated joints');
       const depth=2.5/3-.025,erosion=depth-slab.scale[2],perimeter=Math.abs(slab.position[2])>5-2.5/3;
-      if(perimeter)assert.ok(erosion>=.035-1e-9&&erosion<=.115+1e-9,'only the exposed outer course loses its bounded weathered edge');
+      if(perimeter)assert.ok(erosion>=.08-1e-9&&erosion<=.28+1e-9,'only the exposed outer course loses its bounded weathered edge');
       else assert.ok(Math.abs(erosion)<1e-9,'interior courses retain their complete paving depth');
     }
     for(let i=0;i<slabs.length;i++)for(let j=i+1;j<slabs.length;j++){

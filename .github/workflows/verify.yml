@@ -125,6 +125,14 @@ jobs:
       - run: npm run build
       - name: Usability, navigation and save protection
         run: npm run smoke:usability
+      - name: Native save recovery and unobstructed equipment controls
+        run: npm run smoke:recovery
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: recovery-readability
+          path: tests/visual-results/recovery-readability/
+          retention-days: 14
       - name: Required tasks and undiscovered walking routes
         run: npm run smoke:navigation
       - uses: actions/upload-artifact@v7

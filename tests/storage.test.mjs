@@ -18,7 +18,7 @@ async function withPlatform(run){
     const operations=[],writes=[];let aborted=false;
     const tx={abort(){aborted=true;},objectStore(){return {
       // env.idb is the campaign record; other keys (the unreadable quarantine) are kept separately.
-      get(key){const request={};operations.push(()=>{request.result=structuredClone(key==='campaign'?env.idb:env.idbOther.get(key)??null);request.onsuccess?.();});return request;},
+      get(key){let ready=false,value;const request={get result(){if(!ready)throw new DOMException('The request has not finished.','InvalidStateError');return value;}};operations.push(()=>{value=structuredClone(key==='campaign'?env.idb:env.idbOther.get(key)??null);ready=true;request.onsuccess?.();});return request;},
       put(value,key){writes.push({key,value:structuredClone(value)});}
     };}};
     const execute=async()=>{
@@ -295,10 +295,40 @@ test('SAV-14 an unreadable stored chronicle is preserved before a new save repla
   await assert.rejects(storage.readUnreadableSave(99),/unavailable/);
 }));
 
+test('SAV-15 oversized unreadable local data is archived in IndexedDB before replacement',async()=>withPlatform(async env=>{
+  const raw=JSON.stringify({format:99,payload:'x'.repeat(1500000)});env.local.set(CONFIG.saveKey,raw);
+  const store=await importStorage();await store.saveLocal(newGame('Preserved large record'));
+  const entries=await store.listUnreadableSaves();assert.equal(entries.length,1);
+  assert.equal(await store.readUnreadableSave(entries[0].index),raw);
+  assert.equal((await store.loadLocal()).state.name,'Preserved large record');
+}));
+
+for(const reason of ['too large','quota'])test(`SAV-15 refuses replacement when the unreadable local archive fails: ${reason}`,async()=>withPlatform(async env=>{
+  env.idbOpenFails=true;
+  const raw=JSON.stringify({format:99,payload:reason==='too large'?'x'.repeat(1500000):'old chronicle'});env.local.set(CONFIG.saveKey,raw);
+  if(reason==='quota'){
+    const set=env.options.localStorage.setItem;
+    env.options.localStorage.setItem=(key,value)=>{if(key.endsWith('.unreadable'))throw new DOMException('Quota exceeded','QuotaExceededError');set(key,value);};
+  }
+  const store=await importStorage();await assert.rejects(store.saveLocal(newGame('Replacement')),error=>error.code==='SAVE_UNAVAILABLE'&&/could not be preserved/.test(error.message));
+  assert.equal(env.local.get(CONFIG.saveKey),raw);
+  assert.equal(await store.readUnreadableSave(0),raw);
+}));
+
 // The desktop app's save file (platform.js desktopSaveMirror; the Steam plan, docs/steam-plan.md). A fake file stands in
 // for the bridge: the store must treat it as the chronicle without losing what it replaces.
 const fakeFile=(text=null)=>{const file={text,writes:0,fail:false};
   return Object.assign(file,{mirror:{read:async()=>file.text,write:async next=>{if(file.fail)throw Error('disk full');file.writes++;file.text=next;}}});};
+
+for(const archive of [true,false])test(`DESK-14 adopting a cloud save ${archive?'archives the damaged profile':'refuses to replace an unarchivable profile'}`,async()=>withPlatform(async env=>{
+  const file=fakeFile();await createSaveStore({...env.options,mirror:file.mirror}).saveLocal(newGame('Cloud'));
+  const original=file.text,raw=JSON.stringify({format:99,payload:'x'.repeat(1500000)});
+  env.local.set(CONFIG.saveKey,raw);env.idb=null;env.idbOpenFails=!archive;
+  const store=createSaveStore({...env.options,mirror:file.mirror}),loaded=await store.loadLocal();
+  if(archive)assert.equal(loaded.state.name,'Cloud');
+  else{assert.equal(loaded.state,null);assert.match(loaded.fileProblem,/could not be loaded/);assert.equal(env.local.get(CONFIG.saveKey),raw);}
+  assert.equal(await store.readUnreadableSave(0),raw);assert.equal(file.text,original);
+}));
 
 test('DESK-01 every desktop save is written to its file, and an empty profile loads the chronicle from it',async()=>withPlatform(async env=>{
   const file=fakeFile(),desk=createSaveStore({...env.options,mirror:file.mirror});

@@ -5,6 +5,7 @@ import {desktopSaveMirror} from './platform.js';
 const HISTORY_LIMIT=3;
 const conflict=()=>Object.assign(new Error('A newer save exists in another tab. Reload or explicitly take over before continuing.'),{code:'SAVE_CONFLICT'});
 const unavailable=()=>Object.assign(new Error('Safe browser storage is unavailable. Continue in memory and export a save code to keep this chronicle.'),{code:'SAVE_UNAVAILABLE'});
+const preservationUnavailable=()=>Object.assign(new Error('The unreadable save could not be preserved, so it has not been replaced. Download it in Settings → Saves, then free storage and try again.'),{code:'SAVE_UNAVAILABLE'});
 const fileUnavailable=()=>Object.assign(new Error('The save file could not be written. Progress is kept in the app; export a save code to keep a copy.'),{code:'SAVE_FILE_UNAVAILABLE'});
 const fileUnreadable=()=>Object.assign(new Error('The save file cannot be read right now. It has not been replaced. Your local progress is kept; try saving again or export a save code.'),{code:'SAVE_FILE_UNAVAILABLE'});
 const fileChanged=()=>Object.assign(new Error('The save file changed outside the game. Your local progress is kept. Reopen the game to load the file and review both copies in recovery records.'),{code:'SAVE_FILE_UNAVAILABLE'});
@@ -112,6 +113,9 @@ export function createSaveStore(options={}){
   }
   // Put an envelope as the store's current record as it is (adopting the file): no new sequence, writer or history.
   async function putEnvelope(envelope){
+    // Adopting a desktop file must preserve unreadable profile records too.
+    const raws=await records();
+    for(const [index,raw] of raws.entries())if(unreadable(raw)&&!await preserveFile(raw,index?'indexedDB':'localStorage'))return false;
     const db=await database();
     let kept=false;
     if(db)kept=await new Promise(resolve=>{try{const tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(envelope,'campaign');tx.oncomplete=()=>resolve(true);tx.onabort=()=>resolve(false);tx.onerror=()=>{};}catch{resolve(false);}});
@@ -180,7 +184,9 @@ export function createSaveStore(options={}){
       let tx,next,rejection=null;
       try{
         tx=db.transaction('saves','readwrite');const store=tx.objectStore('saves'),request=store.get('campaign'),held=store.get('unreadable');
-        request.onsuccess=()=>{
+        // Requests complete in issue order. Wait for the archive read as well:
+        // native IDBRequest.result throws while that request is still pending.
+        held.onsuccess=()=>{
           try{
             next=prepareEnvelope(payload,[localRaw(),request.result||null],settings);
             // Preserve an unreadable record in the same transaction, before it is replaced.
@@ -189,7 +195,7 @@ export function createSaveStore(options={}){
           }
           catch(error){rejection=error;try{tx.abort();}catch{reject(error);}}
         };
-        request.onerror=()=>{try{tx.abort();}catch{resolve(null);}};
+        request.onerror=held.onerror=()=>{try{tx.abort();}catch{resolve(null);}};
         tx.oncomplete=()=>resolve(next||null);
         tx.onabort=()=>rejection?reject(rejection):resolve(null);
         tx.onerror=()=>{}; // onabort is the terminal failure signal.
@@ -212,7 +218,10 @@ export function createSaveStore(options={}){
       if(mirror&&deferredFileBase!==undefined){if(typeof deferredFileBase==='string')saveSettings.fileBase=deferredFileBase;}
       else if(mirror&&disk.kind!=='error'&&(observedFile===undefined||observedFile===disk.raw))saveSettings.fileBase=fingerprint(disk.envelope);
       else if(mirror&&observedFile!==undefined)saveSettings.fileBase=fingerprint(localEnvelope(observedFile));
-      keepLocal(localRaw(),'localStorage');
+      // Archive first, using IndexedDB if the local archive is too large or full.
+      // A failed archive must never turn the only unreadable copy into a new save.
+      const local=localRaw();
+      if(unreadable(local)&&!await preserveFile(local,'localStorage'))throw preservationUnavailable();
       let next=await atomicIDB(payload,saveSettings);
       if(!next){
         // localStorage has no cross-tab compare-and-swap. Never pretend it is safe without a lock.

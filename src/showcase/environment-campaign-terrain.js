@@ -28,11 +28,13 @@ export function authoredPavingSlabs(e,tileSize=2.5,courses=3){
     for(let row=0;row<courses;row++)for(let u=left+.015;u<right-.12;){
       const width=Math.min(right-u-.015,.86+hash(row,u*3,y)*.65),cx=u+width/2,cz=near+(row+.5)*depth;
       const cell=Math.min(x,Math.max(start,Math.floor(cx/tileSize+e.width/2))),exposed=row===0&&!stone(cell,y-1)||row===courses-1&&!stone(cell,y+1);
-      const erosion=exposed?.035+hash(u,row,y)*.08:0;
+      const west=u===left+.015&&!stone(start-1,y),east=u+width>=right-.016&&!stone(x+1,y);
+      const erosion=exposed?.08+hash(u,row,y)*.20:0,sideErosion=(west||east)?Math.min(Math.max(0,width-.145),.07+hash(row,y,u)*.15):0;
       // Rare missing perimeter stones reveal existing mixed soil; no repeated
       // missing strips are cut between two otherwise connected paving cells.
-      if(!exposed||hash(u*5,row,y)<.96)out.push({x:cx,z:cz,width:width-.025,depth:depth-.025-erosion,
-        yaw:(hash(row,u,y)-.5)*.008,tone:.89+Math.sin(cx*.31+cz*.27)*.045+hash(u,row,y)*.06,exposed});
+      if(!exposed||hash(u*5,row,y)<.88)out.push({x:cx+(west?sideErosion/2:east?-sideErosion/2:0),
+        z:cz+(row===0?erosion/2:row===courses-1?-erosion/2:0),width:Math.max(.12,width-.025-sideErosion),depth:depth-.025-erosion,
+        yaw:(hash(row,u,y)-.5)*.008,tone:.86+Math.sin(cx*.31+cz*.27)*.045+hash(u,row,y)*.07,exposed:exposed||west||east});
       u+=width;
     }
   }
@@ -147,7 +149,7 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
   }
   const paving=authoredPavingSlabs(e,tileSize,isChapterFivePilot(e)||hasRegionalWorld(e)?3:4);
   for(const slab of paving)instance('authored flagstones',p.box,m.marble,
-    [slab.x,height(slab.x,slab.z)+.018,slab.z],[slab.width,.034,slab.depth],[0,slab.yaw,0],new THREE.Color('#e4dccb').multiplyScalar(slab.tone));
+    [slab.x,height(slab.x,slab.z)+.008,slab.z],[slab.width,.014,slab.depth],[0,slab.yaw,0],new THREE.Color('#e4dccb').multiplyScalar(slab.tone));
   root.userData.pavingCourses={slabs:paving.length,continuous:true};
 
   // Rocky outcrops break each exposed plateau bank above open ground. Beside
