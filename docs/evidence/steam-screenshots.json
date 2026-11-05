@@ -1,0 +1,180 @@
+{
+  "method": "From New Game by legal commands: the real-time campaign bot (scripts/realtime-autoplay.mjs) with the engaged reference player (scripts/kit-policy.mjs). A battle is kept mid-fight as a resume point (Game.saveRealtime). Each save code is restored through the Restore dialog of the desktop build in headless Chromium (software WebGL), at High quality, and framed with the game's own controls. Drafts, to take again after 0.40.0.",
+  "campaign": {
+    "seed": 275,
+    "difficulty": "standard",
+    "kit": "engaged"
+  },
+  "size": {
+    "width": 1920,
+    "height": 1080
+  },
+  "screenshots": [
+    {
+      "id": "01-river-crossing",
+      "file": "desktop/steam/screenshots/01-river-crossing.jpg",
+      "caption": "Chapter VIII: the legion forces the ford at the far bank, in real time with pause",
+      "chapter": 8,
+      "encounter": "ch8-crossing",
+      "seed": 275,
+      "weather": "clear",
+      "moment": "mid-fight, tick 340 (29 of the soldier's side fighting within 22 m)",
+      "saveSha256": "a59f65739106a3ccaafe361163992703ec61d919fc47e7904c095816646f6f80",
+      "frame": [
+        {
+          "pause": true
+        },
+        {
+          "zoomOut": 5
+        }
+      ],
+      "captured": {
+        "quality": "high",
+        "view": "follow",
+        "paused": true,
+        "tick": 352,
+        "build": "527c57b4cb0c"
+      }
+    },
+    {
+      "id": "02-finale",
+      "file": "desktop/steam/screenshots/02-finale.jpg",
+      "caption": "Chapter XII: the road to the purple, before the Aurelian Walls",
+      "chapter": 12,
+      "encounter": "ch12-confrontation",
+      "seed": 276,
+      "weather": "clear",
+      "moment": "mid-fight, tick 240 (33 of the soldier's side fighting within 22 m)",
+      "saveSha256": "62784c3960259eb9bf0dfa56c4a178e57b565ba03f19dd88e31357e3f05d624a",
+      "frame": [
+        {
+          "pause": true
+        },
+        {
+          "glance": true
+        }
+      ],
+      "captured": {
+        "quality": "high",
+        "view": "horizon",
+        "paused": true,
+        "tick": 253,
+        "build": "527c57b4cb0c"
+      }
+    },
+    {
+      "id": "03-curia",
+      "file": "desktop/steam/screenshots/03-curia.jpg",
+      "caption": "Chapter XI: the Senate’s Contest, walked and argued in the Curia",
+      "chapter": 11,
+      "encounter": "ch11-accounts",
+      "seed": 275,
+      "weather": null,
+      "moment": "the Contest as it opens",
+      "saveSha256": "1f67f0f3e398697b27fc2824feab58e007ebf61b1e68faa42b6a59af18f37c08",
+      "frame": [],
+      "captured": {
+        "quality": "high",
+        "view": "overview",
+        "paused": false,
+        "tick": 68,
+        "build": "527c57b4cb0c"
+      }
+    },
+    {
+      "id": "04-cavalry",
+      "file": "desktop/steam/screenshots/04-cavalry.jpg",
+      "caption": "Chapter IX: the turning cavalry on the Euphrates",
+      "chapter": 9,
+      "encounter": "ch9-wing",
+      "seed": 275,
+      "weather": "clear",
+      "moment": "mid-fight, tick 500 (28 of the soldier's side fighting within 22 m)",
+      "saveSha256": "4aaf4beeefb08edeeb4dd4e35787127da86ed3a34eb523f62507e46f48aa955a",
+      "frame": [
+        {
+          "pause": true
+        },
+        {
+          "zoomOut": 3
+        }
+      ],
+      "captured": {
+        "quality": "high",
+        "view": "follow",
+        "paused": true,
+        "tick": 512,
+        "build": "527c57b4cb0c"
+      }
+    },
+    {
+      "id": "05-camp",
+      "file": "desktop/steam/screenshots/05-camp.jpg",
+      "caption": "Chapter V: the fortress camp before the red river gate",
+      "chapter": 5,
+      "encounter": "ch5-wall",
+      "seed": 275,
+      "weather": null,
+      "moment": "the camp before the encounter",
+      "saveSha256": "6e7ae916ef4dea83dc065c3b20826491027abcfe362afbaec5ba977c3fe88cf9",
+      "frame": [
+        {
+          "glance": true
+        }
+      ],
+      "captured": {
+        "quality": "high",
+        "view": "horizon",
+        "paused": false,
+        "tick": 186,
+        "build": "527c57b4cb0c"
+      }
+    },
+    {
+      "id": "06-kit",
+      "file": "desktop/steam/screenshots/06-kit.jpg",
+      "caption": "The soldier’s kit in Chapter X’s camp: what he wears, carries and finds",
+      "chapter": 10,
+      "encounter": "ch10-tribunal",
+      "seed": 275,
+      "weather": null,
+      "moment": "the camp before the encounter",
+      "saveSha256": "85897574ad339d55267a6dcc461aea90e1466cdf569b0dba3d7fb13bfe03a056",
+      "frame": [
+        {
+          "panel": "kit",
+          "until": "#modal[open] .inventory"
+        },
+        {
+          "click": "#modal [data-cmd=\"kit-select\"][data-id=\"worn:weapon:0\"]"
+        }
+      ],
+      "captured": {
+        "quality": "high",
+        "view": "follow",
+        "paused": true,
+        "tick": 136,
+        "build": "527c57b4cb0c"
+      }
+    },
+    {
+      "id": "07-promotion",
+      "file": "desktop/steam/screenshots/07-promotion.jpg",
+      "caption": "Chapter VI: the promotion to praefectus legionis, with its painting",
+      "chapter": 6,
+      "encounter": "promotion 6",
+      "seed": 275,
+      "weather": null,
+      "moment": "the promotion ceremony at the chapter's end",
+      "saveSha256": "ab564cf6cfc3aa8d69d3d6819b3606b0e2bc269d08c12b1d140d84670362b6f3",
+      "frame": [],
+      "captured": {
+        "quality": "high",
+        "view": null,
+        "paused": null,
+        "tick": null,
+        "build": "527c57b4cb0c"
+      }
+    }
+  ]
+}

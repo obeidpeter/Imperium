@@ -2,6 +2,33 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Steam, fourth package, fourth part: the store page's screenshots, drafted from the game ([the record](docs/steam-store-art.md#the-screenshots-drafts))
+
+Seven draft screenshots for the store page, at Steam's 1920 × 1080, taken from the game itself with its interface as the player sees it. They show the game before 0.40.0, so they are drafts, to take again after the owner's Gate 4 sign-off:
+
+- **Three battles,** paused mid-fight in real time: Chapter VIII's ford at the far bank, Chapter XII's road to the purple before the Aurelian Walls, and Chapter IX's turning cavalry.
+- **The Senate's Contest** in the Curia, Chapter XI.
+- **A camp:** Chapter V's fortress camp, seen through the held H's glance at its landmark.
+- **The soldier's kit**, in Chapter X's camp.
+- **A promotion ceremony,** Chapter VI's, with its painting.
+
+How they are made:
+- **The moments.** `node scripts/steam-screenshots.mjs` reaches every moment from New Game by legal commands. The real-time campaign bot plays as the engaged reference player, seed 275, on Standard. A battle is kept mid-fight, as the game keeps one when play pauses: a resume point, at the second within the shot's window with the most fighting round the soldier. Seed 275's finale is fought in mist, so the finale comes from seed 276's campaign, on a clear day.
+- **The shots.** Each save is restored through the game's own Restore dialog, in the desktop build in headless Chromium, with the player's settings for real time at High quality. Each is framed with the game's own controls: Pause, the − key's zoom, the H glance, the bar's Kit button. Nothing is injected into the page and no label is hidden.
+- **High quality throughout.** In software rendering the game steps its quality down after thirty slow frames, as on a slow PC. The script chooses High again in Settings, as a player would, and checks that every shot was taken at High from start to finish.
+- **The record.** `docs/evidence/steam-screenshots.json` records each shot's chapter, encounter, moment, save digest, camera and build.
+- **A test** fails while a screenshot is missing or not at 1920 × 1080, or while the record does not match the list.
+
+The release checklist, the Steam plan, the licence notices, `CLAUDE.md` and the AI disclosure draft now say where the screenshots are. The disclosure also says that the screenshots show the game's generated art as it plays.
+
+**Checked:**
+- **Automated tests:** `npm test`, whose store test checks each screenshot's size and the record.
+- **The screenshots,** looked at one by one and on the contact sheet the script writes.
+
+**Not checked:**
+- **Steam's screenshot rules and sizes,** in Steamworks: this session cannot reach it.
+- **A real graphics chip.** The shots are rendered in software; a PC's GPU may draw the same moments differently in detail.
+
 ### Steam, fourth package, third part: Steam's two icons, drafted ([the record](docs/steam-store-art.md#the-icons))
 
 Drafts of the two icons Steamworks asks for under Community and client icons. Both are the game's own emblem, `icon.svg`, drawn at Steam's sizes:

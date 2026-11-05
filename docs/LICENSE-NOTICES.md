@@ -124,6 +124,8 @@ The drafts of the Steam store's and library's images in `desktop/steam/store-art
 
 Steam's shortcut and app icons in `desktop/steam/icons/` are the game's own `icon.svg` emblem, drawn at Steam's sizes by the same script. They are not part of the game's build either.
 
+The draft screenshots in `desktop/steam/screenshots/` are captures of the game itself, with the game's own art and interface. They are not part of the game's build either.
+
 ## The game's own source and text
 
 The source and narrative were prepared for this Imperium build. They were written with AI coding assistants (OpenAI Codex and Anthropic's Claude) under the owner's direction and review. The project's history records this, and the owner confirmed it on 4 November 2026 ([the AI disclosure draft](steam-ai-disclosure.md#beyond-the-shipped-files)).
