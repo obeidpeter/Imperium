@@ -9,6 +9,7 @@
 - The promotion's oath seal sits above the portrait and never intercepts input, leaving the right-turn control accessible. PR #81's retained preview caption is preserved.
 - Ordinary line, wedge, column and loose formations have more room between files; the close shield wall is retained. Exposed paving is lower, chipped and irregular at the margins, across the shared chapter renderer.
 - The desktop equipment view gives more width and height to the soldier and makes worn-item names easier to read; the narrow and enlarged-text list layouts remain available.
+- The enlarged desktop canvas has an explicit CSS height and does not flex, so selecting an item cannot feed its renderer-owned drawing-buffer dimensions back into layout and resize the preview.
 - Steam screenshot files and their evidence are committed one shot at a time, with image hashes, a recovery journal and a single-writer lock. `--recover` completes an interrupted commit without new captures.
 - Stale capture locks fail closed. After confirming no capture process is running, remove only the lock and run `--recover`; automatic lock reclamation could let two simultaneous recovery processes write together.
 - `npm run smoke:recovery` checks native browser save repair, archive failure, the promotion control at three widths, and equipment layout. It runs with the usability CI checks. Fault injection is labelled separately from native storage and interface checks.
