@@ -26,8 +26,10 @@ const button=(kind,label,data={},{primary=false,disabled=false,title=''}={})=>`<
 const signed=n=>n>0?`+${n}`:`${n}`;
 const inCamp=state=>state.phase!=='encounter';
 const disclosure=(id,label,body)=>`<details id="${esc(id)}" class="soldier-details"><summary>${esc(label)}</summary>${body}</details>`;
-export const figurePreview=()=>`<figure class="soldier-model"><canvas data-soldier-preview tabindex="0" role="img" aria-label="Your soldier wearing his current kit. Drag or use left and right arrows to rotate."></canvas>`+
-  `<figcaption><strong>Current equipped kit</strong><span data-preview-status>Preparing the model…</span></figcaption>`+
+// The page's figure of the soldier (a profile, a ceremony) says what its canvas is doing: the page passes what it last
+// said, so a render that patches the page in place keeps the caption of a figure already drawn.
+export const figurePreview=(status='Preparing the model…')=>`<figure class="soldier-model"><canvas data-soldier-preview tabindex="0" role="img" aria-label="Your soldier wearing his current kit. Drag or use left and right arrows to rotate."></canvas>`+
+  `<figcaption><strong>Current equipped kit</strong><span data-preview-status>${esc(status)}</span></figcaption>`+
   `<div class="soldier-model-controls"><button type="button" data-preview-turn="-1" aria-label="Turn model left">←</button><button type="button" data-preview-reset>Full kit</button><button type="button" data-preview-detail>Face</button><button type="button" data-preview-turn="1" aria-label="Turn model right">→</button></div></figure>`;
 
 // The numbers the rules use for the soldier as he stands (or for a companion).
