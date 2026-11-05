@@ -148,7 +148,7 @@ const demo=demoEdition(),allChapters=allChaptersLabel(demo);
 // title offers its save code for the full game. A save code past the demo is refused before it replaces anything.
 let heldChronicle=null;
 const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,ending}=createCampaignViews(()=>({state,screen,settings,saving,lastSaved,saveProblem,
-  saveConflict,offline,offlineProgress,currentChapterOffline,artProgress,demo,heldChronicle}));
+  saveConflict,offline,offlineProgress,currentChapterOffline,artProgress,demo,heldChronicle,identityStatus}));
 // The desktop app (platform.js; desktop/preload.cjs), or null on the web. Its window's fullscreen shows in Settings.
 const desktop=inDesktopApp()?desktopBridge():null,desktopApp=desktop?{fullscreen:false}:null;
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
@@ -789,24 +789,30 @@ function refreshMissionPanel(){
   missionPanelAt=now;showSoldierPanel('mission');
 }
 let soldierPreview=null,soldierPreviewGeneration=0;
-let identityPreview=null,identityCanvas=null,identityGeneration=0,identityKey='';
+// The page's figure of the soldier (the profile card, a promotion, the accession). The page is patched in place, so
+// what the figure says is kept for its next render as well as shown: a render with the figure already drawn (a
+// Settings change, a save) would otherwise put back "Preparing the model…" under it.
+let identityPreview=null,identityCanvas=null,identityGeneration=0,identityKey='',identityStatus='Preparing the model…';
 async function mountIdentityPreview(){
   const canvas=app.querySelector('[data-soldier-preview]');
   const key=JSON.stringify([state?.name,state?.rank,state?.chapter,state?.soldier?.appearance,state?.soldier?.worn]);
   if(canvas===identityCanvas&&key===identityKey)return;
   identityGeneration++;identityPreview?.dispose();identityPreview=null;identityCanvas=canvas;identityKey=key;
-  if(!canvas||!state?.soldier||typeof globalThis.WebGLRenderingContext==='undefined')return;
-  const generation=identityGeneration,host=canvas.closest('.soldier-model'),status=host.querySelector('[data-preview-status]');
+  const generation=identityGeneration,host=canvas?.closest('.soldier-model'),status=host?.querySelector('[data-preview-status]');
+  const say=text=>{if(generation!==identityGeneration)return;identityStatus=text;if(status)status.textContent=text;};
+  say('Preparing the model…');
+  if(!canvas||!state?.soldier)return;
+  if(typeof globalThis.WebGLRenderingContext==='undefined'){say('Your equipment remains available in the character panel.');return;}
   try{
     const {mountSoldierPreview}=await import('../showcase/soldier-preview.js');
     if(generation!==identityGeneration||!canvas.isConnected)return;
-    const preview=identityPreview=mountSoldierPreview(canvas,{soldier:state.soldier,name:state.name,chapter:state.chapter,rank:state.rank,onError:text=>{status.textContent=text;}});
+    const preview=identityPreview=mountSoldierPreview(canvas,{soldier:state.soldier,name:state.name,chapter:state.chapter,rank:state.rank,onError:say});
     for(const button of host.querySelectorAll('[data-preview-turn]'))button.onclick=()=>preview.rotate(Number(button.dataset.previewTurn)*Math.PI/6);
     host.querySelector('[data-preview-reset]').onclick=()=>preview.reset();
     host.querySelector('[data-preview-detail]').onclick=()=>{preview.inspectFace?.();canvas.scrollIntoView({block:'start',behavior:'instant'});};
     await preview.ready;
-    if(generation===identityGeneration&&canvas.dataset.preview!=='unavailable')status.textContent='Your soldier, carrying the kit earned in this chronicle.';
-  }catch{if(generation===identityGeneration)status.textContent='Your equipment remains available in the character panel.';}
+    if(canvas.dataset.preview!=='unavailable')say('Your soldier, carrying the kit earned in this chronicle.');
+  }catch{say('Your equipment remains available in the character panel.');}
 }
 function disposeSoldierPreview(){soldierPreviewGeneration++;soldierPreview?.dispose();soldierPreview=null;}
 async function showSoldierPreview(){

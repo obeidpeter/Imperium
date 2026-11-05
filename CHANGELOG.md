@@ -2,6 +2,27 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Fix: the soldier's figure no longer says "Preparing the model…" once he is drawn
+
+On a promotion page, after a Settings change, the soldier's figure said "Preparing the model…" again and kept saying it, although he was drawn. The page is updated in place around the figure. Each update put back the caption the figure starts with, while the figure, already drawn on the same canvas, had nothing new to say. The profile card of the turn-based camp and the accession show the same figure through the same code.
+
+- **The caption is kept.** What the figure last said is kept for the page's next update, as the inventory's figure already did: that he is drawn, or that he cannot be.
+- **Without WebGL,** the figure now says that the equipment is in the character panel, instead of "Preparing the model…" for ever.
+- **The screenshot script's comments,** which described the old behaviour, are corrected. What the script does is unchanged.
+
+**Checked:**
+- **Automated tests:** `npm test`, with two new tests. In each, the app runs in Node on a promotion page:
+  - the figure cannot be drawn, and a Settings change follows;
+  - there is no WebGL.
+
+  Both fail on the code before the fix.
+- **Real interface,** in the desktop build, in headless Chromium with software WebGL. Each page was restored through the Restore dialog, then Settings was visited from the Menu.
+  - Before the fix, the bug reproduced on Chapter VI's promotion.
+  - After it, the caption stayed at "Your soldier, carrying the kit earned in this chronicle." on Chapter VI's promotion, on the accession and in the turn-based camp of Chapter I, with no page errors.
+
+**Not checked:**
+- **A real graphics chip,** or a real device.
+
 ### Steam, fourth package, fourth part: the store page's screenshots, drafted from the game ([the record](docs/steam-store-art.md#the-screenshots-drafts))
 
 Seven draft screenshots for the store page, at Steam's 1920 × 1080, taken from the game itself with its interface as the player sees it. They show the game before 0.40.0, so they are drafts, to take again after the owner's Gate 4 sign-off:

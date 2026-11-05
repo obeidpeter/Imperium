@@ -167,7 +167,7 @@ async function take(browser,base,moment,{settings,navigation}){
     for(let attempt=1;attempt<=3;attempt++){
       // Settings first, then what it would close or end: a dialog, or the held H's glance, which lowers the view toward
       // the chapter's landmark for as long as the key is held. A dialog's world behind it stands still. A page with no 3D
-      // world (a ceremony) has no quality to put back, and Settings would set its figure of the soldier preparing again.
+      // world (a ceremony) has no quality to put back.
       if(kind)await chooseHigh(page,navigation);
       for(const step of shot.frame){
         if(step.key){await page.locator('#rt-board').focus();await page.keyboard.press(step.key);}
@@ -177,7 +177,7 @@ async function take(browser,base,moment,{settings,navigation}){
         if(step.click)await page.click(step.click);
       }
       if(dialog)await rest();
-      // A figure of the soldier on the page (a ceremony's) says when it is drawn; Settings redraws it.
+      // A figure of the soldier on the page (a ceremony's) says when it is drawn.
       await page.waitForFunction(()=>[...document.querySelectorAll('[data-preview-status]')].every(e=>!e.offsetParent||!/^Preparing/.test(e.textContent)),null,{timeout:300000});
       if(glance){await page.keyboard.down('h');await settle(page);}
       const before=await observe(page);

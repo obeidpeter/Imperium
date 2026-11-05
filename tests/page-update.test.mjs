@@ -4,6 +4,7 @@ import {Document} from './mini-dom.mjs';
 import {updatePage,rememberPage} from '../src/ui/page-update.js';
 import * as G from '../src/core/game.js';
 import {bootApp} from './inert-app.mjs';
+import {runRealtimeCampaign} from '../scripts/realtime-autoplay.mjs';
 
 function page(html) {const doc = new Document(), root = doc.createElement('div');root.id = 'app';doc.body.append(root);updatePage(root, html);return {doc, root};}
 const board = (label, extra = '') => `<div class="battle-stage"><span class="battle-loading">Preparing…</span><canvas id="battle-board" tabindex="0" aria-label="${label}"${extra}></canvas></div>`;
@@ -115,4 +116,41 @@ test('in the app, the board survives updates with its focus and bindings, and ta
   const touch = type => board.dispatchEvent(Object.assign(new Event(type, {bubbles: true}), {pointerType: 'touch', clientX: 5, clientY: 5}));
   app.timeouts.length = 0;touch('pointerdown');touch('pointerup');
   assert.ok(app.timeouts.includes(900), 'A held finger waits for the new touch delay');
+});
+
+// The page's figure of the soldier (a promotion here) says what its canvas is doing once its module has loaded, after the
+// page was drawn. A later render patches the page in place around the same canvas, so it must keep what the figure said
+// rather than put back "Preparing the model…" under a figure that is drawn (or that will not be).
+async function promotionFigure(t, name, webgl) {
+  const {state} = runRealtimeCampaign({throughChapter: 1, lastChapter: 1, seed: 275});
+  assert.equal(state.phase, 'promotion');assert.ok(state.soldier, 'a chronicle with a soldier shows his figure');
+  const had = Object.getOwnPropertyDescriptor(globalThis, 'WebGLRenderingContext');
+  if (webgl) globalThis.WebGLRenderingContext = class {};else delete globalThis.WebGLRenderingContext;
+  t.after(() => had ? Object.defineProperty(globalThis, 'WebGLRenderingContext', had) : delete globalThis.WebGLRenderingContext);
+  const app = await bootApp(t, {name, save: state, settings: {battleView: '2d'}});
+  await app.click('continue');
+  const figure = () => app.find('#app .soldier-model'), caption = () => figure().querySelector('[data-preview-status]').textContent;
+  for (let i = 0; i < 500 && /^Preparing/.test(caption()); i++) await new Promise(resolve => setImmediate(resolve));
+  return {app, figure, caption};
+}
+const visitSettings = async app => {
+  if (!app.doc.querySelector('[data-cmd="settings"]')) await app.click('menu');
+  await app.click('settings');await app.change('#graphics-quality', {value: 'balanced'});await app.click('close-modal');
+};
+
+test('in the app, the soldier figure keeps what it said when Settings update the page around it', async t => {
+  const {app, figure, caption} = await promotionFigure(t, 'figure-caption', true);
+  const canvas = figure().querySelector('[data-soldier-preview]'), said = caption();
+  assert.equal(canvas.dataset.preview, 'unavailable', 'this DOM has no WebGL context: the figure says it cannot be drawn');
+  assert.equal(said, 'The 3D preview is unavailable. Your equipment list remains available.');
+  await visitSettings(app);
+  assert.equal(figure().querySelector('[data-soldier-preview]'), canvas, 'Settings update the page around the same canvas');
+  assert.equal(caption(), said, 'and the caption still says what the figure said, not "Preparing the model…"');
+});
+
+test('in the app, a soldier figure without WebGL says where his equipment is instead of preparing for ever', async t => {
+  const {app, caption} = await promotionFigure(t, 'figure-no-webgl', false);
+  assert.equal(caption(), 'Your equipment remains available in the character panel.');
+  await visitSettings(app);
+  assert.equal(caption(), 'Your equipment remains available in the character panel.');
 });
