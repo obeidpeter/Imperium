@@ -15,7 +15,7 @@ import {createWorld,roundOf} from './simulation.js';
 import {findRoute,navGrid,span,speedFactor,cellCentre,nearestWalkable,walkable} from './navigation.js';
 import {ITEMS} from '../../data/items.js';
 import {CHAPTERS} from '../../data/campaign.js';
-import {DEPLOYMENT,ROMAN_SQUADS} from '../../data/realtime-squads.js';
+import {DEPLOYMENT,REALTIME_STARTS,ROMAN_SQUADS} from '../../data/realtime-squads.js';
 import {deploymentZone} from './deployment.js';
 import {defaultStanding} from './squad-ai.js';
 import {CONTAINER_KINDS,containersInField} from '../../data/containers.js';
@@ -349,6 +349,9 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
     if(u.id==='hero'||u.hp<=0)continue;
     if(squads&&(u.side==='enemy'||u.side==='ally')&&u.role!=='escort'){
       const spec=squadSpec(state,e,u,k,{party,index:u.side==='ally'?allyIndex++:0,temperament:variety.temperaments[u.id]??null});
+      // A battle may start a tile's squads off its centre (realtime-squads.js REALTIME_STARTS); the board keeps its tiles.
+      const start=REALTIME_STARTS[e.id]?.[`${u.x},${u.y}`];
+      if(start){spec.at=[spec.at[0]+start[0],spec.at[1]+start[1]];if(spec.anchor)spec.anchor=[...spec.at];}
       if(variety.hidden[u.id]){spec.at=pos(variety.hidden[u.id],k);spec.anchor=spec.at;}if(variety.lying[u.id])spec.lying=true;squadSpecs.push(spec);continue;}
     if(u.side==='enemy'){const spec=enemySpec(state,e,u,enemyIndex++,k);if(variety.hidden[u.id])spec.at=pos(variety.hidden[u.id],k);actors.push(spec);}
     else if(u.side==='ally'&&state.chapter<3&&u.veteranId&&COMPANIONS[u.veteranId])actors.push(companionSpec(state,u.veteranId,pos(u,k),{unitId:u.id,preset:'shieldmate'}));
