@@ -2,13 +2,14 @@
 // small DOM (mini-dom.mjs): no canvas drawing, layout, audio or production
 // storage. A test clicks the buttons and changes the controls the app rendered,
 // and reads the page and what the app saved. `name` keeps each boot a fresh
-// module instance; `settings` are stored preferences to start with.
+// module instance; `settings` are stored preferences to start with, and `raw`
+// stored values as they are.
 import {readFileSync} from 'node:fs';
 import {CONFIG} from '../src/config.js';
 import {deserialize} from '../src/core/game.js';
 import {Document} from './mini-dom.mjs';
 
-export async function bootApp(t,{name,save=null,settings=null}={}){
+export async function bootApp(t,{name,save=null,settings=null,raw=null}={}){
   const originals=new Map(),set=(key,value)=>{originals.set(key,Object.getOwnPropertyDescriptor(globalThis,key));Object.defineProperty(globalThis,key,{value,writable:true,configurable:true});};
   const doc=new Document(),values=new Map(),frames=[],storage={reject:false,writes:0,keys:[]},pending=new Set();
   doc.body.innerHTML=/<body>([\s\S]*)<\/body>/.exec(readFileSync(new URL('../index.html',import.meta.url),'utf8'))[1].replace(/<script[\s\S]*?<\/script>/g,'');
@@ -24,6 +25,8 @@ export async function bootApp(t,{name,save=null,settings=null}={}){
   set('BroadcastChannel',class{postMessage(){}close(){}});set('CSS',{escape:text=>String(text).replace(/[^\w-]/g,c=>'\\'+c)});
   const nativeTimeout=globalThis.setTimeout,timeouts=[];set('setTimeout',(fn,delay,...args)=>{timeouts.push(delay);return delay===6500?0:nativeTimeout(fn,delay,...args);});
   if(settings)values.set('sacramentum.settings',JSON.stringify(settings));
+  // Stored values as they are, a damaged save among them (`raw`: {key: text}).
+  if(raw)for(const [key,value] of Object.entries(raw))values.set(key,value);
   t.after(async()=>{await new Promise(setImmediate);for(const [key,descriptor]of originals)descriptor?Object.defineProperty(globalThis,key,descriptor):delete globalThis[key];});
   const store=await import('../src/ui/storage.js');if(save)await store.saveLocal(save,{replace:true});
   storage.writes=0;storage.keys.length=0;

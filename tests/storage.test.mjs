@@ -19,18 +19,20 @@ async function withPlatform(run){
     const tx={abort(){aborted=true;},objectStore(){return {
       // env.idb is the campaign record; other keys (the unreadable quarantine) are kept separately.
       get(key){let ready=false,value;const request={get result(){if(!ready)throw new DOMException('The request has not finished.','InvalidStateError');return value;}};operations.push(()=>{value=structuredClone(key==='campaign'?env.idb:env.idbOther.get(key)??null);ready=true;request.onsuccess?.();});return request;},
-      put(value,key){writes.push({key,value:structuredClone(value)});}
+      put(value,key){writes.push({key,value:structuredClone(value)});},
+      delete(key){writes.push({key,remove:true});}
     };}};
     const execute=async()=>{
       for(const operation of operations){if(aborted)break;operation();}
       if(aborted){tx.onabort?.();return;}
-      if(writes.length){if(env.delayCommit)await new Promise(resolve=>env.pending.push(resolve));if(env.idbWriteFails){tx.onabort?.();return;}for(const {key,value}of writes){if(key==='campaign')env.idb=value;else env.idbOther.set(key,value);}}
+      if(writes.length){if(env.delayCommit)await new Promise(resolve=>env.pending.push(resolve));if(env.idbWriteFails){tx.onabort?.();return;}for(const {key,value,remove}of writes){if(remove){if(key==='campaign')env.idb=null;else env.idbOther.delete(key);}else if(key==='campaign')env.idb=value;else env.idbOther.set(key,value);}}
       tx.oncomplete?.();
     };
     transactionTail=transactionTail.then(execute);return tx;
   }};
   const indexedDB={open(name,version){assert.equal(name,'sacramentum');assert.equal(version,1);const request={};queueMicrotask(()=>{if(env.idbOpenFails){request.onerror?.();return;}request.result=db;request.onsuccess?.();});return request;}};
-  const localStorage={getItem(key){if(env.localFails)throw Error('localStorage unavailable');return env.local.get(key)??null;},setItem(key,value){if(env.localFails)throw Error('localStorage unavailable');env.local.set(key,value);}};
+  const localStorage={getItem(key){if(env.localFails)throw Error('localStorage unavailable');return env.local.get(key)??null;},setItem(key,value){if(env.localFails)throw Error('localStorage unavailable');env.local.set(key,value);},
+    removeItem(key){if(env.localFails)throw Error('localStorage unavailable');env.local.delete(key);}};
   const navigator={locks:{request(name,fn){assert.equal(name,'sacramentum-save');env.lockCalls++;const result=lockTail.then(fn);lockTail=result.catch(()=>{});return result;}},storage:{persist:async()=>{env.persistCalls++;return true;}}};
   const channels=new Set();
   class Channel{constructor(name){assert.equal(name,'sacramentum-save-changes');this.name=name;channels.add(this);}postMessage(data){for(const channel of channels)if(channel!==this&&channel.name===this.name)queueMicrotask(()=>channel.onmessage?.({data}));}close(){channels.delete(this);}}
@@ -313,6 +315,38 @@ for(const reason of ['too large','quota'])test(`SAV-15 refuses replacement when 
   const store=await importStorage();await assert.rejects(store.saveLocal(newGame('Replacement')),error=>error.code==='SAVE_UNAVAILABLE'&&/could not be preserved/.test(error.message));
   assert.equal(env.local.get(CONFIG.saveKey),raw);
   assert.equal(await store.readUnreadableSave(0),raw);
+}));
+
+// The player's discard (Settings → Saves), after downloading: every copy of the one record, and nothing else.
+test('SAV-16 discarding a downloaded unreadable record removes every copy of it and keeps everything else',async()=>withPlatform(async env=>{
+  const local=JSON.stringify({format:99,payload:'damaged local save'}),idb=JSON.stringify({format:98,payload:'damaged database save'});
+  env.local.set(CONFIG.saveKey,local);env.idb=idb;
+  const store=await importStorage();await store.saveLocal(newGame('Kept'));
+  const listed=await store.listUnreadableSaves();assert.equal(listed.length,2,'both damaged records were archived before the save');
+  const entry=listed.find(e=>e.source==='localStorage'),other=listed.find(e=>e!==entry);
+  assert.equal(await store.readUnreadableSave(entry.index),local,'the player downloads it first');
+  assert.ok(await store.discardUnreadableSave(entry.checksum)>=2,'its copies in both archives are removed');
+  const left=await store.listUnreadableSaves();assert.deepEqual(left.map(e=>e.checksum),[other.checksum],'the other damaged record stays');
+  assert.equal(await store.readUnreadableSave(left[0].index),idb);
+  assert.equal(await store.discardUnreadableSave('not-a-record'),0,'an unknown record removes nothing');
+  assert.equal((await store.loadLocal()).state.name,'Kept','the chronicle is untouched');
+}));
+
+test('SAV-16 a damaged record that could not be preserved can be downloaded and discarded, and saving goes on',async()=>withPlatform(async env=>{
+  env.idbOpenFails=true;const raw=JSON.stringify({format:99,payload:'x'.repeat(1500000)});env.local.set(CONFIG.saveKey,raw);
+  const store=await importStorage();
+  await assert.rejects(store.saveLocal(newGame('Blocked')),error=>/discard it there/.test(error.message),'the refusal names the way out');
+  const [entry]=await store.listUnreadableSaves();assert.equal(await store.readUnreadableSave(entry.index),raw);
+  assert.equal(await store.discardUnreadableSave(entry.checksum),1,'the live record goes');assert.equal(env.local.has(CONFIG.saveKey),false);
+  await store.saveLocal(newGame('After discard'));assert.equal((await store.loadLocal()).state.name,'After discard');
+  assert.deepEqual(await store.listUnreadableSaves(),[]);
+}));
+
+test('SAV-16 a readable save is never discarded, whatever record is named',async()=>withPlatform(async env=>{
+  const store=await importStorage();await store.saveLocal(newGame('Readable'));
+  const text=env.local.get(CONFIG.saveKey),sum=JSON.parse(text).checksum;
+  for(const digest of [sum,'0'])assert.equal(await store.discardUnreadableSave(digest),0);
+  assert.equal(env.local.get(CONFIG.saveKey),text);assert.equal((await store.loadLocal()).state.name,'Readable');
 }));
 
 // The desktop app's save file (platform.js desktopSaveMirror; the Steam plan, docs/steam-plan.md). A fake file stands in

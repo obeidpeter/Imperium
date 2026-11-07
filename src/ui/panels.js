@@ -461,10 +461,17 @@ export function createPanels(context){
     `this verified chronicle and replace the current local campaign?</p>${actions('<button class="primary" data-cmd="confirm-import">Restore this '+
     'chronicle</button><button data-cmd="close-modal">Cancel</button>')}`);
   }
-  function showStorageUnavailable(){context().showModal('Play without autosave?',`<div class="panel-lead"><p class="eyebrow">BROWSER STORAGE UNAVAILABLE</p>`+
-    `<p>You can play in this tab, but progress cannot be saved automatically. Export a save code before closing it. Your previous saved chronicle will remain `+
-    `on this device.</p></div>${actions('<button class="primary" data-cmd="begin-unsaved">Play in memory</button>'+
-    '<button data-cmd="close-modal">Cancel</button>')}`);}
+  // A damaged save that cannot be kept beside a new one blocks saving until the player downloads and discards it.
+  function showStorageUnavailable(error=null){
+    const blocked=!!error?.unreadable;
+    context().showModal('Play without autosave?',`<div class="panel-lead"><p class="eyebrow">${blocked?'A DAMAGED SAVE IS IN THE WAY':'BROWSER STORAGE UNAVAILABLE'}</p>`+
+      (blocked?'<p>This device holds an unreadable save that the game cannot set aside, so it will not save over it. In <strong>Settings → Saves → Recover '+
+        'older progress</strong>, download it, then discard it, and your chronicle saves again. Until then you can play in this tab.</p>':
+        `<p>You can play in this tab, but progress cannot be saved automatically. Export a save code before closing it. Your previous saved chronicle will remain `+
+        `on this device.</p>`)+
+      `</div>${actions('<button class="primary" data-cmd="begin-unsaved">Play in memory</button>'+
+      (blocked?'<button data-cmd="settings-section" data-id="saves">Open Saves</button>':'')+'<button data-cmd="close-modal">Cancel</button>')}`);
+  }
   function showRetry(){context().showModal('Retry this encounter?',`<div class="panel-lead"><p class="eyebrow">RETURN TO THE ENCOUNTER’S BEGINNING</p>`+
     `<p>Restore health, positions, the random seed, meters, inventory, and staged promises from the complete start checkpoint. Your earlier campaign `+
     `decisions stay as they were.</p></div>${actions('<button class="primary" data-cmd="retry-confirm">Restore checkpoint</button>'+

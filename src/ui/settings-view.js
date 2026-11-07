@@ -15,7 +15,7 @@ const group=(title,body)=>`<fieldset class="settings-group"><legend>${title}</le
 // controller; they are excluded from both keyboard navigation and speech.
 const capitalized=text=>text.charAt(0).toUpperCase()+text.slice(1);
 export function settingsView(context,{page='general',pace='',development=''}={}){
-  const {settings:s,state,offline,currentChapterOffline,offlineProgress,preservedUnreadable,keymap,devMenu,desktopApp,demo=null}=context;
+  const {settings:s,state,offline,currentChapterOffline,offlineProgress,preservedUnreadable,downloadedUnreadable=null,keymap,devMenu,desktopApp,demo=null}=context;
   const current=SETTINGS_PAGES.some(([id])=>id===page)?page:'general',live=s.controlsModel==='realtime';
   // The desktop app (platform.js): its window's fullscreen, saves on this computer, and every chapter installed.
   const desktop=!!desktopApp,pageLabel=(id,label)=>desktop&&id==='saves'?'Saves':label;
@@ -50,7 +50,9 @@ export function settingsView(context,{page='general',pace='',development=''}={})
       soundscapeSettings(s)),
     saves:`<section class="settings-group"><h3>Your progress</h3><p>${desktop?'Progress saves on this computer, in the game’s own folder.':'Progress saves on this device. Keep a backup before changing browsers.'}</p><div class="panel-actions">${state?'<button class="primary" data-cmd="saves">Save & load</button><button data-cmd="export">Export save code</button>':''}<button data-cmd="restore">Import save code</button></div>`+
       '<details id="settings-recovery" class="settings-details"><summary>Recover older progress</summary><p>The last three checkpoints are kept on this device.</p><button data-cmd="recovery">Find earlier saves</button>'+
-      (preservedUnreadable?`<p>${preservedUnreadable} older save${preservedUnreadable===1?'':'s'} cannot be read. The original data is preserved.</p><button data-cmd="export-unreadable">Download preserved save data</button>`:'')+'</details></section>'+
+      (preservedUnreadable?`<p>${preservedUnreadable} older save${preservedUnreadable===1?'':'s'} cannot be read. The original data is preserved.</p><button data-cmd="export-unreadable">Download preserved save data</button>`+
+        (downloadedUnreadable?'<p class="settings-description">Downloaded. Once the file is safe, you can discard the data from this device, so a new save can take its place.</p>'+
+          '<button data-cmd="discard-unreadable">Discard the downloaded data</button>':''):'')+'</details></section>'+
       (desktop?'':      `<section class="settings-group"><h3>Offline play</h3><p id="settings-offline-status" role="status">${offlineText}</p><p class="settings-description">Chapters download as you reach them. Download everything before playing without internet.</p><div class="panel-actions">${state&&!currentChapterOffline?'<button data-cmd="retry-chapter">Retry chapter download</button>':''}${!offline&&globalThis.navigator&&'serviceWorker' in globalThis.navigator?'<button data-cmd="retry-offline">Download all chapters</button>':''}</div></section>`)+
       '<details id="settings-save-tools" class="settings-details"><summary>New game & local data</summary><div class="panel-actions"><button data-cmd="new">Start a new game</button><button data-cmd="privacy">Privacy & local data</button></div></details>'
   };

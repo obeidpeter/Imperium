@@ -5,7 +5,7 @@ import {desktopSaveMirror} from './platform.js';
 const HISTORY_LIMIT=3;
 const conflict=()=>Object.assign(new Error('A newer save exists in another tab. Reload or explicitly take over before continuing.'),{code:'SAVE_CONFLICT'});
 const unavailable=()=>Object.assign(new Error('Safe browser storage is unavailable. Continue in memory and export a save code to keep this chronicle.'),{code:'SAVE_UNAVAILABLE'});
-const preservationUnavailable=()=>Object.assign(new Error('The unreadable save could not be preserved, so it has not been replaced. Download it in Settings → Saves, then free storage and try again.'),{code:'SAVE_UNAVAILABLE'});
+const preservationUnavailable=()=>Object.assign(new Error('The unreadable save could not be preserved, so it has not been replaced. Download it in Settings → Saves, then discard it there or free storage, and try again.'),{code:'SAVE_UNAVAILABLE',unreadable:true});
 const fileUnavailable=()=>Object.assign(new Error('The save file could not be written. Progress is kept in the app; export a save code to keep a copy.'),{code:'SAVE_FILE_UNAVAILABLE'});
 const fileUnreadable=()=>Object.assign(new Error('The save file cannot be read right now. It has not been replaced. Your local progress is kept; try saving again or export a save code.'),{code:'SAVE_FILE_UNAVAILABLE'});
 const fileChanged=()=>Object.assign(new Error('The save file changed outside the game. Your local progress is kept. Reopen the game to load the file and review both copies in recovery records.'),{code:'SAVE_FILE_UNAVAILABLE'});
@@ -286,12 +286,43 @@ export function createSaveStore(options={}){
     const match=[...live,...stored,...localQuarantine()].find(entry=>entry.checksum===item.checksum);
     if(!match)throw new Error('That preserved record is unavailable.');return match.text;
   }
+  // The player's own discard of one unreadable record, named by its checksum, after downloading it (Settings → Saves):
+  // every copy goes, the live record if it is that one and both archives' entries. A readable save is never removed.
+  // Under the save lock where the browser has one, so a save from another tab cannot land between check and removal.
+  async function discardUnreadableSave(digest){
+    const named=item=>item.checksum===digest||checksum(item.text)===digest,live=raw=>unreadable(raw)&&checksum(rawText(raw))===digest;
+    const run=async()=>{
+      let removed=0;
+      try{if(live(localRaw())){ls.removeItem(key);removed++;}}catch{}
+      const local=localQuarantine(),keep=local.filter(item=>!named(item));
+      if(keep.length<local.length)try{if(keep.length)ls.setItem(quarantineKey,JSON.stringify(keep));else ls.removeItem(quarantineKey);removed+=local.length-keep.length;}catch{}
+      const db=await database();
+      if(db)removed+=await new Promise(resolve=>{let n=0;try{
+        const tx=db.transaction('saves','readwrite'),store=tx.objectStore('saves'),current=store.get('campaign'),held=store.get('unreadable');
+        // Requests complete in issue order: both are read once the archive's is.
+        held.onsuccess=()=>{
+          if(live(current.result)){store.delete('campaign');n++;}
+          const list=quarantined(held.result),rest=list.filter(item=>!named(item));
+          if(rest.length<list.length){if(rest.length)store.put(rest,'unreadable');else store.delete('unreadable');n+=list.length-rest.length;}
+        };
+        current.onerror=held.onerror=()=>{try{tx.abort();}catch{resolve(0);}};
+        tx.oncomplete=()=>resolve(n);tx.onabort=()=>resolve(0);tx.onerror=()=>{};
+      }catch{resolve(0);}});
+      return removed;
+    };
+    if(!useLocks)return run();
+    let entered=false;
+    try{return await nav.locks.request(lockName,()=>{entered=true;return run();});}
+    catch(error){if(entered)throw error;return run();}
+  }
   function subscribeSaveChanges(listener){listeners.add(listener);listen();return()=>listeners.delete(listener);}
   async function close(){closed=true;channel?.close();channel=null;const db=await dbPromise;db?.close?.();listeners.clear();}
-  return {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges,listUnreadableSaves,readUnreadableSave,close};
+  return {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges,listUnreadableSaves,readUnreadableSave,
+    discardUnreadableSave,close};
 }
 const defaultStore=createSaveStore({mirror:desktopSaveMirror()});
-export const {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges,listUnreadableSaves,readUnreadableSave}=defaultStore;
+export const {loadLocal,saveLocal,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,getSaveSession,subscribeSaveChanges,listUnreadableSaves,readUnreadableSave,
+  discardUnreadableSave}=defaultStore;
 // SAC1/SAC1J identify the portable format; retain both across the Imperium rename.
 export async function saveCode(state){const payload=serialize(state);const raw=new TextEncoder().encode(JSON.stringify({format:1,payload,checksum:checksum(payload)}));let bytes=raw,prefix='SAC1J.';if(globalThis.CompressionStream){bytes=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());prefix='SAC1.';}let binary='';for(const b of bytes)binary+=String.fromCharCode(b);return prefix+btoa(binary);}
 export async function restoreCode(code){const text=code.trim();if(text.length>3000000)throw new Error('Save code is too large.');if(text.startsWith('{'))return deserialize(text);let bytes;try{const parts=text.split('.');if(!['SAC1','SAC1J'].includes(parts[0])||parts.length!==2)throw new Error();bytes=Uint8Array.from(atob(parts[1]),c=>c.charCodeAt(0));if(parts[0]==='SAC1'){if(!globalThis.DecompressionStream)throw new Error('This browser cannot read compressed save codes. Use a recent browser.');const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();const chunks=[];let total=0;for(;;){const {value,done}=await reader.read();if(done)break;total+=value.length;if(total>2000000){await reader.cancel();throw new Error('Expanded save exceeds the size limit.');}chunks.push(value);}bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}}const decoded=new TextDecoder('utf-8',{fatal:true}).decode(bytes);const parsed=JSON.parse(decoded);if(parsed.format===1){const checked=unpack(parsed);if(!checked)throw new Error('Checksum or save validation failed.');return checked.state;}return deserialize(decoded);}catch(error){throw new Error(error.message?.includes('browser')?error.message:'This save code is invalid or incompatible. Your existing chronicle has not been changed.');}}

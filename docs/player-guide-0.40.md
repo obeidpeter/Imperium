@@ -1859,6 +1859,14 @@ takeover and load the latest chronicle. Clearing browser data can erase
 both the current and the recovery records, so keep an exported code as
 well.
 
+A save the game cannot read is never deleted on its own. The same place
+says how many there are, and **Download preserved save data** saves one
+as a file. Once it is downloaded, **Discard the downloaded data** removes
+it from this device, after you confirm; the file you downloaded is then
+the only copy. If the game cannot set a damaged save aside, it does not
+save over it: you can play in memory meanwhile, and once you have
+downloaded and discarded it, your chronicle saves again.
+
 ## Playing offline
 
 - Each chapter's artwork and 3D files download as you reach the chapter;
