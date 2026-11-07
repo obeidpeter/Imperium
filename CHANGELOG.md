@@ -2,6 +2,35 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release 11's sweeps re-checked after #82; the eagle battle's opening and the wall walk's clock ([the report](docs/chests-release11-report.md#re-checked-after-82))
+
+#82 widened the ordinary formations. Release 11's six calibration sweeps were run again on the result, 20 seeds each, one at a time, and compared with release 11's.
+
+- **The code just before #82 replays release 11 exactly,** battle by battle, so every difference comes from #82 and the two fixes below.
+- **Every level still meets its win targets,** and the "upgrades count" target is still met:
+  - on Veteran, the better kit ends its wins with 3.8 points more health and wins 0.33 rounds sooner;
+  - on Story, it ends the champion battles with 17.3 points more health.
+  - Veteran's margin on rounds is thin: its 90% range over seeds, 0.26 to 0.40 rounds, dips below the 0.3 target.
+- **Chapter VI's eagle battle opens on a flank again.**
+  - At the opening the pursuers plan from what they see. The company's archers stood just behind the corner of a rock, and #82's wider ranks moved them a tenth of a metre out of the pursuers' sight. Every seed then opened with a frontal attack, where release 11's sweeps saw a flank in 16 of 20.
+  - In real time the company's rear pair now forms up 4 m further north, in sight with metres to spare (`REALTIME_STARTS`). The 0.38 board is unchanged.
+  - Every battle of every sweep now meets the "three enemy plans" target, including the ferry on Story bare, which release 11 missed.
+- **Chapter IV's wall walk has two more rounds in real time,** on every level: 12 on Veteran, 14 on Standard and 17 on Story (`REALTIME_EXTRA_ROUNDS`). The 0.38 battle keeps its turns.
+  - After #82, Veteran's narrowest win with the best kit came on the last round. The column waited 6 m from the goal while the soldier went back to fight, and the extraction needs both there.
+  - Nothing reads the clock before it runs out, so every battle won before plays exactly as before, with two more rounds to spare. The final sweeps match the sweeps with the eagle fix alone in nearly 5,000 battle records, except for the wall walk's clock.
+  - Where the real-time clock is the longer one, the battle's record keeps it, so the result page never reads "turn 13 of 12".
+  - The wall walk's squads still lose more men with the lesser kits than in release 11. Those losses come from the fight itself; the extra rounds don't change them.
+- **The evidence** is in `docs/evidence/realtime-release11-recheck-sweep-*.json`, and `npm test` checks its upgrades count as it checks release 11's.
+
+**Checked:**
+- **Automated tests:** `npm test`, with new tests for the eagle's opening (from the 3D review's legal checkpoint), the wall walk's clock on every level and the re-checked sweeps.
+- **The six sweeps:** Node, headless, on the development container, one at a time.
+- **Identity checks:** the code before #82 replays release 11; the final sweeps match the sweeps with the eagle fix alone, except for the wall walk's clock.
+
+**Not checked:**
+- **A player's play-through:** the sweeps measure the calibration bot. The feel is the owner's Gate 4 play-through.
+- **Tick times:** measured on a different machine from release 11's, so not comparable.
+
 ### Save recovery, equipment controls and battlefield readability
 
 - Damaged IndexedDB saves wait for both reads before archiving and replacement. The Node double now rejects reading an unfinished request, as Chromium does.

@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as G from '../src/core/game.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
-import {REALTIME_DIFFICULTY,PERCEPTION} from '../src/data/realtime-rules.js';
+import {REALTIME_DIFFICULTY,REALTIME_EXTRA_ROUNDS,PERCEPTION} from '../src/data/realtime-rules.js';
+import {applyRealtimeOutcome} from '../src/core/realtime/campaign-encounter.js';
 import {choosePace,defaultSettings,followDifficulty,loadSettings,paceDefaults} from '../src/ui/settings.js';
 import {runRealtimeCampaign} from '../scripts/realtime-autoplay.mjs';
 import {playBattle} from '../scripts/realtime-sweep.mjs';
@@ -50,6 +51,21 @@ test('§3.18 in real time: deadlines, reinforcements, pressure and perception by
   assert.deepEqual(LEVELS.map(l=>[PERCEPTION.difficulty[l].notice,PERCEPTION.difficulty[l].reaction]),[[.7,.5],[1,0],[1.3,-.25]]);
   // The drill keeps its own clock.
   assert.deepEqual(LEVELS.map(l=>G.realtimeWorld(started(l,'ch1-training')).mission.deadline),[12,12,12]);
+});
+
+// Chapter IV's wall walk (REALTIME_EXTRA_ROUNDS): after the wider formations of #82 its narrowest first-try win on Veteran
+// came on the last round. Real time gives it two more rounds on every level; the 0.38 battle keeps its turns.
+test('Chapter IV’s wall walk has two more rounds in real time on every level, the 0.38 battle keeps its turns, and the record shows the clock',()=>{
+  assert.equal(REALTIME_EXTRA_ROUNDS['ch4-wall'],2);
+  for(const level of LEVELS){
+    const turns=started(level,'ch4-wall',{}).encounter,state=started(level,'ch4-wall'),world=G.realtimeWorld(state);
+    assert.equal(G.isRealtime(state),true);assert.equal(state.encounter.turnLimit,turns.turnLimit,`${level}: the 0.38 battle keeps its turns`);
+    assert.equal(world.mission.deadline,turns.turnLimit+REALTIME_DIFFICULTY[level].deadline+2,`${level}: two more rounds than the level's clock`);
+    const gate=G.realtimeWorld(started(level,'ch4-gate')),gateTurns=started(level,'ch4-gate',{}).encounter.turnLimit;
+    assert.equal(gate.mission.deadline,gateTurns+REALTIME_DIFFICULTY[level].deadline,`${level}: the chapter's other battle keeps the level's clock`);
+    applyRealtimeOutcome(state,world);
+    assert.equal(state.encounter.turnLimit,Math.max(turns.turnLimit,world.mission.deadline),`${level}: the record reads the real-time clock where it is longer`);
+  }
 });
 
 test('Contest hours are the same on every level, and each Contest carries its level (contest.js applies the 0.38 speech strength)',()=>{

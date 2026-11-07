@@ -106,6 +106,12 @@ export const HOLD_BRACE_TICKS=200;
 // Deployment (guide "Deployment"): from Chapter VII a battle opens paused and the
 // company is placed in the zone the 0.38 Deploy allowed (its first four tiles).
 export const DEPLOYMENT=freeze({fromChapter:7,tiles:4});
+// Where a real-time battle starts the squads of a board tile away from the tile's centre, by battle: metres east
+// and south. The 0.38 board, its units and its saved routes are unchanged. Chapter VI's eagle: from their tiles'
+// centres, the company's rear pair (tiles 0,5 and 1,5) was in the pursuing archers' sight only just past the corner
+// of the rock between them, so the enemy's opening plan turned on a tenth of a metre of a squad's place (the wider
+// formations of #82 tipped it). Formed up 4 m further north, the pair is in sight with metres to spare.
+export const REALTIME_STARTS=freeze({'ch6-eagle':freeze({'0,5':freeze([0,-4]),'1,5':freeze([0,-4])})});
 
 // Squad standing orders (§3.7 "Squad vocabulary"): four slots like a
 // companion's, with the squad's own actions and targets.

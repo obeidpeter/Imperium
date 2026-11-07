@@ -1,11 +1,14 @@
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import {createWorld,step,snapshotWorld,restoreWorld,worldHash,queueCommand} from '../src/core/realtime/simulation.js';
 import {planDoctrine,decideSquad} from '../src/core/realtime/squad-ai.js';
 import {observeBattleSituation,scoreEnemyPlans} from '../src/core/realtime/adaptive-doctrine.js';
-import {squadById,membersOf,squadSpeed} from '../src/core/realtime/squads.js';
+import {squadById,membersOf,squadSpeed,squadCentre} from '../src/core/realtime/squads.js';
+import {sightBlocked} from '../src/core/realtime/sight.js';
 import {fieldIntelligence} from '../src/core/realtime/intel.js';
-import {ENEMY_PLANS,ROMAN_SQUADS} from '../src/data/realtime-squads.js';
+import {ENEMY_FACTIONS,ENEMY_PLANS,REALTIME_STARTS,ROMAN_SQUADS} from '../src/data/realtime-squads.js';
+import {COMMAND_CHAPTERS} from '../src/data/command-campaign.js';
 import {ADAPTIVE_TACTICS,TACTICAL_IDENTITIES,realtimeAlliedRole} from '../src/data/realtime-tactics.js';
 import {ARCHETYPES} from '../src/data/realtime-forces.js';
 import {ARENA,TIME} from '../src/data/realtime-rules.js';
@@ -77,4 +80,31 @@ test('Regional support roles substitute an existing ally, retain strength and so
     else assert.equal(support.maxMen,6);
   }
   const original={id:'bow',side:'ally',role:'archer',hp:16};assert.equal(realtimeAlliedRole(9,{units:[original]},original),'archer');
+});
+
+// Chapter VI's eagle, from the 3D review's legal checkpoint (New Game, seed 275): from its tiles' centres the company's
+// rear pair was in the pursuing archers' sight only just past a rock's corner, so the enemy's opening plan turned on a
+// tenth of a metre of a squad's place. The real-time battle forms the pair up 4 m further north; the board is unchanged.
+test('Chapter VI’s eagle: the pursuers see the rear pair at the opening with metres to spare, so a flank can open the battle',()=>{
+  const scene=JSON.parse(readFileSync(new URL('./fixtures/campaign-3d.json',import.meta.url),'utf8')).scenes.find(s=>s.id==='ch6-eagle');
+  const state=G.deserialize(JSON.stringify(scene.state)),before=G.serialize(state),world=createEncounterWorld(state);
+  assert.equal(G.serialize(state),before,'building the battle changes nothing in the chronicle');
+  const rear=state.encounter.units.filter(u=>u.side==='ally'&&REALTIME_STARTS['ch6-eagle'][`${u.x},${u.y}`]).map(u=>u.id).sort();
+  assert.deepEqual(rear,['ally2','ally3'],'the board keeps the rear pair on its own tiles');
+  assert.ok(rear.some(id=>squadById(world,id).role==='archer'),'in this checkpoint the company’s archers are in the rear pair');
+  const enemies=world.squads.filter(s=>s.side==='enemy'),friends=world.squads.filter(s=>s.side==='ally');
+  const escorts=(world.mission?.escorts??[]).map(id=>world.actors.find(a=>a.id===id)).filter(Boolean);
+  const seen=observeBattleSituation(world,enemies,friends,escorts,world.actors.find(a=>a.id===world.heroId));
+  for(const id of rear)assert.ok(seen.observed.includes(id),`${id} is in the pursuers’ sight at the opening`);
+  assert.equal(seen.archers,true);
+  // Not on an edge: a metre off its place in any direction, each squad is still in the enemy archers' sight.
+  const bows=squadCentre(world,enemies.find(s=>s.role==='archer'));
+  for(const id of rear){const c=squadCentre(world,squadById(world,id));
+    for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]])
+      assert.equal(sightBlocked(world,bows,{x:c.x+dx,z:c.z+dz}),false,`${id} stays in sight ${dx},${dz} m off its place`);}
+  // The opening plan is drawn among those within a point of the best: the frontal attack and either flank.
+  const doctrine=COMMAND_CHAPTERS.find(c=>c.id===6).doctrine,favour=ENEMY_FACTIONS[enemies[0].faction].plans;
+  const scores=scoreEnemyPlans(world,ENEMY_PLANS.weights[doctrine].map(([id,w])=>[id,w*(favour[id]??1)]),seen),best=Math.max(...scores.map(p=>p.score));
+  const near=scores.filter(p=>p.score>=best-ADAPTIVE_TACTICS.nearBest).map(p=>p.id);
+  for(const id of ['fix','flank-left','flank-right'])assert.ok(near.includes(id),`${id} may open the battle (${scores.map(p=>`${p.id} ${p.score}`).join(', ')})`);
 });

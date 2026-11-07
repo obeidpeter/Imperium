@@ -189,9 +189,10 @@ These are the genre's conventions, built in Imperium's own Roman style. Nothing 
 
 - **Upgrades count, as adopted on 1 November.** It replaces a target of first-try wins: engaged beating issued by 10 points on Veteran. Both reference players already win 98.5–99.8% there at the first try, and making kit decide wins would need Veteran's enemies harder than Story's, which the plan rules out. Kit is measured instead by what it changes: the health a win costs and how soon it comes.
   - Release 11 measured, on Veteran, 4.0 points more health (92.7% → 96.7%) and 0.44 rounds sooner (5.99 → 5.55), and on Story, 17.2 points more health against the champions (76.2% → 93.4%).
-  - Each threshold sits below the low end of its 90% range over seeds.
-  - Each sweep also reports, without a pass mark, the wins that end with the soldier below half health. Release 11: Story 18 → 3 (bare → issued), Standard 6 → 0 and Veteran 8 → 2 (issued → engaged).
-  - `node scripts/upgrades-check.mjs --label=<label>` checks a release's six sweeps; `npm test` checks release 11's.
+  - In release 11 each threshold sat below the low end of its 90% range over seeds.
+  - **Re-checked on 7 November** after #82's wider formations, with the eagle battle's opening and the wall walk's clock fixed ([the report](chests-release11-report.md#re-checked-after-82)): 3.8 points and 0.33 rounds on Veteran, 17.3 points on Story. Veteran's rounds range, 0.26 to 0.40, now dips below its 0.3 threshold, so a different set of seeds could miss it.
+  - Each sweep also reports, without a pass mark, the wins that end with the soldier below half health. Release 11: Story 18 → 3 (bare → issued), Standard 6 → 0 and Veteran 8 → 2 (issued → engaged). The re-check: Story 10 → 2, the others as before.
+  - `node scripts/upgrades-check.mjs --label=<label>` checks a release's six sweeps; `npm test` checks release 11's and their re-check (`release11-recheck`).
 - **The levers are identical on every level:**
   - the enemy tiers;
   - the archetypes' kit;
