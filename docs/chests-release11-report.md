@@ -124,7 +124,7 @@ The engaged soldier also wins Chapters I–III a quarter of a round sooner on Ve
 
 ## Re-checked after #82
 
-On 7 November the six sweeps were run again on the game as it then stood, after the owner's #82 widened the ordinary formations. Line and wedge went from 1.1 to 1.25 m between men, column from 1.2 to 1.3 m and loose from 1.6 to 1.8 m; the shield wall stayed at 0.8 m. The settings were release 11's: 20 seeds a sweep, Chapters I–XII, each level's tries, one sweep at a time. The evidence is in `docs/evidence/realtime-release11-recheck-sweep-*.json`, and `npm test` checks its upgrades count as it checks release 11's.
+On 7 November the six sweeps were run again on the game as it then stood, after the owner's #82 widened the ordinary formations. Line and wedge went from 1.1 to 1.25 m between men, column from 1.2 to 1.3 m and loose from 1.6 to 1.8 m; the shield wall stayed at 0.8 m. The settings were release 11's: 20 seeds a sweep, Chapters I–XII, each level's tries, one sweep at a time. The evidence is in `docs/evidence/realtime-release11-recheck-sweep-*.json`, and `npm test` checks its upgrades count as it checks release 11's. The table's "after #82" figures come from the same six sweeps run on #82 as merged (6ff2624), before the two fixes below. Those sweeps are not kept: run on that commit, the same commands reproduce them, tick times aside.
 
 **What moved the numbers.** The code just before #82 replays release 11's sweeps exactly, battle by battle: one seed of each sweep was checked, and two of Veteran's engaged one. Every change below therefore comes from #82 and the two fixes it led to. Chapters I–III have no squads and play exactly as before.
 
