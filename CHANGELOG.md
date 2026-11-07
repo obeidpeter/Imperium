@@ -2,6 +2,36 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Fix: a damaged save that blocks saving can be discarded once it is downloaded
+
+#82 made the game refuse to save over a damaged save it cannot set aside, so none is ever lost. That left a dead end. On a browser without its database, a damaged save too large for the local archive, or one meeting a full archive, blocked every save. **Settings → Saves** could download it but not remove it, and New Game said browser storage was unavailable.
+
+- **Discard after download.** Once a damaged save is downloaded from **Settings → Saves → Recover older progress**, **Discard the downloaded data** removes it from the device. A confirmation first says the download will be the only copy, and **Keep it** removes nothing.
+  - Every copy of that save goes: the stored record, both archives' entries and, in the desktop app, the save file or its backup.
+  - A readable save is never removed, whatever record is named.
+  - The discard holds the save lock, so a save from another tab cannot land in the middle of it.
+- **Saving resumes.** A chronicle the damaged save kept from saving, played in memory or with a failed save, is saved as soon as the damaged save is discarded.
+- **The refusal says what is wrong.** When a damaged save is what blocks saving, New Game's "Play without autosave?" now says so and opens Saves, instead of saying browser storage is unavailable. The save error names the discard too.
+- **In the desktop app,** a discarded save file is replaced at once with the chronicle, through the usual guarded write that keeps the last readable backup. Without a chronicle, the first save replaces it. Either way the discarded data is not archived again, so it does not come back.
+- **The guide's Recovery section and the in-game help** describe it.
+
+**Checked:**
+- **Automated tests:** `npm test`, with new tests. All of them fail without the change.
+  - **Three storage tests (SAV-16):**
+    - every copy of the named record is removed, and nothing else;
+    - the blocked case is downloaded and discarded, and saving goes on;
+    - a readable save is never discarded.
+  - **Three desktop storage tests (DESK-15):**
+    - a damaged save file is replaced at once with the chronicle;
+    - without a chronicle, it is replaced by the first save;
+    - a damaged backup is rotated out, and a relaunch finds nothing to archive.
+  - **An interface test,** with the game running in Node: a blocked New Game, Play in memory, then Saves, download, **Keep it**, discard. At the end the chronicle in play is saved.
+- **Browser check:** `npm run smoke:recovery` discards a downloaded record from Chromium's own IndexedDB and keeps the chronicle.
+
+**Not checked:**
+- **The desktop app's real save files:** the desktop tests use a stand-in for the app's file bridge, and `npm run smoke:desktop` does not damage a save file.
+- **A real device,** or a browser other than headless Chromium.
+
 ### Release 11's sweeps re-checked after #82; the eagle battle's opening and the wall walk's clock ([the report](docs/chests-release11-report.md#re-checked-after-82))
 
 #82 widened the ordinary formations. Release 11's six calibration sweeps were run again on the result, 20 seeds each, one at a time, and compared with release 11's.

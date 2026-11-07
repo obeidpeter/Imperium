@@ -524,3 +524,34 @@ for(const changed of [false,true])test(`DESK-13 after a startup read error, retr
     await relaunched.saveLocal(state);assert.equal(JSON.parse(file.text).payload,serialize(state));
   }
 }));
+
+// The discard (SAV-16) on the desktop: the damaged data may also be the save file itself, which the archive took it from.
+for(const chronicle of [true,false])test(`DESK-15 a discarded damaged save file ${chronicle?'is replaced at once with the chronicle':'is replaced by the first save'} and not archived again`,async()=>withPlatform(async env=>{
+  if(chronicle)await createSaveStore(env.options).saveLocal(newGame('Kept'));
+  const damaged='{"format":9,"payload":"not a campaign"}',file=fakeFile(damaged),desk=createSaveStore({...env.options,mirror:file.mirror});
+  const loaded=await desk.loadLocal();assert.equal(loaded.state?.name??null,chronicle?'Kept':null);assert.equal(file.text,damaged,'loading leaves the file to the next save');
+  const item=(await desk.listUnreadableSaves()).find(entry=>entry.source==='file');
+  assert.equal(await desk.readUnreadableSave(item.index),damaged,'the player downloads it first');
+  assert.ok(await desk.discardUnreadableSave(item.checksum)>=1);
+  assert.deepEqual(await desk.listUnreadableSaves(),[],'no copy is left in the archives');
+  if(chronicle)assert.equal(JSON.parse(file.text).payload,env.idb.payload,'the file holds the chronicle now');
+  else assert.equal(file.text,damaged,'with no chronicle to write, the file waits for the first save');
+  const state=loaded.state??newGame('Fresh');await desk.saveLocal(state);
+  assert.equal(JSON.parse(file.text).payload,serialize(state),'the save is written to the file');
+  assert.deepEqual(await desk.listUnreadableSaves(),[],'and the discarded data is not archived again');
+}));
+
+test('DESK-15 a discarded damaged backup file is rotated out by writing the chronicle, and a relaunch finds nothing to archive',async()=>withPlatform(async env=>{
+  const file=fakeFile();await createSaveStore({...env.options,mirror:file.mirror}).saveLocal(newGame('Kept'));
+  // The bridge's backup rotation (desktop/saves.cjs): a write copies the current file to the backup unless keepPrevious.
+  const damaged='{"format":9,"payload":"damaged backup"}';let previous=damaged;
+  const mirror={read:async()=>file.text,readPrevious:async()=>previous,write:async(text,{keepPrevious=false}={})=>{if(!keepPrevious)previous=file.text;file.text=text;}};
+  const desk=createSaveStore({...env.options,mirror});assert.equal((await desk.loadLocal()).state.name,'Kept');
+  const item=(await desk.listUnreadableSaves()).find(entry=>entry.source==='file backup');
+  assert.equal(await desk.readUnreadableSave(item.index),damaged,'the player downloads it first');
+  assert.ok(await desk.discardUnreadableSave(item.checksum)>=2);
+  assert.equal(JSON.parse(previous).payload,env.idb.payload,'the backup is the readable file now');
+  assert.deepEqual(await desk.listUnreadableSaves(),[]);
+  const relaunched=createSaveStore({...env.options,mirror});assert.equal((await relaunched.loadLocal()).state.name,'Kept');
+  assert.deepEqual(await relaunched.listUnreadableSaves(),[]);
+}));

@@ -55,6 +55,8 @@ export function createSaveStore(options={}){
   const lockName=namespace?namespace+':save':'sacramentum-save';
   const channelName=namespace?namespace+':changes':'sacramentum-save-changes';
   let dbPromise,sequence=0,observed='',campaignId=null,persistAsked=false,channel=null,closed=false,observedFile,deferredFileBase;
+  // Checksums of the unreadable records the player discarded in this session (discardUnreadableSave): never archived again.
+  const discarded=new Set();
   const listeners=new Set();
   function localRaw(){try{return ls?.getItem(key)||null;}catch{return null;}}
   const quarantineKey=key+'.unreadable';
@@ -82,6 +84,8 @@ export function createSaveStore(options={}){
     }catch{return {kind:'error'};}
   }
   async function preserveFile(raw,source='file'){
+    // The player downloaded and discarded exactly this data: replacing it keeps nothing.
+    const text=rawText(raw);if(text&&discarded.has(checksum(text)))return true;
     const local=keepLocal(raw,source),db=await database();if(!db)return local;
     const kept=await new Promise(resolve=>{try{const tx=db.transaction('saves','readwrite'),s=tx.objectStore('saves'),r=s.get('unreadable');
       r.onsuccess=()=>s.put(withQuarantine(quarantined(r.result),raw,source),'unreadable');
@@ -287,7 +291,7 @@ export function createSaveStore(options={}){
     if(!match)throw new Error('That preserved record is unavailable.');return match.text;
   }
   // The player's own discard of one unreadable record, named by its checksum, after downloading it (Settings → Saves):
-  // every copy goes, the live record if it is that one and both archives' entries. A readable save is never removed.
+  // every copy goes, the live record if it is that one, both archives' entries and the desktop's save file. A readable save is never removed.
   // Under the save lock where the browser has one, so a save from another tab cannot land between check and removal.
   async function discardUnreadableSave(digest){
     const named=item=>item.checksum===digest||checksum(item.text)===digest,live=raw=>unreadable(raw)&&checksum(rawText(raw))===digest;
@@ -308,6 +312,13 @@ export function createSaveStore(options={}){
         current.onerror=held.onerror=()=>{try{tx.abort();}catch{resolve(0);}};
         tx.oncomplete=()=>resolve(n);tx.onabort=()=>resolve(0);tx.onerror=()=>{};
       }catch{resolve(0);}});
+      // The desktop's save file, or its backup, can hold it too. With a readable chronicle, the file is written now through
+      // the usual guarded write, which keeps the last readable backup; without one, the first save replaces it.
+      const disk=mirror?await mirrorRead():null,files=mirror?[disk,await mirrorRead(true)]:[];
+      const inFile=files.some(file=>file.kind==='invalid'&&checksum(rawText(file.raw))===digest);
+      if(removed||inFile)discarded.add(digest);
+      const chronicle=inFile?newest((await records()).map(localEnvelope)):null;
+      if(chronicle){const {state:_state,...saved}=chronicle;try{if(await writeMirror(saved,disk))removed++;}catch{}}
       return removed;
     };
     if(!useLocks)return run();
