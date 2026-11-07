@@ -29,7 +29,10 @@ try{
     await new Promise((resolve,reject)=>{const tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(broken,'campaign');tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});db.close();
     const store=createSaveStore({namespace,BroadcastChannel:null});await store.loadLocal();await store.saveLocal(newGame('Native repair'));
     console.log('Native IndexedDB save completed.');
-    checks.push({name:'native IndexedDB repair',saved:(await store.loadLocal()).state.name==='Native repair',preserved:await store.readUnreadableSave(0)===broken});await store.close();
+    checks.push({name:'native IndexedDB repair',saved:(await store.loadLocal()).state.name==='Native repair',preserved:await store.readUnreadableSave(0)===broken});
+    // The player's discard after downloading (Settings → Saves): the archived copy goes from the native database, the chronicle stays.
+    const [kept]=await store.listUnreadableSaves(),removed=await store.discardUnreadableSave(kept.checksum);
+    checks.push({name:'native discard after download',saved:(await store.loadLocal()).state.name==='Native repair',discarded:removed>=1&&(await store.listUnreadableSaves()).length===0});await store.close();
     const largeSpace='imperium-test.recovery.large',large=JSON.stringify({format:999,payload:'x'.repeat(1500000)});localStorage.setItem(largeSpace,large);
     const largeStore=createSaveStore({namespace:largeSpace,BroadcastChannel:null});await largeStore.loadLocal();await largeStore.saveLocal(newGame('Large repair'));
     console.log('Oversized local save archived.');
@@ -40,7 +43,7 @@ try{
     try{await quota.saveLocal(newGame('Must not replace'));}catch(e){refused=e.code==='SAVE_UNAVAILABLE';}
     checks.push({name:'archive failure refuses replacement',refused,preserved:values.get(quotaSpace)===broken});await quota.close();return checks;
   });
-  for(const check of storage){assert.equal(check.preserved,true,check.name);assert.equal(check.saved??check.refused,true,check.name);}report.checks.push(...storage);await page.close();
+  for(const check of storage){assert.equal(check.preserved??check.discarded,true,check.name);assert.equal(check.saved??check.refused,true,check.name);}report.checks.push(...storage);await page.close();
   console.log('Earning equipment and promotion checkpoints.');
   const moments=earnMoments(SCREENSHOTS.filter(s=>['06-kit','07-promotion'].includes(s.id)));
   for(const moment of moments){

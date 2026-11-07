@@ -44,7 +44,7 @@ import {drawBattle,pickBattlePoint,drawReignCard,reignLaurels} from './renderer.
 import {clearBattleCache} from './battle-art.js';
 import {loadTacticalArt} from './unit-sprites.js';
 import {loadLocal,saveLocal,saveCode,restoreCode,listRecoverySaves,readRecoverySave,restoreRecovery,takeOverSaveSession,subscribeSaveChanges,listUnreadableSaves,
-  readUnreadableSave} from './storage.js';
+  readUnreadableSave,discardUnreadableSave} from './storage.js';
 import {allChaptersLabel,demoEdition,demoLastChapter,desktopBridge,inDesktopApp,pastDemo,pastDemoMessage,platformKind,reportAchievements,usesOfflineCache} from './platform.js';
 import {sound,stopAudio,audioLevel} from './audio.js';
 import {heroPortrait,chapterScene,loadArt,prefetchChapter,viewDecodes} from './art.js';
@@ -101,6 +101,8 @@ let cancelAmbient=null,ambientTime=null;
 let renderedLocation='',pendingScroll=false,resultFocusKey='';
 let cleanupSiteMedia=()=>{};
 let hoverTile=null,showGrid=false,failed3D=false,preservedUnreadable=0,lastPersisted='';
+// The unreadable record the player downloaded in this session: offered for discard in Settings → Saves.
+let downloadedUnreadable=null;
 // A battle that stayed slow at its lowest resolution builds the next one a tier
 // lower, if it was measured at the current tier and adaptive resolution is on.
 const battleStage=createBattleStageController({onError:message=>{failed3D=true;render();toast('3D view unavailable. The tactical view is ready; '+
@@ -153,7 +155,7 @@ const {header,footer,titleView,meters,requirements,camp,realtimeCamp,promotion,e
 const desktop=inDesktopApp()?desktopBridge():null,desktopApp=desktop?{fullscreen:false}:null;
 const {showNew,showMap,showLedger,showSettings,showPerformanceCheck,showHelp,showHistory,showJournal,showCharacter,showRestore,showNavigation,showCredits,
   showPrivacy,showExportCode,showRecoveryRecords,showRecoveryVerified,showImportVerified,showStorageUnavailable,showRetry,showTakeover,showSharePreview}=createPanels(()=>({state,
-    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,devMenu,keymap,
+    screen,settings,offline,currentChapterOffline,offlineProgress,showModal,meters,requirements,preservedUnreadable,downloadedUnreadable,devMenu,keymap,
     worldCamp:screen!=='title'&&!!state&&campMode(),desktopApp,demo}));
 function announce(text){document.querySelector('#announcement').textContent=text;}
 function toast(text,{problem=false}={}){
@@ -1396,7 +1398,7 @@ case 'begin':{
   if(result.ok){choosePlayMode(settings,selectedMode);saveSettings();clearSlots();render();}
   if(result.error?.code==='SAVE_UNAVAILABLE'){
     pendingNew=candidate;pendingNewMode=selectedMode;
-    showStorageUnavailable();
+    showStorageUnavailable(result.error);
   }
   break;
 }
@@ -1506,10 +1508,33 @@ case 'export-held':if(heldChronicle)showExportCode(await saveCode(Game.codeState
           const list=await listUnreadableSaves();if(!list.length){toast('No unreadable save data is stored on this device.');break;}
           const text=await readUnreadableSave(list[0].index);
           download(new Blob([text],{type:'application/json'}),`imperium-unreadable-save-${new Date().toISOString().slice(0,10)}.json`);
+          // Downloaded: the player may now discard it from this device (a damaged record no archive can keep blocks saving).
+          downloadedUnreadable={checksum:list[0].checksum,bytes:list[0].bytes};showSettings('saves');
+          modal.querySelector('[data-cmd="discard-unreadable"]')?.focus();
           announce('The '+
         'preserved unreadable save data was downloaded. Your current chronicle is unchanged.');
         }catch(error){toast(error.message);}break;
       }
+case 'discard-unreadable':if(downloadedUnreadable){
+  const size=downloadedUnreadable.bytes<1e6?`${Math.max(1,Math.round(downloadedUnreadable.bytes/1e3))} kB`:`${(downloadedUnreadable.bytes/1e6).toFixed(1)} MB`;
+  showModal('Discard the unreadable save data?',`<p>The unreadable save data you downloaded (${size}) will be removed from this device. `+
+    'Keep the downloaded file: it will be the only copy.</p><p>Your current chronicle is not affected.</p>'+
+    '<div class="panel-actions"><button class="primary" data-cmd="confirm-discard-unreadable">Discard it</button>'+
+    '<button data-cmd="settings-section" data-id="saves">Keep it</button></div>');
+}break;
+case 'confirm-discard-unreadable':if(downloadedUnreadable){
+  const {checksum}=downloadedUnreadable;downloadedUnreadable=null;let removed=0;
+  try{removed=await discardUnreadableSave(checksum);}catch(error){toast(error.message);}
+  try{preservedUnreadable=(await listUnreadableSaves()).length;}catch{preservedUnreadable=0;}
+  showSettings('saves');
+  const message=removed?'The unreadable save data was removed from this device.':'That save data is no longer on this device.';
+  // A chronicle the damaged record kept from saving (played in memory, or with a failed save) is saved now.
+  if(removed&&state&&!state.archiveReplay&&!saving&&!saveConflict&&!sessionGate.busy&&(memoryOnly||JSON.stringify(state)!==lastPersisted)){
+    const wasMemory=memoryOnly;memoryOnly=false;
+    const saved=await sessionGate.run(()=>persist()).catch(()=>null);if(!saved?.ok)memoryOnly=wasMemory;render();
+    announce(saved?.ok?`${message} Your chronicle is saved.`:`${message} ${saveProblem||'The chronicle could not be saved yet.'}`);
+  }else announce(removed&&!state&&pendingNew?`${message} Begin your new game again: it will save.`:message);
+}break;
 case 'restore':showRestore();break;
 case 'recovery':await showRecovery();break;
 case 'preview-recovery':await previewRecovery(id,Number(b.dataset.sequence));break;

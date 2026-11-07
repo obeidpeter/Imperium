@@ -147,6 +147,8 @@ class Element extends Node{
   scrollIntoView(){}
   showModal(){this.setAttribute('open','');}
   close(){if(!this.hasAttribute('open'))return;this.removeAttribute('open');this.dispatchEvent(new Event('close'));}
+  // As in a browser: a click event from script (a download link, for one).
+  click(){this.dispatchEvent(new Event('click',{bubbles:true,cancelable:true}));}
   getContext(){return null;}
 }
 class TemplateElement extends Element{
