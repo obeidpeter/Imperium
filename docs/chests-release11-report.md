@@ -122,6 +122,39 @@ The engaged soldier also wins Chapters I–III a quarter of a round sooner on Ve
 
 **The ferry's plans.** On Story, against a soldier who wears and trains nothing, the ferry's enemy narrowed to holding the front or turning the right flank in every first-decision run (pass 1). A second run over 40 seeds gave the same. Only the second pass's decisions brought the left flank (2 runs) and a feint (1 run). The enemy feints only when its own bands are worn down near its archers, which the unequipped soldier is slow to do. Every other player and level saw all four plans in pass 1.
 
+## Re-checked after #82
+
+On 7 November the six sweeps were run again on the game as it then stood, after the owner's #82 widened the ordinary formations. Line and wedge went from 1.1 to 1.25 m between men, column from 1.2 to 1.3 m and loose from 1.6 to 1.8 m; the shield wall stayed at 0.8 m. The settings were release 11's: 20 seeds a sweep, Chapters I–XII, each level's tries, one sweep at a time. The evidence is in `docs/evidence/realtime-release11-recheck-sweep-*.json`, and `npm test` checks its upgrades count as it checks release 11's.
+
+**What moved the numbers.** The code just before #82 replays release 11's sweeps exactly, battle by battle: one seed of each sweep was checked, and two of Veteran's engaged one. Every change below therefore comes from #82 and the two fixes it led to. Chapters I–III have no squads and play exactly as before.
+
+**Chapter VI's eagle opened the same way every time (fixed).** At the battle's opening the pursuers plan from what they see. Before #82 they saw the company's archers, which makes a flank worth trying, and the battle opened on a flank in 16 of 20 seeds. The archers' squad stood just behind the corner of a rock, about 53 m from the pursuing archers. #82's wider ranks moved its centre 0.1 m, and the sight line clipped the rock. Every seed then opened on a frontal attack, and the battle saw one or two enemy plans in all six sweeps, against a target of three. In real time the company's rear pair now forms up 4 m further north, in sight with metres to spare (`REALTIME_STARTS` in `data/realtime-squads.js`; the 0.38 board is unchanged). A flank opens the battle again, and every sweep meets the target in every battle, the ferry's on Story bare included.
+
+**Chapter IV's wall walk ran to its last round (retuned).** After #82, Veteran's narrowest first-try win with the engaged player came in the battle's tenth and last round. The column reached the far stair in round 7 and waited 6 m from the goal while the soldier went back to fight. The extraction needs both at the goal, and the battle was won only when the last enemy fell. In real time the battle now has two more rounds on every level (`REALTIME_EXTRA_ROUNDS` in `data/realtime-rules.js`): 12 on Veteran, 14 on Standard and 17 on Story. Nothing reads the clock before it runs out, so every battle won before plays exactly as before. The final sweeps match the sweeps run with the eagle fix alone in all of their nearly 5,000 battle records, except that the 240 wall walks each have two more rounds on the clock and two more to spare.
+
+| Level | Player | Won at the first try | Smallest margin at the wall walk: release 11 → after #82 → now | Median squad losses at the wall walk: release 11 → now |
+| --- | --- | --- | --- | --- |
+| Story | bare | 480/480 → 480/480 | 6 → 5 → 7 rounds | 0.32 → 0.47 |
+| Story | issued | 480/480 → 480/480 | 5 → 7 → 9 | 0.47 → 0.59 |
+| Standard | issued | 480/480 → 480/480 | 3 → 4 → 6 | 0.52 → 0.59 |
+| Standard | engaged | 480/480 → 480/480 | 4 → 2 → 4 | 0.54 → 0.54 |
+| Veteran | issued | 473/480 → 474/480 | 0 → 2 → 4 | 0.49 → 0.59 |
+| Veteran | engaged | 479/480 → 479/480 | 2 → 0 → 2 | 0.54 → 0.56 |
+
+| Target | Release 11 | Re-check |
+| --- | --- | --- |
+| Each level's first-try and within-tries targets | Met in all six | Met in all six |
+| At least 3 enemy plans in each squad battle across seeds | Met in five; the ferry saw two on Story bare | Met in all six, in every battle |
+| The finale's battle lasts 8–12 of its 16 rounds | Met | Met: 8 on Standard and Veteran, 10 on Story |
+| Upgrades count, Veteran: ≥3 points more health with the engaged player | 4.0 points (range 3.3 to 4.7) | 3.8 points (range 3.2 to 4.5) |
+| Upgrades count, Veteran: ≥0.3 rounds sooner | 0.44 rounds (range 0.39 to 0.48) | 0.33 rounds (range 0.26 to 0.40) |
+| Upgrades count, Story: ≥10 points more health against the champions | 17.2 points (range 16.1 to 18.6) | 17.3 points (range 16.0 to 18.6) |
+| Tick p95 within 0.3 ms of the Gate 4 sweep | Met | Met, but measured on a different machine, so not comparable |
+
+- **Veteran's "wins sooner" margin is thin now.** It is still met on average, but its 90% range over seeds (0.26 to 0.40 rounds) dips below the 0.3 target, so a different set of seeds could miss it.
+- **Wins ending below half health,** reported without a pass mark: Story 10 → 2 (bare → issued; 18 → 3 in release 11), Standard 6 → 0 and Veteran 8 → 2 (issued → engaged), as in release 11.
+- **The wall walk's squads lose more men** with the lesser kits than in release 11. The losses come from the fight itself, and they rose across many seeds rather than through one mechanism. The two extra rounds do not change them. Easing them would mean a change to the enemy, which also moves the champion-battle measures above.
+
 ## The browser checks
 
 All in headless Chromium with software rendering (SwiftShader), on the production build:
