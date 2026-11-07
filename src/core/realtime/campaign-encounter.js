@@ -1,4 +1,4 @@
-import {BANDAGES_PER_ENCOUNTER,FINALE_RESERVE,MOVEMENT,REALTIME_DIFFICULTY,STANDING,TIME} from '../../data/realtime-rules.js';
+import {BANDAGES_PER_ENCOUNTER,FINALE_RESERVE,MOVEMENT,REALTIME_DIFFICULTY,REALTIME_EXTRA_ROUNDS,STANDING,TIME} from '../../data/realtime-rules.js';
 import {ARCHETYPES,ESCORTS,FACTION_NAMES,TRAINER,factionFor,tierFor} from '../../data/realtime-forces.js';
 import {BATTLE_OPERATIONS} from '../../data/battle-operations.js';
 import {progressionOperationDefinition} from '../../data/progression-operations.js';
@@ -378,7 +378,7 @@ export function createEncounterWorld(state,{seed=state.rng}={}){
     ...(squads?{squad:templates[w.role]??templates.infantry}:{spec:waveSpec(state,w.role,enemyIndex++)})});
   const mission={...current,phase:index,phases:op?op.phases.map(p=>({id:p.id,label:p.label,escort:p.escort??null,wave:p.wave??null})):null,phaseMissions:phases,
     // The drill keeps its own clock on every level.
-    radius:S,followRange:4*S,heldTicks:0,occupiedTicks:0,deadline:e.type==='training'?e.turnLimit:Math.max(4,e.turnLimit+hard.deadline),
+    radius:S,followRange:4*S,heldTicks:0,occupiedTicks:0,deadline:e.type==='training'?e.turnLimit:Math.max(4,e.turnLimit+hard.deadline+(REALTIME_EXTRA_ROUNDS[e.id]??0)),
     waves:(e.mission.waves??[]).map(wave),escorts:[...(e.mission.escortIds??[])],
     required:(e.requiredAbilities??[]).filter(a=>!CAMP_CAPABILITIES.has(a)),defence:e.defence??100,pressure:difficultyRule(e).pressure,objectId:null,
     // The finale's standoffs: the rivals to win over, the pledges and the meeting so far.
@@ -440,6 +440,8 @@ export const realtimeMissionSupported=e=>e?.kind==='battle'&&!!e.mission&&(opera
 export function applyRealtimeOutcome(state,world){
   const e=state.encounter,k=world.layout,m=world.mission;
   e.turn=clamp(roundOf(world),1,30);
+  // A real-time clock longer than the 0.38 one (REALTIME_EXTRA_ROUNDS) is the record's: never "turn 13 of 12".
+  if(m?.deadline>e.turnLimit)e.turnLimit=m.deadline;
   const mark=a=>{if(!e.usedAbilities.includes(a))e.usedAbilities.push(a);state.capabilityUse[a]=true;const list=state.chapterCapabilities[state.chapter]??=[];if(!list.includes(a))list.push(a);};
   for(const a of world.used)if(['move','strike','brace','throw','assist','scout','order','formation','rally','deploy'].includes(a))mark(a);
   if(e.operation)while(e.operation.index<m.phase&&advanceOperation(e));

@@ -221,6 +221,11 @@ export const REALTIME_DIFFICULTY=Object.freeze({
   story:Object.freeze({deadline:0,wave:7}),
   standard:Object.freeze({deadline:0,wave:7}),
   veteran:Object.freeze({deadline:-2,wave:10})});
+// Rounds a battle's real-time clock adds to its own, after the level's change, by battle; the 0.38 battle keeps its
+// turns. Nothing reads the clock before it runs out, so a battle won before plays exactly as before, with more to spare.
+// Chapter IV's wall walk: after the wider formations (#82) its narrowest first-try win on Veteran came on the last round,
+// with the soldier fighting while the column waited by the far stair. Two more rounds on every level.
+export const REALTIME_EXTRA_ROUNDS=Object.freeze({'ch4-wall':2});
 
 // The finale's battle (Chapter XII's confrontation on the battle and backer routes; worlds and gameplay plan,
 // release 3): the claimant holds two cohorts of his reserve back, and they march on from his side of the field
