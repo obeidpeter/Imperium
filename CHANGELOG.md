@@ -2,6 +2,30 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The owner's choices after the calibration ([the plan](docs/graphics-tripo-plan.md#the-owners-decisions-8-november))
+
+On 8 November the owner chose standard textures for every category and skipped the landmarks' re-texture (step 0c) and the backdrops release (G7). G7's 750 credits go where the camera is: 400 to the camps (G3) and 350 to battle and siege (G5). The plan keeps its 7,900-credit cap, 73.8% of the balance. Step 0 is complete, and G1 starts once the owner approves it. Docs only: the graphics plan and the calibration report.
+
+### Step 0: the figures wear the inventory's own weapons and helmets ([how](docs/asset-pipeline.md#weapons-and-helmets-from-the-item-models--2026-11-08))
+
+Seven of the models generated for the inventory's pictures now ship as 3D kit, at no credit cost: the spatha, the gladius, the knife, the axe, the galea, the Niederbieber helmet and the felt cap.
+
+- **Who wears them:** a figure dressed in those items, on Balanced and High. That is the player's soldier, his companions, named veterans and his squads. Each piece is fitted to the code-built piece it replaces:
+  - a weapon is scaled as one, so its tip meets the code-built tip, with its grip in the hand;
+  - a helmet is scaled on each axis to the code-built bowl and guards, which were fitted to every head.
+- **Who doesn't:** the rank and file, the enemy and every figure on Performance keep the code-built pieces.
+  - In Chapter III's battle at the follow camera, a weapon is a few pixels wide either way, and Tripo's dark iron reads less clearly there than the code-built steel. Each piece also costs 1,000–3,200 triangles near the camera, against a few hundred.
+  - The difference shows where the soldier fills the view, in the inventory's turntable: guards, pommels, rivets and felt.
+- **Left code-built:**
+  - the conical helmet, because the inventory's spangenhelm closes its nasal and cheek guards over the face;
+  - the Gothic cap helmet, spears, bows and slings;
+  - the shields, which carry each unit's design.
+- **Fallbacks:** a piece that has not loaded leaves the code-built one, and the figure rebuilds once when it arrives. A piece that fails to load leaves the code-built one.
+- **Pipeline:** `scripts/assets/process-kit.py` (Blender) turns an item model into a weapon laid along its grip or a helmet stood on its foot. Its near level is reduced by a collapse. Its overview level is a grid clustering, with the colour map baked into its vertices; a collapse alone tore the overview's crossing surfaces apart. The files are compressed like every model (KTX2 and meshopt).
+- **Downloads:** the 7 files take 886,508 bytes (833,612 gzip) and are in every chapter's 3D pack. Chapter I's download is now 16.8 of its 18 MB, the largest chapter's 26.2 of 28 MB, and the complete game 55.8 of 80 MB.
+- **Records:** the manifest's 7 entries, the art record, the AI-content disclosure (regenerated), the 3D provenance record and the licence notice.
+- **Checks:** `tests/actor-kit-models.test.mjs`. The review renders came from the actor viewer, the inventory's turntable and the campaign 3D harness, in headless Chromium under a software renderer at High. They are not a hardware or device check.
+
 ### Step 0's calibration: what Tripo's quality tiers buy in the game ([the results](docs/graphics-calibration.md))
 
 Step 0 of the graphics plan bought test models at Tripo's cheap and expensive tiers, processed each to the game's budgets and showed it in the game's actor viewer and model loader. It spent 190 of its 250-credit cap; the balance is 10,510.

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/kit/kit-niederbieber.glb",
+  "output": "assets/models/kit/kit-niederbieber.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 186412,
+    "gzipBytes": 122026,
+    "sha256": "ac8298d6fa56d81aa32b55daaa1831334e3dfff1938a6d76c893b67933a77c4a"
+  },
+  "after": {
+    "bytes": 177488,
+    "gzipBytes": 168544,
+    "sha256": "45ae8b66cd28061ee0ce0abbd54240da241486bd45233d142c28da203740a36b"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2697,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 2754
+      },
+      "bytes": 6793,
+      "psnr": 43.726
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 29126
+      },
+      "bytes": 50792,
+      "psnr": 34.753
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16554
+      },
+      "bytes": 14372,
+      "psnr": 27.042
+    }
+  ]
+}

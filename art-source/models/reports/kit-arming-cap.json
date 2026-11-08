@@ -1,0 +1,64 @@
+{
+  "tool": "scripts/assets/process-kit.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/item-arming-cap.glb",
+    "bytes": 45330000,
+    "sha256": "2b3885a253176b4d7083a32909480affb6358841bac73cc1b738932239da0422",
+    "triangles": 1440578
+  },
+  "output": {
+    "path": "assets/models/kit/kit-arming-cap.glb",
+    "bytes": 178012,
+    "sha256": "bc64e96ba7a6b7cc5d649f2d37529ed5c2d71cd61a346b76b3f04041e2bcdb01",
+    "triangles": 3243,
+    "overviewTriangles": 199
+  },
+  "settings": {
+    "kind": "helmet",
+    "length": null,
+    "height": 0.22,
+    "turn": -90.0,
+    "triangles": 3200,
+    "overviewTriangles": 200,
+    "texture": 512,
+    "detailTexture": 256,
+    "webpQuality": 80,
+    "sharpAngle": 45.0
+  },
+  "fit": {
+    "turnDegrees": -90.0,
+    "scale": 0.289587,
+    "standCutBelow": 0.1667
+  },
+  "overviewCell": 0.05373,
+  "bounds": {
+    "min": [
+      -0.1427,
+      0.0009,
+      -0.1431
+    ],
+    "max": [
+      0.1441,
+      0.2166,
+      0.1423
+    ]
+  },
+  "textures": [
+    {
+      "name": "Color_292bfd40-ad6d-4889-9cb7-b6c65ef544ae",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_292bfd40-ad6d-4889-9cb7-b6c65ef544ae",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "name": "ORM_292bfd40-ad6d-4889-9cb7-b6c65ef544ae",
+      "width": 256,
+      "height": 256
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/kit/kit-spatha.glb",
+  "output": "assets/models/kit/kit-spatha.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 94248,
+    "gzipBytes": 68412,
+    "sha256": "34ddee4fae0207905075122bfea95b3094a90cb74183be6877a8dac3d7acde2e"
+  },
+  "after": {
+    "bytes": 93944,
+    "gzipBytes": 87925,
+    "sha256": "88f313e350b4b763793630b5018f0e6fdb5a3bf5239c468e7558113d2c72fa10"
+  },
+  "geometryUnchanged": true,
+  "triangles": 1319,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11658
+      },
+      "bytes": 13554,
+      "psnr": 31.622
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12232
+      },
+      "bytes": 16601,
+      "psnr": 30.99
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7932
+      },
+      "bytes": 13514,
+      "psnr": 27.921
+    }
+  ]
+}

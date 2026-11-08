@@ -1,0 +1,116 @@
+{
+  "tool": "scripts/assets/process-kit.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/item-axe.glb",
+    "bytes": 42410744,
+    "sha256": "ccc54d9a9a17898a1b370aa0a4c8726a3de1ff0af1f41502839ad06116edf9be",
+    "triangles": 1381286
+  },
+  "output": {
+    "path": "assets/models/kit/kit-axe.glb",
+    "bytes": 89604,
+    "sha256": "3dc962275963cb4bfa65da65aab897961f0be2fa118a25ce1adad7a0d46de5f8",
+    "triangles": 1199,
+    "overviewTriangles": 119
+  },
+  "settings": {
+    "kind": "axe",
+    "length": 0.74,
+    "height": null,
+    "turn": 0.0,
+    "triangles": 1200,
+    "overviewTriangles": 120,
+    "texture": 256,
+    "detailTexture": 256,
+    "webpQuality": 80,
+    "sharpAngle": 45.0
+  },
+  "fit": {
+    "flipped": true,
+    "widestSlice": 41,
+    "slices": 48,
+    "gripFromEnd": 0.16,
+    "scale": 0.740472,
+    "widthProfile": [
+      0.089,
+      0.0974,
+      0.0991,
+      0.0975,
+      0.0915,
+      0.0834,
+      0.0784,
+      0.0761,
+      0.0731,
+      0.0716,
+      0.0705,
+      0.0698,
+      0.0701,
+      0.0704,
+      0.0703,
+      0.0689,
+      0.0687,
+      0.0687,
+      0.0691,
+      0.0688,
+      0.0689,
+      0.0695,
+      0.0697,
+      0.0696,
+      0.0693,
+      0.0703,
+      0.0724,
+      0.0741,
+      0.0759,
+      0.0794,
+      0.0825,
+      0.0884,
+      0.0926,
+      0.0968,
+      0.097,
+      0.2428,
+      0.2576,
+      0.2633,
+      0.4121,
+      0.4181,
+      0.4238,
+      0.424,
+      0.4212,
+      0.4124,
+      0.401,
+      0.3818,
+      0.0351,
+      0.0284
+    ]
+  },
+  "overviewCell": 0.05695,
+  "bounds": {
+    "min": [
+      -0.1604,
+      -0.1182,
+      -0.0945
+    ],
+    "max": [
+      0.1542,
+      0.6243,
+      0.0918
+    ]
+  },
+  "textures": [
+    {
+      "name": "Color_00cd607c-ce25-4744-b762-8608003de258",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "name": "NormalGL_00cd607c-ce25-4744-b762-8608003de258",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "name": "ORM_00cd607c-ce25-4744-b762-8608003de258",
+      "width": 256,
+      "height": 256
+    }
+  ]
+}

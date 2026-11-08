@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/kit/kit-arming-cap.glb",
+  "output": "assets/models/kit/kit-arming-cap.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 178012,
+    "gzipBytes": 107481,
+    "sha256": "bc64e96ba7a6b7cc5d649f2d37529ed5c2d71cd61a346b76b3f04041e2bcdb01"
+  },
+  "after": {
+    "bytes": 167792,
+    "gzipBytes": 157588,
+    "sha256": "ebb911d621ff696447c729a93c411614f43cc32df27ca837bff1806ac188e0d3"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3442,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 634
+      },
+      "bytes": 2011,
+      "psnr": 48.515
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13118
+      },
+      "bytes": 37834,
+      "psnr": 39.265
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 3166
+      },
+      "bytes": 9176,
+      "psnr": 42.493
+    }
+  ]
+}
