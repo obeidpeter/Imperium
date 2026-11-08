@@ -28,7 +28,7 @@ The following were generated with **Tripo**'s text-to-model service, from text p
 - the camp and town props;
 - the landmarks, the rocks and Chapter V's scenery;
 - the finale's distant crowd;
-- the models behind the inventory's item pictures.
+- the models behind the inventory's item pictures, seven of which the figures also wear as their weapons and helmets.
 
 The figures were rigged by Tripo's auto-rig. Each shipped file made from a Tripo model carries a licence line in the manifest, except the finale crowd's data, which is reduced from one of them. That line records Tripo's terms for paid users as the owner confirmed them on 20 October 2026:
 - the owner may use, modify, distribute and commercially exploit the models;

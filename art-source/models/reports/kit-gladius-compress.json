@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/kit/kit-gladius.glb",
+  "output": "assets/models/kit/kit-gladius.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 92420,
+    "gzipBytes": 66856,
+    "sha256": "8c80b5c6e9f468b8f8ff60b37fc65678647056ada7bec3d2ff808edd6d350c2d"
+  },
+  "after": {
+    "bytes": 93112,
+    "gzipBytes": 87023,
+    "sha256": "4771aac0d7bea8b08c0410438bd837d6279cf097cfc92641df224d6347248cc3"
+  },
+  "geometryUnchanged": true,
+  "triangles": 1320,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9654
+      },
+      "bytes": 12796,
+      "psnr": 32.53
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9774
+      },
+      "bytes": 15055,
+      "psnr": 33.361
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11246
+      },
+      "bytes": 15363,
+      "psnr": 29.425
+    }
+  ]
+}

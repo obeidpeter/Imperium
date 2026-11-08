@@ -15149,6 +15149,454 @@
         "cell": 80
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "kit-spatha",
+      "path": "assets/models/kit/kit-spatha.glb",
+      "subject": "Generated kit: the spatha, the long sword most of the army carries",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt: the inventory's item model item-spatha (release 13), processed locally in Blender 5.2.2 LTS by scripts/assets/process-kit.py for a figure's hand; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "c6544ec3-90e2-4b09-9a7b-3f3ff970798a",
+        "generatedAt": "2026-11-01T23:19:48.272Z",
+        "prompt": "art-source/models/requests/item-spatha.json",
+        "rawBytes": 44464968,
+        "rawSha256": "7cdc93feaded9993c8ec841c5b2b03386fd9ec7143d5efcaa65158d566702242",
+        "credits": 0,
+        "creditsNote": "No credits of its own: made from the item model generated for the inventory's pictures (20 credits, recorded with item-spatha)",
+        "processing": {
+          "kind": "sword",
+          "length": 0.83,
+          "triangles": 1200,
+          "overviewTriangles": 120,
+          "texture": 256,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "sharpAngle": 45,
+          "fit": {
+            "flipped": false,
+            "gripFromEnd": 0.1042
+          },
+          "overviewCell": 0.04644
+        },
+        "report": "art-source/models/reports/kit-spatha.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/kit-spatha-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Worn in place of the code-built weapon by a figure dressed in the inventory's Spatha, Fine spatha, Ring-pommel sword, Pattern-welded spatha and Sasanian long sword (the player's soldier, his companions, named veterans and his squads), on Balanced and High (actorKitModelIds, src/showcase/actors.js); the rank and file and the enemy keep the code-built piece. The figure fits it to the code-built piece's extent on its joint, scaled as one so its tip meets the code-built tip and its grip, the model's origin, stays in the hand (src/showcase/actor-kit-models.js). Its near level is textured; its overview level draws the colours baked into its vertices. Decorative only: contact points, reach and every rule stay the code-built piece's.",
+      "loading": "Shared 3D file in every chapter's pack (art.js), loaded once per page by the figures that wear it. Performance and a failed download keep the code-built piece; a piece that arrives after a figure is built rebuilds that figure once.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression); two meshes, near and overview",
+        "bytes": 93944,
+        "gzipBytes": 87925,
+        "sha256": "88f313e350b4b763793630b5018f0e6fdb5a3bf5239c468e7558113d2c72fa10",
+        "triangles": 1319,
+        "nearTriangles": 1199,
+        "overviewTriangles": 120,
+        "textures": 3,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 0.1567,
+          "height": 0.832,
+          "depth": 0.065
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "kit-gladius",
+      "path": "assets/models/kit/kit-gladius.glb",
+      "subject": "Generated kit: the gladius, the short sword",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt: the inventory's item model item-gladius-b (release 13), processed locally in Blender 5.2.2 LTS by scripts/assets/process-kit.py for a figure's hand; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b3c6a9cf-be3f-4af4-a68c-f058267c4de3",
+        "generatedAt": "2026-11-02T08:23:25.123Z",
+        "prompt": "art-source/models/requests/item-gladius-b.json",
+        "rawBytes": 36030652,
+        "rawSha256": "d9f61a0054000b720b977dd33f5a76cf11cd8c0cce6676a59cb578ca34388488",
+        "credits": 0,
+        "creditsNote": "No credits of its own: made from the item model generated for the inventory's pictures (20 credits, recorded with item-gladius-b)",
+        "processing": {
+          "kind": "sword",
+          "length": 0.57,
+          "triangles": 1200,
+          "overviewTriangles": 120,
+          "texture": 256,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "sharpAngle": 45,
+          "fit": {
+            "flipped": true,
+            "gripFromEnd": 0.125
+          },
+          "overviewCell": 0.04206
+        },
+        "report": "art-source/models/reports/kit-gladius.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/kit-gladius-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Worn in place of the code-built weapon by a figure dressed in the inventory's Gladius and Fine gladius (the player's soldier, his companions, named veterans and his squads), on Balanced and High (actorKitModelIds, src/showcase/actors.js); the rank and file and the enemy keep the code-built piece. The figure fits it to the code-built piece's extent on its joint, scaled as one so its tip meets the code-built tip and its grip, the model's origin, stays in the hand (src/showcase/actor-kit-models.js). Its near level is textured; its overview level draws the colours baked into its vertices. Decorative only: contact points, reach and every rule stay the code-built piece's.",
+      "loading": "Shared 3D file in every chapter's pack (art.js), loaded once per page by the figures that wear it. Performance and a failed download keep the code-built piece; a piece that arrives after a figure is built rebuilds that figure once.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression); two meshes, near and overview",
+        "bytes": 93112,
+        "gzipBytes": 87023,
+        "sha256": "4771aac0d7bea8b08c0410438bd837d6279cf097cfc92641df224d6347248cc3",
+        "triangles": 1320,
+        "nearTriangles": 1200,
+        "overviewTriangles": 120,
+        "textures": 3,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 0.1589,
+          "height": 0.5727,
+          "depth": 0.097
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "kit-pugio",
+      "path": "assets/models/kit/kit-pugio.glb",
+      "subject": "Generated kit: the pugio, drawn for the camp knife",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt: the inventory's item model item-pugio (release 13), processed locally in Blender 5.2.2 LTS by scripts/assets/process-kit.py for a figure's hand; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "679b20f5-d5cc-4b5d-ab45-8d6e4f5b1a85",
+        "generatedAt": "2026-11-02T06:45:51.042Z",
+        "prompt": "art-source/models/requests/item-pugio.json",
+        "rawBytes": 38448540,
+        "rawSha256": "bf9b88905f27ab828fd4c658c4d394329d5be53553a64f3cabf80092361967b6",
+        "credits": 0,
+        "creditsNote": "No credits of its own: made from the item model generated for the inventory's pictures (20 credits, recorded with item-pugio)",
+        "processing": {
+          "kind": "sword",
+          "length": 0.33,
+          "triangles": 1000,
+          "overviewTriangles": 100,
+          "texture": 256,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "sharpAngle": 45,
+          "fit": {
+            "flipped": false,
+            "gripFromEnd": 0.1458
+          },
+          "overviewCell": 0.02637
+        },
+        "report": "art-source/models/reports/kit-pugio.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/kit-pugio-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Worn in place of the code-built weapon by a figure dressed in the inventory's Knife (the player's soldier, his companions, named veterans and his squads), on Balanced and High (actorKitModelIds, src/showcase/actors.js); the rank and file and the enemy keep the code-built piece. The figure fits it to the code-built piece's extent on its joint, scaled as one so its tip meets the code-built tip and its grip, the model's origin, stays in the hand (src/showcase/actor-kit-models.js). Its near level is textured; its overview level draws the colours baked into its vertices. Decorative only: contact points, reach and every rule stay the code-built piece's.",
+      "loading": "Shared 3D file in every chapter's pack (art.js), loaded once per page by the figures that wear it. Performance and a failed download keep the code-built piece; a piece that arrives after a figure is built rebuilds that figure once.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression); two meshes, near and overview",
+        "bytes": 83588,
+        "gzipBytes": 77672,
+        "sha256": "a785b1304983127a7383bc754140e977194e82ae5c7219749b97839e1af1a131",
+        "triangles": 1097,
+        "nearTriangles": 999,
+        "overviewTriangles": 98,
+        "textures": 3,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 0.095,
+          "height": 0.3316,
+          "depth": 0.0431
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "kit-axe",
+      "path": "assets/models/kit/kit-axe.glb",
+      "subject": "Generated kit: the axe",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt: the inventory's item model item-axe (release 13), processed locally in Blender 5.2.2 LTS by scripts/assets/process-kit.py for a figure's hand; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "00cd607c-ce25-4744-b762-8608003de258",
+        "generatedAt": "2026-11-02T06:33:54.521Z",
+        "prompt": "art-source/models/requests/item-axe.json",
+        "rawBytes": 42410744,
+        "rawSha256": "ccc54d9a9a17898a1b370aa0a4c8726a3de1ff0af1f41502839ad06116edf9be",
+        "credits": 0,
+        "creditsNote": "No credits of its own: made from the item model generated for the inventory's pictures (20 credits, recorded with item-axe)",
+        "processing": {
+          "kind": "axe",
+          "length": 0.74,
+          "triangles": 1200,
+          "overviewTriangles": 120,
+          "texture": 256,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "sharpAngle": 45,
+          "fit": {
+            "flipped": true,
+            "gripFromEnd": 0.16
+          },
+          "overviewCell": 0.05695
+        },
+        "report": "art-source/models/reports/kit-axe.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/kit-axe-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Worn in place of the code-built weapon by a figure dressed in the inventory's Axe and Chieftain’s axe (the player's soldier, his companions, named veterans and his squads), on Balanced and High (actorKitModelIds, src/showcase/actors.js); the rank and file and the enemy keep the code-built piece. The figure fits it to the code-built piece's extent on its joint, scaled as one so its tip meets the code-built tip and its grip, the model's origin, stays in the hand (src/showcase/actor-kit-models.js). Its near level is textured; its overview level draws the colours baked into its vertices. Decorative only: contact points, reach and every rule stay the code-built piece's.",
+      "loading": "Shared 3D file in every chapter's pack (art.js), loaded once per page by the figures that wear it. Performance and a failed download keep the code-built piece; a piece that arrives after a figure is built rebuilds that figure once.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression); two meshes, near and overview",
+        "bytes": 92348,
+        "gzipBytes": 86091,
+        "sha256": "1d21f21fb40abe585ac829ade124fe8fc3732fb62cb1ad8e6fc198a4e3a1dc2f",
+        "triangles": 1318,
+        "nearTriangles": 1199,
+        "overviewTriangles": 119,
+        "textures": 3,
+        "textureEdge": 256,
+        "sizeMetres": {
+          "width": 0.3146,
+          "height": 0.7425,
+          "depth": 0.1862
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "kit-galea",
+      "path": "assets/models/kit/kit-galea.glb",
+      "subject": "Generated kit: the ridge helmet (galea)",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt: the inventory's item model item-galea (release 13), processed locally in Blender 5.2.2 LTS by scripts/assets/process-kit.py for a figure's head; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "c84e4a9c-d2dc-4d1e-90f8-ae80303b9e2e",
+        "generatedAt": "2026-11-02T06:40:26.321Z",
+        "prompt": "art-source/models/requests/item-galea.json",
+        "rawBytes": 44828696,
+        "rawSha256": "e8365fee59eb7b44c7236e2791fda745be472cb8f2d272acae859838126137cd",
+        "credits": 0,
+        "creditsNote": "No credits of its own: made from the item model generated for the inventory's pictures (20 credits, recorded with item-galea)",
+        "processing": {
+          "kind": "helmet",
+          "height": 0.3,
+          "turn": 180,
+          "triangles": 2400,
+          "overviewTriangles": 300,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "sharpAngle": 45,
+          "fit": {
+            "standCutBelow": 0
+          },
+          "overviewCell": 0.04387
+        },
+        "report": "art-source/models/reports/kit-galea.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/kit-galea-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Worn in place of the code-built headwear by a figure dressed in the inventory's Galea, Crested galea and Tinned galea (the player's soldier, his companions, named veterans and his squads), on Balanced and High (actorKitModelIds, src/showcase/actors.js); the rank and file and the enemy keep the code-built piece. The figure fits it to the code-built piece's extent on its joint, scaled on each axis to the code-built bowl and guards it replaces, so it sits as they did on every head (src/showcase/actor-kit-models.js). Its near level is textured; its overview level draws the colours baked into its vertices. Decorative only: contact points, reach and every rule stay the code-built piece's.",
+      "loading": "Shared 3D file in every chapter's pack (art.js), loaded once per page by the figures that wear it. Performance and a failed download keep the code-built piece; a piece that arrives after a figure is built rebuilds that figure once.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression); two meshes, near and overview",
+        "bytes": 178236,
+        "gzipBytes": 168769,
+        "sha256": "f579eaf69867cd7853cc0866fb8b3d49363e0dd00c496013d96b0b03289ceb11",
+        "triangles": 2700,
+        "nearTriangles": 2400,
+        "overviewTriangles": 300,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.2452,
+          "height": 0.2978,
+          "depth": 0.2864
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "kit-niederbieber",
+      "path": "assets/models/kit/kit-niederbieber.glb",
+      "subject": "Generated kit: the Niederbieber helmet",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt: the inventory's item model item-niederbieber (release 13), processed locally in Blender 5.2.2 LTS by scripts/assets/process-kit.py for a figure's head; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b1e36df3-5270-49e3-8b69-9cf913dbdb7b",
+        "generatedAt": "2026-11-01T23:24:18.082Z",
+        "prompt": "art-source/models/requests/item-niederbieber.json",
+        "rawBytes": 46333716,
+        "rawSha256": "768dfcbaa611dd4be822f654eee95de8182a25b46031dbf85388bee69914eac6",
+        "credits": 0,
+        "creditsNote": "No credits of its own: made from the item model generated for the inventory's pictures (20 credits, recorded with item-niederbieber)",
+        "processing": {
+          "kind": "helmet",
+          "height": 0.3,
+          "turn": -90,
+          "triangles": 2400,
+          "overviewTriangles": 300,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "sharpAngle": 45,
+          "fit": {
+            "standCutBelow": 0.1458
+          },
+          "overviewCell": 0.04549
+        },
+        "report": "art-source/models/reports/kit-niederbieber.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/kit-niederbieber-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Worn in place of the code-built headwear by a figure dressed in the inventory's Niederbieber helmet and Engraved Niederbieber helmet (the player's soldier, his companions, named veterans and his squads), on Balanced and High (actorKitModelIds, src/showcase/actors.js); the rank and file and the enemy keep the code-built piece. The figure fits it to the code-built piece's extent on its joint, scaled on each axis to the code-built bowl and guards it replaces, so it sits as they did on every head (src/showcase/actor-kit-models.js). Its near level is textured; its overview level draws the colours baked into its vertices. Decorative only: contact points, reach and every rule stay the code-built piece's.",
+      "loading": "Shared 3D file in every chapter's pack (art.js), loaded once per page by the figures that wear it. Performance and a failed download keep the code-built piece; a piece that arrives after a figure is built rebuilds that figure once.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression); two meshes, near and overview",
+        "bytes": 177488,
+        "gzipBytes": 168544,
+        "sha256": "45ae8b66cd28061ee0ce0abbd54240da241486bd45233d142c28da203740a36b",
+        "triangles": 2697,
+        "nearTriangles": 2399,
+        "overviewTriangles": 298,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.2779,
+          "height": 0.302,
+          "depth": 0.2737
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "kit-arming-cap",
+      "path": "assets/models/kit/kit-arming-cap.glb",
+      "subject": "Generated kit: the felt arming cap",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt: the inventory's item model item-arming-cap (release 13), processed locally in Blender 5.2.2 LTS by scripts/assets/process-kit.py for a figure's head; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "292bfd40-ad6d-4889-9cb7-b6c65ef544ae",
+        "generatedAt": "2026-11-02T06:35:03.025Z",
+        "prompt": "art-source/models/requests/item-arming-cap.json",
+        "rawBytes": 45330000,
+        "rawSha256": "2b3885a253176b4d7083a32909480affb6358841bac73cc1b738932239da0422",
+        "credits": 0,
+        "creditsNote": "No credits of its own: made from the item model generated for the inventory's pictures (20 credits, recorded with item-arming-cap)",
+        "processing": {
+          "kind": "helmet",
+          "height": 0.22,
+          "turn": -90,
+          "triangles": 3200,
+          "overviewTriangles": 200,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "sharpAngle": 45,
+          "fit": {
+            "standCutBelow": 0.1667
+          },
+          "overviewCell": 0.05373
+        },
+        "report": "art-source/models/reports/kit-arming-cap.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/kit-arming-cap-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Worn in place of the code-built headwear by a figure dressed in the inventory's Arming cap and Padded arming cap (the player's soldier, his companions, named veterans and his squads), on Balanced and High (actorKitModelIds, src/showcase/actors.js); the rank and file and the enemy keep the code-built piece. The figure fits it to the code-built piece's extent on its joint, scaled on each axis to the code-built bowl and guards it replaces, so it sits as they did on every head (src/showcase/actor-kit-models.js). Its near level is textured; its overview level draws the colours baked into its vertices. Decorative only: contact points, reach and every rule stay the code-built piece's.",
+      "loading": "Shared 3D file in every chapter's pack (art.js), loaded once per page by the figures that wear it. Performance and a failed download keep the code-built piece; a piece that arrives after a figure is built rebuilds that figure once.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression); two meshes, near and overview",
+        "bytes": 167792,
+        "gzipBytes": 157588,
+        "sha256": "ebb911d621ff696447c729a93c411614f43cc32df27ca837bff1806ac188e0d3",
+        "triangles": 3442,
+        "nearTriangles": 3243,
+        "overviewTriangles": 199,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.2869,
+          "height": 0.2157,
+          "depth": 0.2854
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -15216,7 +15664,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-11-04T00:00:00.000Z",
+  "updatedAt": "2026-11-08T00:00:00.000Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -15238,13 +15686,13 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 129,
+    "models": 136,
     "textures": 15,
     "src": 1,
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 58035373,
-  "totalModelBytes": 42731895,
+  "totalBundledAssetBytes": 58921881,
+  "totalModelBytes": 43618403,
   "derivedGeometryBytes": 47428
 }

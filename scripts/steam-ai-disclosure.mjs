@@ -59,6 +59,7 @@ const PLACES=[
   ['assets/models/chapters/','Chapter V scenery','Processed in Blender by the project’s scripts, then compressed'],
   ['assets/models/scenery/rocks-','Rock kits','Reduced in Blender and gathered into one kit for each region'],
   ['assets/items/','Item pictures','Each model rendered in Blender, then packed into one atlas'],
+  ['assets/models/kit/','Weapons and helmets worn by the figures','Made from the item pictures\' models: reduced and fitted in Blender by the project\'s scripts, then compressed'],
   ['src/showcase/finale-crowd','The finale’s distant crowd','Reduced by the project’s script from one generated figure'],
   ['assets/models/scenery/trees-','Tree kits',''],
   ['assets/audio/music-','Music','Used as generated; re-encoded smaller'],
@@ -114,7 +115,7 @@ export function aiInventory(manifest){
 const STORE_LINES=[
   ['illustration','Art: the story paintings, character portraits, 2D figures and some surface textures were generated with OpenAI’s image generation from original prompts written for this game, then cropped, packed and compressed for it.'],
   ['depth','An AI depth-estimation model made depth maps of the paintings, which give them their slight movement.'],
-  ['model','3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed.'],
+  ['model','3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures, which the figures also wear as their weapons and helmets, were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed.'],
   ['music','Music: the music tracks were generated with Google’s Lyria, through Runway.'],
   ['sound','Sound: the ambience and the combat and footstep sounds were generated with Runway; the interface’s short cues are made by the game’s code.'],
   ['voice','Voices: the voiced briefings are AI voices from ElevenLabs’ catalogue (through Runway), reading lines written for the game; no voice was cloned from a recording.'],

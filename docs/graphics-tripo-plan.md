@@ -28,7 +28,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 
 | # | Release | Cap | State |
 | --- | --- | --- | --- |
-| 0 | Use what's paid for, then calibrate | 250 | calibrated (190 credits, [results](graphics-calibration.md)), awaiting the owner's tier choices; the 3D kit next, the landmarks' re-texture recommended against |
+| 0 | Use what's paid for, then calibrate | 250 | calibrated (190 credits, [results](graphics-calibration.md)), awaiting the owner's tier choices; the 3D kit done (seven weapons and helmets, no credits); the landmarks' re-texture recommended against |
 | G1 | Armies | 2,300 | after step 0 |
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 1,300 | |
@@ -54,6 +54,8 @@ Each release's changelog entry records what it actually delivered, spent and mea
 ## Step 0: use what's paid for, then measure (cap 250 credits)
 
 1. **3D weapons, shields and helmets, at no credit cost.** The 39 item models generated for the inventory become held and worn kit. Code-built kit stays the fallback.
+
+   Done on 8 November with seven of them: the spatha, gladius, knife, axe, galea, Niederbieber helmet and felt cap, worn by figures dressed in those items (the player's soldier, his companions, named veterans and his squads). The crowds keep the code-built pieces, which read more clearly at the field's distance. The spangenhelm hides the face; spears, bows, slings and the shields, with their unit designs, stay code-built. The armour and clothes are the generated bodies' own. [The changelog](../CHANGELOG.md) has why.
 2. **Landmarks re-textured, at no credit cost.** They go from 256 px colour-only maps to 512–1,024 px with surface maps, from the original downloads.
 3. **Calibration.** About 10 test assets, each made at the cheap tier and the expensive tiers:
    - a soldier, a tent, a building and a shield;

@@ -466,7 +466,7 @@ The 31 October local Blender pass refines sixteen existing bodies, without repla
 
 ## Item pictures · 2026-11-02
 
-Release 13 gives every piece in the inventory a picture rendered from a generated model (see [art-generation.md](art-generation.md#item-pictures--12-november-2026)). The models never ship, and nothing new is drawn in 3D: the game shows the pictures from one WebP atlas.
+Release 13 gives every piece in the inventory a picture rendered from a generated model (see [art-generation.md](art-generation.md#item-pictures--12-november-2026)). The game shows the pictures from one WebP atlas; seven of the models also ship as the weapons and helmets figures wear ([below](#weapons-and-helmets-from-the-item-models--2026-11-08)).
 
 1. **Generate** each model as any other (`npm run asset:tripo -- generate art-source/models/requests/item-<name>.json`). Its request's `provenance` names the program (`item-pictures`), the credit cap and the expected 20 credits. With `creditAccounting: "batch"` several can run at once, as each task reports its own charge.
 2. **Review** it against its Tripo render. Record the verdict in the request's `status` (`accepted …` or `rejected …`, with the reason), and how to render it in its `picture`:
@@ -486,3 +486,36 @@ Release 13 gives every piece in the inventory a picture rendered from a generate
    - that each picture's model was accepted and paid for from the ledger.
 
 `src/ui/item-art.js` draws a picture as two nested SVGs: the outer fits the item's place into any box without stretching (the pack's cells, the worn places, the details and the traders' goods), and the inner, the place's own size, clips the atlas to it, so a box of another shape never shows the neighbouring pictures. An item with no picture keeps its drawn silhouette.
+
+## Weapons and helmets from the item models · 2026-11-08
+
+Step 0 of the [graphics plan](graphics-tripo-plan.md) gives seven of the item pictures' models a place on the figures: a figure dressed in the inventory's spatha, gladius, knife or axe, galea, Niederbieber helmet or felt cap wears the item's own model in place of the code-built piece. These figures are the player's soldier, his companions, named veterans and his squads. The rank and file and the enemy keep the code-built pieces, and so does every figure on Performance. Spears, bows, slings, the conical and Gothic cap helmets and the shields stay code-built ([why](art-generation.md#weapons-and-helmets-from-the-item-models--8-november-2026)).
+
+1. **Process** each from its item's raw download, under Blender:
+
+   ```sh
+   "$BLENDER_PYTHON" scripts/assets/process-kit.py --input art-source/models/raw/item-spatha.glb \
+     --output assets/models/kit/kit-spatha.glb --report art-source/models/reports/kit-spatha.json \
+     --kind sword --length 0.83 --triangles 1200 --overview-triangles 120
+   ```
+
+   [`process-kit.py`](../scripts/assets/process-kit.py) welds the importer's seam splits, then:
+   - **a weapon** (`--kind sword` for a sword or a knife, `axe` for an axe): it lays the longest axis up, with the flat of the blade or the axe head across and the grip end down, found from the widths along its length (a sword's widest section is its guard, just above the grip; an axe's is its head, at the far end). It scales it to `--length` and puts the origin at the middle of the grip.
+   - **a helmet** (`--kind helmet`): it cuts away any display stand (everything below the lowest section at least half as wide as the widest), turns it by `--turn` degrees so its face looks forward, scales it to `--height` and stands it on its foot.
+   - **both levels:** it reduces the near level to `--triangles` by a collapse, which can stop short where Tripo's surfaces cross; the report records where it stopped. It draws a copy together on the finest grid that fits `--overview-triangles` for the overview level, and bakes the colour map's colours into that level's vertices. It shrinks the maps (`--texture` colour, `--detail-texture` normal and metal-roughness) and exports one GLB with the meshes `near` and `overview`. The report records the digests, settings and the orientation found.
+
+   The pieces shipped with lengths 0.83 m (spatha), 0.57 (gladius), 0.33 (knife, 1,000 triangles) and 0.74 (axe), and heights 0.3 m (helmets, `--turn 180` for the galea and `-90` for the Niederbieber, 2,400 triangles, a 512-pixel colour map) and 0.22 (cap, `--turn -90`, 3,200 triangles). The game rescales every piece to the code-built one, so these sizes set only the file's own scale.
+2. **Compress** it in place: `npm run asset:compress -- assets/models/kit/kit-spatha.glb assets/models/kit/kit-spatha.glb --report art-source/models/reports/kit-spatha-compress.json`.
+3. **Catalogue** it in [`src/showcase/actor-kit-catalog.js`](../src/showcase/actor-kit-catalog.js): its item model and kind, and the weapon or helmet of the items' visuals that wears it. Then record it in `docs/asset-manifest.json` (its source task and raw digest, the processing settings and the compression report) and run `node scripts/steam-ai-disclosure.mjs`.
+
+**In the game.** [`actor-kit-models.js`](../src/showcase/actor-kit-models.js) loads each piece once a page, as an immutable master, and a figure wears copies that it owns and frees. `createActorRig` (`actors.js`) fits each piece to the code-built piece on its joint, then removes the code-built piece:
+- a weapon is scaled as one so its tip meets the code-built tip, with its grip in the hand;
+- a helmet is scaled on each axis to the code-built bowl and guards, which were fitted to every head;
+- a crest or a contact point on the joint stays.
+
+The near level is textured. The overview level, which the figure's overview and its followers draw, uses the baked colours. A piece that has not loaded yet leaves the code-built one, and the figure rebuilds once when it arrives; a piece that fails to load leaves the code-built one for good. The files are shared 3D files in every chapter's pack. `tests/actor-kit-models.test.mjs` checks:
+- each file against its item's Tripo task, its report, its manifest entry and its budgets;
+- the masters' layout;
+- which figures wear what;
+- the fit, the fallbacks and the late rebuild;
+- that no figure frees a master.

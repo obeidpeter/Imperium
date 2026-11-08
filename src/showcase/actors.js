@@ -34,6 +34,8 @@ import {cheekGuardGeometry,helmetBowlGeometry} from './actor-helmet.js';
 import {ACTOR_BODIES,actorBodyId,horseBodyId} from '../ui/actor-body-catalog.js';
 import {actorBody,warmActorBody,mountActorBody,blocTrimGeometry,BODY_REPLACES,BARE_HEAD_REPLACES} from './actor-bodies.js';
 import {IDENTITY_HEAD_BODY,usesPersistentHead} from './generated-identity.js';
+import {defaultActorKitLibrary,wearKitModel} from './actor-kit-models.js';
+import {KIT_WEAPON_MODELS,KIT_HEADWEAR_MODELS} from './actor-kit-catalog.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -63,6 +65,16 @@ function drape(rows,{from=0,to=1,offset=0}={}){const p=[],uv=[],indices=[],n=16;
 // A delegate's bloc reads from the toga trim, in the colour both views share
 // (bloc-style.js) and in a trim shape of its own.
 export const BLOC_TRIM=Object.freeze(Object.fromEntries(Object.entries(BLOC_STYLE).map(([bloc,style])=>[bloc,parseInt(style.color.slice(1),16)])));
+/** The generated kit a figure wears (actor-kit-catalog.js): the inventory's own sword or axe and
+ * helmet or felt cap, on a figure dressed in the items chosen for it (the player's soldier, his
+ * companions, named veterans and his squads). The rank and file and the enemy keep the code-built
+ * pieces, which read more clearly at the field's distance and cost a fraction of the triangles;
+ * so does every figure on Performance. */
+export function actorKitModelIds(kit,options={}){
+  if(options.quality==='performance'||!kit.equipped)return [];
+  const weapon=KIT_WEAPON_MODELS[kit.weapon]??null,headwear=kit.helmet?KIT_HEADWEAR_MODELS[kit.helmet]??null:kit.cap?KIT_HEADWEAR_MODELS.cap:null;
+  return [weapon,headwear].filter(Boolean);
+}
 export function createActor(unit={},options={}){
   let rig=createActorRig(unit,options),disposed=false,lastInput={},group=rig.group,rebuilt=false;
   const contacts=rig.contacts,source=options.assetLibrary;
@@ -82,10 +94,14 @@ export function createActor(unit={},options={}){
   if(preloadComplexion){complexion.acquire(identity);pendingComplexion=true;}
   const assetReady=source?source.warm(identity):typeof window!=='undefined'?warmActorAssets(identity):Promise.resolve(actorAssetStatus(identity).ready);
   const hairReady=!identity.female&&!['bound','long','shaved'].includes(identity.hair)?warmActorHair():Promise.resolve(false);
-  const ready=Promise.all([assetReady,preloadComplexion?complexion.warm(identity):null,hairReady,bodyReady,horseReady]).then(([loaded,,hairLoaded,bodyLoaded,horseLoaded])=>{
+  // Generated weapons and helmets (actor-kit-models.js): a piece that arrives after the first
+  // build, for a code-built piece the figure still shows, rebuilds the figure once.
+  const kitLibrary=options.kitLibrary??(typeof window!=='undefined'?defaultActorKitLibrary:null);
+  const kitReady=Promise.all((kitLibrary?actorKitModelIds(kit,options):[]).map(id=>kitLibrary.warm(id)));
+  const ready=Promise.all([assetReady,preloadComplexion?complexion.warm(identity):null,hairReady,bodyReady,horseReady,kitReady]).then(([loaded,,hairLoaded,bodyLoaded,horseLoaded])=>{
     if(disposed)return false;
-    const built=group.userData.actor;
-    if(!horseLoaded||built.horse===horseId){
+    const built=group.userData.actor,kitArrived=!!kitLibrary&&built.kitWanted.some(id=>kitLibrary.model(id));
+    if(!kitArrived&&(!horseLoaded||built.horse===horseId)){
       if(bodyLoaded){const headLoaded=usesPersistentHead(identity)&&!!(bodies?bodies.body(IDENTITY_HEAD_BODY):actorBody(IDENTITY_HEAD_BODY));if((bodyId?built.body===bodyId:true)&&(!headLoaded||built.persistentIdentity))return true;}
       else if(!loaded)return horseLoaded;
       else if(built.imported&&(!hairLoaded||built.hairImported))return true;
@@ -453,6 +469,19 @@ function createActorRig(unit={},options={},reuseGroup=null){
   // A generated horse's coat takes the place of every code-built horse surface but the saddle.
   if(horse&&horseCoat){const replaced=[];horse.group.traverse(o=>{if(o.isMesh&&o.parent?.isBone&&HORSE_REPLACES.test(o.parent.name))replaced.push(o);});
     for(const item of replaced){item.removeFromParent();for(const g of [item.geometry,item.userData.overviewGeometry])if(g){geometries.delete(g);g.dispose();}}}
+  // Generated kit (actor-kit-models.js) in place of the code-built sword or axe, helmet or cap
+  // still standing, fitted to it; a piece not yet loaded is noted, so the figure rebuilds when it is.
+  const kitLibrary=options.kitLibrary??defaultActorKitLibrary,kitWorn=[],kitWanted=[];
+  const kitIds=actorKitModelIds(kit,options),headwearIds=new Set(Object.values(KIT_HEADWEAR_MODELS));
+  const weaponModel=kitIds.find(id=>!headwearIds.has(id))??null,headwearModel=kitIds.find(id=>headwearIds.has(id))??null;
+  const wear=(piece,id,uniform)=>{
+    if(!piece||!id||!piece.children.some(o=>o.isMesh))return;
+    const master=kitLibrary.model(id);if(!master){kitWanted.push(id);return;}
+    if(wearKitModel(piece,master,{uniform,mesh,geometries,materials}))kitWorn.push(id);
+  };
+  if(weapon&&weaponModel)wear(weapon,weaponModel,true);
+  if(headwearModel)wear(kit.helmet?group.getObjectByName(`${kit.helmet}-helmet`):group.getObjectByName('equipped-arming-cap'),headwearModel,false);
+  Object.assign(group.userData.actor,{kitModels:kitWorn,kitWanted});
   overview(group);
   if(anatomy){const replaced=[];group.traverse(o=>{if(o.isMesh&&o.userData.anatomyReplacement)replaced.push(o);});for(const item of replaced){item.removeFromParent();geometries.delete(item.geometry);item.geometry.dispose();}}
   // Batch rigid details by material within each joint. Faces, folds, fingers

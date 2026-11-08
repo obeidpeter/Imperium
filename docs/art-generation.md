@@ -1292,7 +1292,7 @@ Release 13 of the [worlds and gameplay plan](worlds-and-gameplay-plan.md): a pic
 
 Thirty-nine models were generated with Tripo's text-to-model API (`v3.1-20260211`, textured PBR, standard geometry, 20 credits each) from text prompts only: no reference image or third-party model. The owner approved a cap of 1,000 credits, with a pilot of eight shown first. The pilot (160 credits, 1 November) was approved on 2 November, with about 560 more credits for the other 27 models and a second try at the mail shirt (28 tasks), and then 60 for three remakes after the review below (3 tasks). The balance read 11,480 credits before and 10,700 after: 780 spent and 220 of the cap left, reconciled task by task in [`item-pictures-credits.json`](../art-source/models/item-pictures-credits.json). The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.
 
-The models never ship. Each is rendered in Blender (Cycles on the CPU, AgX with medium-high contrast) by [`render-item-pictures.py`](../scripts/assets/render-item-pictures.py) into a master at 128 pixels a pack cell, with its request's picture settings: an orthographic three-quarter view on transparency, a warm key light from the upper left, a softbox, a cool fill and a rim light; long things across their flat, belts and small things from above. The masters are kept in `art-source/items/pictures/`. [`item-atlas.mjs`](../scripts/assets/item-atlas.mjs) packs one slot per picture, at 80 pixels a cell, into the one atlas the game draws, `assets/items/item-atlas.webp` (WebP at quality 78). The prompts follow [the historical notes](historical-research.md): third-century kit, mail with no segmented plate.
+The models are not shipped as such; since 8 November, seven of them also ship as the figures' weapons and helmets ([below](#weapons-and-helmets-from-the-item-models--8-november-2026)). Each is rendered in Blender (Cycles on the CPU, AgX with medium-high contrast) by [`render-item-pictures.py`](../scripts/assets/render-item-pictures.py) into a master at 128 pixels a pack cell, with its request's picture settings: an orthographic three-quarter view on transparency, a warm key light from the upper left, a softbox, a cool fill and a rim light; long things across their flat, belts and small things from above. The masters are kept in `art-source/items/pictures/`. [`item-atlas.mjs`](../scripts/assets/item-atlas.mjs) packs one slot per picture, at 80 pixels a cell, into the one atlas the game draws, `assets/items/item-atlas.webp` (WebP at quality 78). The prompts follow [the historical notes](historical-research.md): third-century kit, mail with no segmented plate.
 
 ### Reviewed before shipping
 
@@ -1349,6 +1349,48 @@ Each prompt, request body, Tripo task, raw digest and the parameters Tripo repor
 | hamata | `item-hamata-b` | 2 | `48989c9f-766d-4bf7-b2bc-f121660a6f68` | 2x3 | upright | rejected | plate shoulder guards like a segmented cuirass's |
 | gladius | `item-gladius` | 2 | `79355df7-36c3-4896-9f91-272ac20699fe` | 1x3 | long | rejected | a medieval cross-hilted sword |
 | hasta | `item-hasta` | 2 | `c4005a4b-8bb2-4e3e-b7b4-b3921a031ba2` | 1x4 | long | rejected | an iron shaft |
+
+## Weapons and helmets from the item models · 8 November 2026
+
+Step 0 of the [graphics plan](graphics-tripo-plan.md): seven of the item pictures' models (above) became the weapons and helmets that figures dressed in those items wear, in place of the code-built pieces. No new model was generated and no credits were spent. [The asset pipeline](asset-pipeline.md#weapons-and-helmets-from-the-item-models--2026-11-08) has how they are made.
+
+[`process-kit.py`](../scripts/assets/process-kit.py) (Blender 5.2.2 LTS) takes each item's raw download and does the following:
+
+- it welds the importer's seam splits;
+- it lays a weapon along its length, with the grip at the origin;
+- it cuts away a helmet's display stand, turns the helmet to face forward and stands it on its foot;
+- it reduces the near level by a collapse;
+- it draws the overview level together on a grid, with the colour map's colours baked into its vertices;
+- it shrinks the maps to 256 pixels (a helmet's colour map to 512) and exports a GLB with the two levels, `near` and `overview`.
+
+[`compress.mjs`](../scripts/assets/compress.mjs) then turned the maps into KTX2 and packed the geometry with meshopt, with every triangle unchanged. Each file's processing and compression reports are in `art-source/models/reports/kit-*.json`, and its manifest entry gives its source task and digests.
+
+| Piece | From | Tripo task | Triangles (near, overview) | Colour map | Bytes | Worn for |
+| --- | --- | --- | --- | --- | ---: | --- |
+| kit-spatha | `item-spatha` | `c6544ec3-90e2-4b09-9a7b-3f3ff970798a` | 1,199, 120 | 256 px | 93,944 | Spatha, Fine spatha, Ring-pommel sword, Pattern-welded spatha and Sasanian long sword |
+| kit-gladius | `item-gladius-b` | `b3c6a9cf-be3f-4af4-a68c-f058267c4de3` | 1,200, 120 | 256 px | 93,112 | Gladius and Fine gladius |
+| kit-pugio | `item-pugio` | `679b20f5-d5cc-4b5d-ab45-8d6e4f5b1a85` | 999, 98 | 256 px | 83,588 | Knife |
+| kit-axe | `item-axe` | `00cd607c-ce25-4744-b762-8608003de258` | 1,199, 119 | 256 px | 92,348 | Axe and Chieftain’s axe |
+| kit-galea | `item-galea` | `c84e4a9c-d2dc-4d1e-90f8-ae80303b9e2e` | 2,400, 300 | 512 px | 178,236 | Galea, Crested galea and Tinned galea |
+| kit-niederbieber | `item-niederbieber` | `b1e36df3-5270-49e3-8b69-9cf913dbdb7b` | 2,399, 298 | 512 px | 177,488 | Niederbieber helmet and Engraved Niederbieber helmet |
+| kit-arming-cap | `item-arming-cap` | `292bfd40-ad6d-4889-9cb7-b6c65ef544ae` | 3,243, 199 | 512 px | 167,792 | Arming cap and Padded arming cap |
+
+### Reviewed before shipping
+
+Each piece was seen alone, on a figure in the actor viewer, in the inventory's turntable of the soldier, and in Chapter III's battle in the campaign 3D harness, against the code-built piece it replaces (headless Chromium with a software renderer at High; not a hardware or device check).
+
+![The inventory's turntable of the soldier: code-built kit, then the item models](images/kit-turntable.jpg)
+
+![Chapter III at the follow camera, code-built and with every figure in the item models, and the spangenhelm](images/kit-field.jpg)
+
+- **Where they are worn.** In the turntable, where the soldier fills the view, the item models show their guards, pommels, rivets and felt. In the battle, at the follow camera, a weapon is a few pixels wide and the two look alike. Tripo's dark iron also reads less clearly than the code-built steel there. So the pieces go to figures dressed in chosen items: the player's soldier, his companions, named veterans and his squads. The rank and file and the enemy keep the code-built pieces, which also cost 2,000–3,000 fewer triangles a figure.
+- **The spangenhelm does not ship.** Its nasal and cheek guards close over the face; the conical helmet stays code-built.
+- **Not made:**
+  - spears, bows and slings, which stay code-built;
+  - shields, which carry each unit's own design.
+- **Fitted, not reshaped.** A weapon is scaled as one, so its tip meets the code-built tip. A helmet is scaled on each axis to the code-built helmet it replaces, which was fitted to every head; the galea's cheek guards stay splayed as the model has them. Two other fits were tried and dropped: one by the dome alone, and one by width with the model's own height. They lowered the galea over the eyes.
+- **Overview level remade.** A first overview made by collapse alone tore the models' crossing surfaces into loose triangles. It is now a grid clustering of the near level, as the game's own overview simplifier does.
+- **The felt cap** stays at 3,243 triangles, where its collapse stops; only a figure dressed in the cap draws it.
 
 ## Steam achievement icons · 3 November 2026
 

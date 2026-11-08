@@ -1,0 +1,64 @@
+{
+  "tool": "scripts/assets/process-kit.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/item-niederbieber.glb",
+    "bytes": 46333716,
+    "sha256": "768dfcbaa611dd4be822f654eee95de8182a25b46031dbf85388bee69914eac6",
+    "triangles": 1477240
+  },
+  "output": {
+    "path": "assets/models/kit/kit-niederbieber.glb",
+    "bytes": 186412,
+    "sha256": "ac8298d6fa56d81aa32b55daaa1831334e3dfff1938a6d76c893b67933a77c4a",
+    "triangles": 2399,
+    "overviewTriangles": 298
+  },
+  "settings": {
+    "kind": "helmet",
+    "length": null,
+    "height": 0.3,
+    "turn": -90.0,
+    "triangles": 2400,
+    "overviewTriangles": 300,
+    "texture": 512,
+    "detailTexture": 256,
+    "webpQuality": 80,
+    "sharpAngle": 45.0
+  },
+  "fit": {
+    "turnDegrees": -90.0,
+    "scale": 0.349265,
+    "standCutBelow": 0.1458
+  },
+  "overviewCell": 0.04549,
+  "bounds": {
+    "min": [
+      -0.1386,
+      0.0007,
+      -0.1357
+    ],
+    "max": [
+      0.1393,
+      0.3028,
+      0.138
+    ]
+  },
+  "textures": [
+    {
+      "name": "Color_b1e36df3-5270-49e3-8b69-9cf913dbdb7b",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_b1e36df3-5270-49e3-8b69-9cf913dbdb7b",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "name": "ORM_b1e36df3-5270-49e3-8b69-9cf913dbdb7b",
+      "width": 256,
+      "height": 256
+    }
+  ]
+}

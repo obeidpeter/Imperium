@@ -1,0 +1,64 @@
+{
+  "tool": "scripts/assets/process-kit.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/item-galea.glb",
+    "bytes": 44828696,
+    "sha256": "e8365fee59eb7b44c7236e2791fda745be472cb8f2d272acae859838126137cd",
+    "triangles": 1424586
+  },
+  "output": {
+    "path": "assets/models/kit/kit-galea.glb",
+    "bytes": 190672,
+    "sha256": "d1298875d338d874ac7c1f610a2550381da014f248fb48b0b68a85c28d2e0eb1",
+    "triangles": 2400,
+    "overviewTriangles": 300
+  },
+  "settings": {
+    "kind": "helmet",
+    "length": null,
+    "height": 0.3,
+    "turn": 180.0,
+    "triangles": 2400,
+    "overviewTriangles": 300,
+    "texture": 512,
+    "detailTexture": 256,
+    "webpQuality": 80,
+    "sharpAngle": 45.0
+  },
+  "fit": {
+    "turnDegrees": 180.0,
+    "scale": 0.3,
+    "standCutBelow": 0.0
+  },
+  "overviewCell": 0.04387,
+  "bounds": {
+    "min": [
+      -0.1202,
+      0.0003,
+      -0.1456
+    ],
+    "max": [
+      0.125,
+      0.2982,
+      0.1408
+    ]
+  },
+  "textures": [
+    {
+      "name": "Color_c84e4a9c-d2dc-4d1e-90f8-ae80303b9e2e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_c84e4a9c-d2dc-4d1e-90f8-ae80303b9e2e",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "name": "ORM_c84e4a9c-d2dc-4d1e-90f8-ae80303b9e2e",
+      "width": 256,
+      "height": 256
+    }
+  ]
+}

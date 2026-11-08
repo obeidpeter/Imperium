@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/kit/kit-pugio.glb",
+  "output": "assets/models/kit/kit-pugio.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 79564,
+    "gzipBytes": 57229,
+    "sha256": "f5cdfc9332eca5172f72fd1e2f809d949fe837cbaa0d5286847cf29a79a7bca5"
+  },
+  "after": {
+    "bytes": 83588,
+    "gzipBytes": 77672,
+    "sha256": "a785b1304983127a7383bc754140e977194e82ae5c7219749b97839e1af1a131"
+  },
+  "geometryUnchanged": true,
+  "triangles": 1097,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9526
+      },
+      "bytes": 12087,
+      "psnr": 32.631
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8716
+      },
+      "bytes": 14107,
+      "psnr": 34.066
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7848
+      },
+      "bytes": 13965,
+      "psnr": 29.723
+    }
+  ]
+}

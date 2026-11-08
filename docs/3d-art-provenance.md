@@ -68,6 +68,7 @@ From 0.36 the 3D views also load models made outside the game's code. The manife
   - five more camp figures, generated with Tripo (release 8);
   - each chapter's landmarks and camp life, generated with Tripo, and the Curia and the Aurelian Walls, built in Blender (release 9);
   - the inventory's item pictures, rendered in Blender from generated models that are not shipped themselves (release 13);
+  - seven of those item models, reduced and fitted in Blender as the weapons and helmets that figures dressed in those items wear (step 0 of the [graphics plan](graphics-tripo-plan.md), 8 November 2026);
   - five character face textures restored with OpenAI image generation from renders of the game's own models, and baked in Blender (4 November 2026; [the art record](art-generation.md#character-face-restorations--4-november-2026)).
 
 The generated models came from original text prompts only: no third-party image, model or recording was given to the generator. The Blender kits use no external images or models, and their builders, sources and reports are retained in the repository. The generated models' terms, as the owner confirmed them, are in the [project notices](LICENSE-NOTICES.md#ai-generated-3d-models). None of the Blender kits, horses, figures or landmarks is presented as an archaeological reconstruction of a particular site, uniform or individual.
