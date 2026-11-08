@@ -1,0 +1,159 @@
+{
+ "scope": "Step 0 of the graphics plan (docs/graphics-tripo-plan.md): the calibration of Tripo's quality tiers before any bulk spend",
+ "authorization": {
+  "credits": 250,
+  "approvedBy": "Owner",
+  "source": "docs/graphics-tripo-plan.md, approved 8 November 2026: step 0's calibration, capped at 250 credits"
+ },
+ "pricing": {
+  "textWithStandardTextures": 20,
+  "textWithDetailedTextures": 30,
+  "textWithUltraGeometry": 40,
+  "bipedRig": 25,
+  "rigCheck": 0,
+  "p2FromTripoChangelog": {
+   "untextured": 100,
+   "standard": 110,
+   "detailed": 120,
+   "extreme": 130
+  },
+  "source": "each task's reported credits_consumed, the frozen balance read straight after each submission, and Tripo's changelog (docs.tripo3d.com, P2 series, 2026-08) for P2, which was not bought"
+ },
+ "batches": [
+  {
+   "batch": "calibration",
+   "date": "2026-11-08",
+   "plannedCredits": 250,
+   "spentCredits": 190,
+   "items": [
+    "cal-gothic-skirmisher-standard",
+    "cal-gothic-skirmisher-detailed",
+    "cal-landmark-tetrapylon-ultra",
+    "cal-mule",
+    "cal-cast-lucan-bust-detailed"
+   ],
+   "tasks": [
+    {
+     "id": "cal-gothic-skirmisher-standard",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "7c8a8e44-993c-4bf8-9dd3-c2a384f68380",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "cal-gothic-skirmisher-standard",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "9dcca284-d7e0-4061-9e80-9a5f077a5262",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "cal-gothic-skirmisher-standard",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "7f1bf80a-4f0c-4026-86df-c7f11749f79a",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "cal-gothic-skirmisher-detailed",
+     "operation": "text_to_model",
+     "expectedCredits": 30,
+     "status": "success",
+     "taskId": "8cb53ec7-2519-43c1-a72e-9d7988a07013",
+     "creditsReported": 30,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 30
+    },
+    {
+     "id": "cal-gothic-skirmisher-detailed",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "378cd14a-49e8-453d-968a-d3297aa5b0ba",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "cal-gothic-skirmisher-detailed",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "cab31ab2-2a04-44b3-ab0e-d94c2277a68d",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "cal-landmark-tetrapylon-ultra",
+     "operation": "text_to_model",
+     "expectedCredits": 40,
+     "status": "success",
+     "taskId": "31d63fac-ee89-4fae-9be7-07bddef60b6d",
+     "creditsReported": 40,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 40
+    },
+    {
+     "id": "cal-mule",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "f8179353-4ce1-4cbf-a39e-1f3a51a59a67",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "cal-mule",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "fe2114a5-c16c-4731-9c16-e57424f27199",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": false,
+      "rig_type": "quadruped"
+     }
+    },
+    {
+     "id": "cal-cast-lucan-bust-detailed",
+     "operation": "text_to_model",
+     "expectedCredits": 30,
+     "status": "success",
+     "taskId": "107e79a4-9df9-4b12-b9dc-f0df8075b10d",
+     "creditsReported": 30,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 30,
+     "review": "rejected"
+    }
+   ],
+   "startingBalance": 10700,
+   "endingBalance": 10510,
+   "notes": [
+    "No P-series model was bought: Tripo's changelog prices P2 at 110 credits with standard textures, five and a half times the standard model.",
+    "Tripo's free rig check refused the mule (riggable false), so its planned quadruped rig and walk were not submitted.",
+    "The Lucan bust was rejected at review, 1 of 7 paid tasks (14%), under the plan's 20% stop rule."
+   ]
+  }
+ ]
+}

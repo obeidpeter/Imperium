@@ -37,9 +37,33 @@ function choice(body,key,values){
   if(body[key]!==undefined&&!values.includes(body[key]))throw new Error(`Invalid ${key}; choose ${values.join(', ')}.`);
 }
 
+// P-series: low-poly generation with clean topology, on the same endpoint as the H series
+// (https://developers.tripo3d.com/en/docs/generation-text-to-model/p). Text prompts only here.
+export const P_MODELS=Object.freeze({'P1-20260311':[50,20000],'P2-20260801':[48,50000]});
+function pSeriesRequest(g,options){
+  if(g.task!=='text_to_model')throw new Error('This pipeline supports P-series models for text_to_model only.');
+  if(options.model_version!==undefined)throw new Error('Name a P-series model with model, not model_version.');
+  knownOptions(options,['model','negative_prompt','image_seed','model_seed','face_limit','texture','pbr','texture_seed','texture_quality','texture_version','delight','auto_size','export_uv','export_orientation']);
+  const body={...options};
+  body.texture_version??=TEXTURE_MODEL;
+  if(!TEXTURE_MODELS.includes(body.texture_version))throw new Error('Retiring or unsupported texture_version; choose v3.0-20250812 or v3.5-20260815.');
+  for(const key of ['texture','pbr','delight','auto_size','export_uv'])if(body[key]!==undefined&&typeof body[key]!=='boolean')throw new Error(`${key} must be a boolean.`);
+  for(const key of ['model_seed','texture_seed','image_seed'])if(body[key]!==undefined&&(!Number.isSafeInteger(body[key])||body[key]<0))throw new Error(`${key} must be a non-negative safe integer.`);
+  const [least,most]=P_MODELS[body.model];
+  if(body.face_limit!==undefined&&(!Number.isSafeInteger(body.face_limit)||body.face_limit<least||body.face_limit>most))throw new Error(`face_limit for ${body.model} must be a whole number from ${least} to ${most}.`);
+  if(body.negative_prompt!==undefined&&(typeof body.negative_prompt!=='string'||body.negative_prompt.length>255))throw new Error('negative_prompt must be a string of at most 255 characters.');
+  choice(body,'texture_quality',['fast','standard','detailed','extreme']);
+  choice(body,'export_orientation',['+x','-x','-y','+y']);
+  if(body.texture_quality==='fast'&&body.texture_version!=='v3.5-20260815')throw new Error('texture_quality fast requires texture_version v3.5-20260815.');
+  if(typeof g.prompt!=='string'||!g.prompt.trim()||g.prompt.length>1024)throw new Error('Text-to-model needs a non-empty prompt of at most 1,024 characters.');
+  body.prompt=g.prompt;
+  return {endpoint:'/generation/text-to-model',body};
+}
+
 export function generationRequest(request){
   const g=request.generator;
   if(!object(g)||!['text_to_model','image_to_model'].includes(g.task))throw new Error('This pipeline supports text_to_model and image_to_model generation only.');
+  if(object(g.options)&&Object.hasOwn(P_MODELS,g.options.model??g.options.model_version))return pSeriesRequest(g,g.options);
   const common=['model','model_version','negative_prompt','model_seed','texture_seed','face_limit','texture','pbr','texture_quality','texture_version','delight','geometry_quality','auto_size','quad','smart_low_poly','generate_parts','compress','export_uv'];
   const options=g.options??{};
   knownOptions(options,[...common,...(g.task==='text_to_model'?['image_seed']:['input','enable_image_autofix','texture_alignment','orientation'])]);
@@ -91,6 +115,20 @@ export function rigRequest(request){
   if(body.model===RIG_MODEL&&body.rig_type!=='biped')throw new Error('The v1.0 rig model supports bipeds only.');
   if(body.model!=='v3.0-20260909'&&(body.rig_type==='others'||!['tripo','mixamo'].includes(body.spec)))throw new Error('This rig type or skeleton convention requires rig model v3.0-20260909.');
   return {endpoint:'/animations/rig',body};
+}
+
+// A preset animation applied to the recorded rig (https://developers.tripo3d.com/en/docs/animations-retarget):
+// one preset, or up to five, played in place by default so the game moves the figure itself.
+export function retargetRequest(request){
+  const options=request.generator?.retarget??{};
+  knownOptions(options,['animation','animations','out_format','animate_in_place','export_with_geometry']);
+  const body={input:taskId(request.provenance?.rig?.taskId),out_format:'glb',animate_in_place:true,...options};
+  if((body.animation===undefined)===(body.animations===undefined))throw new Error('A retarget names exactly one of animation or animations.');
+  const presets=body.animation!==undefined?[body.animation]:body.animations;
+  if(!Array.isArray(presets)||!presets.length||presets.length>5||presets.some(p=>typeof p!=='string'||!/^preset:[a-z0-9_:-]+$/.test(p)))throw new Error('A retarget plays one to five preset animations, each named preset:….');
+  if(body.out_format!=='glb')throw new Error('The Blender pipeline requires out_format glb.');
+  for(const key of ['animate_in_place','export_with_geometry'])if(typeof body[key]!=='boolean'&&body[key]!==undefined)throw new Error(`${key} must be a boolean.`);
+  return {endpoint:'/animations/retarget',body};
 }
 
 export function modelOutput(task){
@@ -155,7 +193,7 @@ export function createTripoClient({key=process.env.TRIPO_API_KEY,proxyAuth=proce
   }
   async function create({endpoint,body}){
     // Intentionally ONE request: there is no documented creation idempotency key.
-    if(!['/generation/text-to-model','/generation/image-to-model','/animations/rig-check','/animations/rig'].includes(endpoint))throw new Error('Unsupported Tripo creation endpoint.');
+    if(!['/generation/text-to-model','/generation/image-to-model','/animations/rig-check','/animations/rig','/animations/retarget'].includes(endpoint))throw new Error('Unsupported Tripo creation endpoint.');
     const result=await call(endpoint,{method:'POST',body});
     return taskId(result.task_id);
   }

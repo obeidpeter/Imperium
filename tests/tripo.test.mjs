@@ -6,13 +6,14 @@ import {tmpdir} from 'node:os';
 import {join,resolve,sep} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
-import {createTripoClient,generationRequest,rigRequest,taskCredits,TRIPO_API} from '../scripts/assets/tripo-client.mjs';
+import {createTripoClient,generationRequest,rigRequest,retargetRequest,taskCredits,TRIPO_API} from '../scripts/assets/tripo-client.mjs';
 import {runTripo} from '../scripts/assets/tripo.mjs';
 
 // All transport is injected. These tests cannot contact Tripo or spend credits.
 const ID='123e4567-e89b-42d3-a456-426614174000';
 const CHECK='123e4567-e89b-42d3-a456-426614174001';
 const RIG='123e4567-e89b-42d3-a456-426614174002';
+const WALK='123e4567-e89b-42d3-a456-426614174003';
 const HASH=bytes=>createHash('sha256').update(bytes).digest('hex');
 const GLB=Buffer.alloc(24);GLB.write('glTF');GLB.writeUInt32LE(2,4);GLB.writeUInt32LE(GLB.length,8);
 const fresh=()=>({id:'test-prop',status:'requested',generator:{service:'Tripo',task:'text_to_model',prompt:'A Roman stone well.',options:{model_version:'v3.1-20260211'}},provenance:{licence:'preserve licence',creditCeiling:400}});
@@ -245,6 +246,48 @@ for(const riggable of [false,true])test(`Tripo rig ${riggable?'type mismatch':'r
   const f=await fixture(t,r),mock=transport([{task_id:CHECK},completed(CHECK,{type:'animate_prerigcheck',output:{riggable,rig_type:'quadruped'},credits_consumed:0})]);
   await assert.rejects(runTripo(['rig',f.file,'--allow-paid'],{...f.options,client:mock.client}),riggable?/recommends/:/not riggable/);
   assert.equal(mock.calls.filter(x=>x.method==='POST').length,1);assert.ok(!mock.calls.some(x=>x.url.endsWith('/animations/rig')));
+});
+
+test('Tripo P-series requests keep the low-poly models and their face ranges',()=>{
+  const r=fresh();r.generator.options={model:'P2-20260801',face_limit:12000,texture_quality:'detailed',pbr:true};
+  const wire=generationRequest(r);
+  assert.equal(wire.endpoint,'/generation/text-to-model');
+  assert.deepEqual(wire.body,{model:'P2-20260801',face_limit:12000,texture_quality:'detailed',pbr:true,texture_version:'v3.0-20250812',prompt:'A Roman stone well.'});
+  r.generator.options={model:'P1-20260311',face_limit:20001};assert.throws(()=>generationRequest(r),/50 to 20000/);
+  r.generator.options={model:'P2-20260801',face_limit:47};assert.throws(()=>generationRequest(r),/48 to 50000/);
+  r.generator.options={model:'P2-20260801',quad:true};assert.throws(()=>generationRequest(r),/Unsupported Tripo option quad/);
+  r.generator.options={model:'P1-20260311',geometry_quality:'detailed'};assert.throws(()=>generationRequest(r),/Unsupported Tripo option geometry_quality/);
+  r.generator.options={model_version:'P1-20260311'};assert.throws(()=>generationRequest(r),/not model_version/);
+  r.generator={task:'image_to_model',input:'file_test',options:{model:'P1-20260311'}};assert.throws(()=>generationRequest(r),/text_to_model only/);
+});
+
+test('Tripo retarget plays presets in place on the recorded rig, as a GLB',()=>{
+  const r=fresh();r.provenance={taskId:ID,rig:{taskId:RIG,rawSha256:'x'}};r.generator.retarget={animation:'preset:quadruped:walk'};
+  assert.deepEqual(retargetRequest(r),{endpoint:'/animations/retarget',body:{input:RIG,out_format:'glb',animate_in_place:true,animation:'preset:quadruped:walk'}});
+  r.generator.retarget={animations:['preset:idle','preset:walk']};assert.deepEqual(retargetRequest(r).body.animations,['preset:idle','preset:walk']);
+  for(const [retarget,pattern] of [[{},/exactly one/],[{animation:'preset:walk',animations:['preset:run']},/exactly one/],[{animations:Array(6).fill('preset:walk')},/one to five/],
+    [{animation:'walk'},/preset/],[{animation:'preset:walk',out_format:'fbx'},/glb/],[{animation:'preset:walk',loop:true},/Unsupported Tripo option loop/]]){
+    r.generator.retarget=retarget;assert.throws(()=>retargetRequest(r),pattern);
+  }
+  r.generator.retarget={animation:'preset:walk'};r.provenance={taskId:ID};assert.throws(()=>retargetRequest(r),/task UUID/);
+});
+
+test('Tripo retarget needs a downloaded rig, persists its own ID, and resumes without paying twice',async t=>{
+  const r=fresh();r.generator.retarget={animation:'preset:quadruped:walk'};Object.assign(r.provenance,{taskId:ID,rawSha256:HASH(GLB)});
+  const bare=await fixture(t,r);
+  await assert.rejects(runTripo(['retarget',bare.file,'--allow-paid'],{...bare.options,client:transport([]).client}),/No rigged, hashed model/);
+  r.provenance.rig={taskId:RIG,rawSha256:HASH(GLB),creditsSpent:25};
+  const f=await fixture(t,{...r,id:'test-mule'}),mock=transport([{balance:100,frozen:0},{task_id:WALK},completed(WALK,{type:'animate_retarget',credits_consumed:10}),new Response(GLB)]);
+  await assert.rejects(runTripo(['retarget',f.file],{...f.options,client:mock.client}),/--allow-paid/);assert.equal(mock.calls.length,0);
+  await runTripo(['retarget',f.file,'--dry-run'],{...f.options,client:mock.client});assert.equal(mock.calls.length,0);
+  await runTripo(['retarget',f.file,'--allow-paid'],{...f.options,client:mock.client});
+  const p=(await f.read()).provenance;
+  assert.equal(p.retarget.taskId,WALK);assert.equal(p.retarget.creditsSpent,10);assert.equal(p.retarget.raw,'art-source/models/raw/test-mule-animated.glb');
+  assert.deepEqual(mock.calls.filter(x=>x.method==='POST').map(x=>[x.url,x.body.input,x.body.animation]),[[TRIPO_API+'/animations/retarget',RIG,'preset:quadruped:walk']]);
+  // A second run, paid or not, only verifies the recorded task's download.
+  await runTripo(['retarget',f.file,'--allow-paid'],{...f.options,client:mock.client});assert.equal(mock.calls.filter(x=>x.method==='POST').length,1);
+  const wrong=await fixture(t,{...r,id:'test-wrong',provenance:{...r.provenance,retarget:{taskId:WALK}}}),other=transport([completed(WALK,{type:'animate_rig'})]);
+  await assert.rejects(runTripo(['resume-retarget',wrong.file],{...wrong.options,client:other.client}),/wrong operation type/);
 });
 
 test('Tripo resume-rig restores a historical rig without running a new check',async t=>{

@@ -2,6 +2,29 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Step 0's calibration: what Tripo's quality tiers buy in the game ([the results](docs/graphics-calibration.md))
+
+Step 0 of the graphics plan bought test models at Tripo's cheap and expensive tiers, processed each to the game's budgets and showed it in the game's actor viewer and model loader. It spent 190 of its 250-credit cap; the balance is 10,510.
+
+- **Prices:**
+  - detailed textures cost 30 credits a model and Ultra geometry 40, against 20 at the standard tier;
+  - Tripo's changelog prices the clean-topology P2 series at 110 with standard textures, so none was bought.
+- **A soldier:** a Gothic skirmisher was made at both texture tiers, rigged and bound to the game's skeleton. At the game's camera distance the two look the same; up close, the detailed one shows a little more cloth, and both faces are limited by triangles rather than texture.
+- **A building:** the tetrapylon's Ultra geometry does not survive the reduction to the game's 6,000 triangles. Re-texturing the shipped landmarks at 1,024 pixels with surface maps, the plan's free step 0c, sharpens them close up. In the game's own Horizon view of Chapter IX they are a few pixels high in the haze and all three versions look the same, so step 0c is recommended against: it would add about 10 MB for nothing visible, and the backdrop release (G7) should be reconsidered.
+- **A pack mule:** Tripo's free rig check refused a four-legged rig. Bound without credits to the game's own horse skeleton, it walks on the horse gait.
+- **Lucan as a bust** came back as a grey stone statue and was rejected, 1 of 7 paid tasks.
+- **Recommended:**
+  - standard textures for every category;
+  - animals bound to the game's own skeleton;
+  - the shipped landmarks left as they are, and the backdrop release reconsidered;
+  - a face pilot in release G6 that starts from a picture.
+
+  The owner picks the tiers before any bulk spend.
+- **Pipeline:** `npm run asset:tripo` now also accepts P-series text-to-model requests and Tripo's preset animations on a recorded rig (`retarget`, `resume-retarget`), each dry-run first and covered by tests. The calibration needed neither.
+- **Records:**
+  - every task is in `art-source/models/graphics-calibration-credits.json`, with its request in `art-source/models/requests/cal-*.json`;
+  - no calibration model ships. One the owner picks ships from a new request that reuses its task ID, so it is not paid for twice.
+
 ### A graphics plan for 7,900 Tripo credits, approved ([the plan](docs/graphics-tripo-plan.md))
 
 On 8 November the owner approved a plan to improve the game's graphics substantially with at least 70% of the Tripo balance. It caps the spend at 7,900 of 10,700 credits and keeps about 2,800 back.

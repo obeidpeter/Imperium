@@ -1,0 +1,133 @@
+{
+  "id": "cal-mule",
+  "status": "calibration: generated; Tripo's free rig check refused a quadruped rig, so it was bound without credits to the game's own horse skeleton and reviewed; not shipped",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "use": "Step 0 calibration (docs/graphics-tripo-plan.md): a pack mule of the baggage train, rigged by Tripo on four legs (rig v2.5, quadruped) and given Tripo's quadruped walk, and also bound without credits to the game's own horse skeleton (scripts/assets/bind-horse.py), so the two ways of animating release G4's animals can be compared in the game.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman army pack mule of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, long ears upright, tail hanging straight down, symmetrical. A sturdy mule about 1.35 metres at the withers with a dark bay-brown coat, a pale muzzle and belly and a short upright mane, a plain leather headstall with its lead rope coiled on the saddle, and a wooden pack saddle on a woollen pad carrying two evenly lashed bundles of baggage, one on each side. Realistic proportions, anatomically accurate. No rider, no cart, no shafts, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "model_seed": 2611086,
+      "image_seed": 2611087,
+      "texture_seed": 2611088
+    },
+    "rig": {
+      "model": "v2.5-20260210",
+      "rig_type": "quadruped"
+    },
+    "retarget": {
+      "animation": "preset:quadruped:walk",
+      "animate_in_place": true
+    }
+  },
+  "budget": {
+    "triangles": 9000,
+    "overviewTriangles": 1800,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.75,
+    "minHeight": 1.55,
+    "maxHeight": 1.95
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-calibration",
+    "creditCeiling": 250,
+    "expectedCredits": 55,
+    "creditAccounting": "batch",
+    "calibration": "a textured model (20), a quadruped rig and a walk; the rig and walk prices are measured",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T20:19:31.901Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "model_seed": 2611086,
+      "image_seed": 2611087,
+      "texture_seed": 2611088,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman army pack mule of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, long ears upright, tail hanging straight down, symmetrical. A sturdy mule about 1.35 metres at the withers with a dark bay-brown coat, a pale muzzle and belly and a short upright mane, a plain leather headstall with its lead rope coiled on the saddle, and a wooden pack saddle on a woollen pad carrying two evenly lashed bundles of baggage, one on each side. Realistic proportions, anatomically accurate. No rider, no cart, no shafts, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10610,
+    "balanceSnapshotBefore": {
+      "balance": 10610,
+      "frozen": 90
+    },
+    "submission": {
+      "id": "79c2d4b9-22f3-4ca3-bf12-2947668d9824",
+      "state": "accepted",
+      "requestSha256": "8557ddd76162e49d7f42c874156209555104d4097a6d35d9e7662d756394c98a"
+    },
+    "taskId": "f8179353-4ce1-4cbf-a39e-1f3a51a59a67",
+    "status": "success",
+    "generatedAt": "2026-11-08T20:21:44.888Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/cal-mule.glb",
+    "rawBytes": 45513812,
+    "rawSha256": "81440102004a62b4f0be302e58f3dc29d25c01fdfd67367a6cb0b592a2acfacb",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman army pack mule of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, long ears upright, tail hanging straight down, symmetrical. A sturdy mule about 1.35 metres at the withers with a dark bay-brown coat, a pale muzzle and belly and a short upright mane, a plain leather headstall with its lead rope coiled on the saddle, and a wooden pack saddle on a woollen pad carrying two evenly lashed bundles of baggage, one on each side. Realistic proportions, anatomically accurate. No rider, no cart, no shafts, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611087,
+      "model_seed": 2611086,
+      "texture_seed": 2611088,
+      "model_version": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T20:19:32.280320Z",
+    "tripoCompletedAt": "2026-11-08T20:21:40.201741Z",
+    "tripoRender": "art-source/models/raw/cal-mule-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-08T20:21:55.157Z",
+      "requestBody": {
+        "input": "f8179353-4ce1-4cbf-a39e-1f3a51a59a67"
+      },
+      "submission": {
+        "id": "ef54d512-3170-4d3a-b3b9-652d0de9612d",
+        "state": "accepted",
+        "requestSha256": "3f8c384a334297003e3de2db49744258bc5ebb333a1bb6db66a9c743948f10d9"
+      },
+      "taskId": "fe2114a5-c16c-4731-9c16-e57424f27199",
+      "status": "success",
+      "output": {
+        "riggable": false,
+        "rig_type": "quadruped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "review": "The rig check returned riggable false (rig type quadruped), so no paid rig or walk was submitted (generator.rig and generator.retarget record the plan it refused). scripts/assets/bind-horse.py bound it to 9,000 and 1,800 triangles (714,348 bytes compressed), and it walks on the game's horse gait; see docs/graphics-calibration.md."
+  }
+}

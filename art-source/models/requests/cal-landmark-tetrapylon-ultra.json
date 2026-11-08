@@ -1,0 +1,94 @@
+{
+  "id": "cal-landmark-tetrapylon-ultra",
+  "status": "calibration: generated, processed and reviewed; not shipped",
+  "chapters": [
+    9
+  ],
+  "use": "Step 0 calibration (docs/graphics-tripo-plan.md): the tetrapylon of Chapter IX's horizon from the same prompt as landmark-tetrapylon, at Tripo's Ultra geometry (geometry_quality detailed) with standard textures, compared with that standard-geometry model processed the same way. Whichever the owner picks can become release G7's tetrapylon.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A tetrapylon at the crossing of a colonnaded street in a Syrian city of the third century: four square stone platforms at the corners of the crossing, each carrying four tall columns under a moulded entablature, and a stretch of colonnaded street running out on each side. Seen from the front, the street running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "detailed",
+      "texture_quality": "standard",
+      "model_seed": 2611083,
+      "image_seed": 2611084,
+      "texture_seed": 2611085
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "heightMetres": 10.2,
+    "minHeight": 9.69,
+    "maxHeight": 10.71,
+    "texture": 1024,
+    "bytes": 900000
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-calibration",
+    "creditCeiling": 250,
+    "expectedCredits": 40,
+    "creditAccounting": "batch",
+    "calibration": "geometry Ultra (detailed), texture standard",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T20:19:20.313Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "detailed",
+      "texture_quality": "standard",
+      "model_seed": 2611083,
+      "image_seed": 2611084,
+      "texture_seed": 2611085,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A tetrapylon at the crossing of a colonnaded street in a Syrian city of the third century: four square stone platforms at the corners of the crossing, each carrying four tall columns under a moulded entablature, and a stretch of colonnaded street running out on each side. Seen from the front, the street running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos."
+    },
+    "balanceBefore": 10650,
+    "balanceSnapshotBefore": {
+      "balance": 10650,
+      "frozen": 50
+    },
+    "submission": {
+      "id": "3fc31b2e-e4ad-4ccc-82c6-f26a87ee130b",
+      "state": "accepted",
+      "requestSha256": "6a599244c69f4c51bde0cf1e59de5695a41acdabb5dc6884d8ed5ee75b87413f"
+    },
+    "taskId": "31d63fac-ee89-4fae-9be7-07bddef60b6d",
+    "status": "success",
+    "generatedAt": "2026-11-08T20:21:24.162Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/cal-landmark-tetrapylon-ultra.glb",
+    "rawBytes": 59094956,
+    "rawSha256": "7241021df174a43a47ebddbd1e88e34582f074a6d563e9dc2329e10b65813a51",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A tetrapylon at the crossing of a colonnaded street in a Syrian city of the third century: four square stone platforms at the corners of the crossing, each carrying four tall columns under a moulded entablature, and a stretch of colonnaded street running out on each side. Seen from the front, the street running left to right. A single isolated structure for a painterly-realistic historical game set in the third century Roman world, seen from a distance: a clear, strong silhouette, restrained surface detail, physically based aged materials, believable hand-made construction, a level base and complete geometry from every side. No surrounding landscape, ground plane, base slab or display plinth, no water, trees, people, animals, scaffolding, modern materials, text or logos.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611084,
+      "model_seed": 2611083,
+      "texture_seed": 2611085,
+      "model_version": "v3.1-20260211",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "detailed",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 40,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T20:19:20.902285Z",
+    "tripoCompletedAt": "2026-11-08T20:21:15.797321Z",
+    "tripoRender": "art-source/models/raw/cal-landmark-tetrapylon-ultra-tripo-render.webp",
+    "review": "1,947,890 triangles raw (the standard tetrapylon: 1,413,200). Processed like landmark-tetrapylon to 5,880 triangles and 1,024 px maps, the extra geometry is gone, and this attempt came out narrower and more ruined, with loose paving; see docs/graphics-calibration.md."
+  }
+}
