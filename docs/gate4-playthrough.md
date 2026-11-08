@@ -17,7 +17,7 @@ The [playtest kit](playtest-kit.md) is for a first-time player watched by an obs
 ## Before you start
 
 1. Use the live site, or build and serve it yourself: `npm run build`, then `npm run preview`. The live site is published by hand ([Replit static deployment](../README.md#replit-static-deployment)), so republish it from `main` first. To play on a phone on the same network, use `HOST=0.0.0.0 npm run preview` and open the address it prints.
-2. Write down the build: the commit you built (`git log -1 --format=%h`) or the date you opened the live site. Use `41652bd` (2 November) or later, which has releases 11–14 and the two fixes their checks found after the merge.
+2. Write down the build: the commit you built (`git log -1 --format=%h`) or the date you opened the live site. Use `6c60348` (7 November) or later. It has releases 11–14, #82's wider formations and save repair, the eagle and wall walk fixes ([#83](https://github.com/obeidpeter/Imperium/pull/83)) and the damaged-save discard ([#84](https://github.com/obeidpeter/Imperium/pull/84)).
 3. Begin a **New Game** with **Real-time with pause**:
    - the first time on **Standard**;
    - the second time on **Story**, ideally played by someone less experienced, as the 0.40 brief asks.
@@ -50,7 +50,7 @@ Mark anything that stops play, loses progress or saves the wrong thing as **bloc
 | | Names on the road (escort) | | |
 | IV · Hold the Line | Camp: the frontier ford court | Squads and their orders appear. An errand or two, the trader. | |
 | | The gate with the broken drum (the escalade) | Throwing down the ladders; the gate's integrity. Pause and open **Review orders**: cancel one squad's queued order and replace another's. | |
-| | Across the wall walk (escort) | | |
+| | Across the wall walk (escort) | Bring the columns to the far stair. The calibration bot is sometimes caught by the guards on the last approach while the column waits at the goal: does the battle make it clear where the soldier must be? | |
 | V · The Centurion | Camp: the Euphrates staging courtyard | The engineer's preparation; the countermine or the families. | |
 | | The cracked tower (siege) | The countermine against the siege works. | |
 | | The red river gate (the sortie) | Out by the postern to burn the ram, then back to hold the gate. The bot loses this one most on Veteran: is it fair? | |
@@ -65,7 +65,7 @@ Mark anything that stops play, loses progress or saves the wrong thing as **bloc
 | | The last boats (escort) | | |
 | | The far bank (the crossing under fire) | Forcing the ford under the volleys, then holding the landing. If you repair the bridge, demolish it again: two stages, or one with an engineer beside you. | |
 | IX · Rome's Sword | Camp: the surrender court on campaign | The terms of surrender. | |
-| | The turning cavalry (the feigned retreat) | Your horse's charge and feigned retreat; drawing the armoured horse onto the line. The order card shows both, under your keys. | |
+| | The turning cavalry (the feigned retreat) | Your horse's charge and feigned retreat; drawing the armoured horse onto the line. The order card shows both, under your keys. Since #82's wider ranks the armoured officer reaches the soldier later and lands fewer blows: is his duel still a threat? | |
 | | The road to the keys | | |
 | X · The Province | Camp: the governor's relief courtyard | The convoys' allocation and the land judgment. | |
 | | Grain under guard (the relief convoy) | The road you chose in camp. | |
