@@ -1392,6 +1392,143 @@ Each piece was seen alone, on a figure in the actor viewer, in the inventory's t
 - **Overview level remade.** A first overview made by collapse alone tore the models' crossing surfaces into loose triangles. It is now a grid clustering of the near level, as the game's own overview simplifier does.
 - **The felt cap** stays at 3,243 triangles, where its collapse stops; only a figure dressed in the cap draws it.
 
+## Release G1's pilot: the armies · 8 November 2026
+
+Release G1 of the [graphics plan](graphics-tripo-plan.md#g1s-pilot-8-november) gives the unit types that wore another unit's body bodies of their own. Its pilot, one body for each of the release's categories and one horse, went to the owner before the rest is generated. [The asset pipeline](asset-pipeline.md#release-g1s-pilot-a-unit-types-own-body--2026-11-08) has how a unit type's body is chosen.
+
+The models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-08, from the text prompts below only: no reference image or third-party model. The bodies were rigged by Tripo's biped auto-rig (25 credits each); the horse was bound to the game's own horse skeleton without a rig. The Gothic skirmisher is step 0's calibration body at the standard tier, shipped from its own request with the calibration's task IDs and digests, so its credits are not spent twice. The pilot cost 310 credits of its 345-credit ceiling, task by task in [the G1 ledger](../art-source/models/graphics-g1-credits.json), and the balance read 10,510 before and 10,200 after. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Worn by | Chapters | Tripo task | Rig task | Triangles | Runtime file |
+| --- | --- | --- | --- | --- | ---: | ---: |
+| char-gothic-skirmisher | the Gothic skirmisher of the reinforcements | I, II | `7c8a8e44-993c-4bf8-9dd3-c2a384f68380` | `7f1bf80a-4f0c-4026-86df-c7f11749f79a` | 13,780 | 408,220 bytes |
+| char-gothic-warband | the Gothic war bands' infantry | II, IV, VII, VIII | `ed7c6087-9578-4aa1-9d7e-5524bdc270f1` | `e66dd26e-11a4-4ee3-b734-d6cb4b979ec8` | 13,863 | 421,260 bytes |
+| char-champion-gate | the war band's chieftain, the gate battle's champion | IV | `ca9f3eb1-015b-40b8-903f-96b9a35cd652` | `10395c0c-7008-4be5-b1f8-143f4ecb7c66` | 13,886 | 437,144 bytes |
+| char-persian-skirmisher | Persian raiders | VI | `a69dc59a-eec4-4539-b95c-894c030c4d34` | `062ca361-4fcb-4cef-9e4e-650c2a538388` | 13,723 | 423,236 bytes |
+| char-palmyrene-spearman | Palmyrene infantry | IX | `551e4849-1420-4ea0-91af-20f8b0519b33` | `a13c1ad5-ba58-4155-bd12-dc71b68aaeb3` | 14,013 | 472,840 bytes |
+| char-rival-legionary-b | the claimant's civil-war cohorts | XII | `a07a6901-559f-4966-9e0e-60e19e70a2db` | `6e0ce422-414c-436a-80f8-19656a5d1fc0` | 13,709 | 432,828 bytes |
+| char-roman-moorish-cavalry | the Roman cavalry of the Palmyrene war | IX | `c6176082-f573-4e9a-9e1b-1e13bad5597f` | `2a4f991d-2818-4c2f-91a4-e7c0cb918828` | 13,753 | 418,212 bytes |
+| horse-cataphract | the Palmyrene cataphracts' horses | IX | `15f4f317-3226-4092-80a2-2d57f047818c` | — | 10,800 | 492,908 bytes |
+
+Triangles count both levels of detail; the near bodies have 11,210–11,513 and the horse 9,000. Every runtime file is quantized and compressed (meshopt geometry, ETC1S KTX2 with mipmaps) and passes `check-model` within its request's budget. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the binding and compression reports in `art-source/models/reports/`. The first rival legionary (`char-rival-legionary`, task `935077b8-8885-43fb-b6d4-7161bc5518a7`, 20 credits) was rejected at review and is not shipped.
+
+The prompts follow [the historical notes](historical-research.md): long-sleeved tunics and trousers; mail rather than segmented plate for the Romans; the kit each unit carries in the rules (the war band's segmented helmet and jerkin, the Palmyrene and Persian spearmen's helmets); Zosimus's Mauretanian horse in Aurelian's army at Emesa (*New History* 1.52); and the Palmyrene horse's scale trapper after those found at Dura-Europos.
+
+### Reviewed before shipping
+
+Each model was compared with its Tripo render and then, bound, in the game's actor viewer at High, beside the body its type wore before, at the game's distance, full length from the front and back, and walking. What it showed, and what was kept:
+
+![Each pilot body beside the body its type wore before, in the game's actor viewer at High: at the game's distance, full length and walking](images/g1-pilot-bodies.jpg)
+
+- **The first rival legionary was rejected.** Its armour came out as banded segmented plate with shoulder plates, despite the negative prompt, with bare arms and open sandals. The second attempt asked for the chainmail shirt in the words that gave Quintus and the Roman cavalryman theirs, and has it, over an off-white tunic with a purple band at the hem. Its forearms are bare below the tunic's sleeves, as several shipped bodies' are.
+- **The war band's spearman** now wears the segmented helmet and leather jerkin his kit lists. The body his type wore before was bare-headed in a tunic. His jerkin has leather shoulder pieces and rivets the prompt did not ask for.
+- **The Palmyrene spearman's** jerkin came out as a shaped corselet of red leather with riveted panels, rather than padded, and his helmet is rounded with cheek pieces rather than conical. He reads apart from the bronze-scaled guard, which is what the type needs.
+- **The Moorish horseman's** hair came out in short waves rather than ringlets, and he wears a studded belt with hanging straps.
+- **The cataphract's horse.** Its bronze scales read dark in the field light, darker than the eastern horse's iron. The trapper covers the neck and body and lies under the game's saddle; its tail hangs clear of the ground, so the binder did not cut it.
+- **The chieftain** stands apart from his men: dark leather studded with bronze, red sleeves, the gold torc he drops as loot, and a helmet banded in bronze.
+- **The skirmisher** is the calibration's: at the game's distance the standard tier showed no less than the detailed ([the calibration](graphics-calibration.md)).
+
+#### Exact prompts
+
+**char-gothic-skirmisher**
+
+```text
+Full-body young Gothic skirmisher of the mid-3rd century AD, about eighteen years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. Lean and wiry, he wears a long-sleeved undyed wool tunic to mid-thigh with a narrow woven border at the hem and cuffs, a narrow leather belt with a small leather pouch, close-fitting grey-brown wool trousers wrapped with linen leg bindings below the knee and soft leather shoes. Bare head with shoulder-length light-brown hair tied back with a leather thong and a thin young beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no helmet, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+armour, mail, helmet, shield, weapon, spear, sword, cloak, cape, fur, horns, fantasy armour, modern clothing
+```
+
+**char-gothic-warband**
+
+```text
+Full-body Gothic warrior of the mid-3rd century AD, a spearman of a war band, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of thick brown leather over a long-sleeved dark green-brown wool tunic to mid-thigh, a leather belt, loose grey wool trousers wrapped with leg bindings and leather shoes, and a simple iron segmented helmet of riveted plates with a brow band and small cheek pieces, face visible. Fair hair to the shoulders and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+mail, plate armour, horns, wings, fur cape, cloak, shield, weapon, spear, sword, axe, fantasy armour, modern clothing
+```
+
+**char-champion-gate**
+
+```text
+Full-body Gothic war-band chieftain of the mid-3rd century AD, a powerful man of about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a fitted jerkin of dark leather studded with bronze over a long-sleeved red wool tunic with a woven border, a heavy twisted gold torc at the neck, a broad belt with silver fittings, dark wool trousers with leg bindings and leather boots, and an iron segmented helmet with bronze bands, cheek pieces and a short mail neck guard, face visible. Grey-streaked long hair and a full grey-brown beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+horns, wings, plate armour, fur cape, cloak, crown, shield, weapon, axe, sword, spear, skulls, fantasy armour, modern clothing
+```
+
+**char-persian-skirmisher**
+
+```text
+Full-body Sasanian Persian skirmisher of the mid-3rd century AD, a light-armed javelin man, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length tunic of undyed linen with a woven red border at the hem and cuffs, belted with a brown cloth sash, baggy trousers gathered at the ankle, soft leather shoes, and a soft rounded felt cap. Black beard and dark hair to the shoulders. No armour, no helmet. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+armour, mail, scale, lamellar, helmet, turban, cloak, cape, shield, weapon, spear, javelin, sword, bow, quiver, fantasy armour, modern clothing
+```
+
+**char-palmyrene-spearman**
+
+```text
+Full-body Palmyrene infantry spearman of the 270s AD, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a padded leather jerkin over a long-sleeved knee-length tunic of natural linen with embroidered red borders at the hem and cuffs, a narrow belt, close-fitting dark trousers with an embroidered band down the front, soft leather boots, and a simple conical iron helmet, face visible. Short dark beard and dark curly hair. No metal armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+mail, scale armour, plate armour, muscled cuirass, cloak, cape, shield, weapon, spear, sword, bow, quiver, turban, fantasy armour, modern clothing
+```
+
+**char-rival-legionary** (rejected at review)
+
+```text
+Full-body Roman legionary of the mid-3rd century AD serving a rival claimant, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an iron mail shirt to mid-thigh over a long-sleeved off-white wool tunic with two narrow dark purple bands, a broad leather belt with a bronze ring buckle, close-fitting dark brown wool trousers and closed leather boots, and an iron helmet of the Niederbieber type with crossed reinforcing bars on the bowl, wide cheek guards and a deep neck guard. Clean-shaven weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+lorica segmentata, segmented plate armour, muscled cuirass, crest, plume, red tunic, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing
+```
+
+**char-rival-legionary-b**
+
+```text
+Full-body Roman legionary of the mid-3rd century AD serving a rival claimant, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved off-white wool tunic with two narrow dark purple bands; a broad leather belt with a bronze ring buckle, close-fitting dark brown wool trousers and closed leather boots, and an iron helmet with a deep bowl, crossed reinforcing bars on the crown, wide cheek guards and a deep neck guard. Clean-shaven weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No crest, no plume, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, lorica segmentata, segmented armour, metal bands, breastplate, cuirass, shoulder plates, pauldrons, belt apron, crest, plume, red tunic, bare arms, sandals, cloak, shield, weapon, fantasy armour
+```
+
+**char-roman-moorish-cavalry**
+
+```text
+Full-body Moorish light cavalryman of the Roman army in the 270s AD, a Berber horseman from Mauretania, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved belted tunic of undyed wool to just above the knee with a narrow red border, a narrow leather belt, close-fitting light brown wool trousers and soft leather boots. Brown skin, dark hair in tight curled ringlets and a short curly beard. No helmet, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+helmet, armour, mail, turban, hood, robe, cloak, cape, shield, weapon, spear, javelin, sword, bow, fantasy armour, modern clothing
+```
+
+**horse-cataphract**
+
+```text
+An armoured horse of the Palmyrene heavy cavalry of the 270s AD, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A tall, strong horse about 1.55 metres at the withers, chestnut coat with a dark mane and tail. It wears a close-fitting armour trapper of small overlapping bronze scales sewn on leather, covering the neck, chest, flanks and hindquarters down to the belly and lying flat and smooth along the back, where a saddle will sit on top, and a plain leather bridle; the legs below the trapper are bare. Realistic proportions, anatomically accurate, worn and practical. No saddle, no saddle cloth, no rider, no face mask, no plumes, no spikes, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, raised seat, fantasy, cartoon
+```
+
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.

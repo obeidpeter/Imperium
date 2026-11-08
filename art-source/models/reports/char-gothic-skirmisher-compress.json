@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/gothic-skirmisher.glb",
+  "output": "assets/models/characters/gothic-skirmisher.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 470064,
+    "gzipBytes": 332907,
+    "sha256": "e836ec9fce6f8f66be9041d932320c8aa76b8d210d3114fde4bb0b21dd1e1510"
+  },
+  "after": {
+    "bytes": 408220,
+    "gzipBytes": 387566,
+    "sha256": "d907c190b9830c32964ee9fb3f7c582c177959cc68ac7ce60728fc1c8f23f177"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13780,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9002
+      },
+      "bytes": 20156,
+      "psnr": 42.137
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 58218
+      },
+      "bytes": 137319,
+      "psnr": 38.298
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14308
+      },
+      "bytes": 33519,
+      "psnr": 38.775
+    }
+  ]
+}

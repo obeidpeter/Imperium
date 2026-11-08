@@ -49,7 +49,12 @@ test('every generated body and horse is worn or ridden in its listed chapters, t
     const e=G.getChapter(s).encounters[s.encounterIndex],key=`${s.chapter}:${e?.id??'end'}`;if(seen.has(key))return;seen.add(key);
     const look=(unit,state=s)=>{const kit=actorKit(unit,{chapter:state.chapter,rank:state.rank});add(actorBodyId(kit,actorIdentity(unit,kit).key),state.chapter);add(horseBodyId(kit),state.chapter);};
     // The real-time camp and field draw the soldier and his company in their own kit.
-    const world=w=>{if(!w)return;for(const a of w.actors)look(stageUnit(a,{appearance:s.soldier.appearance}));for(const q of w.squads??[])look(squadUnit(w,q));};
+    const world=w=>{if(!w)return;for(const a of w.actors)look(stageUnit(a,{appearance:s.soldier.appearance}));for(const q of w.squads??[])look(squadUnit(w,q));
+      // Reinforcements march on later, a single man before Chapter IV and a squad after, each drawn as one of its kind.
+      for(const wave of [...(w.mission?.waves??[]),...(w.mission?.phaseMissions??[]).flatMap(p=>p.waves??[])]){
+        if(wave.spec)look(stageUnit({...wave.spec,x:0,z:0}));
+        if(wave.squad)look({id:wave.squad.id,name:wave.squad.name,side:wave.squad.side,role:wave.squad.role});
+      }};
     const camp=createCampWorld(clone(s));world(camp);
     if(s.chapter===12&&s.relationships.patron>=10){
       const patron=camp.actors.find(a=>a.id==='severianus');assert.ok(patron,'Earned patron support brings Severianus to the court');
@@ -82,10 +87,13 @@ test('every body has its Tripo task, rig, licence, manifest entry and budget, an
   const shipped=(await readdir(new URL('assets/models/characters/',root))).filter(f=>f.endsWith('.glb')).map(f=>f.slice(0,-4)).sort();
   assert.deepEqual(shipped,Object.keys(ACTOR_BODIES).sort(),'One file per catalogued body');
   for(const id of shipped){
-    const request=JSON.parse(await file(`art-source/models/requests/char-${id}.json`)),entry=manifest.assets.find(a=>a.path===actorBodyUrl(id)),p=request.provenance;
+    const entry=manifest.assets.find(a=>a.path===actorBodyUrl(id));assert.ok(entry,`${id} has provenance in the asset manifest`);
+    // A body shipped from a later attempt names that attempt's request (char-<id>-b); the rejected first one stays beside it.
+    assert.match(entry.source.prompt,new RegExp(`^art-source/models/requests/char-${id}(-[b-z])?\\.json$`),`${id} names its request`);
+    const request=JSON.parse(await file(entry.source.prompt)),p=request.provenance;
     assert.ok(p.taskId&&p.rawSha256&&p.rig?.taskId&&p.rig?.rawSha256,`${id} records its Tripo generation and rig`);
     assert.match(p.licence,/full rights to use, modify, distribute and commercially exploit/);
-    assert.ok(entry,`${id} has provenance in the asset manifest`);assert.equal(entry.source.taskId,p.taskId);assert.equal(entry.source.rigTaskId,p.rig.taskId);
+    assert.equal(entry.source.taskId,p.taskId);assert.equal(entry.source.rigTaskId,p.rig.taskId);
     const bytes=await file(actorBodyUrl(id)),info=await inspectModel(bytes),b={...request.budget,...entry.source.surfaceRepair?.budget};
     if(entry.source.surfaceRepair?.budget){
       assert.equal(b.bytes,request.budget.bytes,'Surface repair retains the original byte ceiling');
@@ -130,6 +138,32 @@ test('a soldier in his own kit wears the body closest to it: the recruit\'s tuni
   assert.equal(hero(mail,5),'roman-officer');assert.equal(hero([...mail.filter(id=>id!=='hamata'),'squamata'],8),'roman-commander');
   assert.equal(actorBodyId(actorKit({id:'felix',veteranId:'felix',name:'Marcus Felix',side:'player',role:'infantry',equipment:['tunic','jerkin','arming_cap','bracae','caligae','quiver','bow']},{chapter:4})),'roman-archer');
   assert.equal(hero(['tunic','bracae','caligae','bow','quiver'],4),'roman-recruit','The protagonist with a bow is still himself');
+});
+
+test('a unit type wears its own body where it has one, in turns and real time, and every other figure keeps its faction\'s', () => {
+  const look=(name,role,chapter,{side='enemy',id=name}={})=>{const kit=actorKit({id,name,side,role},{chapter});return [actorBodyId(kit,actorIdentity({id,name,side,role},kit).key),horseBodyId(kit)];};
+  const body=(...args)=>look(...args)[0];
+  // A war band: the reinforcement's skirmisher, the raider's axe and the spearman keep apart; the helmeted infantry wears the war band's jerkin.
+  assert.equal(body('Gothic skirmisher','raider',1),'gothic-skirmisher');assert.equal(body('Gothic raider','raider',1),'gothic-warrior');assert.equal(body('Gothic spearman','raider',2),'gothic-warrior');
+  for(const [name,chapter]of [['Gothic warrior',2],['Gothic warriors',4],['Gothic infantry',8]])assert.equal(body(name,'infantry',chapter),'gothic-warband',name);
+  assert.equal(body('Gothic shield guard','guard',4),'gothic-noble');assert.deepEqual(look('Gothic horse','cavalry',8),['gothic-noble','horse-northern']);
+  // A champion wears his own body by his id; the others keep their faction's.
+  assert.equal(body('The war band’s chieftain','champion',4,{id:'champion-gate'}),'champion-gate');
+  assert.equal(body('The war band’s war leader','champion',4,{id:'champion-wall'}),'gothic-warrior');
+  assert.equal(body('A Persian sapper captain','champion',5,{id:'champion-mine'}),'persian-infantry');
+  // The east: light-armed skirmishers and spearmen apart from the scale-armoured guard; the cataphract on his own horse.
+  assert.equal(body('Persian raiders','raider',6),'persian-skirmisher');assert.equal(body('Persian raider','raider',6),'persian-skirmisher');
+  assert.equal(body('Persian warriors','infantry',5),'persian-infantry');assert.equal(body('Persian shield guard','guard',5),'persian-infantry');
+  assert.equal(body('Palmyrene warriors','infantry',9),'palmyrene-spearman');assert.equal(body('Palmyrene shield guard','guard',9),'palmyrene-infantry');
+  assert.deepEqual(look('Palmyrene horse','cavalry',9),['palmyrene-cavalry','horse-cataphract']);assert.deepEqual(look('Persian horse','cavalry',6),['persian-cavalry','horse-eastern']);
+  // The claimant's cohorts no longer wear the soldier's own legionaries' mail; the claimant and his reserve keep the commander's cuirass, his archers the bowman's,
+  // and a cohort that takes the oath is drawn as the soldier's own.
+  for(const name of ['Civil-war cohort 2','Rival Roman warriors','Rival Roman infantry'])assert.equal(body(name,'infantry',12),'rival-legionary',name);
+  assert.equal(body('Rival claimant','infantry',12),'roman-commander');assert.equal(body('Claimant’s reserve cohort','infantry',12),'roman-commander');
+  assert.equal(body('Civil-war cohort 3','archer',12),'roman-archer');assert.equal(body('Pledged cohort','infantry',12,{side:'ally'}),'roman-legionary');
+  // Aurelian's Moorish horse ride in the Palmyrene war; the Roman cavalry elsewhere, and the claimant's, keep the cavalryman's mail.
+  assert.deepEqual(look('First horse','cavalry',9,{side:'ally'}),['roman-moorish-cavalry','horse-roman']);
+  assert.equal(body('First horse','cavalry',7,{side:'ally'}),'roman-cavalry');assert.equal(body('Rival Roman horse','cavalry',12),'roman-cavalry');
 });
 
 test('the camp\'s people wear their role\'s body, and only escorts on the march carry a traveller\'s bundle', async () => {

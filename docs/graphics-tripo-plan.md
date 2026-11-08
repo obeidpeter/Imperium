@@ -29,7 +29,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | # | Release | Cap | State |
 | --- | --- | --- | --- |
 | 0 | Use what's paid for, then calibrate | 250 | done: calibrated (190 credits, [results](graphics-calibration.md)), and the 3D kit made (seven weapons and helmets, no credits); the landmarks' re-texture skipped |
-| G1 | Armies | 2,300 | next, once the owner approves it |
+| G1 | Armies | 2,300 | pilot made on 8 November (310 credits): seven bodies and a horse, [awaiting the owner's review](#g1s-pilot-8-november) |
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 1,700 | (1,300, and 400 from G7) |
 | G4 | Animals | 600 | |
@@ -96,6 +96,37 @@ G1's 34 bodies:
 | Rival Romans | 4 |
 | Roman specialists: Moorish and Dalmatian cavalry, a draco-bearer, a centurion | 4 |
 | Unique champions | 8 |
+
+### G1's pilot (8 November)
+
+Seven bodies and a horse, one for each of G1's categories, in the game for the owner's review:
+
+![Each pilot body beside the body its type wore before, in the game's actor viewer at High](images/g1-pilot-bodies.jpg)
+
+| Category | Body | Worn by | Chapters |
+| --- | --- | --- | --- |
+| Gothic | a young skirmisher, step 0's calibration body (no credits) | the skirmisher who marches on with the reinforcements | I, II |
+| Gothic | a war-band spearman in a leather jerkin and segmented helmet | the war bands' infantry | II, IV, VII, VIII |
+| Persian | a skirmisher in linen and a felt cap | the raiders | VI |
+| Palmyrene | a spearman in a leather corselet over linen | the infantry | IX |
+| Rival Romans | a legionary in mail over an off-white tunic | the claimant's civil-war cohorts | XII |
+| Roman specialists | a Moorish horseman | the Roman cavalry of the Palmyrene war | IX |
+| Champions | the war band's chieftain, with his torc | the gate battle's champion | IV |
+| Horses | a chestnut cataphract's horse under bronze scales, flat along the back | the Palmyrene cataphracts | IX |
+
+- **Credits:** 310: six rigged bodies (45 each), the horse (20), and one rejected generation redone (the first rival legionary came out in segmented plate). [The ledger](../art-source/models/graphics-g1-credits.json) has every task.
+- **How a body is chosen:** by what the rules made the unit (its role, a skirmisher's or a claimant's name, a champion's id), in presentation only; a type's body is matched before its faction's.
+- **Downloads:** Chapter I's download is now 17.2 of its 18 MB, so at most two more of Chapter I's bodies fit the web build at the bodies' 1,024-pixel maps. The rest can take the cast's 512-pixel maps, as release 8 did, or ship in the desktop app only, as decision 2 allows.
+
+**Proposed for the rest of G1, after the owner's review** (about 1,500 credits, within the cap):
+- **A body for every unit type still without one (23):**
+  - Gothic: the axe raider, the spearman, the band's war leader, the shield guard and the horseman;
+  - Persian: the spearman and the guard;
+  - rival Romans: the guardsman, the archer and the horseman;
+  - Roman specialists: Dalmatian cavalry, a draco-bearer and a centurion;
+  - the other ten champions. The mounted Palmyrene officer is drawn on foot today, and would ride.
+- **A second body for the crowds seen most (10):** each squad wears one of its type's bodies by its identity, so neighbouring squads differ. The war bands, the raiders, the Persian and Palmyrene spearmen, the claimant's legionaries, and the soldier's own legionaries, archers and cavalry.
+- **Two horses:** the northern horse remade at its own smaller size, and a Persian horse in iron lamellae, apart from the Palmyrene bronze.
 
 Each cap includes about 10% for rejected attempts. G3 and G5 have G7's credits too: each pilot proposes how many more of its own list they buy. Some things stay out of Tripo:
 - the Colosseum, which failed three times there, gets a Blender build;

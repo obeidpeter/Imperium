@@ -2,7 +2,8 @@
   "id": "horse-northern",
   "status": "bound on its own rest pose, quantized and compressed: shipped",
   "chapters": [
-    7
+    7,
+    8
   ],
   "use": "The Gothic riders' horse, mesh only: skinned in Blender to the game's own horse skeleton (scripts/assets/bind-horse.py), so its hooves stay planted, its rider seated, and formations and fallen horses work as with the code-built horse, which stays the stand-in.",
   "generator": {

@@ -1,0 +1,498 @@
+{
+  "tool": "scripts/assets/bind-horse.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/horse-cataphract.glb",
+    "bytes": 47424808,
+    "sha256": "b115a654ff429a335bd3f96ff5f226de32bdc93358755b0f7d5fb08561ac29c2",
+    "triangles": 1497584
+  },
+  "output": {
+    "path": "assets/models/horses/horse-cataphract.glb",
+    "bytes": 609808,
+    "sha256": "24f2fa5a8e070780b01c36b9f6610ebb8a1f578339ca48507bbbcda9464c1f2a",
+    "triangles": 9000,
+    "overviewTriangles": 1800,
+    "unquantizedBytes": 884792,
+    "quantized": {
+      "tool": "scripts/assets/quantize-model.mjs",
+      "extension": "KHR_mesh_quantization",
+      "vertices": {
+        "NORMAL": 11469,
+        "TEXCOORD_0": 11469,
+        "WEIGHTS_0": 11469
+      }
+    }
+  },
+  "settings": {
+    "triangles": 9000,
+    "overviewTriangles": 1800,
+    "texture": 1024,
+    "detailTexture": 512,
+    "webpQuality": 80,
+    "sharpAngle": 60
+  },
+  "fit": {
+    "turnDegrees": -90,
+    "scale": 2.14248,
+    "saddle": -0.2652,
+    "legSpacing": 1.258,
+    "legZ": 0.629,
+    "bakedFromFullDetail": true,
+    "legs": {
+      "fore-right": {
+        "sole": [
+          0.1228,
+          0,
+          0.6742
+        ],
+        "coronet": [
+          0.1282,
+          0.12,
+          0.642
+        ],
+        "knee": [
+          0.1271,
+          0.47,
+          0.6419
+        ],
+        "pivot": [
+          0.1254,
+          1.04,
+          0.6023
+        ]
+      },
+      "fore-left": {
+        "sole": [
+          -0.1384,
+          0,
+          0.6718
+        ],
+        "coronet": [
+          -0.1328,
+          0.12,
+          0.6258
+        ],
+        "knee": [
+          -0.1338,
+          0.47,
+          0.631
+        ],
+        "pivot": [
+          -0.1375,
+          1.04,
+          0.6
+        ]
+      },
+      "hind-right": {
+        "sole": [
+          0.1848,
+          0,
+          -0.4654
+        ],
+        "coronet": [
+          0.171,
+          0.12,
+          -0.5436
+        ],
+        "knee": [
+          0.1563,
+          0.54,
+          -0.6514
+        ],
+        "pivot": [
+          0.1789,
+          1.04,
+          -0.5333
+        ]
+      },
+      "hind-left": {
+        "sole": [
+          -0.19,
+          0,
+          -0.4742
+        ],
+        "coronet": [
+          -0.1814,
+          0.12,
+          -0.5431
+        ],
+        "knee": [
+          -0.1622,
+          0.54,
+          -0.6519
+        ],
+        "pivot": [
+          -0.1718,
+          1.04,
+          -0.5219
+        ]
+      }
+    },
+    "legLines": {
+      "fore-right": [
+        [
+          0.02,
+          0.1177,
+          -0.6936,
+          0.1015
+        ],
+        [
+          0.1,
+          0.1291,
+          -0.6529,
+          0.0554
+        ],
+        [
+          0.2,
+          0.1287,
+          -0.599,
+          0.05
+        ],
+        [
+          0.4,
+          0.1345,
+          -0.628,
+          0.0422
+        ],
+        [
+          0.48,
+          0.1298,
+          -0.6273,
+          0.0597
+        ],
+        [
+          0.58,
+          0.1246,
+          -0.6298,
+          0.0569
+        ],
+        [
+          0.7,
+          0.1307,
+          -0.6482,
+          0.0659
+        ]
+      ],
+      "fore-left": [
+        [
+          0.02,
+          -0.1358,
+          -0.6928,
+          0.0994
+        ],
+        [
+          0.1,
+          -0.1325,
+          -0.6458,
+          0.0497
+        ],
+        [
+          0.18,
+          -0.1419,
+          -0.6004,
+          0.0526
+        ],
+        [
+          0.34,
+          -0.1497,
+          -0.6224,
+          0.0146
+        ],
+        [
+          0.46,
+          -0.1329,
+          -0.6232,
+          0.0607
+        ],
+        [
+          0.54,
+          -0.131,
+          -0.6282,
+          0.0531
+        ],
+        [
+          0.76,
+          -0.1294,
+          -0.629,
+          0.0761
+        ]
+      ],
+      "hind-right": [
+        [
+          0.02,
+          0.1839,
+          0.4537,
+          0.0967
+        ],
+        [
+          0.1,
+          0.1752,
+          0.5167,
+          0.0602
+        ],
+        [
+          0.18,
+          0.1624,
+          0.5919,
+          0.0595
+        ],
+        [
+          0.36,
+          0.1563,
+          0.6327,
+          0.0399
+        ],
+        [
+          0.5,
+          0.1511,
+          0.6699,
+          0.0502
+        ],
+        [
+          0.6,
+          0.1549,
+          0.6444,
+          0.0932
+        ],
+        [
+          0.68,
+          0.1642,
+          0.5229,
+          0.0963
+        ],
+        [
+          0.76,
+          0.1869,
+          0.4552,
+          0.1088
+        ]
+      ],
+      "hind-left": [
+        [
+          0.02,
+          -0.1873,
+          0.4549,
+          0.0974
+        ],
+        [
+          0.1,
+          -0.1863,
+          0.5153,
+          0.062
+        ],
+        [
+          0.18,
+          -0.1738,
+          0.5958,
+          0.06
+        ],
+        [
+          0.26,
+          -0.1677,
+          0.6088,
+          0.034
+        ],
+        [
+          0.52,
+          -0.1626,
+          0.6591,
+          0.0605
+        ],
+        [
+          0.62,
+          -0.1551,
+          0.6032,
+          0.1045
+        ],
+        [
+          0.7,
+          -0.1602,
+          0.525,
+          0.0971
+        ],
+        [
+          0.78,
+          -0.1824,
+          0.4498,
+          0.1248
+        ]
+      ]
+    },
+    "tailRoot": [
+      0,
+      1.125,
+      -0.7806
+    ],
+    "tailVertices": 33,
+    "pieces": {
+      "legs": {
+        "fore-right": 108,
+        "fore-left": 99,
+        "hind-right": 105,
+        "hind-left": 99
+      },
+      "freeTail": 94,
+      "freeTailBelow": 1
+    },
+    "joints": {
+      "horse": [
+        0,
+        0,
+        0
+      ],
+      "horse-body": [
+        0,
+        1.04,
+        0
+      ],
+      "horse-neck": [
+        0,
+        1.04,
+        0
+      ],
+      "horse-head": [
+        0,
+        1.76,
+        0.87
+      ],
+      "horse-left-ear": [
+        -0.067,
+        1.904,
+        0.881
+      ],
+      "horse-right-ear": [
+        0.067,
+        1.904,
+        0.881
+      ],
+      "horse-tail": [
+        0,
+        1.125,
+        -0.7806
+      ],
+      "fore-right-leg": [
+        0.1254,
+        1.04,
+        0.6023
+      ],
+      "fore-right-knee": [
+        0.1271,
+        0.47,
+        0.6419
+      ],
+      "fore-right-fetlock": [
+        0.1282,
+        0.12,
+        0.642
+      ],
+      "fore-left-leg": [
+        -0.1375,
+        1.04,
+        0.6
+      ],
+      "fore-left-knee": [
+        -0.1338,
+        0.47,
+        0.631
+      ],
+      "fore-left-fetlock": [
+        -0.1328,
+        0.12,
+        0.6258
+      ],
+      "hind-right-leg": [
+        0.1789,
+        1.04,
+        -0.5333
+      ],
+      "hind-right-knee": [
+        0.1563,
+        0.54,
+        -0.6514
+      ],
+      "hind-right-fetlock": [
+        0.171,
+        0.12,
+        -0.5436
+      ],
+      "hind-left-leg": [
+        -0.1718,
+        1.04,
+        -0.5219
+      ],
+      "hind-left-knee": [
+        -0.1622,
+        0.54,
+        -0.6519
+      ],
+      "hind-left-fetlock": [
+        -0.1814,
+        0.12,
+        -0.5431
+      ]
+    },
+    "verticesByJoint": {
+      "horse-neck": 893,
+      "horse-body": 2897,
+      "horse-tail": 163,
+      "hind-right-leg": 49,
+      "fore-left-fetlock": 35,
+      "fore-right-fetlock": 37,
+      "hind-right-fetlock": 33,
+      "hind-right-knee": 55,
+      "hind-left-knee": 53,
+      "fore-left-leg": 26,
+      "hind-left-fetlock": 34,
+      "hind-left-leg": 44,
+      "fore-right-leg": 40,
+      "fore-left-knee": 49,
+      "fore-right-knee": 50
+    },
+    "overviewVertexColours": true
+  },
+  "bounds": {
+    "min": [
+      -0.29839,
+      -0.00096,
+      -0.86731
+    ],
+    "max": [
+      0.29852,
+      2.14659,
+      1.18206
+    ]
+  },
+  "textures": [
+    {
+      "name": "Color_15f4f317-3226-4092-80a2-2d57f047818c",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "name": "horse-colour",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "name": "horse-normal",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "horse-roughness",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_15f4f317-3226-4092-80a2-2d57f047818c",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_15f4f317-3226-4092-80a2-2d57f047818c",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "id": "char-rival-legionary-b",
+  "status": "bound, quantized and compressed: G1 pilot, awaiting the owner's review",
+  "chapters": [
+    12
+  ],
+  "use": "Rival Roman infantry: the claimant's civil-war cohorts in Chapter XII, in off-white tunics so they no longer wear the player's own soldiers' bodies; the game adds the shield, sword and pilum. Release G1's pilot.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman legionary of the mid-3rd century AD serving a rival claimant, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved off-white wool tunic with two narrow dark purple bands; a broad leather belt with a bronze ring buckle, close-fitting dark brown wool trousers and closed leather boots, and an iron helmet with a deep bowl, crossed reinforcing bars on the crown, wide cheek guards and a deep neck guard. Clean-shaven weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No crest, no plume, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, metal bands, breastplate, cuirass, shoulder plates, pauldrons, belt apron, crest, plume, red tunic, bare arms, sandals, cloak, shield, weapon, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611270,
+      "image_seed": 2611271,
+      "texture_seed": 2611272
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "pilot",
+    "creditCeiling": 345,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "replaces": "char-rival-legionary",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T23:13:58.861Z",
+    "requestBody": {
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, metal bands, breastplate, cuirass, shoulder plates, pauldrons, belt apron, crest, plume, red tunic, bare arms, sandals, cloak, shield, weapon, fantasy armour",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611270,
+      "image_seed": 2611271,
+      "texture_seed": 2611272,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Roman legionary of the mid-3rd century AD serving a rival claimant, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved off-white wool tunic with two narrow dark purple bands; a broad leather belt with a bronze ring buckle, close-fitting dark brown wool trousers and closed leather boots, and an iron helmet with a deep bowl, crossed reinforcing bars on the crown, wide cheek guards and a deep neck guard. Clean-shaven weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No crest, no plume, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10320,
+    "balanceSnapshotBefore": {
+      "balance": 10320,
+      "frozen": 45
+    },
+    "submission": {
+      "id": "18ade9d3-d6c9-43f1-b35b-158762318c4a",
+      "state": "accepted",
+      "requestSha256": "605af11a482c042b728c29f991ffe5298058437a1b09f0cc5f25e2d503f08979"
+    },
+    "taskId": "a07a6901-559f-4966-9e0e-60e19e70a2db",
+    "status": "success",
+    "generatedAt": "2026-11-08T23:15:35.999Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-rival-legionary-b.glb",
+    "rawBytes": 44884416,
+    "rawSha256": "15826a4f7d01073f5af5faf9d25965eb4b1e78b0982c16a0424c07d5b675bc14",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Roman legionary of the mid-3rd century AD serving a rival claimant, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved off-white wool tunic with two narrow dark purple bands; a broad leather belt with a bronze ring buckle, close-fitting dark brown wool trousers and closed leather boots, and an iron helmet with a deep bowl, crossed reinforcing bars on the crown, wide cheek guards and a deep neck guard. Clean-shaven weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No crest, no plume, no shield, no weapons, no cloak, no backpack, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611271,
+      "model_seed": 2611270,
+      "texture_seed": 2611272,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, lorica segmentata, segmented armour, metal bands, breastplate, cuirass, shoulder plates, pauldrons, belt apron, crest, plume, red tunic, bare arms, sandals, cloak, shield, weapon, fantasy armour",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T23:13:59.447116Z",
+    "tripoCompletedAt": "2026-11-08T23:15:31.255651Z",
+    "tripoRender": "art-source/models/raw/char-rival-legionary-b-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-08T23:16:56.107Z",
+      "requestBody": {
+        "input": "a07a6901-559f-4966-9e0e-60e19e70a2db"
+      },
+      "submission": {
+        "id": "74379f7c-7325-4fe2-8db6-d6ab05196b20",
+        "state": "accepted",
+        "requestSha256": "dd27706b23459dec864959435059b91727b482c94d8ebd630abf2de83511c09f"
+      },
+      "taskId": "a138b9d6-fa26-4b72-aae3-a933e43e4ff7",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-08T23:17:01.856Z",
+      "requestBody": {
+        "input": "a07a6901-559f-4966-9e0e-60e19e70a2db",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 10225,
+      "balanceSnapshotBefore": {
+        "balance": 10225,
+        "frozen": 0
+      },
+      "submission": {
+        "id": "9f452efa-c2de-4588-825d-0512d69fb087",
+        "state": "accepted",
+        "requestSha256": "d1d8bf2c1d34fda25b7b5e5bf565300470d28d6dd4585bb618192ffe800c1085"
+      },
+      "taskId": "6e0ce422-414c-436a-80f8-19656a5d1fc0",
+      "status": "success",
+      "generatedAt": "2026-11-08T23:17:52.099Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-rival-legionary-b-rigged.glb",
+      "rawBytes": 59605488,
+      "rawSha256": "1102dc49295de0318ecf411807ebf02190195516cb9bb0b6fce299f33cb86849",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "a07a6901-559f-4966-9e0e-60e19e70a2db"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-08T23:17:02.113665Z",
+      "tripoCompletedAt": "2026-11-08T23:17:44.727552Z"
+    }
+  }
+}

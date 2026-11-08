@@ -2,6 +2,32 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G1's pilot: unit types in bodies of their own, for the owner's review ([the plan](docs/graphics-tripo-plan.md#g1s-pilot-8-november))
+
+Seven unit types that wore another unit's body now wear their own, and the Palmyrene cataphracts ride a horse of their own. Each was generated with Tripo at the standard tier, rigged and bound to the game's skeleton like every body. The owner reviews them before the rest of G1 is generated.
+
+- **Who wears what:**
+  - Chapters I and II: the Gothic skirmisher who marches on with the reinforcements, the young javelin man bought for step 0's calibration, at no further cost;
+  - Chapters II, IV, VII and VIII: the Gothic war bands' infantry, in the leather jerkin and segmented helmet their kit lists;
+  - Chapter IV: the war band's chieftain, the gate battle's champion, in a studded jerkin, a gold torc and a banded helmet;
+  - Chapter VI: Persian skirmishers, light-armed in linen and a felt cap, no longer in the guard's scale coat;
+  - Chapter IX: Palmyrene infantry, in a leather corselet over linen, apart from the bronze-scaled guard;
+  - Chapter IX: Aurelian's Moorish horse, the Roman cavalry of the Palmyrene war (Zosimus names them at Emesa), and the cataphracts' chestnut horse under bronze scales;
+  - Chapter XII: the claimant's civil-war cohorts, in mail over an off-white tunic with purple bands, no longer in the soldier's own legionaries' bodies.
+- **How a body is chosen:** by the unit's own role and name, in presentation only. A type's body is matched before its faction's, and champions by their id. Every other figure keeps the body it wore.
+- **Found on the way:** the chapter check now counts the reinforcements that march on mid-battle. Chapter VIII's Gothic cavalry wave wore the noble's body and rode the northern horse, but neither was in Chapter VIII's download. Both are now.
+- **Credits:** 310 of G1's 2,300, and the balance went from 10,510 to 10,200.
+  - Six rigged bodies cost 45 each, and the horse 20.
+  - One generation was rejected and redone: the first rival legionary came out in segmented plate, which the historical notes rule out for AD 250–275. That is one of eight (12.5%), under the plan's 20% stop rule.
+- **Downloads:** the eight files take 3,506,648 bytes. Chapter I's download is now 17.2 of its 18 MB, the largest chapter's (XII) 26.6 of 28 MB, and the complete game 59.1 of 80 MB.
+- **Records:** the requests (the rejected one kept), [the G1 credit ledger](art-source/models/graphics-g1-credits.json), the manifest's eight entries, the art record and the AI-content disclosure (regenerated).
+- **Checks:**
+  - the body tests check every body's chapters against the legal campaign in turns and real time, reinforcements included, and which body each unit type wears;
+  - the horse tests;
+  - a ledger test checks the credits task by task.
+
+  The review images come from the actor viewer, in headless Chromium under a software renderer at High. They are not a hardware or device check.
+
 ### The owner's choices after the calibration ([the plan](docs/graphics-tripo-plan.md#the-owners-decisions-8-november))
 
 On 8 November the owner chose standard textures for every category and skipped the landmarks' re-texture (step 0c) and the backdrops release (G7). G7's 750 credits go where the camera is: 400 to the camps (G3) and 350 to battle and siege (G5). The plan keeps its 7,900-credit cap, 73.8% of the balance. Step 0 is complete, and G1 starts once the owner approves it. Docs only: the graphics plan and the calibration report.

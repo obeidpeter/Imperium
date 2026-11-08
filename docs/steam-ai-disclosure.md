@@ -6,7 +6,7 @@ Steam’s own wording in Steamworks decides what is asked. This draft could not 
 
 ## The answers
 
-- **Made with AI before release (pre-generated): yes.** 199 of the 234 files the game ships were made with AI tools ([below](#what-it-rests-on-the-files-made-with-ai)), and so were its writing and code ([beyond the shipped files](#beyond-the-shipped-files)).
+- **Made with AI before release (pre-generated): yes.** 207 of the 242 files the game ships were made with AI tools ([below](#what-it-rests-on-the-files-made-with-ai)), and so were its writing and code ([beyond the shipped files](#beyond-the-shipped-files)).
 - **Generated while the game runs (live-generated): no.** The manifest’s runtime policy: “All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.” The game connects to no AI service.
 
 ## The text for the store page
@@ -38,8 +38,8 @@ No third-party art, photographs or voice recordings were given to any generator.
 | 2D figures in action | 5 | OpenAI image generation (the built-in tool in the Codex app) | Cut out, packed into atlases and compressed |
 | 2D camp, ground and nature pictures | 3 | OpenAI image generation (the built-in tool in the Codex app) | Cut out, packed and compressed |
 | Surface textures | 10 | OpenAI image generation (the built-in tool in the Codex app) | Resized and compressed; some recompressed again |
-| Characters’ bodies | 35 | Tripo text-to-model (v3.0, v3.1) and Tripo’s auto-rig; OpenAI image generation restored five face textures from the project’s own renders | Rigged by Tripo’s auto-rig, bound to the game’s own skeleton and motions, reduced and compressed |
-| Horses | 3 | Tripo text-to-model (v3.1) | Bound to the game’s own horse rig and gaits, reduced and compressed |
+| Characters’ bodies | 42 | Tripo text-to-model (v3.0, v3.1) and Tripo’s auto-rig; OpenAI image generation restored five face textures from the project’s own renders | Rigged by Tripo’s auto-rig, bound to the game’s own skeleton and motions, reduced and compressed |
+| Horses | 4 | Tripo text-to-model (v3.1) | Bound to the game’s own horse rig and gaits, reduced and compressed |
 | Landmarks | 32 | Tripo text-to-model (H3.1) | Processed in Blender by the project’s scripts, then compressed |
 | Camp and town props | 30 | Tripo text-to-model (H3.1) | Processed in Blender by the project’s scripts, then compressed |
 | Chapter V scenery | 9 | Tripo text-to-model (H3.1, v2.5) | Processed in Blender by the project’s scripts, then compressed |
