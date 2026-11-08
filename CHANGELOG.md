@@ -2,6 +2,19 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### A graphics plan for 7,900 Tripo credits, approved ([the plan](docs/graphics-tripo-plan.md))
+
+On 8 November the owner approved a plan to improve the game's graphics substantially with at least 70% of the Tripo balance. It caps the spend at 7,900 of 10,700 credits and keeps about 2,800 back.
+
+- **Step 0, now:**
+  - first, two upgrades that cost no credits: 3D weapons, shields and helmets from the 39 item models already generated, and the landmarks re-textured;
+  - then about 10 calibration assets, which measure the price and look of each quality tier for the owner's choice.
+- **Seven releases:** armies, arms and standards, camps, animals, battle and siege, faces and people, and backdrops. Each has a credit cap and a pilot the owner reviews.
+- **Where it ships:** the full set ships in the desktop app; the web builds take what fits their current download limits.
+- **Timing:** the plan runs alongside Gate 4 and changes no rules.
+
+Docs only: `docs/graphics-tripo-plan.md`, and a line in `docs/steam-plan.md`.
+
 ### The trailer's capture script and a draft trailer ([the record](docs/steam-store-art.md#the-trailer-a-draft))
 
 `node scripts/steam-trailer.mjs` records the trailer for the Steam store page from the game itself, as the revised plan asked. `desktop/steam/trailer/draft.mp4` is its first draft, 34 seconds long: six clips from Chapter V to Chapter XII and the library logo, with the game's own battle music and no voice-over. It shows the game before 0.40.0, so it is recorded again after the owner's Gate 4 sign-off.

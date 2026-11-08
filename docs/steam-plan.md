@@ -23,7 +23,7 @@ The owner approved this revision on 8 November 2026, after [#82](https://github.
      - sends the Performance-check files from a phone and a laptop, and decides whether the turn-based mode stays;
      - sets up Steamworks: the partner account, the $100 fee and the App ID, the store title, and the rights checks in [the release checklist](steam-release.md). Steam's waiting times then run during Gate 4;
      - may try the Windows app from CI's `imperium-windows` artifact before any Steam upload.
-   - **Claude:** writes the trailer's capture script (`scripts/steam-trailer.mjs`), from legal play like the screenshots. It produces a draft only, with nothing uploaded and no credits spent. Done: [the draft](steam-store-art.md#the-trailer-a-draft).
+   - **Claude:** writes the trailer's capture script (`scripts/steam-trailer.mjs`), from legal play like the screenshots. It produces a draft only, with nothing uploaded and no credits spent. Done: [the draft](steam-store-art.md#the-trailer-a-draft). Since 8 November, also [the graphics plan](graphics-tripo-plan.md), which runs alongside and changes no rules.
 2. **After Gate 4,** one PR per step:
    - the play-through's fixes, blocking problems first. A fix that touches balance re-runs the six sweeps and checks the battle on fresh seeds (`scripts/battle-seeds.mjs`);
    - real time by default for a chronicle with no chosen mode;
