@@ -1,0 +1,172 @@
+{
+  "id": "cal-gothic-skirmisher-standard",
+  "status": "calibration: generated, rigged, bound to the game's skeleton and reviewed in the actor viewer; not shipped",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    7,
+    8,
+    10
+  ],
+  "use": "Step 0 calibration (docs/graphics-tripo-plan.md): a Gothic skirmisher body at Tripo's standard texture tier, the same prompt and seeds as its pair, so the two differ only in texture quality. Bound to the game's skeleton for review; whichever the owner picks can become the Gothic skirmisher body of release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body young Gothic skirmisher of the mid-3rd century AD, about eighteen years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. Lean and wiry, he wears a long-sleeved undyed wool tunic to mid-thigh with a narrow woven border at the hem and cuffs, a narrow leather belt with a small leather pouch, close-fitting grey-brown wool trousers wrapped with linen leg bindings below the knee and soft leather shoes. Bare head with shoulder-length light-brown hair tied back with a leather thong and a thin young beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no helmet, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, mail, helmet, shield, weapon, spear, sword, cloak, cape, fur, horns, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611080,
+      "image_seed": 2611081,
+      "texture_seed": 2611082
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-calibration",
+    "creditCeiling": 250,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "calibration": "texture tier standard, geometry standard",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T20:18:49.108Z",
+    "requestBody": {
+      "negative_prompt": "armour, mail, helmet, shield, weapon, spear, sword, cloak, cape, fur, horns, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611080,
+      "image_seed": 2611081,
+      "texture_seed": 2611082,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body young Gothic skirmisher of the mid-3rd century AD, about eighteen years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. Lean and wiry, he wears a long-sleeved undyed wool tunic to mid-thigh with a narrow woven border at the hem and cuffs, a narrow leather belt with a small leather pouch, close-fitting grey-brown wool trousers wrapped with linen leg bindings below the knee and soft leather shoes. Bare head with shoulder-length light-brown hair tied back with a leather thong and a thin young beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no helmet, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10700,
+    "balanceSnapshotBefore": {
+      "balance": 10700,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "86637280-83fd-4c97-8a8c-8b2a485b290a",
+      "state": "accepted",
+      "requestSha256": "9d01e71b9ea23d007c4f221d760ebc04d8b90db3e86ff103e28479bba8797e7e"
+    },
+    "taskId": "7c8a8e44-993c-4bf8-9dd3-c2a384f68380",
+    "status": "success",
+    "generatedAt": "2026-11-08T20:20:21.892Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/cal-gothic-skirmisher-standard.glb",
+    "rawBytes": 45203012,
+    "rawSha256": "79ad449349ecc6b74f0fef4757faf8cf2ec8225b10efed1464c4bb9f93b4b887",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body young Gothic skirmisher of the mid-3rd century AD, about eighteen years old, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. Lean and wiry, he wears a long-sleeved undyed wool tunic to mid-thigh with a narrow woven border at the hem and cuffs, a narrow leather belt with a small leather pouch, close-fitting grey-brown wool trousers wrapped with linen leg bindings below the knee and soft leather shoes. Bare head with shoulder-length light-brown hair tied back with a leather thong and a thin young beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no helmet, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611081,
+      "model_seed": 2611080,
+      "texture_seed": 2611082,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, mail, helmet, shield, weapon, spear, sword, cloak, cape, fur, horns, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T20:18:49.795837Z",
+    "tripoCompletedAt": "2026-11-08T20:20:14.374036Z",
+    "tripoRender": "art-source/models/raw/cal-gothic-skirmisher-standard-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-08T20:21:55.173Z",
+      "requestBody": {
+        "input": "7c8a8e44-993c-4bf8-9dd3-c2a384f68380"
+      },
+      "submission": {
+        "id": "225bef89-4feb-48fb-91ec-dcc58dccee72",
+        "state": "accepted",
+        "requestSha256": "b5e3543151104854df2b87eb39ef424894e67cba401b79ade636cd87b332083e"
+      },
+      "taskId": "9dcca284-d7e0-4061-9e80-9a5f077a5262",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-08T20:22:01.312Z",
+      "requestBody": {
+        "input": "7c8a8e44-993c-4bf8-9dd3-c2a384f68380",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 10560,
+      "balanceSnapshotBefore": {
+        "balance": 10560,
+        "frozen": 30
+      },
+      "submission": {
+        "id": "7d925b41-7b8f-465e-997b-3f3bf957014d",
+        "state": "accepted",
+        "requestSha256": "a6b64700a957815e21cfaccfe2822818935019b9344b53ef5e124dcdfe81e70a"
+      },
+      "taskId": "7f1bf80a-4f0c-4026-86df-c7f11749f79a",
+      "status": "success",
+      "generatedAt": "2026-11-08T20:23:15.864Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/cal-gothic-skirmisher-standard-rigged.glb",
+      "rawBytes": 60303404,
+      "rawSha256": "5006c9966f52a3703b18dd416e6b2703c2b59e6934a47d5fdaf475c349f13ee1",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "7c8a8e44-993c-4bf8-9dd3-c2a384f68380"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-08T20:22:01.575910Z",
+      "tripoCompletedAt": "2026-11-08T20:22:58.616638Z"
+    },
+    "review": "Bound at the body budget (11,280 near and 2,500 overview triangles, 1,024 px colour) and compressed (408,220 bytes). At the game's tactical distance it is indistinguishable from the detailed pair; see docs/graphics-calibration.md."
+  }
+}

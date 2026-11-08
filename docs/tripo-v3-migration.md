@@ -36,8 +36,10 @@ V3 results use `output.model_url`, `output.rendered_image_url`, `credits_consume
 | H-series geometry | `v3.1-20260211` | `v3.0-20250812` |
 | Textures | `v3.0-20250812` | `v3.5-20260815` |
 | Biped rig, Tripo naming, GLB | `v1.0-20240301` | Explicit `v2.5-20260210` or `v3.0-20260909` |
+| P-series geometry, text prompts only | none: name it as `options.model` | `P1-20260311` (50–20,000 faces) or `P2-20260801` (48–50,000 triangles, without `quad`) |
+| A preset animation on a recorded rig (`generator.retarget`) | played in place, GLB | one to five `preset:…` names |
 
-The default biped skeleton is intentional: the existing Blender binder expects it. The newer rig models and naming conventions need paid output and binding review before use. Existing provenance is never relabelled with the new defaults. Separate texturing/segmentation, P-series generation, FBX, generated parts and implicit smart-low-poly generation are outside this pipeline's supported single-GLB workflow. They fail locally rather than invoking retired or automatically changing models. Blender still performs mesh reduction.
+The default biped skeleton is intentional: the existing Blender binder expects it. The newer rig models and naming conventions need paid output and binding review before use. Existing provenance is never relabelled with the new defaults. Separate texturing/segmentation, P-series image or multiview input, quad meshes, FBX, generated parts and implicit smart-low-poly generation are outside this pipeline's supported single-GLB workflow. Tripo's changelog prices P2 at 100 credits untextured and 110, 120 or 130 with standard, detailed or extreme textures, against 20 for a standard H-series model ([the calibration](graphics-calibration.md)). They fail locally rather than invoking retired or automatically changing models. Blender still performs mesh reduction.
 
 ## Authentication
 
@@ -51,10 +53,12 @@ An environment-managed proxy secret must be scoped to `openapi.tripo3d.ai`. `TRI
 # No HTTP requests, credentials or file writes:
 node scripts/assets/tripo.mjs generate art-source/models/requests/<new-id>.json --dry-run
 node scripts/assets/tripo.mjs rig art-source/models/requests/<id>.json --dry-run
+node scripts/assets/tripo.mjs retarget art-source/models/requests/<id>.json --dry-run
 
 # Only AFTER approval of this exact request and its current cost:
 node scripts/assets/tripo.mjs generate art-source/models/requests/<new-id>.json --allow-paid
 node scripts/assets/tripo.mjs rig art-source/models/requests/<id>.json --allow-paid
+node scripts/assets/tripo.mjs retarget art-source/models/requests/<id>.json --allow-paid
 ```
 
 `--allow-paid` is an execution guard, not a quote, spending cap or substitute for approval. Old pilot/batch allowances do not authorize this migration to spend again. A separately approved retry needs a new asset ID/request; keep the old record and rejected-attempt history. Never erase a task ID to pay again.
@@ -67,9 +71,10 @@ Commands that do not create paid tasks:
 | `task <task-id>` | Read a task summary, without exposing its signed download URL or writing a record. |
 | `resume <request.json>` | Restore/finish its recorded generation. Never POST. |
 | `resume-rig <request.json>` | Restore/finish its recorded rig. Never POST. |
+| `resume-retarget <request.json>` | Restore/finish its recorded animation (`provenance.retarget`, downloaded as `<id>-animated.glb`). Never POST. |
 | `rig-check <request.json>` | Reuse a recorded check or submit only the documented free check; never submit a rig. |
 
-`rig` with an already-recorded rig ID also resumes without requiring `--allow-paid`.
+`rig` or `retarget` with an already-recorded task ID also resumes without requiring `--allow-paid`. A retarget needs a recorded, downloaded rig.
 
 ## Records, interruption and recovery
 

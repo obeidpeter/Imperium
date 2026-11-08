@@ -1,0 +1,105 @@
+{
+  "id": "cal-cast-lucan-bust-detailed",
+  "status": "rejected at review: a grey stone sculpture with a uniform grey colour map, not a living face, and not Lucan's face",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "use": "Step 0 calibration (docs/graphics-tripo-plan.md): Aurelius Lucan as a head-and-shoulders bust at Tripo's detailed texture tier, so his face fills the texture, compared at close range with the face he wears now (char-cast-lucan, painted from his full-body model). Release G6 bakes such a face onto the shared animated head.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A lifelike head-and-shoulders portrait of a young late Roman soldier of the mid-3rd century AD, about twenty years old, as a living man, facing straight forward, symmetrical, with a calm neutral expression, the mouth closed and the eyes open looking straight ahead. Thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion with natural skin detail. At the shoulders a grey, slightly rusty chainmail shirt of small interlocking iron rings over a red-brown wool tunic with a round neck. The figure ends at the upper chest with a flat, level cut. Realistic proportions, historically accurate. No helmet, no plinth or pedestal, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "marble, stone, bronze, statue, sculpture, plinth, pedestal, base, helmet, plate armour, fantasy armour, closed eyes",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "detailed",
+      "model_seed": 2611089,
+      "image_seed": 2611090,
+      "texture_seed": 2611091
+    }
+  },
+  "budget": {
+    "texture": 2048,
+    "detailTexture": 1024,
+    "heightMetres": 0.62
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-calibration",
+    "creditCeiling": 250,
+    "expectedCredits": 30,
+    "creditAccounting": "batch",
+    "calibration": "texture tier detailed, geometry standard",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T20:19:32.305Z",
+    "requestBody": {
+      "negative_prompt": "marble, stone, bronze, statue, sculpture, plinth, pedestal, base, helmet, plate armour, fantasy armour, closed eyes",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "detailed",
+      "model_seed": 2611089,
+      "image_seed": 2611090,
+      "texture_seed": 2611091,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A lifelike head-and-shoulders portrait of a young late Roman soldier of the mid-3rd century AD, about twenty years old, as a living man, facing straight forward, symmetrical, with a calm neutral expression, the mouth closed and the eyes open looking straight ahead. Thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion with natural skin detail. At the shoulders a grey, slightly rusty chainmail shirt of small interlocking iron rings over a red-brown wool tunic with a round neck. The figure ends at the upper chest with a flat, level cut. Realistic proportions, historically accurate. No helmet, no plinth or pedestal, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10590,
+    "balanceSnapshotBefore": {
+      "balance": 10590,
+      "frozen": 110
+    },
+    "submission": {
+      "id": "fbabc7f2-c538-44c0-9ba7-74d2f0ee2164",
+      "state": "accepted",
+      "requestSha256": "6f77936ae2dc269b39d345b95ca936eee7f4b85126df648388326b470c743c38"
+    },
+    "taskId": "107e79a4-9df9-4b12-b9dc-f0df8075b10d",
+    "status": "success",
+    "generatedAt": "2026-11-08T20:22:16.837Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/cal-cast-lucan-bust-detailed.glb",
+    "rawBytes": 46938968,
+    "rawSha256": "b7f41c5587bd93447099b872c95c52c75c2dda66d1d0abbfa188a8b7c7190b27",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A lifelike head-and-shoulders portrait of a young late Roman soldier of the mid-3rd century AD, about twenty years old, as a living man, facing straight forward, symmetrical, with a calm neutral expression, the mouth closed and the eyes open looking straight ahead. Thick wavy dark-brown hair, clean-shaven, a round, friendly open face with full cheeks, a wide mouth and a short straight nose, a light warm complexion with natural skin detail. At the shoulders a grey, slightly rusty chainmail shirt of small interlocking iron rings over a red-brown wool tunic with a round neck. The figure ends at the upper chest with a flat, level cut. Realistic proportions, historically accurate. No helmet, no plinth or pedestal, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611090,
+      "model_seed": 2611089,
+      "texture_seed": 2611091,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "marble, stone, bronze, statue, sculpture, plinth, pedestal, base, helmet, plate armour, fantasy armour, closed eyes",
+      "texture_quality": "detailed",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 30,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T20:19:33.116593Z",
+    "tripoCompletedAt": "2026-11-08T20:22:12.034625Z",
+    "tripoRender": "art-source/models/raw/cal-cast-lucan-bust-detailed-tripo-render.webp",
+    "review": "A text-prompted head-and-shoulders figure came back as a statue despite the negative prompt. Release G6 should start its faces from a reference image (the cast portraits) or from full-body figures; see docs/graphics-calibration.md."
+  }
+}

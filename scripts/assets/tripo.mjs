@@ -5,11 +5,14 @@ import {createHash,randomUUID} from 'node:crypto';
 import {mkdir,open,readFile,rename,unlink} from 'node:fs/promises';
 import {basename,dirname,resolve,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {createTripoClient,generationRequest,rigRequest,modelOutput,taskCredits,taskId,TRIPO_API} from './tripo-client.mjs';
+import {createTripoClient,generationRequest,rigRequest,retargetRequest,modelOutput,taskCredits,taskId,TRIPO_API} from './tripo-client.mjs';
+
+// What each paid stage after generation records, downloads and expects Tripo to report.
+const STAGES={rig:{suffix:'-rigged',type:'animate_rig',label:' rig'},retarget:{suffix:'-animated',type:'animate_retarget',label:' animation'}};
 
 const ROOT=fileURLToPath(new URL('../../',import.meta.url));
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
-const usage='Usage: node scripts/assets/tripo.mjs balance | task <task-id> | generate <request.json> [--dry-run | --allow-paid] | resume <request.json> | rig <request.json> [--dry-run | --allow-paid] | rig-check <request.json> | resume-rig <request.json>';
+const usage='Usage: node scripts/assets/tripo.mjs balance | task <task-id> | generate <request.json> [--dry-run | --allow-paid] | resume <request.json> | rig <request.json> [--dry-run | --allow-paid] | rig-check <request.json> | retarget <request.json> [--dry-run | --allow-paid] | resume-retarget <request.json> | resume-rig <request.json>';
 
 async function optionalRead(file){
   try{return await readFile(file);}catch(error){if(error.code==='ENOENT')return null;throw error;}
@@ -40,8 +43,8 @@ function freshRecord(record,label){
   if(record?.rawSha256||record?.rejectedAttempts?.length||record?.requestBody)throw new Error(`${label} has historical generation evidence. Preserve it and prepare a separately approved request with a new asset ID.`);
 }
 
-function rawPath(root,record,id,rigged=false){
-  const relative=record.raw??`art-source/models/raw/${id}${rigged?'-rigged':''}.glb`;
+function rawPath(root,record,id,stage=null){
+  const relative=record.raw??`art-source/models/raw/${id}${stage?STAGES[stage].suffix:''}.glb`;
   const dir=resolve(root,'art-source/models/raw'),file=resolve(root,relative);
   if(!file.startsWith(dir+sep)||!file.toLowerCase().endsWith('.glb'))throw new Error('Recorded raw model path must stay inside art-source/models/raw and end in .glb.');
   return {relative,file};
@@ -53,15 +56,15 @@ function checkGlb(bytes){
   }
 }
 
-async function finish(file,request,record,{root,client,log,now,saveRequest},rigged=false){
-  const raw=rawPath(root,record,request.id,rigged),existing=await optionalRead(raw.file);
+async function finish(file,request,record,{root,client,log,now,saveRequest},stage=null){
+  const rigged=Boolean(stage),raw=rawPath(root,record,request.id,stage),existing=await optionalRead(raw.file);
   // Recovery of a finished asset is non-mutating and works offline.
   if(existing&&record.rawSha256){
     if(digest(existing)!==record.rawSha256)throw new Error('Existing raw model does not match its recorded SHA-256. Preserve both for investigation; no file was overwritten.');
     log({id:request.id,task:record.taskId,raw:raw.relative,sha256:record.rawSha256,recovery:'already verified locally'});return;
   }
-  const task=await client.settle(taskId(record.taskId),`${request.id}${rigged?' rig':''}`);
-  if(task.type&&task.type!==(rigged?'animate_rig':request.generator?.task))throw new Error('Recorded task has the wrong operation type. Verify the recovered ID; no model was downloaded.');
+  const task=await client.settle(taskId(record.taskId),`${request.id}${stage?STAGES[stage].label:''}`);
+  if(task.type&&task.type!==(stage?STAGES[stage].type:request.generator?.task))throw new Error('Recorded task has the wrong operation type. Verify the recovered ID; no model was downloaded.');
   const output=modelOutput(task),bytes=await client.download(output.url),hash=digest(bytes);
   checkGlb(bytes);
   if(record.rawSha256&&record.rawSha256!==hash)throw new Error('Downloaded model does not match the historical SHA-256. No asset or task record was overwritten.');
@@ -134,29 +137,43 @@ export async function runTripo(args,{root=ROOT,client=createTripoClient(),log=va
   const command=args[0],flags=args.filter(arg=>arg.startsWith('--')),positional=args.slice(1).filter(arg=>!arg.startsWith('--'));
   if(flags.some(flag=>!['--dry-run','--allow-paid'].includes(flag))||new Set(flags).size!==flags.length)throw new Error(usage);
   const dry=flags.includes('--dry-run'),paid=flags.includes('--allow-paid');
-  if((flags.length&&!['generate','rig'].includes(command))||(dry&&paid))throw new Error(usage);
+  if((flags.length&&!['generate','rig','retarget'].includes(command))||(dry&&paid))throw new Error(usage);
   const ctx={root,client,log,now,saveRequest};
   if(command==='balance'&&!positional.length){log(await client.balance());return;}
   if(command==='task'&&positional.length===1){
     const task=await client.task(taskId(positional[0]));
     log({taskId:task.task_id,status:task.status,progress:task.progress??null,type:task.type??null,...taskCredits(task),modelVersion:task.model??task.model_version??task.input?.model??task.input?.model_version??null,createdAt:task.created_at??null,completedAt:task.completed_at??null,hasModelUrl:!!(task.output?.model_url??task.output?.pbr_model??task.output?.model??task.output?.base_model),errorCode:task.error_code??null});return;
   }
-  if(!['generate','resume','rig','rig-check','resume-rig'].includes(command)||positional.length!==1)throw new Error(usage);
+  if(!['generate','resume','rig','rig-check','resume-rig','retarget','resume-retarget'].includes(command)||positional.length!==1)throw new Error(usage);
   const file=resolve(positional[0]);
   const operate=async()=>{
     const request=JSON.parse(await readFile(file,'utf8'));
     if(typeof request.id!=='string'||!/^[a-z0-9][a-z0-9-]*$/.test(request.id)||basename(file)!==`${request.id}.json`)throw new Error('Request filename must match its lowercase, hyphenated asset ID.');
     if(request.provenance!==undefined&&(!request.provenance||typeof request.provenance!=='object'||Array.isArray(request.provenance)))throw new Error('provenance must be an object.');
     const p=request.provenance??={};
-    if(command==='resume'||command==='resume-rig'){
-      const record=command==='resume-rig'?p.rig:p;
+    if(command==='resume'||command==='resume-rig'||command==='resume-retarget'){
+      const stage=command==='resume-rig'?'rig':command==='resume-retarget'?'retarget':null,record=stage?p[stage]:p;
       if(!record?.taskId)throw new Error('No recorded task to resume. If a submission is pending, reconcile it first; recovery never creates a replacement.');
-      return finish(file,request,record,ctx,command==='resume-rig');
+      return finish(file,request,record,ctx,stage);
     }
     if(command==='rig-check'){log(await rigCheck(file,request,ctx));return;}
     if(command==='rig'&&p.rig?.taskId){
       if(dry){log({operation:'resume-rig',taskId:p.rig.taskId,paid:false});return;}
-      return finish(file,request,p.rig,ctx,true);
+      return finish(file,request,p.rig,ctx,'rig');
+    }
+    if(command==='retarget'){
+      // A preset animation is applied to the recorded, downloaded rig; a recorded task is only ever resumed.
+      if(p.retarget?.taskId){
+        if(dry){log({operation:'resume-retarget',taskId:p.retarget.taskId,paid:false});return;}
+        return finish(file,request,p.retarget,ctx,'retarget');
+      }
+      freshRecord(p.retarget,request.id);
+      if(!p.rig?.taskId||!p.rig.rawSha256)throw new Error('No rigged, hashed model is available for an animation.');
+      const wire=retargetRequest(request);
+      if(dry){log({apiBase:TRIPO_API,...wire,paid:true,submitted:false});return;}
+      if(!paid)throw new Error('Creating this task spends Tripo credits. Review --dry-run, obtain approval for this request, then pass --allow-paid. Nothing was submitted.');
+      const record=p.retarget??={};
+      await submit(file,request,record,wire,ctx,true);return finish(file,request,record,ctx,'retarget');
     }
     freshRecord(command==='rig'?p.rig:p,request.id);
     const wire=command==='rig'?rigRequest(request):generationRequest(request);
@@ -171,7 +188,7 @@ export async function runTripo(args,{root=ROOT,client=createTripoClient(),log=va
     if(check.rig_type&&check.rig_type!==wire.body.rig_type)throw new Error(`Rig check recommends ${check.rig_type}, but the request selects ${wire.body.rig_type}; review before paying.`);
     const record=p.rig??={};
     record.check=check;
-    await submit(file,request,record,wire,ctx,true);return finish(file,request,record,ctx,true);
+    await submit(file,request,record,wire,ctx,true);return finish(file,request,record,ctx,'rig');
   };
   return dry?operate():withLock(file,operate);
 }

@@ -21,14 +21,14 @@ Each release's changelog entry records what it actually delivered, spent and mea
 - **Measured unit costs:**
   - 20 credits per textured model and 25 per biped rig, over 170 generations and 36 rigs;
   - 8% of past attempts were rejected.
-- **Unknown prices:** Tripo's prices for detailed textures, Ultra geometry and the clean-topology P-series are not yet known. Step 0 measures them, since every task reports the credits it consumed.
+- **Prices unknown at approval:** Tripo's prices for detailed textures, Ultra geometry and the clean-topology P-series were not yet known. Step 0 measured the first two (30 and 40 credits a model) and found P2's in Tripo's changelog (110 with standard textures): [the calibration](graphics-calibration.md).
 - **How the plan holds:** each release has a fixed credit cap, and its counts follow the measured prices.
 
 ## Status
 
 | # | Release | Cap | State |
 | --- | --- | --- | --- |
-| 0 | Use what's paid for, then calibrate | 250 | in progress |
+| 0 | Use what's paid for, then calibrate | 250 | calibrated (190 credits, [results](graphics-calibration.md)), awaiting the owner's tier choices; the free upgrades next |
 | G1 | Armies | 2,300 | after step 0 |
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 1,300 | |
@@ -61,6 +61,8 @@ Each release's changelog entry records what it actually delivered, spent and mea
    - a cast bust.
 
    Each is processed to the game's budgets and shown in the game, and the owner picks the tier for each category. The default is standard for troops and props, and detailed only where the camera comes close.
+
+   Done on 8 November for 190 credits: [the calibration](graphics-calibration.md) recommends standard textures throughout, animals bound to the game's own skeleton, and a face pilot that starts from a picture.
 
 The original downloads (7.3 GB, not in git) exist only in the working container, so the two credit-free upgrades come first. Tripo still serves them by task ID: on 8 November a task from 2 November downloaded again, identical to its recorded SHA-256.
 
