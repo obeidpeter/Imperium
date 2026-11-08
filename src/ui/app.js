@@ -735,7 +735,6 @@ function saveField(world,{announced=false}={}){
   const saved=Game.saveRealtime(state,world);if(!saved.ok)return;if(field)field.source=fieldSource();
   if(sessionGate.busy||saveConflict){if(announced)toast(saveConflict?saveProblem:'Saving… try again in a moment.');return;}
   sessionGate.run(()=>persist()).then(result=>{
-    const label=document.querySelector('.save-status');if(label)label.textContent=result?.ok?'Saved':'';
     if(announced)toast(result?.ok?'Saved. The fight continues from here after a reload.':saveProblem);
   }).catch(error=>{if(error.code!=='SESSION_BUSY')console.error(error);});
 }
@@ -1101,7 +1100,12 @@ async function persist(){
   const label=document.querySelector('.save-status');if(label)label.textContent='Saving…';
   try{lastSaved=await saveLocal(state);lastPersisted=JSON.stringify(state);saveProblem='';saveConflict=false;reportAchievements(state);return {ok:true};}
   catch(error){lastSaved='';saveProblem=error.message;saveConflict=error.code==='SAVE_CONFLICT';return {ok:false,error};}
-  finally{saving=false;}
+  finally{
+    // The page may go on without drawing again (a real-time world resumed, say), so the bar says now what the next
+    // drawing would.
+    saving=false;const done=document.querySelector('.save-status');
+    if(done?.textContent==='Saving…')done.textContent=lastSaved?(done.classList.contains('game-status')?'Chronicle saved':'Saved'):'';
+  }
 }
 async function change(fn,{reset=false,tone='click',turn=false,silent=false,command:issuedCommand=null,clearSelection=false,afterRender=null}={}){
   if(sessionGate.busy){toast('Please wait for the current save to finish.');return;}
