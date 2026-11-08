@@ -2,6 +2,10 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The bar no longer keeps "Saving…" after a resume
+
+Resuming a real-time world saves the chronicle again. The bar said "Saving…" for that save and kept saying it until the page next redrew, often for the rest of the fight. The save made when the world pauses already corrected the bar; now every save does, so the bar says "Saved" as soon as the chronicle is written. In play without storage ("Playing in memory"), the bar no longer says "Saved" after a pause, since nothing is written. Found while recording the trailer. `npm run smoke:polish` now checks that resuming shows "Saving…", then "Saved".
+
 ### The road to 0.40.0 and Steam, revised ([the Steam plan](docs/steam-plan.md#the-road-to-0400-and-steam-revised-8-november-2026))
 
 The owner approved a revised order on 8 November.

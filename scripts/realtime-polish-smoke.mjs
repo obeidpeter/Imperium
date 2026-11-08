@@ -193,7 +193,14 @@ try{
   assert.equal(cleared.height,saying,'The world keeps its size when the event line empties');
   assert.equal(cleared.title,null,'An empty event line has no tooltip');
   evidence.checks.push({name:'The event line keeps its room: the world keeps its size as a message comes and goes',pass:true,worldHeight:saying});
+  // Resuming saves the chronicle again, and the bar says so: "Saving…", then "Saved" once it is written, though nothing
+  // else on the page changes meanwhile (it once kept "Saving…" until the page next redrew).
+  await road.evaluate(()=>{const status=document.querySelector('.save-status');window.__saveSnaps=[];
+    new MutationObserver(()=>window.__saveSnaps.push(status.textContent)).observe(status,{childList:true,characterData:true,subtree:true});});
   await road.keyboard.press('KeyP');await road.waitForFunction(t=>window.__realtime.world().tick>t,stopped);
+  await road.waitForFunction(()=>window.__saveSnaps.includes('Saving…')&&document.querySelector('.save-status')?.textContent==='Saved',null,{timeout:15000})
+    .catch(async()=>assert.fail(`Resuming saves, then the bar says Saved: ${JSON.stringify(await road.evaluate(()=>({seen:window.__saveSnaps,now:document.querySelector('.save-status')?.textContent})))}`));
+  evidence.checks.push({name:'Resuming saves the chronicle, and the bar says Saved once it is written',pass:true});
   await pause(road);await road.click('[data-role="listButton"]');
   evidence.checks.push({name:'Pause and resume from a focused command-list Use button',pass:true});
   await road.locator('#rt-board').focus();await road.keyboard.press('Home');
