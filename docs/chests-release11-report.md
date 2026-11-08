@@ -153,7 +153,41 @@ On 7 November the six sweeps were run again on the game as it then stood, after 
 
 - **Veteran's "wins sooner" margin is thin now.** It is still met on average, but its 90% range over seeds (0.26 to 0.40 rounds) dips below the 0.3 target, so a different set of seeds could miss it.
 - **Wins ending below half health,** reported without a pass mark: Story 10 → 2 (bare → issued; 18 → 3 in release 11), Standard 6 → 0 and Veteran 8 → 2 (issued → engaged), as in release 11.
-- **The wall walk's squads lose more men** with the lesser kits than in release 11. The losses come from the fight itself, and they rose across many seeds rather than through one mechanism. The two extra rounds do not change them. Easing them would mean a change to the enemy, which also moves the champion-battle measures above.
+- **The wall walk's squads lose a little more** with the lesser kits than in release 11. The medians in the table above overstate it; on 40 seeds the mean rose by 1.6 to 3.2 points of strength, within the battle's spread ([followed up on 8 November](#followed-up-on-8-november-three-shifts-on-more-seeds)). The two extra rounds do not change it.
+
+### Followed up on 8 November: three shifts on more seeds
+
+The owner asked for three shifts to be fixed: the wall walk's squad losses, Chapter IX's cavalry battle growing easier for the issued kit, and Veteran's thin "wins sooner" margin. Each was measured again on seeds the sweeps above never played:
+
+- the six reference players on seeds 21–40, and some on seeds 41–60, as the sweep's first pass plays them (`node scripts/battle-seeds.mjs`);
+- the two Veteran sweeps on 40 seeds instead of 20;
+- the code just before #82 (edfe269) beside today's.
+
+The result: one of the three shifts is real, and none of the data changes tried fixes it on every seed set. **The game is unchanged.**
+
+- **The wall walk's losses: no real shift.**
+  - Over 40 seeds, the lesser kits' squads lose 1.6 to 3.2 points more of their strength than before #82, and the engaged kit's the same as before (+0.1 to +0.2). Every 90% range includes no change.
+  - The medians above moved further, 32% → 46% on Story bare, because each kit's losses fall in two clusters: seeds that lose about a third and seeds that lose about three fifths. A few seeds changing cluster move a median a long way and a mean only a little.
+  - The engaged kit's later wins, 0.7 rounds on seeds 1–20, do not recur on seeds 21–40 (0.1 rounds sooner). Over 40 seeds they come 0.3 rounds later.
+  - Moving the enemy guard squad 3 m back from the last approach looked right on seeds 1–20. On seeds 21–40 it made the battle easier than release 11: up to 5 points fewer losses and up to 0.45 rounds sooner. It was not kept.
+- **Chapter IX's cavalry battle: real, and left as it is.**
+  - Over 40 seeds, the issued kit ends the battle 2.9 (Story), 5.9 (Standard) and 4.6 (Veteran) points healthier than before #82, and wins 0.3 to 0.5 rounds sooner on Standard and Veteran. Every one of these ranges excludes no change. The engaged kit and the bare recruit are nearly unchanged.
+  - All of the soldier's damage there comes from the champion, the Palmyrene armoured officer. #82's wider lines stand across his ride to the soldier, so he reaches him later: on seed 1, in round 2 instead of round 1. They also keep the soldier facing him. On seeds 21–40, 18% of his blows at the soldier came from the flank before #82, which passes the shield, and 7% after.
+  - Tried on fresh seeds:
+    - our second infantry squad starting 3 m north;
+    - the champion starting 3 m north, 3 m south or 5 m south;
+    - his combat 1 or 2 higher, with and without the south start;
+    - his strength 20 instead of 15.
+  - None brought the issued kit back without moving the other players by as much. The same change moved results in opposite directions on different seed sets: starting him 3 m south brought back most of the issued kit's pace on seeds 21–40, and slowed the engaged kit on seeds 1–20.
+  - So the battle is a little easier for the issued kit because the wider ranks protect the soldier, as #82 meant them to. The [Gate 4 checklist](gate4-playthrough.md) asks the owner to judge it.
+- **Veteran's "wins sooner" margin: about 0.32 rounds.**
+  - On 40 seeds it is 0.32 rounds (range 0.28 to 0.37), and the health measure 4.1 points (3.6 to 4.6). The margin really is close to its 0.3 threshold: it is not an accident of 20 seeds.
+  - Most of the drop from release 11's 0.44 comes from the two battles above.
+  - The 40-seed sweeps meet every other Veteran target: at the first try, 98.5% of the issued kit's battles and 99.8% of the engaged kit's; all within three tries.
+  - Keeping the threshold, lowering it, or retuning so the better kit wins sooner is the owner's decision.
+- **Also found: the river gate on seed 57.** Past the sweeps' seeds, Veteran with the issued kit loses Chapter V's river gate on all four tries; the code before #82 wins it. The river gate was already Veteran's hardest battle for the issued kit: lost at the first try in 5 of 20 seeds in release 11, and in 11 of 40 now. The Gate 4 checklist already asks whether it is fair.
+
+These checks are not kept as evidence files. They are reproduced, tick times aside, on 6c60348, or on edfe269 for before #82, by `node scripts/realtime-sweep.mjs --seeds=40 --difficulty=veteran --kit=issued` (and `--kit=engaged`) and by `scripts/battle-seeds.mjs`, which came with this follow-up: copy it into the older checkout to run it there.
 
 ## The browser checks
 

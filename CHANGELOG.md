@@ -2,6 +2,31 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Balance after #82, followed up on more seeds: no game change ([the report](docs/chests-release11-report.md#followed-up-on-8-november-three-shifts-on-more-seeds))
+
+The owner asked for three shifts after #82 to be fixed. Each was measured again on seeds the release sweeps never played: the six reference players on seeds 21–40 (some on 41–60), the two Veteran sweeps on 40 seeds, and the code just before #82 beside today's. One shift is real, and nothing tried fixes it on every seed set, so the game is unchanged.
+
+- **The wall walk's squad losses did not really rise.**
+  - Over 40 seeds the lesser kits' squads lose 1.6 to 3.2 points more of their strength, the engaged kit's the same as before. Every range includes no change.
+  - The re-check's medians (32% → 46% on Story bare) moved further because each kit's losses fall in two clusters. Its line that the squads "lose more men" is corrected in the report.
+  - A guard-squad offset that looked right on the sweeps' seeds made the battle easier than release 11 on fresh seeds. It was not kept.
+- **Chapter IX's cavalry battle is a little easier for the issued kit, and stays so.**
+  - Over 40 seeds, the issued kit ends it 2.9 to 5.9 points healthier, and 0.3 to 0.5 rounds sooner on Standard and Veteran. The engaged kit and the bare recruit are nearly unchanged.
+  - The cause is #82's wider ranks. They stand across the armoured officer's ride to the soldier, so he arrives about a round later. They also keep the soldier facing him: his flank blows, which pass the shield, fell from 18% to 7% of his blows.
+  - Moving our squad or the champion, and raising his combat or strength, each failed to bring the issued kit back without moving the other players as much, or moved results in opposite directions on different seed sets.
+  - The Gate 4 checklist now asks whether the duel still feels like a threat.
+- **Veteran's "wins sooner" margin is about 0.32 rounds.** On 40 seeds it is 0.32 (range 0.28 to 0.37), close to its 0.3 threshold. Whether to keep the threshold is the owner's decision. Every other Veteran target is met on 40 seeds.
+- **Also found:** past the sweeps' seeds, Veteran with the issued kit loses Chapter V's river gate on every try on seed 57. The river gate was already that player's hardest battle (5 of 20 first tries lost in release 11, 11 of 40 now).
+- **A development tool:** `node scripts/battle-seeds.mjs --battle=<id> --seeds=21-40` plays one battle's first try, seed by seed, as the sweep's first pass does.
+- **The Gate 4 checklist** names the build to play, 6c60348 (7 November) or later, and has notes on the wall walk and the cavalry battle.
+
+**Checked:**
+- **Automated tests:** `npm test`, with a test that `battle-seeds` reproduces the release sweep's records.
+- **The measurements:** Node, headless, on the development container: fresh-seed runs with `battle-seeds` and two 40-seed Veteran sweeps, run side by side, so their tick times are not comparable. They are not kept as evidence files. The commands and commits in the report reproduce them.
+
+**Not checked:**
+- **A player's play-through.** These measure the calibration bot; how the two battles feel is the owner's Gate 4 play-through.
+
 ### Fix: a damaged save that blocks saving can be discarded once it is downloaded
 
 #82 made the game refuse to save over a damaged save it cannot set aside, so none is ever lost. That left a dead end. On a browser without its database, a damaged save too large for the local archive, or one meeting a full archive, blocked every save. **Settings → Saves** could download it but not remove it, and New Game said browser storage was unavailable.
