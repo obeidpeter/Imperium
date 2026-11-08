@@ -11,7 +11,47 @@ Each package's changelog entry records what it actually delivered and measured. 
 | S1 | The desktop app | done ([changelog](../CHANGELOG.md), [the app](desktop.md)); a real Windows PC not yet checked |
 | S2 | The web demo | done ([changelog](../CHANGELOG.md)); publishing it is the owner's step |
 | S3 | Steamworks | built: the 35 achievements, their icons and the Steam link ([changelog](../CHANGELOG.md), [the list](steam-achievements.md)); the live checks need the App ID and the owner's PC |
-| S4 | The store and the release | drafted: [the store text](steam-store-text.md), [the AI disclosure](steam-ai-disclosure.md) and [the store and library images, Steam's two icons and the screenshots](steam-store-art.md); the screenshots taken again, the trailer and the release after 0.40.0 and the owner's Gate 4 sign-off |
+| S4 | The store and the release | drafted: [the store text](steam-store-text.md), [the AI disclosure](steam-ai-disclosure.md) and [the store and library images, Steam's two icons and the screenshots](steam-store-art.md); the trailer's capture script next; the screenshots and the trailer taken again, and the release, after 0.40.0 and the owner's Gate 4 sign-off |
+
+## The road to 0.40.0 and Steam (revised 8 November 2026)
+
+The owner approved this revision on 8 November 2026, after [#82](https://github.com/obeidpeter/Imperium/pull/82)–[#85](https://github.com/obeidpeter/Imperium/pull/85). Everything that can be built without the owner is built. What remains runs through the owner's **Gate 4 play-through** and the owner's **Steamworks account**, so the order is now:
+
+1. **Now, in parallel:**
+   - **The owner:**
+     - plays Gate 4 ([the checklist](gate4-playthrough.md), on `6c60348` or later), on Standard and then on Story;
+     - sends the Performance-check files from a phone and a laptop, and decides whether the turn-based mode stays;
+     - sets up Steamworks: the partner account, the $100 fee and the App ID, the store title, and the rights checks in [the release checklist](steam-release.md). Steam's waiting times then run during Gate 4;
+     - may try the Windows app from CI's `imperium-windows` artifact before any Steam upload.
+   - **Claude:** writes the trailer's capture script (`scripts/steam-trailer.mjs`), from legal play like the screenshots. It produces a draft only, with nothing uploaded and no credits spent.
+2. **After Gate 4,** one PR per step:
+   - the play-through's fixes, blocking problems first. A fix that touches balance re-runs the six sweeps and checks the battle on fresh seeds (`scripts/battle-seeds.mjs`);
+   - real time by default for a chronicle with no chosen mode;
+   - 0.40.0, with the owner's device files as evidence;
+   - the screenshots and the trailer taken again from 0.40.0.
+3. **With the App ID:**
+   - Claude puts it in the app and the SteamPipe files.
+   - The owner enters the achievements and Auto-Cloud, uploads to a private beta branch, and checks the build on the owner's own PC.
+4. **The store and the release,** from the drafts:
+   - the store page and the content survey, the price and the date;
+   - the Coming Soon page, public for at least two weeks, and Valve's review;
+   - the web demo, published with the store link by the time the Coming Soon page is up.
+
+**No balance retune before Gate 4.** Measured on fresh seeds, the sweeps' 20 seeds sit at their noise floor battle by battle ([the follow-up](chests-release11-report.md#followed-up-on-8-november-three-shifts-on-more-seeds)).
+
+**The owner's decisions, with the recommendation first:**
+- **Veteran's "wins sooner" threshold:** 0.32 rounds on 40 seeds, against 0.3. Keep it and accept the risk; or lower it to 0.25; or retune so the better kit wins sooner.
+- **The cavalry battle:** judge it at Gate 4. A retune, if asked for, is measured on fresh seeds.
+- **The turn-based mode:** keep it as an option for 0.40.0, or retire it after.
+- **The web demo:** publish it with the Coming Soon page, or earlier.
+- **Steam Deck and gamepad:** not for launch, unless the owner wants Deck Verified at release.
+- **The trailer:** write its capture script now, or wait for 0.40.0.
+
+**Risks:**
+- Gate 4 can move everything; no release date is planned until it is done.
+- The overlay and Windows-only problems show only on the owner's PC.
+- Steamworks' own rules take precedence over these drafts.
+- The AI-content rights rest on each provider's terms for the owner's plan. This is not legal advice.
 
 ## Context
 

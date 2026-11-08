@@ -2,6 +2,18 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The road to 0.40.0 and Steam, revised ([the Steam plan](docs/steam-plan.md#the-road-to-0400-and-steam-revised-8-november-2026))
+
+The owner approved a revised order on 8 November.
+- **Gate 4 is the critical path:** real time by default, 0.40.0, the final screenshots, the trailer and the release wait on it.
+- **Steam's paperwork starts now,** in parallel, so its waiting times run during Gate 4.
+- **The trailer's capture script is written now,** from legal play, so the trailer after 0.40.0 is a re-run.
+- **No balance retune before Gate 4.**
+- **The owner's decisions** are listed with recommendations: Veteran's "wins sooner" threshold, the cavalry battle, the turn-based mode, the demo's publication, Steam Deck, and the trailer.
+- **The release checklist** adds an optional early run of the Windows app from CI's artifact.
+
+Docs only: `docs/steam-plan.md`, `docs/steam-release.md`, release 10's row of `docs/worlds-and-gameplay-plan.md`.
+
 ### Balance after #82, followed up on more seeds: no game change ([the report](docs/chests-release11-report.md#followed-up-on-8-november-three-shifts-on-more-seeds))
 
 The owner asked for three shifts after #82 to be fixed. Each was measured again on seeds the release sweeps never played: the six reference players on seeds 21–40 (some on 41–60), the two Veteran sweeps on 40 seeds, and the code just before #82 beside today's. One shift is real, and nothing tried fixes it on every seed set, so the game is unchanged.
