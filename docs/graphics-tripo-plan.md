@@ -28,7 +28,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 
 | # | Release | Cap | State |
 | --- | --- | --- | --- |
-| 0 | Use what's paid for, then calibrate | 250 | calibrated (190 credits, [results](graphics-calibration.md)), awaiting the owner's tier choices; the free upgrades next |
+| 0 | Use what's paid for, then calibrate | 250 | calibrated (190 credits, [results](graphics-calibration.md)), awaiting the owner's tier choices; the 3D kit next, the landmarks' re-texture recommended against |
 | G1 | Armies | 2,300 | after step 0 |
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 1,300 | |
@@ -62,7 +62,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 
    Each is processed to the game's budgets and shown in the game, and the owner picks the tier for each category. The default is standard for troops and props, and detailed only where the camera comes close.
 
-   Done on 8 November for 190 credits: [the calibration](graphics-calibration.md) recommends standard textures throughout, animals bound to the game's own skeleton, and a face pilot that starts from a picture.
+   Done on 8 November for 190 credits: [the calibration](graphics-calibration.md) recommends standard textures throughout, animals bound to the game's own skeleton, and a face pilot that starts from a picture. In the game's Horizon view the landmarks are a few pixels high, so it recommends against item 2 and asks the owner to reconsider G7.
 
 The original downloads (7.3 GB, not in git) exist only in the working container, so the two credit-free upgrades come first. Tripo still serves them by task ID: on 8 November a task from 2 November downloaded again, identical to its recorded SHA-256.
 

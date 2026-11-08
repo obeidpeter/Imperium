@@ -10,12 +10,13 @@ Step 0 of the graphics plan bought test models at Tripo's cheap and expensive ti
   - detailed textures cost 30 credits a model and Ultra geometry 40, against 20 at the standard tier;
   - Tripo's changelog prices the clean-topology P2 series at 110 with standard textures, so none was bought.
 - **A soldier:** a Gothic skirmisher was made at both texture tiers, rigged and bound to the game's skeleton. At the game's camera distance the two look the same; up close, the detailed one shows a little more cloth, and both faces are limited by triangles rather than texture.
-- **A building:** the tetrapylon's Ultra geometry does not survive the reduction to the game's 6,000 triangles. Re-texturing the shipped tetrapylon at 1,024 pixels with surface maps, free, sharpens it more.
+- **A building:** the tetrapylon's Ultra geometry does not survive the reduction to the game's 6,000 triangles. Re-texturing the shipped landmarks at 1,024 pixels with surface maps, the plan's free step 0c, sharpens them close up. In the game's own Horizon view of Chapter IX they are a few pixels high in the haze and all three versions look the same, so step 0c is recommended against: it would add about 10 MB for nothing visible, and the backdrop release (G7) should be reconsidered.
 - **A pack mule:** Tripo's free rig check refused a four-legged rig. Bound without credits to the game's own horse skeleton, it walks on the horse gait.
 - **Lucan as a bust** came back as a grey stone statue and was rejected, 1 of 7 paid tasks.
 - **Recommended:**
   - standard textures for every category;
   - animals bound to the game's own skeleton;
+  - the shipped landmarks left as they are, and the backdrop release reconsidered;
   - a face pilot in release G6 that starts from a picture.
 
   The owner picks the tiers before any bulk spend.
