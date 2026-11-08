@@ -2,6 +2,10 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The owner's choices after the calibration ([the plan](docs/graphics-tripo-plan.md#the-owners-decisions-8-november))
+
+On 8 November the owner chose standard textures for every category and skipped the landmarks' re-texture (step 0c) and the backdrops release (G7). G7's 750 credits go where the camera is: 400 to the camps (G3) and 350 to battle and siege (G5). The plan keeps its 7,900-credit cap, 73.8% of the balance. Step 0 is complete, and G1 starts once the owner approves it. Docs only: the graphics plan and the calibration report.
+
 ### Step 0: the figures wear the inventory's own weapons and helmets ([how](docs/asset-pipeline.md#weapons-and-helmets-from-the-item-models--2026-11-08))
 
 Seven of the models generated for the inventory's pictures now ship as 3D kit, at no credit cost: the spatha, the gladius, the knife, the axe, the galea, the Niederbieber helmet and the felt cap.

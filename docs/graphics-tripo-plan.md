@@ -28,14 +28,14 @@ Each release's changelog entry records what it actually delivered, spent and mea
 
 | # | Release | Cap | State |
 | --- | --- | --- | --- |
-| 0 | Use what's paid for, then calibrate | 250 | calibrated (190 credits, [results](graphics-calibration.md)), awaiting the owner's tier choices; the 3D kit done (seven weapons and helmets, no credits); the landmarks' re-texture recommended against |
-| G1 | Armies | 2,300 | after step 0 |
+| 0 | Use what's paid for, then calibrate | 250 | done: calibrated (190 credits, [results](graphics-calibration.md)), and the 3D kit made (seven weapons and helmets, no credits); the landmarks' re-texture skipped |
+| G1 | Armies | 2,300 | next, once the owner approves it |
 | G2 | Arms and standards | 700 | |
-| G3 | Camps | 1,300 | |
+| G3 | Camps | 1,700 | (1,300, and 400 from G7) |
 | G4 | Animals | 600 | |
-| G5 | Battle and siege | 900 | |
+| G5 | Battle and siege | 1,250 | (900, and 350 from G7) |
 | G6 | Faces and people | 1,100 | |
-| G7 | Backdrops | 750 | |
+| G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
 | | **Total** | **7,900** | |
 
 ## What the game shows today, and where it falls short
@@ -57,12 +57,16 @@ Each release's changelog entry records what it actually delivered, spent and mea
 
    Done on 8 November with seven of them: the spatha, gladius, knife, axe, galea, Niederbieber helmet and felt cap, worn by figures dressed in those items (the player's soldier, his companions, named veterans and his squads). The crowds keep the code-built pieces, which read more clearly at the field's distance. The spangenhelm hides the face; spears, bows, slings and the shields, with their unit designs, stay code-built. The armour and clothes are the generated bodies' own. [The changelog](../CHANGELOG.md) has why.
 2. **Landmarks re-textured, at no credit cost.** They go from 256 px colour-only maps to 512–1,024 px with surface maps, from the original downloads.
+
+   Skipped by the owner on 8 November, as the calibration recommended: in the game's Horizon view the landmarks are a few pixels high, and the re-texture would add about 10 MB for nothing visible.
 3. **Calibration.** About 10 test assets, each made at the cheap tier and the expensive tiers:
    - a soldier, a tent, a building and a shield;
    - a mule, rigged on four legs and walking;
    - a cast bust.
 
    Each is processed to the game's budgets and shown in the game, and the owner picks the tier for each category. The default is standard for troops and props, and detailed only where the camera comes close.
+
+   The owner chose standard textures for every category on 8 November, with standard geometry.
 
    Done on 8 November for 190 credits: [the calibration](graphics-calibration.md) recommends standard textures throughout, animals bound to the game's own skeleton, and a face pilot that starts from a picture. In the game's Horizon view the landmarks are a few pixels high, so it recommends against item 2 and asks the owner to reconsider G7.
 
@@ -80,7 +84,7 @@ Each release is its own PR. A pilot of about 15% goes to the owner before the re
 | G4 | Animals | Mules, oxen, camels, dogs, goats and sheep, rigged on four legs and walking; carts harnessed | 10 |
 | G5 | Battle and siege | Onager, ballista, scorpion and cart-mounted ballista; siege tower, ram shed, mantlets and the Gothic wagon laager; regional palisades and stakes; the code-built field objects; battlefield debris; river boats | 40 |
 | G6 | Faces and people | 12 detailed cast busts, their faces baked onto the shared animated head; bodies for Vibia, Dida, Caecilia, Licinia and the smith; 3 civilians; correct full-length togas | 24 |
-| G7 | Backdrops | Temple of Bel, tetrapylon, Euphrates bridge, Danube fort gate, roadside tombs, aqueduct, triumphal arch, Milvian bridge, villas and shrines | 20 |
+| G7 | Backdrops (skipped) | Temple of Bel, tetrapylon, Euphrates bridge, Danube fort gate, roadside tombs, aqueduct, triumphal arch, Milvian bridge, villas and shrines | — |
 
 G1's 34 bodies:
 
@@ -93,7 +97,7 @@ G1's 34 bodies:
 | Roman specialists: Moorish and Dalmatian cavalry, a draco-bearer, a centurion | 4 |
 | Unique champions | 8 |
 
-Each cap includes about 10% for rejected attempts. Some things stay out of Tripo:
+Each cap includes about 10% for rejected attempts. G3 and G5 have G7's credits too: each pilot proposes how many more of its own list they buy. Some things stay out of Tripo:
 - the Colosseum, which failed three times there, gets a Blender build;
 - terrain, trees and water stay with the existing code and Blender kits.
 
@@ -128,6 +132,12 @@ Each cap includes about 10% for rejected attempts. Some things stay out of Tripo
 3. **Timing:** step 0 starts now, in parallel with Gate 4. Nothing here changes the rules.
 4. **Review:** each release's pilot goes to the owner before the rest is generated.
 
+After the calibration (8 November):
+
+5. **Tiers:** standard textures for every category, and standard geometry.
+6. **Step 0c:** skipped; the shipped landmarks stay as they are.
+7. **G7:** skipped. Its 750 credits went where the camera is: 400 to the camps (G3) and 350 to battle and siege (G5), so the plan keeps its 7,900-credit cap, 73.8% of the balance.
+
 ## Rules for the spend
 
 - **Approvals:**
@@ -140,7 +150,7 @@ Each cap includes about 10% for rejected attempts. Some things stay out of Tripo
 
 ## Risks
 
-- **Higher-tier prices** are unknown until step 0. Counts may shrink; the caps don't move.
+- **Prices:** step 0 measured them, and every category takes the standard tier: 20 credits a model and 25 a rig. The caps don't move.
 - **The original downloads** live only in the working container. If it is reclaimed, the free upgrades depend on Tripo still serving the outputs. On 8 November it did: a task from 2 November downloaded again by its ID, identical to its recorded SHA-256.
 - **Rights:** the owner's statement of 20 October covers commercial use of what a paid account generates. [The release checklist](steam-release.md) still asks for a saved copy of Tripo's terms and a record of the plan tier, before the bulk releases.
 - **Style and history:**
@@ -150,4 +160,4 @@ Each cap includes about 10% for rejected attempts. Some things stay out of Tripo
   - the only real device measured, an Intel integrated GPU, ran Balanced at about 33 ms a frame;
   - new scenery shows on Balanced and High;
   - Performance, the phone default, keeps loading bodies and horses only.
-- **Scale:** about 225 models with their integration is a programme of several weeks. It runs alongside Gate 4 and does not change the road to 0.40.0 ([the Steam plan](steam-plan.md#the-road-to-0400-and-steam-revised-8-november-2026)).
+- **Scale:** about 230 models with their integration is a programme of several weeks. It runs alongside Gate 4 and does not change the road to 0.40.0 ([the Steam plan](steam-plan.md#the-road-to-0400-and-steam-revised-8-november-2026)).

@@ -93,6 +93,13 @@ What this changes in the plan:
 - **What the camera sees.** Landmarks and backdrops stand at the horizon, where the game draws them a few pixels high. The credits buy most where the camera is: bodies, kit, camps and battle.
 - **Pipeline support.** The client now also accepts P-series models and Tripo's preset animations (`retarget` and `resume-retarget` in `npm run asset:tripo`). Neither was used, for the reasons above.
 
+## The owner's decisions (8 November)
+
+- **Tiers:** standard textures for every category, with standard geometry.
+- **Step 0c:** skipped; the shipped landmarks stay as they are.
+- **G7:** skipped. Its 750 credits go where the camera is: 400 to the camps (G3) and 350 to battle and siege (G5). The plan keeps its 7,900-credit cap, 73.8% of the balance.
+- **Faces:** the approach for G6 is still to choose, from its pilot.
+
 ## Limits
 
 - **One sample per tier.** One soldier and one building were tried at each tier, and generations vary from attempt to attempt.
