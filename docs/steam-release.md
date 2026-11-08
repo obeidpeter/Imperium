@@ -9,6 +9,7 @@ The owner's own steps for the Steam release ([the plan](steam-plan.md)), next to
   - whether the fee is recouped after $1,000 in sales;
   - whether there is a 30-day wait between paying and releasing.
 - [ ] **The name.** Steam already lists *Imperivm RTC – HD Edition "Great Battles of Rome"* (a Roman strategy series), and one listing shows a game titled "Imperium". Choose the store title, for example the manifest's "Imperium: From Recruit to Emperor", and consider a trademark search.
+- [ ] **Optional: the Windows app before Steam.** Download the `imperium-windows` artifact from the latest CI run on `main` (GitHub keeps it 14 days), unzip it and run `Imperium.exe`. Problems found on your PC now don't wait for the Steam upload.
 
 ## Rights for a commercial release
 
