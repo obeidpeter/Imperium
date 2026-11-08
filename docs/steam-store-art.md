@@ -1,6 +1,6 @@
 # The Steam store's and library's images: the drafts
 
-These are the drafts of the images Steamworks asks for under **Store assets** and **Library assets**, and of the two icons it asks for under **Community and client icons** ([the Steam plan](steam-plan.md), S4). `node scripts/steam-store-art.mjs` makes them from the game's own art, with nothing generated, into `desktop/steam/store-art/` and `desktop/steam/icons/`. They are for the owner to review before uploading. The screenshots and the trailer come after 0.40.0, once the game they show is final.
+These are the drafts of the images Steamworks asks for under **Store assets** and **Library assets**, and of the two icons it asks for under **Community and client icons** ([the Steam plan](steam-plan.md), S4). `node scripts/steam-store-art.mjs` makes them from the game's own art, with nothing generated, into `desktop/steam/store-art/` and `desktop/steam/icons/`. They are for the owner to review before uploading. The screenshots and the trailer are drafts too, recorded from the game itself, to take again after 0.40.0, once the game they show is final.
 
 The sizes come from Valve's [graphical assets page](https://partner.steamgames.com/doc/store/assets) and its [community and client icons page](https://partner.steamgames.com/doc/store/assets/community), as quoted in search results, and from guides that agree with them. This session could not open Valve's partner site itself. **Check each size in Steamworks before uploading.** Developers report that Steamworks sorts an upload by its pixel size and refuses one that is off by a pixel.
 
@@ -76,6 +76,31 @@ Steam asks for at least five screenshots, at 1920 × 1080 by the same reports. T
 - **Interrupted captures:** every completed shot commits its image and evidence before starting the next. A journal retains the intended pair if a file replacement is interrupted. The next run completes it first, or `node scripts/steam-screenshots.mjs --recover` does that alone, without launching a browser. A hash mismatch stops recovery and retains the files for inspection. One process may capture at a time. After a hard crash, confirm that no capture process is running before removing only `docs/evidence/steam-screenshots.json.lock`, then run `--recover`; retain all pending image and journal files. Locks are never reclaimed automatically because competing recovery processes could otherwise remove each other's new lock. A failure making the contact sheet does not discard completed captures.
 - **The time:** a few minutes a shot. `--only 01-river-crossing,05-camp` takes some of them again.
 
+## The trailer: a draft
+
+Steamworks' trailer page, as quoted in search results, asks for the highest resolution you have, up to 1920 × 1080, at 30 or 60 frames a second, with a high bit rate (5,000 kbps or more), in an .mov, .wmv or .mp4 file. This session could not open the page itself. **Check it in Steamworks before uploading.**
+
+`desktop/steam/trailer/draft.mp4` is the draft: 34 seconds at 1920 × 1080 and 30 frames a second, H.264 video and AAC stereo sound in an MP4, at about 6,200 kbps (26 MB). It opens on a battle and closes on the game's library logo. Its sound is the game's own battle music, and it has no voice-over. Like the screenshots, it shows the game before 0.40.0: record it again after the owner's Gate 4 sign-off.
+
+| Clip | Seconds | What it shows | The player's keys |
+| --- | --- | --- | --- |
+| `river-crossing` | 6 | Chapter VIII: the legion forcing the ford at the far bank, mid-fight | T and Enter before it starts (the nearest enemy); − three times at 2 seconds, so the view draws back over the ford |
+| `camp` | 5 | Chapter V: the fortress camp before the red river gate | H held from 1.5 seconds: the view swings up to the fortress on the horizon |
+| `promotion` | 4 | Chapter VI: the promotion to praefectus legionis, with its painting | none |
+| `cavalry` | 6 | Chapter IX: the turning cavalry on the Euphrates, mid-fight | T and Enter before it starts; − three times at 2 seconds |
+| `curia` | 5 | Chapter XI: the Senate's Contest as it opens, in the Curia | + twice at 1 second, so the view closes in on the members |
+| `finale` | 7 | Chapter XII: the road to the purple, before the Aurelian Walls | T and Enter before it starts; H held from 3.5 seconds |
+| end card | 4 | The library logo on black | |
+
+- **The moments** are the screenshots' kind, reached from New Game by legal commands: the same campaigns (seed 275, and seed 276 for the clear finale), a battle kept mid-fight where the most of the soldier's side are fighting near him, a camp as the chronicle stands there, a Contest as it opens, a promotion as the chapter ends.
+- **The recording.** `node scripts/steam-trailer.mjs` restores each save through the desktop build's Restore dialog in headless Chromium, with the player's settings for real time at High quality. P then pauses the world while the camera comes to rest on the soldier, the clip's first keys are given in that pause, as a player gives orders, and P resumes it; the clip plays on with the player's own keys, as listed above. Nothing is injected into the page, no label is hidden, and a request to anywhere but the local copy of the build fails the clip.
+- **Time.** Software WebGL takes about five seconds to draw a frame at High quality, far too slow for a recording at the game's own pace. So the page keeps Playwright's clock: time flows as usual while the save loads, then stands still between frames and moves on by 1/30 s for each one. Each frame shows 1/30 s of play, drawn once, as a fast PC would draw it at 30 frames a second. The game's rules and commands are untouched; only the wait between frames changes.
+- **High quality.** The game judges its quality by what its last 30 frames cost. Those it drew while the save loaded took seconds each, so before a clip starts the paused world draws 32 frames on the stopped clock, where a frame costs no time, and the slow frames drop out of the count. If the game stepped down meanwhile, the script chooses High in Settings, as a player would; the world stays built at High, so nothing is rebuilt. The script fails if any frame is drawn below High.
+- **The cut.** ffmpeg (not a project dependency: `FFMPEG`, or ffmpeg on the path) joins the clips with half-second fades and fades the last into the end card. The battle music (`assets/audio/music-battle.mp3`) loops under the whole trailer, fades in and out, and is set to −16 LUFS in two passes with one gain throughout, so it is not compressed. The video is H.264 High, encoded in two passes at 6,000 kbps, a fifth above Steam's floor, so the draft is about 26 MB.
+- **The record,** `docs/evidence/steam-trailer.json`, names each clip's chapter, encounter and moment, the SHA-256 digest of its save, the keys pressed, the ticks the world ran through and the build. It also gives the music's digest and loudness, the end card's, and the trailer's own `videoSha256` and `videoBytes`. The tests check the trailer's size, frame rate, codecs, length and bit rate against Steam's figures, and its digest against the record.
+- **Interrupted captures** recover as the screenshots' do, with a lock and a journal of their own (`--recover`). Each clip is kept in `tests/visual-results/steam-trailer/` (not committed) with what it was recorded from. A later run records only the clips whose save, keys or build changed; `--only river-crossing,finale` records some again, and `--cut` cuts again from the kept clips.
+- **The time:** about five seconds a frame on four cores, so about an hour and a half for the whole trailer (1 hour 34 minutes for this draft, on 8 November).
+
 ## Steam's rules to check in Steamworks
 
 These are as reported; Steamworks' own pages decide.
@@ -86,6 +111,7 @@ These are as reported; Steamworks' own pages decide.
 - **The library logo** is a PNG with transparency, 1280 pixels wide or 720 tall at most.
 - **The page background** is optional, and Steam darkens it further.
 - **Screenshots:** at least five, 1920 × 1080, of the game itself: drafted above, to take again after 0.40.0.
+- **Trailers:** up to 1920 × 1080 at 30 or 60 frames a second, 5,000 kbps or more, in .mov, .wmv or .mp4: drafted above, to record again after 0.40.0.
 
 ## AI and rights
 
@@ -97,4 +123,4 @@ These are as reported; Steamworks' own pages decide.
 - **The owner's review:** composition and name. The store name is still to decide.
 - **Sizes and rules:** to check in Steamworks.
 - **The screenshots:** the owner's choice and order. Steam shows the first ones most. Take them again after 0.40.0 and the owner's Gate 4 sign-off.
-- **The trailer:** after 0.40.0 and the Gate 4 sign-off.
+- **The trailer:** the owner's review of its clips, their order and the end card. Record it again after 0.40.0 and the owner's Gate 4 sign-off.

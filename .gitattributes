@@ -18,3 +18,4 @@
 *.wasm binary
 *.blend binary
 *.pdf binary
+*.mp4 binary
