@@ -11,7 +11,7 @@ Each package's changelog entry records what it actually delivered and measured. 
 | S1 | The desktop app | done ([changelog](../CHANGELOG.md), [the app](desktop.md)); a real Windows PC not yet checked |
 | S2 | The web demo | done ([changelog](../CHANGELOG.md)); publishing it is the owner's step |
 | S3 | Steamworks | built: the 35 achievements, their icons and the Steam link ([changelog](../CHANGELOG.md), [the list](steam-achievements.md)); the live checks need the App ID and the owner's PC |
-| S4 | The store and the release | drafted: [the store text](steam-store-text.md), [the AI disclosure](steam-ai-disclosure.md) and [the store and library images, Steam's two icons and the screenshots](steam-store-art.md); the trailer's capture script next; the screenshots and the trailer taken again, and the release, after 0.40.0 and the owner's Gate 4 sign-off |
+| S4 | The store and the release | drafted: [the store text](steam-store-text.md), [the AI disclosure](steam-ai-disclosure.md) and [the store and library images, Steam's two icons and the screenshots](steam-store-art.md), and [a trailer](steam-store-art.md#the-trailer-a-draft) recorded by its capture script; the screenshots and the trailer taken again, and the release, after 0.40.0 and the owner's Gate 4 sign-off |
 
 ## The road to 0.40.0 and Steam (revised 8 November 2026)
 
@@ -23,7 +23,7 @@ The owner approved this revision on 8 November 2026, after [#82](https://github.
      - sends the Performance-check files from a phone and a laptop, and decides whether the turn-based mode stays;
      - sets up Steamworks: the partner account, the $100 fee and the App ID, the store title, and the rights checks in [the release checklist](steam-release.md). Steam's waiting times then run during Gate 4;
      - may try the Windows app from CI's `imperium-windows` artifact before any Steam upload.
-   - **Claude:** writes the trailer's capture script (`scripts/steam-trailer.mjs`), from legal play like the screenshots. It produces a draft only, with nothing uploaded and no credits spent.
+   - **Claude:** writes the trailer's capture script (`scripts/steam-trailer.mjs`), from legal play like the screenshots. It produces a draft only, with nothing uploaded and no credits spent. Done: [the draft](steam-store-art.md#the-trailer-a-draft).
 2. **After Gate 4,** one PR per step:
    - the play-through's fixes, blocking problems first. A fix that touches balance re-runs the six sweeps and checks the battle on fresh seeds (`scripts/battle-seeds.mjs`);
    - real time by default for a chronicle with no chosen mode;

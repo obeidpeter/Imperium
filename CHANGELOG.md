@@ -2,6 +2,15 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The trailer's capture script and a draft trailer ([the record](docs/steam-store-art.md#the-trailer-a-draft))
+
+`node scripts/steam-trailer.mjs` records the trailer for the Steam store page from the game itself, as the revised plan asked. `desktop/steam/trailer/draft.mp4` is its first draft, 34 seconds long: six clips from Chapter V to Chapter XII and the library logo, with the game's own battle music and no voice-over. It shows the game before 0.40.0, so it is recorded again after the owner's Gate 4 sign-off.
+
+- **From legal play.** Each clip starts from a save the real-time bot reaches from New Game, as the screenshots' do. The save is restored through the desktop build's Restore dialog at High quality, and the clip plays on with the player's own keys: T and Enter, − and +, a held H.
+- **At the game's own pace.** Software rendering takes seconds a frame, so the page keeps Playwright's clock, which moves on by 1/30 s for each frame drawn. A frame shows exactly what a fast PC would draw at 30 frames a second; the game itself is untouched. The script fails on any frame drawn below High quality.
+- **Steam's figures, as reported:** 1920 × 1080 at 30 frames a second, H.264 and AAC, above 5,000 kbps. The video is encoded in two passes at 6,000 kbps, so the draft is 26 MB (6,211 kbps with its sound). A test checks the file against them and against its record, `docs/evidence/steam-trailer.json`.
+- **Records:** the trailer has its own record, journal and lock, shared with the screenshots' code (`scripts/steam-capture-records.mjs`). The AI disclosure's draft now names the trailer.
+
 ### The bar no longer keeps "Saving…" after a resume
 
 Resuming a real-time world saves the chronicle again. The bar said "Saving…" for that save and kept saying it until the page next redrew, often for the rest of the fight. The save made when the world pauses already corrected the bar; now every save does, so the bar says "Saved" as soon as the chronicle is written. In play without storage ("Playing in memory"), the bar no longer says "Saved" after a pause, since nothing is written. Found while recording the trailer. `npm run smoke:polish` now checks that resuming shows "Saving…", then "Saved".

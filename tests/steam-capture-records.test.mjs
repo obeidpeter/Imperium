@@ -5,7 +5,8 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
-import {CAPTURE_RECORD,imageDigest,writeScreenshot,recoverScreenshots,readScreenshotRecord,withCaptureLock} from '../scripts/steam-capture-records.mjs';
+import {CAPTURE_KINDS,CAPTURE_RECORD,imageDigest,writeScreenshot,recoverScreenshots,readScreenshotRecord,withCaptureLock,
+  writeCapture,recoverCapture,readCaptureRecord} from '../scripts/steam-capture-records.mjs';
 
 const entry={id:'01-test',file:'desktop/steam/screenshots/01-test.jpg',captured:{build:'test'}};
 for(const phase of ['image','record'])test(`interrupted ${phase} replacement recovers matching image bytes and evidence`,async t=>{
@@ -70,4 +71,21 @@ test('resuming with a stale in-memory record keeps the interrupted capture befor
   assert.deepEqual(resumed.screenshots.map(s=>s.id),[entry.id,second.id,third.id]);
   for(const shot of resumed.screenshots)assert.equal(imageDigest(await fs.readFile(join(root,shot.file))),shot.imageSha256);
   assert.deepEqual(await readScreenshotRecord(root),resumed);
+});
+
+test('the trailer keeps a record and a lock of its own, and an interrupted video recovers as a screenshot does',async t=>{
+  const root=await fs.mkdtemp(join(tmpdir(),'imperium-capture-'));t.after(()=>fs.rm(root,{recursive:true,force:true}));
+  const kind=CAPTURE_KINDS.trailer,draft={id:'draft',file:'desktop/steam/trailer/draft.mp4'};
+  const first=await writeCapture(root,kind,{trailers:[]},draft,Buffer.from('first cut'));
+  let failed=false;
+  const io={...fs,rename:async(from,to)=>{if(!failed&&to===join(root,kind.record)){failed=true;throw Error('simulated interruption');}return fs.rename(from,to);}};
+  await assert.rejects(writeCapture(root,kind,first,draft,Buffer.from('second cut'),io),/interruption/);
+  assert.equal(await recoverCapture(root,kind),true);
+  const record=await readCaptureRecord(root,kind);
+  assert.deepEqual(await fs.readFile(join(root,draft.file)),Buffer.from('second cut'));
+  assert.equal(record.trailers[0].videoSha256,imageDigest(Buffer.from('second cut')));assert.equal(record.trailers[0].videoBytes,10);
+  assert.equal(await readScreenshotRecord(root),null,'the screenshots’ record is not touched');
+  await assert.rejects(writeCapture(root,kind,record,{id:'draft',file:'desktop/steam/screenshots/draft.jpg'},Buffer.from('x')),/Invalid trailer path/);
+  assert.equal(await withCaptureLock(root,()=>withCaptureLock(root,()=>42,kind)),42,'a trailer and a screenshot capture hold separate locks');
+  await assert.rejects(withCaptureLock(root,()=>withCaptureLock(root,()=>{},kind),kind),/Trailer capture is already running/);
 });

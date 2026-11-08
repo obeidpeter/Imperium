@@ -35,3 +35,8 @@ desktop/steam/screenshots/*.tmp
 docs/evidence/steam-screenshots.json.pending
 docs/evidence/steam-screenshots.json.lock
 docs/evidence/steam-screenshots.json.*.tmp
+desktop/steam/trailer/*.pending
+desktop/steam/trailer/*.tmp
+docs/evidence/steam-trailer.json.pending
+docs/evidence/steam-trailer.json.lock
+docs/evidence/steam-trailer.json.*.tmp

@@ -9,6 +9,7 @@ import {ACHIEVEMENTS} from '../src/data/achievements.js';
 import {KINDS,sourceKind,aiInventory,storeText,steamAiDisclosureSheet} from '../scripts/steam-ai-disclosure.mjs';
 import {STORE_ART,ICONS,HERO,TALL,RENDER_SCENE,fileName,renderFile,enlargement} from '../scripts/steam-store-art.mjs';
 import {SCREENSHOTS,SIZE,SCREENSHOTS_DIR,RECORD,fileName as screenshotFile} from '../scripts/steam-screenshots.mjs';
+import {CLIPS,FPS,TRAILER,RECORD as TRAILER_RECORD,MUSIC,MIN_KBPS,frames,trailerSeconds,mp4Info} from '../scripts/steam-trailer.mjs';
 
 // The Steam store drafts (the Steam plan, S4): the AI-content disclosure, generated from the asset manifest, and the
 // store page's text, written from the guide. Both stay true to the game: these checks fail when it changes under them.
@@ -142,6 +143,29 @@ test('the draft screenshots are at least five, each 1920 × 1080 and taken from 
   assert.deepEqual(record.screenshots.map(r=>r.id),SCREENSHOTS.map(s=>s.id),'the record names every screenshot, in order');
   assert.ok(record.screenshots.every(r=>r.captured.quality==='high'&&/^[0-9a-f]{64}$/.test(r.saveSha256)),'each was taken at High quality, from a recorded save');
   for(const r of record.screenshots){const bytes=await readFile(new URL(`../${r.file}`,import.meta.url));assert.equal(r.imageSha256,imageDigest(bytes),`${r.id}: image and evidence match`);assert.equal(r.imageBytes,bytes.length);}
+});
+
+test('the draft trailer is 1920 × 1080 at 30 frames a second, H.264 and AAC, recorded from the game: run node scripts/steam-trailer.mjs',async()=>{
+  const encounters=new Set(CHAPTERS.flatMap(c=>c.encounters.map(e=>e.id)));
+  assert.ok(CLIPS.every(c=>c.moment.promotion?CHAPTERS.some(ch=>ch.id===c.moment.promotion):encounters.has(c.moment.fight??c.moment.contest??c.moment.camp)),
+    'every clip starts from a moment the campaign reaches');
+  const record=JSON.parse(await readFile(new URL(`../${TRAILER_RECORD}`,import.meta.url),'utf8'));
+  assert.deepEqual(record.trailers.map(t=>t.file),[TRAILER.file],'the record names the draft');
+  const [entry]=record.trailers,bytes=await readFile(new URL(`../${entry.file}`,import.meta.url));
+  assert.equal(entry.videoSha256,imageDigest(bytes),'video and evidence match');assert.equal(entry.videoBytes,bytes.length);
+  const info=mp4Info(bytes),video=info.tracks.find(t=>t.handler==='vide'),audio=info.tracks.find(t=>t.handler==='soun');
+  assert.deepEqual({width:video.width,height:video.height},SIZE,'1920 × 1080');
+  assert.equal(video.codec,'avc1','H.264 video');assert.equal(Math.round(video.fps),FPS,'30 frames a second');
+  assert.equal(audio?.codec,'mp4a','AAC sound');assert.equal(audio.channels,2,'in stereo');
+  assert.ok(Math.abs(info.seconds-trailerSeconds())<0.1,`as long as its clips and end card make it (${info.seconds} s)`);
+  assert.ok(bytes.length*8/info.seconds/1000>=MIN_KBPS,'at Steam’s 5,000 kbps or more');
+  assert.deepEqual(entry.clips.map(c=>c.id),CLIPS.map(c=>c.id),'every clip, in order');
+  for(const [i,c] of entry.clips.entries()){
+    assert.equal(c.frames,frames(CLIPS[i]),`${c.id}: recorded in full`);
+    assert.ok(/^[0-9a-f]{64}$/.test(c.saveSha256)&&c.quality==='high',`${c.id}: from a recorded save, at High quality`);
+    assert.deepEqual(c.play,CLIPS[i].play,`${c.id}: with the keys the script presses`);
+  }
+  assert.equal(entry.music.sha256,imageDigest(await readFile(new URL(`../${MUSIC}`,import.meta.url))),'its music is the game’s own');
 });
 
 test('the renders the capsules are drawn from are kept, at their images’ sizes, so the name can be drawn again without rendering',async()=>{

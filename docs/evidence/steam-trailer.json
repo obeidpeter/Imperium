@@ -1,0 +1,223 @@
+{
+  "method": "Each clip starts from a save reached from New Game by legal commands (the real-time campaign bot, the engaged reference player), restored through the desktop build’s Restore dialog in Chromium at High quality and played on with the player’s own keys. Playwright’s clock moves the page on by 1/30 s a frame. A draft, to record again after 0.40.0.",
+  "campaign": {
+    "seed": 275,
+    "difficulty": "standard",
+    "kit": "engaged"
+  },
+  "size": {
+    "width": 1920,
+    "height": 1080
+  },
+  "fps": 30,
+  "trailers": [
+    {
+      "id": "draft",
+      "file": "desktop/steam/trailer/draft.mp4",
+      "caption": "Draft trailer: from the ford of Chapter VIII to the Aurelian Walls",
+      "seconds": 34,
+      "kbps": 6211,
+      "videoKbps": 6000,
+      "music": {
+        "file": "assets/audio/music-battle.mp3",
+        "sha256": "791bd9197c4bcfdf338ca70349eca8a4c14556552175134dd8b771a5c8a457fb",
+        "loudness": {
+          "target": {
+            "integrated": -16,
+            "truePeak": -1.5,
+            "range": 11
+          },
+          "measured": {
+            "integrated": -11.86,
+            "truePeak": 0.74,
+            "range": 8.9
+          }
+        }
+      },
+      "endCard": {
+        "logo": "desktop/steam/store-art/library_logo.png",
+        "seconds": 4,
+        "sha256": "f691e3d6b7cba856792290b3e1e4dd06bc3fee9d6d44101ba954c00568c68490"
+      },
+      "fade": 0.5,
+      "clips": [
+        {
+          "id": "river-crossing",
+          "caption": "Chapter VIII: the legion forces the ford at the far bank",
+          "chapter": 8,
+          "encounter": "ch8-crossing",
+          "seed": 275,
+          "weather": "clear",
+          "moment": "mid-fight from tick 260 (32 of the soldier's side fighting within 22 m)",
+          "saveSha256": "647e39065bb7df526ff89ae0e646881e7f4c617d7ab0da86098228e36daacb42",
+          "seconds": 6,
+          "frames": 180,
+          "lead": 0,
+          "play": [
+            {
+              "at": 0,
+              "keys": [
+                "KeyT",
+                "Enter"
+              ]
+            },
+            {
+              "at": 2,
+              "keys": [
+                "Minus",
+                "Minus",
+                "Minus"
+              ]
+            }
+          ],
+          "ticks": [
+            269,
+            389
+          ],
+          "quality": "high",
+          "build": "f4985a8c0c3d"
+        },
+        {
+          "id": "camp",
+          "caption": "Chapter V: the fortress camp before the red river gate",
+          "chapter": 5,
+          "encounter": "ch5-wall",
+          "seed": 275,
+          "weather": null,
+          "moment": "the camp before the encounter",
+          "saveSha256": "68fa38e3c35642f5ab8956ac1eb2421a488f41af6c163a753e69bd3c907a6292",
+          "seconds": 5,
+          "frames": 150,
+          "lead": 0,
+          "play": [
+            {
+              "at": 1.5,
+              "hold": "KeyH"
+            }
+          ],
+          "ticks": [
+            7,
+            107
+          ],
+          "quality": "high",
+          "build": "f4985a8c0c3d"
+        },
+        {
+          "id": "promotion",
+          "caption": "Chapter VI: the promotion to praefectus legionis, with its painting",
+          "chapter": 6,
+          "encounter": "promotion 6",
+          "seed": 275,
+          "weather": null,
+          "moment": "the promotion ceremony at the chapter's end",
+          "saveSha256": "408a183f15c46e465a73bd7bd354ff2392932337fc8e7d141c5a0debd8bf4e5f",
+          "seconds": 4,
+          "frames": 120,
+          "lead": 3,
+          "play": [],
+          "ticks": null,
+          "quality": "high",
+          "build": "f4985a8c0c3d"
+        },
+        {
+          "id": "cavalry",
+          "caption": "Chapter IX: the turning cavalry on the Euphrates",
+          "chapter": 9,
+          "encounter": "ch9-wing",
+          "seed": 275,
+          "weather": "clear",
+          "moment": "mid-fight from tick 400 (24 of the soldier's side fighting within 22 m)",
+          "saveSha256": "8190c5b251d74dbaba98368ca6644ae86d6478a5210a1ee9e0060cb8d6691541",
+          "seconds": 6,
+          "frames": 180,
+          "lead": 0,
+          "play": [
+            {
+              "at": 0,
+              "keys": [
+                "KeyT",
+                "Enter"
+              ]
+            },
+            {
+              "at": 2,
+              "keys": [
+                "Minus",
+                "Minus",
+                "Minus"
+              ]
+            }
+          ],
+          "ticks": [
+            411,
+            531
+          ],
+          "quality": "high",
+          "build": "f4985a8c0c3d"
+        },
+        {
+          "id": "curia",
+          "caption": "Chapter XI: the Senate’s Contest in the Curia",
+          "chapter": 11,
+          "encounter": "ch11-accounts",
+          "seed": 275,
+          "weather": null,
+          "moment": "the Contest as it opens",
+          "saveSha256": "051f6093e9bb223f4a3be6fb416b32e3c28501bbc39f3e107a3d9684353c68ea",
+          "seconds": 5,
+          "frames": 150,
+          "lead": 0,
+          "play": [
+            {
+              "at": 1,
+              "keys": [
+                "Equal",
+                "Equal"
+              ]
+            }
+          ],
+          "ticks": [
+            8,
+            108
+          ],
+          "quality": "high",
+          "build": "f4985a8c0c3d"
+        },
+        {
+          "id": "finale",
+          "caption": "Chapter XII: the road to the purple, before the Aurelian Walls",
+          "chapter": 12,
+          "encounter": "ch12-confrontation",
+          "seed": 276,
+          "weather": "clear",
+          "moment": "mid-fight from tick 260 (33 of the soldier's side fighting within 22 m)",
+          "saveSha256": "16b1f8b1213f1e2a2d16d9708d66ab2411b0689e5c66815842c383f4f6f89492",
+          "seconds": 7,
+          "frames": 210,
+          "lead": 0,
+          "play": [
+            {
+              "at": 0,
+              "keys": [
+                "KeyT",
+                "Enter"
+              ]
+            },
+            {
+              "at": 3.5,
+              "hold": "KeyH"
+            }
+          ],
+          "ticks": [
+            272,
+            412
+          ],
+          "quality": "high",
+          "build": "f4985a8c0c3d"
+        }
+      ],
+      "videoSha256": "cd06b6ec8dafa7e5a3203f1f229fce51481d9349dcf3742570601d16669a44eb",
+      "videoBytes": 26397866
+    }
+  ]
+}
