@@ -62,7 +62,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 
    Each is processed to the game's budgets and shown in the game, and the owner picks the tier for each category. The default is standard for troops and props, and detailed only where the camera comes close.
 
-The original downloads (7.3 GB, not in git) exist only in the working container. So the two credit-free upgrades come first, and step 0 checks whether Tripo still serves them by task ID.
+The original downloads (7.3 GB, not in git) exist only in the working container, so the two credit-free upgrades come first. Tripo still serves them by task ID: on 8 November a task from 2 November downloaded again, identical to its recorded SHA-256.
 
 ## The releases
 
@@ -137,8 +137,8 @@ Each cap includes about 10% for rejected attempts. Some things stay out of Tripo
 ## Risks
 
 - **Higher-tier prices** are unknown until step 0. Counts may shrink; the caps don't move.
-- **The original downloads** live only in the working container. If it is reclaimed, the free upgrades depend on Tripo still serving the outputs.
-- **Rights:** Tripo's commercial terms for the owner's plan are on [the release checklist](steam-release.md). They should be confirmed before the bulk releases.
+- **The original downloads** live only in the working container. If it is reclaimed, the free upgrades depend on Tripo still serving the outputs. On 8 November it did: a task from 2 November downloaded again by its ID, identical to its recorded SHA-256.
+- **Rights:** the owner's statement of 20 October covers commercial use of what a paid account generates. [The release checklist](steam-release.md) still asks for a saved copy of Tripo's terms and a record of the plan tier, before the bulk releases.
 - **Style and history:**
   - generated models drift, and the togas and sleeves were wrong before;
   - prompts fix the 3rd-century kit, and every release is reviewed.
