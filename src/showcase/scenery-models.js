@@ -4,8 +4,9 @@ import {worldModelUrl,worldAssetShown,CAMP_WALL_CHAPTERS,CAMP_WALL_MODELS} from 
 import {campWallStyle,campWallSections,campTowerSpots,campGateways,campGateSpan,BREASTWORK_BATCHES,CAMP_PARAPET_BATCHES} from './camp-walls.js';
 import {getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
 import {createSceneryModelCache} from './scenery-cache.js';
-import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements,regionalTentPitches,regionalChapter,TENT_MODEL,TENT_VARIANTS,tentFallbackName} from './environment-regional-world.js';
+import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements,regionalPlacementBounds,regionalComponentDimensions,regionalTentPitches,regionalChapter,TENT_MODEL,TENT_VARIANTS,tentFallbackName} from './environment-regional-world.js';
 import {boardKitUrl} from './board-kit.js';
+import {fieldModelUrls,battlePropPlacements,hasBattleProps} from './field-models.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
 import {normaliseModelMaterials} from './model-materials.js';
@@ -86,9 +87,16 @@ export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false,desk
   // code-built stand-ins stay where those models would stand. `desktop` overrides the build's own platform (tests).
   return chapterScenery(e,{chapter,tileSize,withoutGate,desktop}).filter(p=>worldAssetShown(p.id,chapter,desktop===undefined?{}:{desktop}));
 }
+// Where the scene's other scenery stands, as {minX, maxX, minZ, maxZ}, for a battle's set pieces to keep clear of: a
+// building by its component's footprint, a placed prop by the room it is fitted within.
+const sceneryBounds=placements=>placements.flatMap(p=>p.component&&regionalComponentDimensions(p.id,p.component)?[regionalPlacementBounds(p)]:(p.instances??[p]).map(({x,z})=>{
+  const w=(p.fitWithin?.width??4.4)/2,d=(p.fitWithin?.depth??4.4)/2;return {minX:x-w,maxX:x+w,minZ:z-d,maxZ:z+d};}));
+// A battle's set pieces beyond the board (G5, field-models.js) find their spots last, clear of everything else.
+const withBattleProps=(e,placements,tileSize)=>e?.kind!=='battle'||!hasBattleProps(e)?placements:
+  [...placements,...battlePropPlacements(e,{tileSize,occupied:sceneryBounds(placements)})];
 function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
-  if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
-    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize,desktop),...campWallPlacements(e,chapter,tileSize)];
+  if(hasRegionalWorld(e))return withBattleProps(e,[...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
+    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize,desktop),...campWallPlacements(e,chapter,tileSize)],tileSize);
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
@@ -102,7 +110,7 @@ function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
     return {id:m.id,url:sceneryModelUrl(m.id),x,z,yaw};
   });
   // Chapter V's staging courtyard keeps its own props; its mudbrick walls are the camps' (G3).
-  return [...props,...getChapterFiveKitPlacements(e,{chapter,tileSize}).map((p,i)=>({...p,key:`${p.id}:${p.component}:${i}`,url:sceneryModelUrl(p.id)})),...campWallPlacements(e,chapter,tileSize)];
+  return withBattleProps(e,[...props,...getChapterFiveKitPlacements(e,{chapter,tileSize}).map((p,i)=>({...p,key:`${p.id}:${p.component}:${i}`,url:sceneryModelUrl(p.id)})),...campWallPlacements(e,chapter,tileSize)],tileSize);
 }
 
 // Each master's materials share the imported art's programs (model-materials.js).
@@ -121,10 +129,10 @@ export const holdSceneryModel=url=>masters.hold(url);
 /** The chapter's generated landmarks (LANDMARK_LAYOUT; environment-horizon.js), as [world catalog
  * id, model url] pairs: those whose models exist, and none in the Curia, whose walls hide them. */
 export const landmarkModelUrls=(e,{chapter}={})=>e&&!hasCuria(e,{chapter})?(LANDMARK_LAYOUT[chapter]??[]).map(slot=>[slot.model,worldModelUrl(slot.model)]).filter(([,url])=>url):[];
-// The board kit, the region's tree and rock kits, before Rome Aurelian's walls, and the
-// chapter's generated landmarks belong to the working set wherever the scenery is drawn.
+// The board kit, the region's tree and rock kits, before Rome Aurelian's walls, the chapter's generated landmarks
+// and a battle's field-object models (field-models.js) belong to the working set wherever the scenery is drawn.
 const worldKitUrls=(e,quality,chapter)=>quality==='performance'?[]:[boardKitUrl(e),sceneTreeKitUrl(e,chapter),sceneRockKitUrl(e,chapter),aurelianWallsUrl(e,{chapter}),
-  ...landmarkModelUrls(e,{chapter}).map(([,url])=>url)].filter(Boolean);
+  ...landmarkModelUrls(e,{chapter}).map(([,url])=>url),...fieldModelUrls(e,{chapter}).map(([,url])=>url)].filter(Boolean);
 /** Every model a scene's stage keeps while it stands, when the loading veil has preloaded
  * them: its placed scenery and the world kits. None on Performance. */
 export const sceneryWorkingSet=(e,{chapter,quality='balanced'}={})=>quality==='performance'?[]:[...new Set([...sceneryPlacements(e,{chapter}).map(p=>p.url),...worldKitUrls(e,quality,chapter)])];

@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-ram.glb",
+    "bytes": 45567692,
+    "sha256": "b710e461b907c15d4ee5b3974832bb8daefaa70d7f6248c6408b78c0a9f1323a",
+    "triangles": 1452044
+  },
+  "output": {
+    "path": "assets/models/world/g5-ram.glb",
+    "bytes": 248404,
+    "sha256": "25041f44dbe397de6eecc4eb429619beae174af2d675189ca38a54782f9bb3a8",
+    "triangles": 3430
+  },
+  "settings": {
+    "triangles": 3500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.01983504068724,
+  "sizeMetres": {
+    "width": 3.0416,
+    "height": 2.0,
+    "depth": 1.805
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_fd95fe01-5ead-45b7-9809-13d1aa141b90",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_fd95fe01-5ead-45b7-9809-13d1aa141b90",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_fd95fe01-5ead-45b7-9809-13d1aa141b90",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

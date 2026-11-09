@@ -1,0 +1,95 @@
+{
+  "id": "g5-ram",
+  "status": "G5 pilot: processed, compressed and reviewed; in the game at Chapter V's river gate (desktop build, High)",
+  "chapters": [
+    5
+  ],
+  "use": "The Persian ram under its shed at Chapter V's river gate (the siege work 'ram') while it stands; burnt, its code-built charred timbers remain.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A siege ram of the third century as used by the Persian army: a low timber shed on four solid wooden wheels, its sloping roof covered in overlapping raw hides against fire, and inside it a heavy ram beam with a blunt iron head hung by chains from the roof beams, the iron head projecting from the front; about three metres long, one point eight metres wide and two point two metres high. Weathered timber, dark hides and black iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, tower, castle, medieval, battering ram with handles, cannon, ship, boat",
+      "model_seed": 2615130,
+      "image_seed": 2615131,
+      "texture_seed": 2615132
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 2.0,
+    "minHeight": 1.8,
+    "maxHeight": 2.2
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T17:48:02.070Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, tower, castle, medieval, battering ram with handles, cannon, ship, boat",
+      "model_seed": 2615130,
+      "image_seed": 2615131,
+      "texture_seed": 2615132,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A siege ram of the third century as used by the Persian army: a low timber shed on four solid wooden wheels, its sloping roof covered in overlapping raw hides against fire, and inside it a heavy ram beam with a blunt iron head hung by chains from the roof beams, the iron head projecting from the front; about three metres long, one point eight metres wide and two point two metres high. Weathered timber, dark hides and black iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8885,
+    "balanceSnapshotBefore": {
+      "balance": 8885,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "79f5594b-10a7-4ebc-9c4f-84ea37a66472",
+      "state": "accepted",
+      "requestSha256": "bb25e5006fd7406ce48e8909f627a56d830a941c08d088d763762e964ddecbd2"
+    },
+    "taskId": "fd95fe01-5ead-45b7-9809-13d1aa141b90",
+    "status": "success",
+    "generatedAt": "2026-11-09T17:50:32.010Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-ram.glb",
+    "rawBytes": 45567692,
+    "rawSha256": "b710e461b907c15d4ee5b3974832bb8daefaa70d7f6248c6408b78c0a9f1323a",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A siege ram of the third century as used by the Persian army: a low timber shed on four solid wooden wheels, its sloping roof covered in overlapping raw hides against fire, and inside it a heavy ram beam with a blunt iron head hung by chains from the roof beams, the iron head projecting from the front; about three metres long, one point eight metres wide and two point two metres high. Weathered timber, dark hides and black iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2615131,
+      "model_seed": 2615130,
+      "texture_seed": 2615132,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, tower, castle, medieval, battering ram with handles, cannon, ship, boat",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T17:48:02.715366Z",
+    "tripoCompletedAt": "2026-11-09T17:50:27.527561Z",
+    "tripoRender": "art-source/models/raw/g5-ram-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
+    "notes": "A timber shed on four solid wheels under a pitched roof of dark, ragged hides, the ram beam hung in it on a chain, its long iron head projecting at the model's +x. Turned half round (yaw pi) so the head points west at the gate, like the code-built ram's. Processed at 2.0 m high rather than the request's 2.2, so its 3.04 m length overhangs its 2.5 m cell by about a quarter metre at each end, the head over the gate's cell; at 2.2 m it was 3.35 m long. The head is pointed rather than the blunt one asked for."
+  }
+}

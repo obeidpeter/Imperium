@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g5-carroballista.glb",
+  "output": "assets/models/world/g5-carroballista.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 298020,
+    "gzipBytes": 206914,
+    "sha256": "29040b1ae4be47b927dce49bf11748f763c409d6276c68da69f7140c7d4519ed"
+  },
+  "after": {
+    "bytes": 287748,
+    "gzipBytes": 278165,
+    "sha256": "ca3ea7e591429b47002e02f4bbbb13469b5135786de702e0aa60fc95975ef7af"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4409,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16800
+      },
+      "bytes": 25804,
+      "psnr": 38.139
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 40598
+      },
+      "bytes": 57978,
+      "psnr": 33.054
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 35734
+      },
+      "bytes": 47900,
+      "psnr": 27.504
+    }
+  ]
+}

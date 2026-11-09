@@ -1,0 +1,98 @@
+{
+  "id": "g5-onager",
+  "status": "G5 pilot: processed, compressed and reviewed; in the game beyond the west edge of Chapter V's wall and Chapter IX's city (desktop build, High)",
+  "chapters": [
+    4,
+    5,
+    9,
+    12
+  ],
+  "use": "Siege artillery: a stone-thrower on the Roman side, beyond the board's west edge, in the sieges.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman onager, a one-armed torsion stone-thrower: a heavy rectangular timber frame lying on the ground, about three metres long, with a thick horizontal bundle of twisted rope in its middle from which a single wooden throwing arm rises, a leather sling at the arm's tip, a padded buffer beam across the front uprights, a winch with spoked handles at the back, and a few round dressed stone balls beside it. Weathered timber, rope and iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, trebuchet, counterweight, medieval catapult, castle, wheels, cannon",
+      "model_seed": 2615150,
+      "image_seed": 2615151,
+      "texture_seed": 2615152
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 2.2,
+    "minHeight": 1.98,
+    "maxHeight": 2.42
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T17:52:31.581Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, trebuchet, counterweight, medieval catapult, castle, wheels, cannon",
+      "model_seed": 2615150,
+      "image_seed": 2615151,
+      "texture_seed": 2615152,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman onager, a one-armed torsion stone-thrower: a heavy rectangular timber frame lying on the ground, about three metres long, with a thick horizontal bundle of twisted rope in its middle from which a single wooden throwing arm rises, a leather sling at the arm's tip, a padded buffer beam across the front uprights, a winch with spoked handles at the back, and a few round dressed stone balls beside it. Weathered timber, rope and iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8845,
+    "balanceSnapshotBefore": {
+      "balance": 8845,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "c650c7e1-cade-40ea-b4f9-ffa1ce6acdb4",
+      "state": "accepted",
+      "requestSha256": "7405f5c6e39e8d844517602eed44bedc61731f4f5abb1c97424acc82c73d0072"
+    },
+    "taskId": "aa7f9d44-bd59-4663-bb72-12af71ddab64",
+    "status": "success",
+    "generatedAt": "2026-11-09T17:54:39.656Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-onager.glb",
+    "rawBytes": 45930436,
+    "rawSha256": "69a982bb9bd5cf7680929f619bd74d95a3066fda44b4a869151c2dbf35e0d709",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman onager, a one-armed torsion stone-thrower: a heavy rectangular timber frame lying on the ground, about three metres long, with a thick horizontal bundle of twisted rope in its middle from which a single wooden throwing arm rises, a leather sling at the arm's tip, a padded buffer beam across the front uprights, a winch with spoked handles at the back, and a few round dressed stone balls beside it. Weathered timber, rope and iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2615151,
+      "model_seed": 2615150,
+      "texture_seed": 2615152,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, trebuchet, counterweight, medieval catapult, castle, wheels, cannon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T17:52:32.163985Z",
+    "tripoCompletedAt": "2026-11-09T17:54:33.695665Z",
+    "tripoRender": "art-source/models/raw/g5-onager-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
+    "notes": "A heavy rectangular timber frame on the ground with a long coil of twisted rope along it, a single throwing arm standing upright at its front with a short crossbar at the top and a rope hanging from it, iron fittings and three dressed stone balls beside it; the padded buffer beam the prompt asked for is missing, and the front beam carries a decorative iron plate. The arm stands at the model's -x, so it turns half round (yaw pi) to face east."
+  }
+}

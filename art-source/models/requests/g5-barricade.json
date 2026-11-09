@@ -1,0 +1,103 @@
+{
+  "id": "g5-barricade",
+  "status": "G5 pilot: processed, compressed and reviewed; in the game at Chapter III's station (desktop build, High)",
+  "chapters": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12
+  ],
+  "use": "The battle's timber barricade (the field object 'barricade') while it stands; dismantled, its code-built scattered timbers remain.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman field barricade of sharpened stakes: five pairs of long double-pointed timber stakes, each pair crossed in an X and lashed at the middle with rope, threaded on one horizontal beam about two metres long, so that the points stand out on both sides like a cheval-de-frise, about one metre high. Weathered grey-brown wood with paler cut points and hemp rope. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, fence, picket fence, gate, wall, medieval, barbed wire, metal spikes",
+      "model_seed": 2615120,
+      "image_seed": 2615121,
+      "texture_seed": 2615122
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 240000,
+    "heightMetres": 1,
+    "minHeight": 0.9,
+    "maxHeight": 1.1
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T17:44:50.259Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, fence, picket fence, gate, wall, medieval, barbed wire, metal spikes",
+      "model_seed": 2615120,
+      "image_seed": 2615121,
+      "texture_seed": 2615122,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman field barricade of sharpened stakes: five pairs of long double-pointed timber stakes, each pair crossed in an X and lashed at the middle with rope, threaded on one horizontal beam about two metres long, so that the points stand out on both sides like a cheval-de-frise, about one metre high. Weathered grey-brown wood with paler cut points and hemp rope. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8905,
+    "balanceSnapshotBefore": {
+      "balance": 8905,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "7940ecba-f336-41ff-9ebf-f945a48840c5",
+      "state": "accepted",
+      "requestSha256": "1c5d1eedc5824be6423aae02fefcb0a39adfcd04ac67b60626935a64db1cf1a4"
+    },
+    "taskId": "27f7d4d1-c0af-4b2f-a038-3aad626484ce",
+    "status": "success",
+    "generatedAt": "2026-11-09T17:48:01.116Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-barricade.glb",
+    "rawBytes": 45630108,
+    "rawSha256": "7035abd3cd04d3df368c8a9358fae11b429c89c9f7a312bf8b1a9f8173e66d65",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman field barricade of sharpened stakes: five pairs of long double-pointed timber stakes, each pair crossed in an X and lashed at the middle with rope, threaded on one horizontal beam about two metres long, so that the points stand out on both sides like a cheval-de-frise, about one metre high. Weathered grey-brown wood with paler cut points and hemp rope. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2615121,
+      "model_seed": 2615120,
+      "texture_seed": 2615122,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, fence, picket fence, gate, wall, medieval, barbed wire, metal spikes",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T17:44:51.189398Z",
+    "tripoCompletedAt": "2026-11-09T17:47:52.752442Z",
+    "tripoRender": "art-source/models/raw/g5-barricade-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
+    "notes": "Not the crossed pairs of stakes on one beam the prompt asked for, but a lattice of four sharpened horizontal beams on five sharpened uprights, braced and lashed with rope: a timber obstacle whose points face both ways, as the code-built barricade's stakes do. Kept: it reads as a field obstacle at once. A panel is 1.16 m long at 1.0 m high, so two stand side by side across the cell, east to west, spanning 2.3 m as the code-built barricade's 2 m do. Its thin stakes need their 2,939 triangles; the byte budget rose from 220,000 to 240,000 for them."
+  }
+}

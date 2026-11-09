@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g5-cart-load.glb",
+  "output": "assets/models/world/g5-cart-load.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 210788,
+    "gzipBytes": 144426,
+    "sha256": "69ee3c0366ecef86b964c7bffa2d24dc21d45294b8f4e5b44769bfd256981860"
+  },
+  "after": {
+    "bytes": 222016,
+    "gzipBytes": 213861,
+    "sha256": "0a23723b3ac1b8014d96dceb86a807b7c5c920a3c2f47fb5fd265e15cf520594"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2972,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13326
+      },
+      "bytes": 24871,
+      "psnr": 41.524
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 37064
+      },
+      "bytes": 55709,
+      "psnr": 33.59
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16792
+      },
+      "bytes": 33432,
+      "psnr": 38.981
+    }
+  ]
+}

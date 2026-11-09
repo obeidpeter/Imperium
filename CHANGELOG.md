@@ -2,6 +2,37 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G5's pilot: the battles' cart, barricade and ram, and engines behind the line ([the plan](docs/graphics-tripo-plan.md#g5s-pilot-9-november))
+
+Six Tripo models, made for 140 credits and reviewed in the game before the rest of G5 is generated:
+
+- **Field objects drawn by models,** on their cells, in place of the code-built pieces:
+  - the abandoned supply cart in every battle, a two-wheeled cart with spoked, iron-tyred wheels, in all four of its states;
+  - its load, sacks, amphorae and rope under a lashed leather sheet, on its bed while the supplies are still to be recovered. Without the load, the code-built cart with its own sacks stands instead, so the cart never stands empty while the supplies are there;
+  - the timber barricade (Chapters III–X and XII), two panels of sharpened stakes lashed with rope side by side across its cell;
+  - the Persian ram under its hide-roofed shed at Chapter V's river gate, its iron head toward the gate.
+
+  Each model draws its object only in the states it is made for: the dismantled barricade and the burnt ram keep their code-built timbers. The code-built pieces stay the fallback on Performance and until a model is ready, and the rules keep every object's state.
+- **Set pieces behind the Roman line,** a few metres beyond the board's west edge, where the camera sees them behind the army, facing the enemy:
+  - a carroballista, a bolt-thrower with bronze-cased springs on a cart, in the field battles of Chapters VII–X;
+  - an onager, a one-armed stone-thrower, in the sieges of Chapters IV, V, IX and XII.
+
+  Each stands on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery. Like the camps' furniture, they have no code-built stand-in.
+- **The first load was rejected** (it came on a four-wheeled cart of its own) and redone: one generation in seven, under the 20% stop rule.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web:
+  - Chapters I, VII and VIII take none;
+  - IV takes the cart, its load and the barricade; IX the two engines; X the carroballista and the barricade; XII the barricade;
+  - every other battle's chapter takes all of its models;
+  - the largest chapter download is 27.95 of 28 MB, Chapter I's 3D download is unchanged at 17.87 of 18 MB, and the complete web game is 71.86 of 80 MB.
+- **The proposal for the rest of G5** and for the 1,840 credits held from G3 is in [the plan](docs/graphics-tripo-plan.md#what-g5s-pilot-proposes).
+- **Checks:** `tests/graphics-g5.test.mjs` covers:
+  - the ledger and every shipped model's budget;
+  - which model draws each field object in each state, on its cell, in every battle reached by legal commands;
+  - the cart standing only with its load;
+  - the instanced pieces, grounded and within their cells, and the code-built pieces without them;
+  - the set pieces beyond the west edge, clear of roads and other scenery, and never on Performance;
+  - each chapter's web and desktop packs.
+
 ### Release G3: the stone and mudbrick camps walled, gates, tents and the rest of the camps' furniture ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g3-9-november))
 
 The rest of G3: eighteen Tripo models, made for 380 credits after the pilot's review in the game. G3 is done at 560 of its 2,400 credits.

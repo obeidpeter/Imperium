@@ -33,7 +33,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
 | G4 | Animals | 600 | |
-| G5 | Battle and siege | 1,845 | (900, 350 from G7 and 595 from G1) |
+| G5 | Battle and siege | 1,845 | [the pilot](#g5s-pilot-9-november) done (140 credits): 6 models. It [proposes](#what-g5s-pilot-proposes) the rest of G5 and where G3's held 1,840 go |
 | G6 | Faces and people | 1,100 | |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
 | | **Total** | **7,900** | |
@@ -266,6 +266,55 @@ Eighteen more camp models, made after the pilot's review in the game (decision 9
 G3 is done at 560 of its 2,400 credits. The rest bought what its list still lacked where the camera meets the camps; the carts, barrels and amphorae on the list already stood there, as camp life (release 9) and the quartermaster's stores. Its other 1,840 credits are held for the releases after it rather than moved now, since moving them would raise another release's cap:
 - at standard prices, the lists of G5, G4, G6 and G2 come to about 3,000 credits, so the plan would end near 4,800 of its 7,900, below the owner's 70% floor (7,490);
 - G5's pilot proposes how many more of battle and siege to buy, and where the rest of the 1,840 goes, before anything beyond a cap is spent.
+
+### G5's pilot (9 November)
+
+Six battle and siege models, about a seventh of G5's list, made and reviewed in the game before the rest of G5 (decision 9). Four draw field objects on their cells in place of the code-built pieces, which stay for every other state, on Performance and until a model is ready; two are set pieces beyond the board:
+
+| Model | Where it stands | Chapters |
+| --- | --- | --- |
+| an abandoned two-wheeled supply cart | on the supply cart's cell, in all four of its states | every battle (I–X, XII) |
+| the cart's load: sacks, amphorae and rope under a lashed sheet | on the cart's bed while the supplies are still to be recovered | every battle |
+| a timber barricade of sharpened stakes, two panels side by side | on the barricade's cell while it stands | III–X, XII |
+| a ram under a hide-roofed shed | on the ram's cell at Chapter V's river gate while it stands | V |
+| a carroballista, a bolt-thrower with bronze-cased springs on a cart | beyond the west edge, behind the Roman line, facing the enemy | the field battles of VII–X |
+| an onager, a one-armed stone-thrower | beyond the west edge, behind the Roman line, facing the enemy | the sieges of IV, V, IX and XII |
+
+- **Credits:** 140 of the pilot's 160-credit ceiling: six generations at 20, and one rejected and redone (the first load came on a four-wheeled cart of its own). [The ledger](../art-source/models/graphics-g5-credits.json) has every task. The balance went from 8,945 to 8,805. One generation in seven was rejected, under the 20% stop rule. G5 has 1,705 credits left.
+- **Field objects:** the rules keep each object's state, and the model shows it.
+  - The cart stands in every state, its load only while the supplies are to be recovered. A cart never stands empty while they are: without its load the code-built cart, with its own sacks, stands instead.
+  - Two barricade panels span the barricade's cell east to west, as the code-built barricade's two metres do. Dismantled, its code-built scattered timbers remain.
+  - The ram's iron head points west at the gate. Burnt, its code-built charred timbers remain.
+  - Each model is one instanced draw for each of its meshes, with the scenery's shader programs.
+- **Set pieces:** each stands a few metres beyond the board's west edge, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery. The fixed camera looks north-west, so it sees them behind the army. Like the camps' furniture, they have no code-built stand-in.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web:
+  - Chapters I, VII and VIII take none (17.87 of 18 MB, 27.95 and 27.92 of 28);
+  - IV takes the cart, its load and the barricade (27.91 of 28); IX the two engines (27.86); X the carroballista and the barricade (27.92); XII the barricade (27.95);
+  - II, III, V and VI take all of theirs (V at 24.91, VI at 27.41);
+  - the complete web game is 71.86 of 80 MB.
+- **The review,** in the desktop build at High, each battle restored from a moment the real-time bot reached from New Game, before (G5's files refused) and after:
+REVIEW
+
+![Battles before (the code-built pieces) and with the pilot's models, in the desktop build at High](images/g5-pilot-battles.jpg)
+
+#### What G5's pilot proposes
+
+The pilot shows the field objects and the set pieces read in battle, so the rest of G5 buys more of both, in two batches, each reviewed in the game before the next:
+- **The rest of the list,** about 30 models, about 660 credits with a tenth for rejects:
+  - the other field objects on their cells, each with its code-built fallback: the signal station, the pitch brazier (its flame stays the particle plume), the Gothic ladder, the countermine's timbering, the siege ramp, and the side gate and the footbridge outside the fortified fields (7);
+  - beyond the west edge, a ballista on its stand and a scorpion (2); before the walls of the sieges, a siege tower and a row of mantlets (2);
+  - beyond the north edge, which the camera sees behind both armies: the Gothic wagon laager in the Gothic battles (2), the Persian siege works in Chapter V (2), regional palisades (2), and at Chapter VIII's river a Danube patrol boat and a barge (2);
+  - regional carts and barricades, so the eastern and Gothic battles differ from the Roman ones: an eastern cart, a Gothic ox wagon and an eastern barricade of wicker hurdles (3);
+  - battlefield debris for the walked field after a win: scattered shields and broken spears, a fallen standard, spent bolts and a broken cart (4), and the stacks of shot and bolts beside the engines (2), an eastern signal station (1) and the fascines and gabions of a Roman siege (1).
+- **Regional sets,** about 40 models and 900 credits, after the first batch's review: each region's battles take field objects and set pieces in their own style (the Danube, the East, Palmyra, Italy). G5 would then have spent about 1,700 of its 1,845.
+- **Downloads:** most of these ship in the desktop app alone. After the pilot, Chapters I, IV, VII–X and XII have under 0.15 MB of web room left, and their web builds keep the code-built pieces. Raising the web's 28 MB chapter limit is the owner's call.
+
+**The 1,840 credits held from G3.** At standard prices what is left of the lists of G5, G4, G6 and G2 comes to about 2,600 credits, so the plan would end near 4,500 of its 7,900, well below the owner's 70% floor (7,490). With G5 spending about 1,700, the floor needs the held credits too. I propose they go where the camera still meets the weakest work:
+- **G6, faces and people, +900:** bodies of their own for the camps' people, who share a few bodies in every chapter;
+- **G4, animals, +500:** mules and oxen harnessed to the carts, wagons and carroballista, which stand unhitched, and the camps' animals;
+- **G2, arms and standards, +440:** each faction's shields and weapons as 3D kit, and each unit's standard.
+
+The plan would then end near 7,700 of its 7,900 credits, 72% of the balance. Each of those releases' pilots proposes its counts, as G3's and G5's did, and nothing beyond G5's own cap is spent before the owner has seen this proposal.
 
 ## Around every release, at no credit cost
 

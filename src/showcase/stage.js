@@ -11,6 +11,7 @@ import {followerCount} from './formation.js';
 import {createBattleRemains} from './battle-remains.js';
 import {createSceneryModels,holdSceneryModel,landmarkModelUrls,sceneryResidency} from './scenery-models.js';
 import {boardKitUrl} from './board-kit.js';
+import {fieldModelUrls} from './field-models.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
 import {aurelianWallsUrl} from './aurelian-walls.js';
@@ -353,10 +354,12 @@ export class BattleStage{
     this.boardKit=take(boardKitUrl(encounter));this.treeKit=take(sceneTreeKitUrl(encounter,this.chapter));this.rockKit=take(sceneRockKitUrl(encounter,this.chapter));
     this.wallsKit=take(aurelianWallsUrl(encounter,{chapter:this.chapter}));
     this.landmarkKits=landmarkModelUrls(encounter,{chapter:this.chapter}).map(([model,url])=>[model,take(url)]).filter(([,lease])=>lease);
+    // The battle's field-object models (field-models.js, G5), like the board kit: only those already loaded.
+    this.fieldKits=fieldModelUrls(encounter,{chapter:this.chapter}).map(([model,url])=>[model,take(url)]).filter(([,lease])=>lease);
   }
   releaseWorldKits(){
-    for(const lease of [this.boardKit,this.treeKit,this.rockKit,this.wallsKit,...(this.landmarkKits??[]).map(([,l])=>l)])lease?.release();
-    this.boardKit=this.treeKit=this.rockKit=this.wallsKit=null;this.landmarkKits=[];
+    for(const lease of [this.boardKit,this.treeKit,this.rockKit,this.wallsKit,...(this.landmarkKits??[]).map(([,l])=>l),...(this.fieldKits??[]).map(([,l])=>l)])lease?.release();
+    this.boardKit=this.treeKit=this.rockKit=this.wallsKit=null;this.landmarkKits=[];this.fieldKits=[];
   }
   // The kits' models for the world's build, with the finish their cached materials take.
   worldKits(){
@@ -378,7 +381,7 @@ export class BattleStage{
     const finish=material=>{installCloudShadows(material);const baked=this.environment?.occlusion?.uniforms;if(baked)installBakedOcclusion(material,baked);};
     this.fieldFeatures?.dispose();
     this.fieldFeatures=createBattlefieldFeatures(this.scene,{heightAt:(x,z)=>this.environment.groundHeight(x,z),quality:this.worldQuality,finish,kitFinish,
-      boardKit:this.boardKit?.scene??null});
+      boardKit:this.boardKit?.scene??null,fieldModels:new Map((this.fieldKits??[]).filter(([,lease])=>lease.scene).map(([model,lease])=>[model,lease.scene]))});
   }
   // The tier the world (ground, scenery, sky, lighting, figures and the finishing
   // pass) was built at. It can lag behind the live tier below until a rebuild.

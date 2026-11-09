@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-cart-load-b.glb",
+    "bytes": 44752256,
+    "sha256": "89255bdf967895ba093f886a23d05702b4f137e4dd33e0a478a3639117c3dc1e",
+    "triangles": 1413658
+  },
+  "output": {
+    "path": "assets/models/world/g5-cart-load.glb",
+    "bytes": 210788,
+    "sha256": "69ee3c0366ecef86b964c7bffa2d24dc21d45294b8f4e5b44769bfd256981860",
+    "triangles": 2972
+  },
+  "settings": {
+    "triangles": 2500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.75,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 0.985544785170216,
+  "sizeMetres": {
+    "width": 0.9763,
+    "height": 0.75,
+    "depth": 0.9382
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_56efc54e-3f11-4570-809d-0a3fa9521ee9",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_56efc54e-3f11-4570-809d-0a3fa9521ee9",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_56efc54e-3f11-4570-809d-0a3fa9521ee9",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}
