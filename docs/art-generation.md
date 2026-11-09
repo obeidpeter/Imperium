@@ -1601,7 +1601,16 @@ Each model was compared with its Tripo render and then, bound, in the game's act
 
 #### In battle
 
-IN_BATTLE_ART
+The bodies were then seen where a player meets them, in sixteen moments of the desktop build at High. Each was reached from New Game by the real-time bot's legal commands, restored through the Restore dialog, and kept where the unit stood nearest the soldier. Eight were captured twice, with these bodies and with the bodies the types wore before served under the same files' names; the other eight only as built.
+
+![G1's remaining bodies at the battle camera: eight fights before and after, and eight as built, crops at the game's own pixels in the desktop build at High](images/g1-rest-battles.jpg)
+
+As in the pilot, a figure stands about 70 to 100 pixels tall, so what reads is its outline and main colours:
+- **Clearest:** whole squads in a colour of their own, the Persian spearmen's saffron (V) and the claimant's archers' off-white (XII); and the armoured officer, now mounted, in gilded scale over purple (IX).
+- **A champion reads as the one figure in his own colour:** the war leader's red (I), the wall's war leader's blue (IV), the standard-breaker's turquoise (VI), the crossing's champion's saffron (VIII), the city's captain's white (IX) and the raiders' chief's grey (X).
+- **Barely:** the dark bodies read as dark figures, close to what they wore before: the shield guard (IV), the sapper captain's indigo (V) and the mercenary captain's dark green (VII). The Persian horses read darker, but their lamellae do not show.
+- **The claimant's men** carry his purple on their shields, which reads across the field more than any of the bodies.
+- **The claimant's guard captain** is hard to pick out in the finale's press at the camera's distance; the actor viewer shows him.
 
 #### Exact prompts
 
