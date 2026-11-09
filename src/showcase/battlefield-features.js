@@ -5,6 +5,7 @@ import {batchStaticEnvironment} from './environment-batching.js';
 import {createFlamePlume,sampleFlamePlume} from './stage-particles.js';
 import {BOARD_KIT_KINDS,boardKitFamily,boardKitPieces} from './structure-registry.js';
 import {createBoardKitPieces} from './board-kit.js';
+import {createFieldModelPieces,fieldModelPlacements} from './field-models.js';
 
 // Only committed field state drives these presentation meshes. Decorative
 // detail merges by material and never becomes a picking or rule obstacle.
@@ -12,16 +13,19 @@ import {createBoardKitPieces} from './board-kit.js';
 // the field's structures; without it the code-built fieldwork stands in. Its
 // materials are the cached model's, shared between stages, so they take their
 // own finish (kitFinish) rather than this stage's (finish).
-export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balanced',finish=null,kitFinish=null,boardKit=null}={}){
+// fieldModels: the field objects' loaded models by world catalog id (field-models.js, graphics plan G5), cached and
+// finished like the board kit; an object whose kind and state one draws stands as that model, drawn as the scenery's
+// placed models are, else code-built.
+export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balanced',finish=null,kitFinish=null,boardKit=null,fieldModels=null}={}){
   const group=new T.Group();group.name='interactive-battlefield';scene.add(group);
-  let signature='',fires=[],walkSurfaces=[],platformSurfaces=[],bounds=null,disposed=false,retired=[],chapter=1,weather=null,pieces=null;
+  let signature='',fires=[],walkSurfaces=[],platformSurfaces=[],bounds=null,disposed=false,retired=[],chapter=1,weather=null,pieces=null,modelPieces=null;
   const geometries=new Set(),materials=new Set();
   // A state change rebuilds the set with materials like the old ones. The old
   // ones are disposed only after the new set has drawn, so their shader
   // programs pass straight to the new materials instead of compiling again.
   function clear(){
     for(const g of geometries)g.dispose();if(materials.size)retired.push({materials:[...materials],frames:0});
-    pieces?.dispose();pieces=null;
+    pieces?.dispose();pieces=null;modelPieces?.dispose();modelPieces=null;
     geometries.clear();materials.clear();group.clear();group.userData.fieldObjects=[];fires=[];walkSurfaces=[];platformSurfaces=[];bounds=null;
   }
   function release(force=false){retired=retired.filter(r=>{if(!force&&++r.frames<3)return true;r.materials.forEach(m=>m.dispose());return false;});}
@@ -43,8 +47,16 @@ export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balance
       const placements=boardKitPieces(e,{height:ground});pieces=createBoardKitPieces(group,boardKit,placements,{finish:kitFinish});
       for(const p of placements)if(p.walk)walkSurfaces.push({x:p.x,z:p.z,left:p.deck-.13,right:p.deck-.13,halfLength:p.yaw?.72:1.35,halfWidth:p.yaw?1.35:.72});
     }
+    // Generated models draw the objects they have a model for (field-models.js); the code-built pieces the rest.
+    const modelled=fieldModels?.size?fieldModelPlacements(e,{chapter,available:new Set(fieldModels.keys())}):[];
+    if(modelled.length)modelPieces=createFieldModelPieces(group,fieldModels,modelled,{heightAt:ground,finish:kitFinish});
+    const drawn=new Set(modelled.filter(p=>!p.on).map(p=>p.object));
     for(const o of e.field.objects){
       if(useKit&&(BOARD_KIT_KINDS.includes(o.kind)||o.gatePanel))continue;
+      if(drawn.has(o.id)){
+        const b=modelPieces.bounds.get(o.id);if(b&&!b.isEmpty())records.push({id:o.id,kind:o.kind,state:o.state,min:b.min.toArray(),max:b.max.toArray(),model:true});
+        continue;
+      }
       if(!Number.isInteger(o.x)||!Number.isInteger(o.y)||o.x<0||o.y<0||o.x>=e.width||o.y>=e.height)continue;
       const p=gridToWorld(o,e,2.5),left=ground(p.x-1.35,p.z),right=ground(p.x+1.35,p.z);
       const y=o.kind==='bridge'?(left+right)/2:ground(p.x,p.z),model=kit.build(group,o,{x:p.x,y,z:p.z,left,right});
@@ -56,10 +68,11 @@ export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balance
         geometries.add(plume.geometry);materials.add(plume.material);group.add(plume);fires.push(plume);
       }
     }
-    const batching=batchStaticEnvironment(group,{geometries,instanceThreshold:Infinity});
+    // The models' meshes stay as they are: their geometry is the cache's, shared with every other stage.
+    const batching=batchStaticEnvironment(group,{geometries,instanceThreshold:Infinity,exclude:new Set(modelPieces?.meshes??[])});
     let triangles=0,drawBatches=0;group.traverse(o=>{if(o.isMesh){drawBatches++;triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;}});
     group.userData.fieldObjects=records;group.userData.regionalPalette=kit.region.key;
-    bounds={objects:records.length,drawBatches,triangles,region:kit.region.key,batching};
+    bounds={objects:records.length,drawBatches,triangles,region:kit.region.key,batching,fieldModels:modelPieces?.stats()??null};
     return true;
   }
   return {group,sync,

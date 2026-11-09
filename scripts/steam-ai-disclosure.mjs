@@ -55,7 +55,7 @@ const PLACES=[
   ['assets/models/characters/','Characters’ bodies','Rigged by Tripo’s auto-rig, bound to the game’s own skeleton and motions, reduced and compressed'],
   ['assets/models/horses/','Horses','Bound to the game’s own horse rig and gaits, reduced and compressed'],
   ['assets/models/landmarks/','Landmarks','Processed in Blender by the project’s scripts, then compressed'],
-  ['assets/models/world/','Camp and town props','Processed in Blender by the project’s scripts, then compressed'],
+  ['assets/models/world/','Camp, town and battlefield props','Processed in Blender by the project’s scripts, then compressed'],
   ['assets/models/chapters/','Chapter V scenery','Processed in Blender by the project’s scripts, then compressed'],
   ['assets/models/scenery/rocks-','Rock kits','Reduced in Blender and gathered into one kit for each region'],
   ['assets/items/','Item pictures','Each model rendered in Blender, then packed into one atlas'],

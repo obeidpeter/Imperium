@@ -1,0 +1,105 @@
+{
+  "id": "g5-cart",
+  "status": "G5 pilot: processed, compressed and reviewed; in the game at Chapter III's station and Chapter VIII's ferry (desktop build, High)",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12
+  ],
+  "use": "The battle's abandoned supply cart (the field object 'stores'), on its cell of the board, in every state; its load stands on the bed while the cart is still to be recovered.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "An abandoned Roman army supply cart: a sturdy two-wheeled cart about two and a half metres long including its pole and one and a half metres wide, with a flat plank bed and low slatted side rails, two large spoked wooden wheels with iron tyres on a timber axle, and a single draught pole with a short yoke bar resting on the ground in front. The bed is empty apart from a folded leather cover. Weathered grey-brown wood and dark iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, wagon with four wheels, carriage, chariot, covered wagon, canopy, barrels, cargo",
+      "model_seed": 2615100,
+      "image_seed": 2615101,
+      "texture_seed": 2615102
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 1.2,
+    "minHeight": 1.08,
+    "maxHeight": 1.32
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T17:40:08.404Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, wagon with four wheels, carriage, chariot, covered wagon, canopy, barrels, cargo",
+      "model_seed": 2615100,
+      "image_seed": 2615101,
+      "texture_seed": 2615102,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "An abandoned Roman army supply cart: a sturdy two-wheeled cart about two and a half metres long including its pole and one and a half metres wide, with a flat plank bed and low slatted side rails, two large spoked wooden wheels with iron tyres on a timber axle, and a single draught pole with a short yoke bar resting on the ground in front. The bed is empty apart from a folded leather cover. Weathered grey-brown wood and dark iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8945,
+    "balanceSnapshotBefore": {
+      "balance": 8945,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "5ee440f3-e5db-4c86-b6e2-6ee3826a3fe6",
+      "state": "accepted",
+      "requestSha256": "ef4b84147416be1b2057ecac8e8295e2af8ef4bc13c8cbd7194b42e82cb7282f"
+    },
+    "taskId": "e6ffb740-0249-4178-a7d8-6e715df62888",
+    "status": "success",
+    "generatedAt": "2026-11-09T17:42:12.589Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-cart.glb",
+    "rawBytes": 44650752,
+    "rawSha256": "4b4d74b8a50f49ab2a44932b46026f5d67ff74f3b9bb95811d59eccdd3b8ddad",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "An abandoned Roman army supply cart: a sturdy two-wheeled cart about two and a half metres long including its pole and one and a half metres wide, with a flat plank bed and low slatted side rails, two large spoked wooden wheels with iron tyres on a timber axle, and a single draught pole with a short yoke bar resting on the ground in front. The bed is empty apart from a folded leather cover. Weathered grey-brown wood and dark iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2615101,
+      "model_seed": 2615100,
+      "texture_seed": 2615102,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, wagon with four wheels, carriage, chariot, covered wagon, canopy, barrels, cargo",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T17:40:08.855608Z",
+    "tripoCompletedAt": "2026-11-09T17:42:06.329863Z",
+    "tripoRender": "art-source/models/raw/g5-cart-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
+    "notes": "A two-wheeled cart with spoked, iron-tyred wheels on a timber axle, a plank bed with low slatted rails, a folded cover on the bed and a pole with a yoke bar resting on the ground. The pole runs along the model's -z, so it turns a quarter (yaw pi/2) to point west like the code-built cart's shafts. Its bed floor stands 0.62 m up, where the load rides. In the game it reads at once as an abandoned cart, with its load on the bed."
+  }
+}

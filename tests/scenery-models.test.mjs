@@ -9,6 +9,7 @@ import {clone} from '../src/core/shared.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {chapterOfflineAssets} from '../src/ui/art.js';
 import {SCENERY_MODELS,sceneryModelUrl,sceneryPlacements,createSceneryModels,warmSceneryModel,sceneryMaster,preloadSceneryModels,sceneryResidency,sceneryWorkingSet,landmarkModelUrls,SCENERY_IDLE_MASTERS} from '../src/showcase/scenery-models.js';
+import {fieldModelUrls} from '../src/showcase/field-models.js';
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
 import {createSceneryOcclusion} from '../src/showcase/environment-occlusion.js';
 import {createModelLoader} from '../src/showcase/model-loader.js';
@@ -165,8 +166,9 @@ test('the camera cutaway covers the generated models like the rest of the scener
 test('preloaded scenery is synchronous, shared across stages, and evicted after leaving its chapter', async () => {
   const [e]=chapterFiveStarts(),placements=sceneryPlacements(e,{chapter:5});
   const landmarks=landmarkModelUrls(e,{chapter:5}).map(([,url])=>url);assert.equal(landmarks.length,3,'Chapter V\'s three generated landmarks');
-  assert.deepEqual(sceneryWorkingSet(e,{chapter:5}).sort(),[...new Set([...placements.map(p=>p.url),...['trees-arid','rocks-arid'].map(worldModelUrl),...landmarks])].sort(),
-    'the placed scenery, the region\'s tree and rock kits and the chapter\'s landmarks');
+  const fieldModels=fieldModelUrls(e,{chapter:5}).map(([,url])=>url);assert.equal(fieldModels.length,4,'the cart, its load, the barricade and the ram (G5)');
+  assert.deepEqual(sceneryWorkingSet(e,{chapter:5}).sort(),[...new Set([...placements.map(p=>p.url),...['trees-arid','rocks-arid'].map(worldModelUrl),...landmarks,...fieldModels])].sort(),
+    'the placed scenery, the region\'s tree and rock kits, the chapter\'s landmarks and the battle\'s field models');
   assert.deepEqual(sceneryWorkingSet(e,{chapter:5,quality:'performance'}),[]);
   assert.deepEqual(await preloadSceneryModels(e,{chapter:5,quality:'performance'}),[],'Performance quality loads no scenery');
   assert.ok((await preloadSceneryModels(e,{chapter:5,load:loadFile})).every(Boolean));

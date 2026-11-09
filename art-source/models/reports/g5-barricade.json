@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-barricade.glb",
+    "bytes": 45630108,
+    "sha256": "7035abd3cd04d3df368c8a9358fae11b429c89c9f7a312bf8b1a9f8173e66d65",
+    "triangles": 1431456
+  },
+  "output": {
+    "path": "assets/models/world/g5-barricade.glb",
+    "bytes": 230432,
+    "sha256": "76a415892d2a0e28ad3eea711f575e014429464f0f6a54f59cb06328c7112487",
+    "triangles": 2939
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.1499243292088774,
+  "sizeMetres": {
+    "width": 0.5159,
+    "height": 1.0,
+    "depth": 1.1627
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_27f7d4d1-c0af-4b2f-a038-3aad626484ce",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_27f7d4d1-c0af-4b2f-a038-3aad626484ce",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_27f7d4d1-c0af-4b2f-a038-3aad626484ce",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

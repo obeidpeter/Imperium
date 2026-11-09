@@ -1,0 +1,118 @@
+{
+  "scope": "Release G5 of the graphics plan (docs/graphics-tripo-plan.md): battle and siege",
+  "authorization": {
+    "credits": 1845,
+    "approvedBy": "Owner",
+    "source": "docs/graphics-tripo-plan.md: release G5, capped at 900 credits on 8 November 2026 and raised to 1,845 with G7's 350 (decision 7) and 595 of G1's (decision 11); decision 9 (9 November 2026) leaves the rest of the plan to my judgement within each release's cap, each pilot reviewed in the game before the rest of its release is generated"
+  },
+  "pricing": {
+    "textWithStandardTextures": 20,
+    "source": "the calibration's measured prices (docs/graphics-calibration.md); each task's reported credits_consumed is recorded below"
+  },
+  "spentCredits": 140,
+  "remainingAuthorization": 1705,
+  "batches": [
+    {
+      "batch": "pilot",
+      "date": "2026-11-09",
+      "ceilingCredits": 160,
+      "plannedCredits": 120,
+      "spentCredits": 140,
+      "items": [
+        "g5-cart",
+        "g5-cart-load-b",
+        "g5-barricade",
+        "g5-ram",
+        "g5-carroballista",
+        "g5-onager"
+      ],
+      "note": "Six props at standard texture and geometry, 20 credits each, and one rejected generation redone (20 more): 140 credits within the pilot's 160-credit ceiling. The cart, its load, the barricade and the ram stand on their field objects' cells in the battles, in place of the code-built pieces; the carroballista and the onager stand beyond the board's west edge, behind the Roman line.",
+      "balance": {
+        "before": 8945,
+        "after": 8805,
+        "source": "the account balance read before the first task and after the last (frozen 0)"
+      },
+      "rejected": {
+        "count": 1,
+        "of": 7,
+        "items": [
+          "g5-cart-load"
+        ],
+        "note": "The load came on a four-wheeled cart of its own, despite the negative prompt; its wheels rise above its bed, so the cart could not be cut away without cutting the sacks. The second attempt, g5-cart-load-b, without the cart in its prompt, ships as g5-cart-load. One of seven generations (14%), under the plan's 20% stop rule."
+      },
+      "tasks": [
+        {
+          "id": "g5-cart",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "e6ffb740-0249-4178-a7d8-6e715df62888",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-cart-load",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "00da9cac-7f6e-48ea-b859-c63b81960152",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20,
+          "rejectedAtReview": "the load came on a four-wheeled cart of its own, despite the negative prompt; its wheels rise above its bed, so the cart could not be cut away without cutting the sacks"
+        },
+        {
+          "id": "g5-barricade",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "27f7d4d1-c0af-4b2f-a038-3aad626484ce",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-ram",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "fd95fe01-5ead-45b7-9809-13d1aa141b90",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-carroballista",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d7bb058b-fb19-4b37-bf7d-394be9969613",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-onager",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "aa7f9d44-bd59-4663-bb72-12af71ddab64",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-cart-load-b",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "56efc54e-3f11-4570-809d-0a3fa9521ee9",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        }
+      ]
+    }
+  ]
+}

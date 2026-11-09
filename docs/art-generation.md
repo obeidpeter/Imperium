@@ -1917,6 +1917,64 @@ The camps were then seen where a player meets them, in the desktop build at High
 - **Not seen in the captures:** Chapter IX's courts are full, so its tribunal and parley awning stand in the far rows south of the camp, about 22 m beyond the board, below the edge of its Overview camera's frame at 1920 × 1080; the striped pavilion, further out to the south-west, shows at the frame's edge. The camera's pan stays over the board, so a player in Chapter IX may never see the tribunal or the awning there. The web therefore leaves both out of Chapter IX's download, which also made room for its other models, and since no other web chapter carries them, the web build leaves out their files; the desktop app keeps them, as it keeps every chapter's models.
 - **Page errors:** none, in Chapters II, IV, V, VI and IX at High.
 
+## Release G5's pilot: battle and siege · 9 November 2026
+
+Release G5 of the [graphics plan](graphics-tripo-plan.md#g5s-pilot-9-november) brings the battles' field objects and siege works into generated models. Its pilot, six models for about a seventh of the release's list, was reviewed in the game before the rest is generated (the owner's decision 9). [The asset pipeline](asset-pipeline.md#release-g5s-pilot-field-objects-and-set-pieces--2026-11-09) has how they are placed.
+
+The models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-09, from the text prompts in their requests only: no reference image or third-party model. The pilot cost 140 credits of its 160-credit ceiling, task by task in [the G5 ledger](../art-source/models/graphics-g5-credits.json), and the balance read 8,945 before and 8,805 after. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Where | Chapters | Tripo task | Triangles | Runtime file |
+| --- | --- | --- | --- | ---: | ---: |
+| g5-cart | the supply cart's cell, in every state | every battle (I–X, XII) | `e6ffb740-0249-4178-a7d8-6e715df62888` | 3,920 | 252,332 bytes |
+| g5-cart-load-b (ships as g5-cart-load) | on the cart's bed while the supplies are to be recovered | every battle | `56efc54e-3f11-4570-809d-0a3fa9521ee9` | 2,972 | 222,016 bytes |
+| g5-barricade | the barricade's cell while it stands, two panels | III–X, XII | `27f7d4d1-c0af-4b2f-a038-3aad626484ce` | 2,939 | 236,188 bytes |
+| g5-ram | the ram's cell at the river gate while it stands | V | `fd95fe01-5ead-45b7-9809-13d1aa141b90` | 3,429 | 243,708 bytes |
+| g5-carroballista | beyond the west edge, behind the Roman line | the field battles of VII–X | `d7bb058b-fb19-4b37-bf7d-394be9969613` | 4,409 | 287,748 bytes |
+| g5-onager | beyond the west edge, behind the Roman line | the sieges of IV, V, IX and XII | `aa7f9d44-bd59-4663-bb72-12af71ddab64` | 3,430 | 239,064 bytes |
+
+Every runtime file was processed in Blender to its request's budget (512-pixel maps), compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. Four budgets changed at review, each noted in its request: the barricade's and the carroballista's bytes, by 20,000 and 10,000, for their thin stakes and spokes; the ram's height, 2.0 m rather than 2.2, to keep its length near its cell; and the load's height, 0.75 m rather than 0.6, to fill the cart's bed, with its triangles to 3,000 as the decimator stopped at 2,972. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`. The first load (`g5-cart-load`, task `00da9cac-7f6e-48ea-b859-c63b81960152`, 20 credits) was rejected at review and is not shipped.
+
+The prompts follow [the historical notes](historical-research.md):
+- **The cart:** the two-wheeled *carrus* of the army's baggage, with a pole for a yoke of mules or oxen; its draught animals are G4's.
+- **The barricade:** stakes sharpened at both ends and lashed together, as an army in the field made from its *sudes* where it had no time to dig.
+- **The ram:** a ram under a gabled shed covered in raw hides against fire, the *testudo arietaria*; Persian armies used rams at Dura-Europos and Amida.
+- **The carroballista:** a bolt-thrower on a cart, its springs cased in bronze and joined by an arched bar, as on Trajan's Column.
+- **The onager:** the one-armed stone-thrower Ammianus Marcellinus describes in the fourth century; in the third it stands for the army's stone-throwing artillery.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the battles of Chapters III, V, VII, VIII, IX and XII in the desktop build at High, each restored from a moment the real-time bot reached from New Game through the Restore dialog. What it showed, and what was kept:
+
+![The pilot's six models from four sides with a 1.8 m figure for scale](images/g5-pilot-models.jpg)
+
+- **The first load was rejected.** Tripo heaped the sacks, amphorae and rope on a four-wheeled cart of their own, which the request ("as it would sit on a cart bed") had invited. The wheels rise above the bed and the amphorae lie at its edge, so no cut takes the cart away without cutting the load. The second request describes only the heap, lying on the ground, and leaves the cart to the negative prompt: six sacks in two layers under a lashed leather sheet, two amphorae and a coil of rope on top, on a leather ground sheet.
+- **The cart** has spoked, iron-tyred wheels, a plank bed with low rails, a folded cover and a pole with its yoke bar on the ground. Its pole runs along the model's −z, so it turns a quarter to point west like the code-built cart's shafts.
+- **The barricade** is not the crossed pairs of stakes on one beam the prompt asked for, but a lattice of sharpened beams on sharpened uprights, braced and lashed with rope, its points facing both ways. It was kept: it reads at once as a field obstacle. A panel is 1.16 m long, so two stand side by side across the cell.
+- **The ram** stands on four solid wheels under a pitched roof of dark, ragged hides, its beam hung on a chain. The iron head is pointed rather than blunt. At 2.0 m high it is 3.04 m long, a quarter metre over its cell at each end, the head over the gate's cell.
+- **The carroballista** has four spoked wheels where the column's has two; its bronze springs and arched bar read at the distance it stands.
+- **The onager** lacks the padded buffer beam the prompt asked for, and its front beam carries a decorative iron plate. Its arm stands upright, as after a shot.
+
+#### In the game
+
+Each battle was seen twice at the same moment: once with G5's files refused, which leaves the code-built pieces or bare ground where a set piece would stand, and once with them. Each moment was paused and framed with the game's own controls: the zoom, and **Find objective** for the ram.
+
+![Field objects before (the code-built pieces) and with the pilot's models, in the desktop build at High](images/g5-pilot-battles.jpg)
+
+![The set pieces behind the Roman line, before (none) and with the pilot's models](images/g5-pilot-set-pieces.jpg)
+
+- **The cart and its load** (Chapters III and VIII) stand on the cell where the code-built cart and its sacks stood. They read at once as an abandoned cart with its load still lashed on.
+- **The barricade** (Chapter XII) stands as two lattice panels where the code-built crossed stakes stood. In the press of the fight it is half hidden by the men around it, as the stakes are, and its thin beams are harder to pick out than theirs.
+- **The ram** (Chapter V) stands on its ground east of the river gate, its iron head toward the gate. Where the code-built piece is a thin frame, it reads as a wheeled timber engine with its beam slung inside. From the camera's height its hide roof shows only as dark, ragged pieces over the timbers.
+- **The onager** (Chapters V and IX) reads at once behind the Roman line: the frame on the ground, the arm upright, a long shadow.
+- **The carroballista** (Chapter VII) reads less well. At the edge of the view its thin frame and dark timber are hard to tell from the scrub around it.
+- **The set pieces** stand at the top of the view as a battle opens, a few metres beyond the soldiers' starting ground. They pass out of it as the army moves east.
+- **Not seen:**
+  - the cart in its other states (secured, forgone or missed);
+  - the battles of Chapters I, II, IV, VI and X;
+  - the burnt ram's and the dismantled barricade's code-built remains, which are unchanged.
+
+  `tests/graphics-g5.test.mjs` checks every state's placement in every battle.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.

@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-carroballista.glb",
+    "bytes": 43359928,
+    "sha256": "95e17f491c93fd0f42fa5ddebe3347adc77ca7bf91fb798940ad78a8660e7176",
+    "triangles": 1381016
+  },
+  "output": {
+    "path": "assets/models/world/g5-carroballista.glb",
+    "bytes": 298020,
+    "sha256": "29040b1ae4be47b927dce49bf11748f763c409d6276c68da69f7140c7d4519ed",
+    "triangles": 4409
+  },
+  "settings": {
+    "triangles": 4500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.3020051988641814,
+  "sizeMetres": {
+    "width": 3.3107,
+    "height": 1.8,
+    "depth": 1.1411
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_d7bb058b-fb19-4b37-bf7d-394be9969613",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_d7bb058b-fb19-4b37-bf7d-394be9969613",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_d7bb058b-fb19-4b37-bf7d-394be9969613",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

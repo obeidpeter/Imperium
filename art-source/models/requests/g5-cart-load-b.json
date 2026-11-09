@@ -1,0 +1,105 @@
+{
+  "id": "g5-cart-load-b",
+  "status": "G5 pilot: processed, compressed and reviewed; ships as g5-cart-load, on the cart at Chapter III's station and Chapter VIII's ferry (desktop build, High)",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12
+  ],
+  "use": "The supply cart's load: on the cart's bed while the supplies are still to be recovered, gone once they are secured or lost. The redo of g5-cart-load.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A heap of Roman army supplies lying directly on the ground: six bulging linen grain sacks tied at the neck, stacked four below and two above, two clay amphorae laid on their sides against the sacks and a coil of rope on top, the whole heap partly covered by a dark leather sheet lashed down with cords; about one point two metres long, nine tenths of a metre wide and sixty centimetres high, with a flat underside. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, cart, wheels, wheel, wagon, axle, wooden platform, pallet, plank bed, barrel, crate, chest, table",
+      "model_seed": 2615210,
+      "image_seed": 2615211,
+      "texture_seed": 2615212
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 230000,
+    "heightMetres": 0.75,
+    "minHeight": 0.68,
+    "maxHeight": 0.82
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T17:54:46.451Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, cart, wheels, wheel, wagon, axle, wooden platform, pallet, plank bed, barrel, crate, chest, table",
+      "model_seed": 2615210,
+      "image_seed": 2615211,
+      "texture_seed": 2615212,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A heap of Roman army supplies lying directly on the ground: six bulging linen grain sacks tied at the neck, stacked four below and two above, two clay amphorae laid on their sides against the sacks and a coil of rope on top, the whole heap partly covered by a dark leather sheet lashed down with cords; about one point two metres long, nine tenths of a metre wide and sixty centimetres high, with a flat underside. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8825,
+    "balanceSnapshotBefore": {
+      "balance": 8825,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "bea6e5a7-dd18-4352-bc0c-09b2264fe50f",
+      "state": "accepted",
+      "requestSha256": "babfde5764217936c47a51360da3f62c4e9823881223a9baaa45f1267d87368f"
+    },
+    "taskId": "56efc54e-3f11-4570-809d-0a3fa9521ee9",
+    "status": "success",
+    "generatedAt": "2026-11-09T17:57:51.523Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-cart-load-b.glb",
+    "rawBytes": 44752256,
+    "rawSha256": "89255bdf967895ba093f886a23d05702b4f137e4dd33e0a478a3639117c3dc1e",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A heap of Roman army supplies lying directly on the ground: six bulging linen grain sacks tied at the neck, stacked four below and two above, two clay amphorae laid on their sides against the sacks and a coil of rope on top, the whole heap partly covered by a dark leather sheet lashed down with cords; about one point two metres long, nine tenths of a metre wide and sixty centimetres high, with a flat underside. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2615211,
+      "model_seed": 2615210,
+      "texture_seed": 2615212,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, cart, wheels, wheel, wagon, axle, wooden platform, pallet, plank bed, barrel, crate, chest, table",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T17:54:47.150187Z",
+    "tripoCompletedAt": "2026-11-09T17:57:44.300459Z",
+    "tripoRender": "art-source/models/raw/g5-cart-load-b-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
+    "notes": "Six bulging grain sacks in two layers under a dark leather sheet lashed with cords, a coil of rope and two amphorae laid on the top, on a leather ground sheet: no cart. Processed at 0.75 m high so its 0.98 by 0.94 m footprint fills the cart's 1.03 by 1.35 m bed; the decimator stopped at 2,972 of its 2,500-triangle target, within a 3,000-triangle budget."
+  }
+}

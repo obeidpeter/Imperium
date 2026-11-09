@@ -93,6 +93,45 @@ const G3_WEB_ROOM=Object.freeze({
   12:Object.freeze([])
 });
 const g3=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,chapters.filter(c=>!G3_WEB_ROOM[c]||G3_WEB_ROOM[c].includes(id)));
+// Battle and siege (graphics plan, G5). The field objects' models (field-models.js): each draws its kind in the states it
+// names, on the object's cell, in place of the code-built piece (environment-fieldwork.js), which stays for every other
+// state, on Performance and while the model is not loaded. A load rides on the model it names, `lift` above the ground
+// at `x` and `z` in its carrier's own frame. `yaw` turns a model to the code-built piece's bearing: the cart's pole, along
+// the model's -z, points west like the code-built cart's shafts; the barricade's panel, along its z, runs east and west
+// like the code-built barricade; the ram's iron head, at the model's +x, points west at the gate like the code-built
+// ram's. `copies` sets a model out more than once on its cell, each at `x` and `z` in the model's
+// own frame and turned by its own `yaw`: two panels side by side span the cell as the code-built barricade's two metres
+// do. With the chapters whose battles hold the kind: the supply cart in every battle (Chapter XI has none), the
+// barricade from Chapter III, the Persian ram at Chapter V's river gate.
+const BATTLE_CHAPTERS=Object.freeze([1,2,3,4,5,6,7,8,9,10,12]);
+export const FIELD_OBJECT_MODELS=Object.freeze({
+  'g5-cart':Object.freeze({kind:'stores',states:Object.freeze(['available','secured','forgone','missed']),chapters:BATTLE_CHAPTERS,yaw:Math.PI/2}),
+  'g5-cart-load':Object.freeze({kind:'stores',states:Object.freeze(['available']),chapters:BATTLE_CHAPTERS,yaw:Math.PI/2,
+    on:Object.freeze({model:'g5-cart',lift:.62,x:.06,z:.43})}),
+  'g5-barricade':Object.freeze({kind:'barricade',states:Object.freeze(['intact']),chapters:Object.freeze([3,4,5,6,7,8,9,10,12]),yaw:Math.PI/2,
+    copies:Object.freeze([Object.freeze({x:0,z:-.56,yaw:.05}),Object.freeze({x:0,z:.56,yaw:-.04})])}),
+  'g5-ram':Object.freeze({kind:'ram',states:Object.freeze(['active']),chapters:Object.freeze([5]),yaw:Math.PI})
+});
+// Set pieces beyond the board (G5): behind the Roman line, just beyond the board's west edge, where the camera's view of
+// the line takes them in (field-models.js), with the battles that set each out. `yaw` faces each east, toward the
+// enemy: the carroballista's springs and the onager's arm stand at the model's -x. `along` is where along the edge it
+// would stand (a share of the board's half-depth, north of the road the army came by), `fit` the room it is fitted
+// within. Like the camps' furniture, they have no code-built stand-in.
+export const BATTLE_PROP_MODELS=Object.freeze({
+  'g5-carroballista':Object.freeze({encounters:Object.freeze(['ch7-legion','ch8-ferry','ch8-crossing','ch9-wing','ch10-road']),
+    yaw:Math.PI,along:-.25,fit:Object.freeze({width:3.6,depth:1.6})}),
+  'g5-onager':Object.freeze({encounters:Object.freeze(['ch4-gate','ch4-wall','ch5-mine','ch5-wall','ch9-city','ch12-confrontation']),
+    yaw:Math.PI,along:-.3,fit:Object.freeze({width:3.6,depth:1.8})})
+});
+const encounterChapters=ids=>[...new Set(ids.map(id=>Number(/^ch(\d+)-/.exec(id)[1])))].sort((a,b)=>a-b);
+// What a chapter's web download has room for of G5's models (presentation-budget.js), each about 0.21-0.28 MB
+// compressed. After G3, Chapter I's 3D download stood at 17.87 of its 18 MB and Chapters VII's and VIII's within
+// 0.1 MB of their 28, so those take none; IV had 0.79 MB left (the cart, its load and the barricade), IX 0.66 (the two
+// engines), X 0.60 (the carroballista and the barricade) and XII 0.28 (the barricade). A cart and its load go
+// together. Every other chapter takes all of its G5 models.
+const G5_WEB_ROOM=Object.freeze({1:Object.freeze([]),4:Object.freeze(['g5-cart','g5-cart-load','g5-barricade']),7:Object.freeze([]),8:Object.freeze([]),
+  9:Object.freeze(['g5-carroballista','g5-onager']),10:Object.freeze(['g5-carroballista','g5-barricade']),12:Object.freeze(['g5-barricade'])});
+const g5=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,chapters.filter(c=>!G5_WEB_ROOM[c]||G5_WEB_ROOM[c].includes(id)));
 // The generated landmarks on the chapters' horizons (release 9), with the chapters whose
 // LANDMARK_LAYOUT (world-layouts.js) names each. The Colosseum keeps its code-built outline.
 export const LANDMARK_CHAPTERS=Object.freeze(Object.fromEntries(Object.entries({
@@ -147,6 +186,8 @@ export const WORLD_CATALOG=Object.freeze({
   ...Object.fromEntries(Object.entries(REGIONAL_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
   ...Object.fromEntries(Object.entries(LIFE_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
   ...Object.fromEntries(Object.entries({...CAMP_PROP_CHAPTERS,...CAMP_WALL_CHAPTERS,...TENT_VARIANT_CHAPTERS}).map(([id,chapters])=>[id,g3(id,chapters)])),
+  ...Object.fromEntries(Object.entries(FIELD_OBJECT_MODELS).map(([id,m])=>[id,g5(id,m.chapters)])),
+  ...Object.fromEntries(Object.entries(BATTLE_PROP_MODELS).map(([id,m])=>[id,g5(id,encounterChapters(m.encounters))])),
   ...Object.fromEntries(Object.entries(LANDMARK_CHAPTERS).map(([id,chapters])=>[id,asset('landmark',[`assets/models/landmarks/${id}.glb`],chapters)])),
   // The ground's photographed layers (ground-layers.js), shared by every chapter.
   'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12]),
