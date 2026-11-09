@@ -1,6 +1,6 @@
 {
   "id": "g3-tent-struck",
-  "status": "G3 pilot: processed, compressed and reviewed from Tripo's render and four views; its camps (II, VI, VIII) not yet captured in the game",
+  "status": "G3 pilot: processed, compressed and reviewed; small at the Overview camera in Chapter VIII (desktop build, High)",
   "chapters": [
     2,
     6,
@@ -91,7 +91,7 @@
   },
   "review": {
     "date": "2026-11-09",
-    "scope": "Tripo's own render, and four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs)",
-    "notes": "A leather tent rolled and tied, with its poles and coiled rope."
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A leather tent rolled and tied, with its poles and coiled rope. Beyond Chapter VIII's east wall, beside the ox cart, it reads as a dark rolled bundle with its rope at one end, small at the Overview camera."
   }
 }
