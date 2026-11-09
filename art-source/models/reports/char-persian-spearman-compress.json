@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/persian-spearman.glb",
+  "output": "assets/models/characters/persian-spearman.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 468696,
+    "gzipBytes": 334612,
+    "sha256": "216db3d48b09ff430407f1923fec95f43ff922dfbf78db2b0a0e3fb1d95ea6d4"
+  },
+  "after": {
+    "bytes": 414900,
+    "gzipBytes": 393276,
+    "sha256": "f4287998684e3204882abbbc180cbd01e02fadb3e90d8dcd3d105b8cd8aec740"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13744,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9746
+      },
+      "bytes": 22019,
+      "psnr": 41.478
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 56952
+      },
+      "bytes": 140554,
+      "psnr": 36.912
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16660
+      },
+      "bytes": 35238,
+      "psnr": 33.624
+    }
+  ]
+}

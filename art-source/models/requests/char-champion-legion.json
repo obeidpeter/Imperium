@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-legion",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    7
+  ],
+  "use": "A mercenary captain in the usurper’s pay, the champion of Chapter VII’s legion battle (ch7-legion), in his own body; the game adds his round shield and spatha. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Germanic mercenary captain of the 260s AD in the pay of a Roman usurper, a broad-shouldered man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather over a long-sleeved dark green wool tunic to mid-thigh, a broad Roman military belt with bronze plates and a ring buckle, a gilded bronze ring on each upper arm, close-fitting dark wool trousers and leather boots, and a conical iron helmet with cheek pieces, face visible. Dark-blond hair to the shoulders and a long moustache. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611310,
+      "image_seed": 2611311,
+      "texture_seed": 2611312
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T08:54:14.938Z",
+    "requestBody": {
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611310,
+      "image_seed": 2611311,
+      "texture_seed": 2611312,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Germanic mercenary captain of the 260s AD in the pay of a Roman usurper, a broad-shouldered man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather over a long-sleeved dark green wool tunic to mid-thigh, a broad Roman military belt with bronze plates and a ring buckle, a gilded bronze ring on each upper arm, close-fitting dark wool trousers and leather boots, and a conical iron helmet with cheek pieces, face visible. Dark-blond hair to the shoulders and a long moustache. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10160,
+    "balanceSnapshotBefore": {
+      "balance": 10160,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "68ca51df-3cbb-48b1-8540-7fcea399e0af",
+      "state": "accepted",
+      "requestSha256": "cd70359214c81d746ef179882f9e88bd0d4153d21ca710016247bcbd80f833b7"
+    },
+    "taskId": "3e8a39f0-ba7c-46b3-9eda-25c917270dff",
+    "status": "success",
+    "generatedAt": "2026-11-09T08:56:33.720Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-legion.glb",
+    "rawBytes": 43404712,
+    "rawSha256": "ec3ab720d92a067d9b72fb034157f742ba822ec88b4e77d378e5f6e233307958",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Germanic mercenary captain of the 260s AD in the pay of a Roman usurper, a broad-shouldered man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather over a long-sleeved dark green wool tunic to mid-thigh, a broad Roman military belt with bronze plates and a ring buckle, a gilded bronze ring on each upper arm, close-fitting dark wool trousers and leather boots, and a conical iron helmet with cheek pieces, face visible. Dark-blond hair to the shoulders and a long moustache. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611311,
+      "model_seed": 2611310,
+      "texture_seed": 2611312,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T08:54:15.727080Z",
+    "tripoCompletedAt": "2026-11-09T08:56:26.510551Z",
+    "tripoRender": "art-source/models/raw/char-champion-legion-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:00:53.994Z",
+      "requestBody": {
+        "input": "3e8a39f0-ba7c-46b3-9eda-25c917270dff"
+      },
+      "submission": {
+        "id": "c745309d-f344-45f6-8967-5a936407cead",
+        "state": "accepted",
+        "requestSha256": "3fb5d1b3a0eb3b8e27fa8cff19c43b487b0485df5b6a5e6f72e64709beaa692c"
+      },
+      "taskId": "c5a936a3-2e7c-4d53-8bfb-22dd1a7f47c7",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:00:59.781Z",
+      "requestBody": {
+        "input": "3e8a39f0-ba7c-46b3-9eda-25c917270dff",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9970,
+      "balanceSnapshotBefore": {
+        "balance": 9970,
+        "frozen": 40
+      },
+      "submission": {
+        "id": "297ea84e-1169-4a83-a469-596bf02a35fe",
+        "state": "accepted",
+        "requestSha256": "28183f517117b24e38a40207d2e77ee2b1836faa72195eb22af90d82eababb60"
+      },
+      "taskId": "b7194fad-5b63-40e5-a20b-e57117818db4",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:01:51.095Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-legion-rigged.glb",
+      "rawBytes": 57821304,
+      "rawSha256": "476a354b1b82ec9445b2abb73aa0681ec68a8ce383ca7605f5ea8f3eab18c07b",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "3e8a39f0-ba7c-46b3-9eda-25c917270dff"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:01:00.054227Z",
+      "tripoCompletedAt": "2026-11-09T09:01:44.615516Z"
+    }
+  }
+}

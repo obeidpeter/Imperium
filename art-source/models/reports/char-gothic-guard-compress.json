@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/gothic-guard.glb",
+  "output": "assets/models/characters/gothic-guard.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 494656,
+    "gzipBytes": 348036,
+    "sha256": "fd308b36c1b3e6e767f477bebdbe70deb96af42a2b4630ed70a5b8b7dea3e12f"
+  },
+  "after": {
+    "bytes": 428312,
+    "gzipBytes": 406350,
+    "sha256": "ecd65324c77b21c2bb60aa5f0a35bec8d6fdd08f64d4e3c5d740a969dc3b3cc2"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13855,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7086
+      },
+      "bytes": 16862,
+      "psnr": 43.725
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 56458
+      },
+      "bytes": 140220,
+      "psnr": 37.75
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 27314
+      },
+      "bytes": 43886,
+      "psnr": 32.654
+    }
+  ]
+}

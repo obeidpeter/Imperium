@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-guard",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    12
+  ],
+  "use": "The claimant’s guard captain, the champion of Chapter XII’s confrontation (ch12-confrontation), in his own body; the game adds his scutum and spatha. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman guard captain of AD 275 serving a rival claimant to the throne, a hard-faced veteran of about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved scarlet wool tunic; a broad leather belt with bronze plates and a ring buckle, close-fitting dark wool trousers and closed leather boots, and an iron helmet with a deep bowl, wide cheek guards and a tall transverse crest of white horsehair across the top, face visible. Clean-shaven, with close-cropped grey hair. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611390,
+      "image_seed": 2611391,
+      "texture_seed": 2611392
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T08:56:02.903Z",
+    "requestBody": {
+      "negative_prompt": "segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611390,
+      "image_seed": 2611391,
+      "texture_seed": 2611392,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Roman guard captain of AD 275 serving a rival claimant to the throne, a hard-faced veteran of about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved scarlet wool tunic; a broad leather belt with bronze plates and a ring buckle, close-fitting dark wool trousers and closed leather boots, and an iron helmet with a deep bowl, wide cheek guards and a tall transverse crest of white horsehair across the top, face visible. Clean-shaven, with close-cropped grey hair. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10140,
+    "balanceSnapshotBefore": {
+      "balance": 10140,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "fca1fba4-ac48-4925-9e0f-3d871dee1a9c",
+      "state": "accepted",
+      "requestSha256": "f568a761776fd5770f0f4c7a8ccdc574874b127ca324a169489f456f4fe56dcf"
+    },
+    "taskId": "761bc946-fc7a-425b-a35c-a0ed8145d7d9",
+    "status": "success",
+    "generatedAt": "2026-11-09T08:57:55.027Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-guard.glb",
+    "rawBytes": 45194080,
+    "rawSha256": "05484e5603cf3d784e301ec3a221d5ea416a5b874f1709d93c3b0600d53bbc05",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Roman guard captain of AD 275 serving a rival claimant to the throne, a hard-faced veteran of about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved scarlet wool tunic; a broad leather belt with bronze plates and a ring buckle, close-fitting dark wool trousers and closed leather boots, and an iron helmet with a deep bowl, wide cheek guards and a tall transverse crest of white horsehair across the top, face visible. Clean-shaven, with close-cropped grey hair. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611391,
+      "model_seed": 2611390,
+      "texture_seed": 2611392,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T08:56:03.294758Z",
+    "tripoCompletedAt": "2026-11-09T08:57:50.642190Z",
+    "tripoRender": "art-source/models/raw/char-champion-guard-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:01:51.457Z",
+      "requestBody": {
+        "input": "761bc946-fc7a-425b-a35c-a0ed8145d7d9"
+      },
+      "submission": {
+        "id": "deada583-9545-4e21-a7c4-71af79846bd7",
+        "state": "accepted",
+        "requestSha256": "8a4a61b8a2d1cb315e526367d3c26746001ff353f7214097742c0d6ab851c9ec"
+      },
+      "taskId": "cb0e3ad2-c7e5-4581-aa96-1f8efb08c647",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:01:57.310Z",
+      "requestBody": {
+        "input": "761bc946-fc7a-425b-a35c-a0ed8145d7d9",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9925,
+      "balanceSnapshotBefore": {
+        "balance": 9925,
+        "frozen": 20
+      },
+      "submission": {
+        "id": "9855568e-c0b6-4144-a379-1f66b846d089",
+        "state": "accepted",
+        "requestSha256": "2563a27b035f85651648098f90d1b1ed58867030e1e0d554918ef1977f6c4c6c"
+      },
+      "taskId": "5de4594a-52df-4d60-bacf-f772a502da4f",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:02:48.464Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-guard-rigged.glb",
+      "rawBytes": 59668396,
+      "rawSha256": "1d81f9013b7d6ddfa38f1b32b5b79fff50228110e29039b113f55ee8f6c4128b",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "761bc946-fc7a-425b-a35c-a0ed8145d7d9"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:01:57.737353Z",
+      "tripoCompletedAt": "2026-11-09T09:02:41.533505Z"
+    }
+  }
+}

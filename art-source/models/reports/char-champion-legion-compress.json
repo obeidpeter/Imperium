@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/champion-legion.glb",
+  "output": "assets/models/characters/champion-legion.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 497164,
+    "gzipBytes": 354116,
+    "sha256": "4e1ba52664f11f557f4717cf09cc27f371689d1509d146c8153c985abfb6d3dc"
+  },
+  "after": {
+    "bytes": 430356,
+    "gzipBytes": 408795,
+    "sha256": "bef33311c39bbd352fd244fb42dfa17c595e0b43784b8d2ca677a0a1c1c63aaa"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13787,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10712
+      },
+      "bytes": 19580,
+      "psnr": 40.424
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 57064
+      },
+      "bytes": 139700,
+      "psnr": 36.972
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 30638
+      },
+      "bytes": 44901,
+      "psnr": 31.339
+    }
+  ]
+}

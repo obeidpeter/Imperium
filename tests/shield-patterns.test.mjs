@@ -27,6 +27,19 @@ test('each faction carries its own designs: no Goth, Persian or Palmyrene bears 
   assert.equal(design({id:'hero',name:'Marcellus',side:'player',role:'soldier'},4),'wreath');
 });
 
+test('the claimant\'s men carry his purple with bold rings or rays, and the soldier\'s own line never does', () => {
+  const pick=(unit,chapter)=>{const kit=actorKit(unit,{chapter});return shieldDesign(kit,actorIdentity(unit,kit));};
+  const rivals=new Set(),ours=new Set();
+  for(let i=0;i<60;i++){
+    for(const unit of [{id:`enemy${i}`,name:`Civil-war cohort ${i}`,side:'enemy',role:'infantry'},{id:`r${i}`,name:`Rival Roman warriors ${i}`,side:'enemy',role:'infantry'},{id:`a${i}`,name:`Claimant’s reserve cohort ${i}`,side:'enemy',role:'infantry'}]){
+      const d=pick(unit,12);rivals.add(d.id);assert.equal(d.base,0x5b3866,`${unit.name} paints the claimant's purple`);}
+    const ally=pick({id:`ally${i}`,name:`Roman line ${i}`,side:'ally',role:'infantry'},12);ours.add(ally.id);assert.equal(ally.base,undefined,'the soldier\'s line keeps its own paint');
+  }
+  assert.deepEqual([...rivals].sort(),['rays','rings']);assert.ok(ours.size>2);
+  // A cohort that takes the oath is the soldier's own, and paints as his.
+  assert.equal(pick({id:'enemy1',name:'Pledged cohort',side:'ally',role:'infantry'},12).base,undefined);
+});
+
 test('every design lies on the shield\'s face, inside its rim, and stays cheap', () => {
   for(const id of SHIELD_DESIGNS){
     const parts=shieldDecals(id);let triangles=0;

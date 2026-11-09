@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/champion-wing.glb",
+  "output": "assets/models/characters/champion-wing.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 543628,
+    "gzipBytes": 416769,
+    "sha256": "96335ccc56b5580b5c2bbfa845dac1b669f9063ad05d116a2e20cada666c2d85"
+  },
+  "after": {
+    "bytes": 450104,
+    "gzipBytes": 428627,
+    "sha256": "df65150f47392d1966f747c763555c31aa292e55b057d520a1dd87c56ab80f1f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13873,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 26750
+      },
+      "bytes": 33126,
+      "psnr": 35.083
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 104366
+      },
+      "bytes": 157611,
+      "psnr": 32.488
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 32938
+      },
+      "bytes": 45108,
+      "psnr": 26.918
+    }
+  ]
+}

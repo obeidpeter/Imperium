@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-crossing",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    8
+  ],
+  "use": "The war band’s champion, the champion of Chapter VIII’s crossing (ch8-crossing), in his own body; the game adds his round shield and axe. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Gothic war-band champion of the 270s AD, a huge, heavily built man of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of black leather over a long-sleeved saffron-yellow wool tunic to mid-thigh with a dark woven border, a twisted bronze torc at the neck, a broad leather belt, brown wool trousers with leg bindings and leather boots, and an iron segmented helmet with cheek pieces, face visible. Red hair in two thick braids and a full red beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611320,
+      "image_seed": 2611321,
+      "texture_seed": 2611322
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T08:56:34.713Z",
+    "requestBody": {
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611320,
+      "image_seed": 2611321,
+      "texture_seed": 2611322,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Gothic war-band champion of the 270s AD, a huge, heavily built man of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of black leather over a long-sleeved saffron-yellow wool tunic to mid-thigh with a dark woven border, a twisted bronze torc at the neck, a broad leather belt, brown wool trousers with leg bindings and leather boots, and an iron segmented helmet with cheek pieces, face visible. Red hair in two thick braids and a full red beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10120,
+    "balanceSnapshotBefore": {
+      "balance": 10120,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "58f2b4d9-8e7c-4e4f-b785-4312a478e87a",
+      "state": "accepted",
+      "requestSha256": "38f4ee5f5c7636a29364e28a6098356525f4fa78dd102aa154709bb4074c2c51"
+    },
+    "taskId": "3b567ea7-f9b8-4f7c-b7c9-239d12057b87",
+    "status": "success",
+    "generatedAt": "2026-11-09T08:58:17.080Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-crossing.glb",
+    "rawBytes": 45130040,
+    "rawSha256": "bc143c5706c790cdeb1aab1159a3be00d2890e6d7a47a9e860116a0ec6803e0f",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Gothic war-band champion of the 270s AD, a huge, heavily built man of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of black leather over a long-sleeved saffron-yellow wool tunic to mid-thigh with a dark woven border, a twisted bronze torc at the neck, a broad leather belt, brown wool trousers with leg bindings and leather boots, and an iron segmented helmet with cheek pieces, face visible. Red hair in two thick braids and a full red beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611321,
+      "model_seed": 2611320,
+      "texture_seed": 2611322,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T08:56:35.262557Z",
+    "tripoCompletedAt": "2026-11-09T08:58:08.768916Z",
+    "tripoRender": "art-source/models/raw/char-champion-crossing-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:02:48.827Z",
+      "requestBody": {
+        "input": "3b567ea7-f9b8-4f7c-b7c9-239d12057b87"
+      },
+      "submission": {
+        "id": "e590c53c-45f6-4bc6-a184-1228968be6ae",
+        "state": "accepted",
+        "requestSha256": "2b62425acd046981d1ec8c3d45395301f7a389f1bfb6c856a05588621a313b59"
+      },
+      "taskId": "2f28ddcc-7bac-4b5a-8404-ad22730aed9e",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:02:54.592Z",
+      "requestBody": {
+        "input": "3b567ea7-f9b8-4f7c-b7c9-239d12057b87",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9880,
+      "balanceSnapshotBefore": {
+        "balance": 9880,
+        "frozen": 40
+      },
+      "submission": {
+        "id": "dbc95e14-605f-4120-b39d-e8ad0f4a4f46",
+        "state": "accepted",
+        "requestSha256": "7732ac15ce6e6f4156beb18c0c21aa05d21369427f5a4f08c883fe8c6ba194ca"
+      },
+      "taskId": "8327d231-dbda-4dba-8a8c-d1409a5e26d7",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:03:51.049Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-crossing-rigged.glb",
+      "rawBytes": 60206424,
+      "rawSha256": "099c1e94a2fee8dbb1bb590797d588810f565657fcbd9565ae329ca7e3f38df2",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "3b567ea7-f9b8-4f7c-b7c9-239d12057b87"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:02:54.864123Z",
+      "tripoCompletedAt": "2026-11-09T09:03:44.272243Z"
+    }
+  }
+}

@@ -141,28 +141,34 @@ test('a soldier in his own kit wears the body closest to it: the recruit\'s tuni
 });
 
 test('a unit type wears its own body where it has one, in turns and real time, and every other figure keeps its faction\'s', () => {
-  const look=(name,role,chapter,{side='enemy',id=name}={})=>{const kit=actorKit({id,name,side,role},{chapter});return [actorBodyId(kit,actorIdentity({id,name,side,role},kit).key),horseBodyId(kit)];};
+  const look=(name,role,chapter,{side='enemy',id=name,mounted}={})=>{const unit={id,name,side,role,...(mounted?{mounted}:{})},kit=actorKit(unit,{chapter});return [actorBodyId(kit,actorIdentity(unit,kit).key),horseBodyId(kit)];};
   const body=(...args)=>look(...args)[0];
-  // A war band: the reinforcement's skirmisher, the raider's axe and the spearman keep apart; the helmeted infantry wears the war band's jerkin.
+  // A war band: the reinforcement's skirmisher, the raider's axe and the spearman keep apart; the helmeted infantry wears the war band's jerkin,
+  // the shield guard his own check, and the man the rules name the band's war leader his own body, whatever his weapon.
   assert.equal(body('Gothic skirmisher','raider',1),'gothic-skirmisher');assert.equal(body('Gothic raider','raider',1),'gothic-warrior');assert.equal(body('Gothic spearman','raider',2),'gothic-warrior');
   for(const [name,chapter]of [['Gothic warrior',2],['Gothic warriors',4],['Gothic infantry',8]])assert.equal(body(name,'infantry',chapter),'gothic-warband',name);
-  assert.equal(body('Gothic shield guard','guard',4),'gothic-noble');assert.deepEqual(look('Gothic horse','cavalry',8),['gothic-noble','horse-northern']);
-  // A champion wears his own body by his id; the others keep their faction's.
-  assert.equal(body('The war band’s chieftain','champion',4,{id:'champion-gate'}),'champion-gate');
-  assert.equal(body('The war band’s war leader','champion',4,{id:'champion-wall'}),'gothic-warrior');
-  assert.equal(body('A Persian sapper captain','champion',5,{id:'champion-mine'}),'persian-infantry');
-  // The east: light-armed skirmishers and spearmen apart from the scale-armoured guard; the cataphract on his own horse.
+  for(const [role,chapter]of [['raider',1],['raider',3],['infantry',2]])assert.equal(body('Gothic war leader',role,chapter),'gothic-warleader',`${role} ${chapter}`);
+  assert.equal(body('Gothic shield guard','guard',4),'gothic-guard');assert.deepEqual(look('Gothic horse','cavalry',8),['gothic-noble','horse-northern']);
+  // Every champion wears his own body by his id, the mounted Palmyrene officer on his people's horse; a champion named a war leader is still the champion.
+  for(const [id,name,chapter]of [['champion-gate','The war band’s chieftain',4],['champion-wall','The war band’s war leader',4],['champion-mine','A Persian sapper captain',5],
+    ['champion-wells','A Persian captain of the pursuit',6],['champion-eagle','The raiders’ standard-breaker',6],['champion-legion','A mercenary captain in the usurper’s pay',7],
+    ['champion-crossing','The war band’s champion',8],['champion-city','The city’s defending captain',9],['champion-road','The raiders’ chief',10],['champion-guard','The claimant’s guard captain',12]])
+    assert.deepEqual(look(name,'champion',chapter,{id}),[id,null],id);
+  assert.deepEqual(look('A Palmyrene armoured officer','champion',9,{id:'champion-wing',mounted:true}),['champion-wing','horse-cataphract']);
+  // The east: light-armed skirmishers and the jerkined spearmen apart from the scale-armoured guard; the cataphract on his own horse.
   assert.equal(body('Persian raiders','raider',6),'persian-skirmisher');assert.equal(body('Persian raider','raider',6),'persian-skirmisher');
-  assert.equal(body('Persian warriors','infantry',5),'persian-infantry');assert.equal(body('Persian shield guard','guard',5),'persian-infantry');
+  assert.equal(body('Persian warriors','infantry',5),'persian-spearman');assert.equal(body('Persian spearman','infantry',5),'persian-spearman');assert.equal(body('Persian shield guard','guard',5),'persian-infantry');
   assert.equal(body('Palmyrene warriors','infantry',9),'palmyrene-spearman');assert.equal(body('Palmyrene shield guard','guard',9),'palmyrene-infantry');
   assert.deepEqual(look('Palmyrene horse','cavalry',9),['palmyrene-cavalry','horse-cataphract']);assert.deepEqual(look('Persian horse','cavalry',6),['persian-cavalry','horse-eastern']);
-  // The claimant's cohorts no longer wear the soldier's own legionaries' mail; the claimant and his reserve keep the commander's cuirass, his archers the bowman's,
-  // and a cohort that takes the oath is drawn as the soldier's own.
-  for(const name of ['Civil-war cohort 2','Rival Roman warriors','Rival Roman infantry'])assert.equal(body(name,'infantry',12),'rival-legionary',name);
-  assert.equal(body('Rival claimant','infantry',12),'roman-commander');assert.equal(body('Claimant’s reserve cohort','infantry',12),'roman-commander');
-  assert.equal(body('Civil-war cohort 3','archer',12),'roman-archer');assert.equal(body('Pledged cohort','infantry',12,{side:'ally'}),'roman-legionary');
-  // Aurelian's Moorish horse ride in the Palmyrene war; the Roman cavalry elsewhere, and the claimant's, keep the cavalryman's mail.
+  // The claimant's cohorts, his reserve among them, no longer wear the soldier's own legionaries' mail, and his archers carry his colours;
+  // the claimant keeps the commander's cuirass, and a cohort that takes the oath is drawn as the soldier's own.
+  for(const name of ['Civil-war cohort 2','Rival Roman warriors','Rival Roman infantry','Claimant’s reserve cohort'])assert.equal(body(name,'infantry',12),'rival-legionary',name);
+  assert.equal(body('Rival claimant','infantry',12),'roman-commander');
+  assert.equal(body('Civil-war cohort 3','archer',12),'rival-archer');assert.equal(body('Rival Roman archers','archer',12),'rival-archer');
+  assert.equal(body('Reserve archers','archer',12,{side:'ally'}),'roman-archer');assert.equal(body('Pledged cohort','infantry',12,{side:'ally'}),'roman-legionary');
+  // Aurelian's Moorish horse ride in the Palmyrene war and his Dalmatian horse in the finale; the Roman cavalry elsewhere, and the claimant's, keep the cavalryman's mail.
   assert.deepEqual(look('First horse','cavalry',9,{side:'ally'}),['roman-moorish-cavalry','horse-roman']);
+  assert.deepEqual(look('First horse','cavalry',12,{side:'ally'}),['roman-dalmatian-cavalry','horse-roman']);
   assert.equal(body('First horse','cavalry',7,{side:'ally'}),'roman-cavalry');assert.equal(body('Rival Roman horse','cavalry',12),'roman-cavalry');
 });
 

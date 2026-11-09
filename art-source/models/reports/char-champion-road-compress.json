@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/champion-road.glb",
+  "output": "assets/models/characters/champion-road.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 522088,
+    "gzipBytes": 380576,
+    "sha256": "addb81188b8a75d8eff8359bb25a282bd3dc7fad4ef810ca882de034ad6354ad"
+  },
+  "after": {
+    "bytes": 448440,
+    "gzipBytes": 427287,
+    "sha256": "cef1e6903dafc9b19b33031671769a4f354aefb902a58ece8848d0f7f58b47bd"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13994,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 15848
+      },
+      "bytes": 25560,
+      "psnr": 37.687
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 80472
+      },
+      "bytes": 155703,
+      "psnr": 35.44
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 26732
+      },
+      "bytes": 43147,
+      "psnr": 30.984
+    }
+  ]
+}

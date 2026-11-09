@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/roman-dalmatian-cavalry.glb",
+  "output": "assets/models/characters/roman-dalmatian-cavalry.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 566292,
+    "gzipBytes": 425983,
+    "sha256": "36dc6883b61a94fa0b0565bbbbd1dff5e13de09281cfad5368f24f1496b83773"
+  },
+  "after": {
+    "bytes": 435700,
+    "gzipBytes": 414349,
+    "sha256": "cc6ee5c820cb1e43029fe2e5d9bdbc5afa19902eaf0681b18a7a23be8e9dc4e2"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13705,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 26844
+      },
+      "bytes": 30134,
+      "psnr": 35.168
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 120918
+      },
+      "bytes": 143464,
+      "psnr": 30.87
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 27888
+      },
+      "bytes": 43579,
+      "psnr": 29.385
+    }
+  ]
+}

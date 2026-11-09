@@ -32,15 +32,36 @@ export const ACTOR_BODIES=Object.freeze({
   // A unit type's own body (graphics plan, release G1), ahead of the faction-wide bodies below,
   // since the first body whose fit matches is worn: chosen by what the rules made the unit
   // (its troop), a war band's skirmisher, a claimant's Roman, or a champion by his id.
+  // The champions (data/champions.js), each by his id, in the kit the rules give him.
+  'champion-gate':body([{champion:'champion-gate'}],[4]),
+  'champion-wall':body([{champion:'champion-wall'}],[4]),
+  'champion-mine':body([{champion:'champion-mine'}],[5]),
+  'champion-wells':body([{champion:'champion-wells'}],[6]),
+  'champion-eagle':body([{champion:'champion-eagle'}],[6]),
+  'champion-legion':body([{champion:'champion-legion'}],[7]),
+  'champion-crossing':body([{champion:'champion-crossing'}],[8]),
+  'champion-wing':body([{champion:'champion-wing'}],[9]),
+  'champion-city':body([{champion:'champion-city'}],[9]),
+  'champion-road':body([{champion:'champion-road'}],[10]),
+  'champion-guard':body([{champion:'champion-guard'}],[12]),
+  // The war leader the rules name in a band that fights alone (Chapters I–III), whatever his weapon.
+  'gothic-warleader':body([{faction:'Gothic',leader:true}],[1,2,3]),
   'gothic-skirmisher':body([{faction:'Gothic',troop:'raider',skirmisher:true}],[1,2]),
   'gothic-warband':body([{faction:'Gothic',troop:'infantry'}],[2,4,7,8]),
-  'champion-gate':body([{champion:'champion-gate'}],[4]),
+  // The shield guard, in the war band's jerkin and helmet but its own woven check.
+  'gothic-guard':body([{faction:'Gothic',troop:'guard'}],[4,7]),
   'persian-skirmisher':body([{faction:'Persian',troop:'raider'}],[6]),
+  // The spearman in the jerkin his kit lists; the scale coat below is the guard's.
+  'persian-spearman':body([{faction:'Persian',troop:'infantry'}],[5]),
   'palmyrene-spearman':body([{faction:'Palmyrene',troop:'infantry'}],[9]),
-  // The claimant's cohorts, not his own band (an officer, in the commander's cuirass).
+  // The claimant's cohorts, his reserve among them; not the claimant himself (an officer, in the commander's cuirass).
   'rival-legionary':body([{faction:'Roman',rival:true,troop:'infantry',officer:false}],[12]),
+  // The claimant's archers, in his colours, apart from the soldier's own.
+  'rival-archer':body([{faction:'Roman',rival:true,troop:'archer'}],[12]),
   // Aurelian's Moorish horse, the Roman cavalry of the Palmyrene war (Zosimus 1.52).
   'roman-moorish-cavalry':body([{faction:'Roman',role:'cavalry',chapter:9}],[9]),
+  // Aurelian's Dalmatian horse, the equites Dalmatae, the Roman cavalry of the finale.
+  'roman-dalmatian-cavalry':body([{faction:'Roman',role:'cavalry',chapter:12,rival:false}],[12]),
   'roman-recruit':body([{faction:'Roman',role:'recruit'}],[1,2,3,4,5,6,7,8,9,10,11,12],{headwear:SHARED_HEAD}),
   'roman-trainer':body([{faction:'Roman',role:'trainer'}],[1]),
   'roman-legionary':body([{faction:'Roman',role:'veteran'}],[1,2,3,4,5,6,7,8,9,10,12]),
@@ -48,16 +69,16 @@ export const ACTOR_BODIES=Object.freeze({
   // The protagonist's command shows in his armour: a centurion's mail, then a commander's cuirass.
   'roman-officer':body([{faction:'Roman',role:'officer',command:false}],[4,5,6]),
   'roman-commander':body([{faction:'Roman',role:'officer',command:true}],[7,8,9,10,11,12]),
-  'gothic-warrior':body([{faction:'Gothic',role:'raider',armored:false}],[1,2,3,4,7,8,10]),
+  'gothic-warrior':body([{faction:'Gothic',role:'raider',armored:false}],[1,2,3,4,8,10]),
   'gothic-archer':body([{faction:'Gothic',role:'archer'}],[1,2,3,4,7,8,10]),
-  'gothic-noble':body([{faction:'Gothic',role:'raider',armored:true},{faction:'Gothic',role:'cavalry'}],[4,7,8]),
-  'persian-infantry':body([{faction:'Persian',role:'raider'}],[5,6]),
+  'gothic-noble':body([{faction:'Gothic',role:'raider',armored:true},{faction:'Gothic',role:'cavalry'}],[7,8]),
+  'persian-infantry':body([{faction:'Persian',role:'raider'}],[5]),
   'persian-archer':body([{faction:'Persian',role:'archer'}],[5,6]),
   'persian-cavalry':body([{faction:'Persian',role:'cavalry'}],[5,6]),
   'palmyrene-infantry':body([{faction:'Palmyrene',role:'raider'}],[9]),
   'palmyrene-archer':body([{faction:'Palmyrene',role:'archer'}],[9]),
   'palmyrene-cavalry':body([{faction:'Palmyrene',role:'cavalry'}],[9]),
-  'roman-cavalry':body([{faction:'Roman',role:'cavalry'}],[7,12]),
+  'roman-cavalry':body([{faction:'Roman',role:'cavalry'}],[7]),
   // The camp's staff by their camp role (actor-kit.js), ahead of the escorts' civilian dress.
   'camp-clerk':body([{faction:'Civilian',role:'escort',staff:'clerk'},{faction:'Civilian',role:'escort',staff:'quartermaster'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   'camp-capsarius':body([{faction:'Civilian',role:'escort',staff:'capsarius'},{faction:'Civilian',role:'escort',staff:'orderly'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
@@ -135,7 +156,7 @@ export const HORSE_BODIES=Object.freeze({
   'horse-northern':Object.freeze({fits:Object.freeze(['Gothic']),chapters:Object.freeze([7,8])}),
   // The Palmyrene cataphracts' horse, its bronze-scale trapper flat along the back under the saddle (release G1).
   'horse-cataphract':Object.freeze({fits:Object.freeze(['Palmyrene']),chapters:Object.freeze([9])}),
-  // The scale-armoured horse of the Persian heavy cavalry.
+  // The Persian heavy cavalry's horse, remade in release G1 with its lamellar trapper flat along the back.
   'horse-eastern':Object.freeze({fits:Object.freeze(['Persian']),chapters:Object.freeze([5,6])})
 });
 export const horseBodyUrl=id=>`assets/models/horses/${id}.glb`;

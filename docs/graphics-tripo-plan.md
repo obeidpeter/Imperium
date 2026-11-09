@@ -29,7 +29,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | # | Release | Cap | State |
 | --- | --- | --- | --- |
 | 0 | Use what's paid for, then calibrate | 250 | done: calibrated (190 credits, [results](graphics-calibration.md)), and the 3D kit made (seven weapons and helmets, no credits); the landmarks' re-texture skipped |
-| G1 | Armies | 2,300 | pilot made on 8 November (310 credits): seven bodies and a horse, [awaiting the owner's review](#g1s-pilot-8-november) |
+| G1 | Armies | 2,300 | [pilot](#g1s-pilot-8-november) approved and merged on 9 November (310 credits); [the rest](#the-rest-of-g1-9-november) made on 9 November (695 credits): fifteen bodies and a horse. 1,295 credits left |
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 1,700 | (1,300, and 400 from G7) |
 | G4 | Animals | 600 | |
@@ -125,7 +125,7 @@ Seven bodies and a horse, one for each of G1's categories, in the game for the o
 
   ![Four battles before and after the pilot, crops at the game's own pixels in the desktop build at High](images/g1-pilot-battles.jpg)
 
-**Proposed for the rest of G1, for the owner's decision.** G1 has 1,990 credits left.
+**Proposed for the rest of G1, and approved by the owner on 9 November** ([what was made](#the-rest-of-g1-9-november)). G1 had 1,990 credits left.
 - **Now, about 1,200 credits** (1,075 at the measured prices, and the plan's 10% for rejected attempts):
   - **a body for every unit type still without one (23):**
     - Gothic: the axe raider, the spearman, the band's war leader, the shield guard and the horseman;
@@ -140,6 +140,31 @@ Seven bodies and a horse, one for each of G1's categories, in the game for the o
   - It is decided once the new type bodies have been seen in battle, because it is the part least likely to show there.
 - **Chapter I's web download:** the bodies that do not fit take 512-pixel maps. A figure 100 pixels tall cannot show a finer one.
 - **At no credit cost:** the claimant's cohorts could carry shield markings of their own. Their shields are still the soldier's men's.
+
+### The rest of G1 (9 November)
+
+The owner approved the pilot and the proposal above on 9 November. Fifteen bodies and a horse were made, reviewed and shipped:
+
+| Category | Body | Worn by | Chapters |
+| --- | --- | --- | --- |
+| Gothic | a war leader, bare-headed in red, with a torc | the war leader of a band that fights alone | I–III |
+| Gothic | a shield guard in a checked tunic and a segmented helmet | the shield guard (he wore the noble's body) | IV, VII |
+| Persian | a spearman in a leather jerkin over saffron linen | the spearmen (they wore the guard's scale coat) | V |
+| Rival Romans | an archer in off-white padding with the claimant's purple | the claimant's archers (they wore the soldier's archers' body) | XII |
+| Roman specialists | a Dalmatian horseman in mail over dark green, with a red scarf | the soldier's cavalry in the finale | XII |
+| Champions | a body each for the ten who had none | the wall's war leader (IV), the sapper captain (V), the captain of the pursuit and the standard-breaker (VI), the mercenary captain (VII), the crossing's champion (VIII), the armoured officer, who now rides, and the city's captain (IX), the raiders' chief (X) and the claimant's guard captain (XII) | IV–XII |
+| Horses | a dark bay under iron lamellae, flat along the back | the Persian cavalry, in place of the first eastern horse | V, VI |
+
+- **Credits:** 695 of the batch's 780-credit ceiling: fifteen rigged bodies at 45 and the horse at 20. No generation was rejected. [The ledger](../art-source/models/graphics-g1-credits.json) has every task.
+- **Not made: 8 of the proposal's 23 types.** The game's own data showed:
+  - four already wear a body of their own: the Gothic raider, the war bands' spearman (the pilot's), the Gothic horseman and the Persian guard;
+  - four are not units in the game: a rival guardsman, a rival horseman, a draco-bearer and a centurion.
+- **The northern horse** is not remade. The binder sets every horse's back to the game's one saddle height, so a smaller remake would come out the same size. A smaller northern horse needs runtime work, with its rider lowered, and no credits.
+- **At no credit cost:** the claimant's cohorts and archers carry his purple on their shields, with designs of their own.
+- **Downloads:** Chapter I's download is 17.5 of its 18 MB, with the war leader at 512-pixel maps. The largest chapter's (XII) is 27.5 of 28 MB, and the complete game 65.2 of 80 MB.
+- **In battle:** IN_BATTLE
+
+**Left of G1: 1,295 credits.** For the owner's decision: RECOMMENDATION
 
 Each cap includes about 10% for rejected attempts. G3 and G5 have G7's credits too: each pilot proposes how many more of its own list they buy. Some things stay out of Tripo:
 - the Colosseum, which failed three times there, gets a Blender build;

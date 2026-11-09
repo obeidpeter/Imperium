@@ -13,8 +13,10 @@ export function actorKit(unit={},options={}){
   // capsarius, trader and so on) chooses a body and spares them a traveller's bundle.
   const staff=escort&&unit.role&&unit.role!=='escort'?String(unit.role):null;
   const faction=/persian/i.test(name)?'Persian':/palmyrene/i.test(name)?'Palmyrene':/gothic/i.test(name)?'Gothic':/roman|civil-war|rival claimant/i.test(name)?'Roman':trainer||unit.side==='player'||unit.side==='ally'?'Roman':escort||civic?'Civilian':chapter===5||chapter===6?'Persian':chapter===9?'Palmyrene':chapter>=11?'Roman':'Gothic';
-  const mounted=['cavalry','heavy'].includes(unit.role),archer=unit.role==='archer',eastern=['Persian','Palmyrene'].includes(faction);
-  const officer=!civic&&!escort&&(unit.id==='hero'&&(chapter>=4||/Optio|Centurio|Primus|Praefectus|Praepositus|Dux|Senator|Augustus/i.test(rank))||/claimant/i.test(name));
+  // A man the rules seat on a horse rides: cavalry, and a mounted champion (the Palmyrene armoured officer).
+  const mounted=['cavalry','heavy'].includes(unit.role)||unit.mounted===true,archer=unit.role==='archer',eastern=['Persian','Palmyrene'].includes(faction);
+  // The claimant himself commands; "the claimant's" reserve cohort and guard captain are his soldiers.
+  const officer=!civic&&!escort&&(unit.id==='hero'&&(chapter>=4||/Optio|Centurio|Primus|Praefectus|Praepositus|Dux|Senator|Augustus/i.test(rank))||/\bclaimant\b(?![’']s)/i.test(name));
   // A trained soldier (the real-time arena's Legionary) is never drawn as the chapter's recruit.
   const recruit=unit.id==='hero'&&chapter===1&&!officer&&options.role!=='veteran'&&!unit.trained;
   const armored=!trainer&&!civic&&!escort&&!recruit&&(faction==='Roman'||mounted||unit.role==='guard'||eastern);
@@ -26,10 +28,12 @@ export function actorKit(unit={},options={}){
   // What the rules made the unit (its own role, unmapped), which choose a type's body
   // (actor-body-catalog.js): a war band's skirmisher, a claimant's Roman, a champion by his id.
   const troop=String(unit.role??''),skirmisher=/skirmisher/i.test(name);
+  // The war leader the rules name in a band that fights alone (bands.js): its hardiest man, not a champion.
+  const leader=/\bwar leader\b/i.test(name)&&unit.role!=='champion';
   const rival=faction==='Roman'&&!trainer&&!civic&&!escort&&(unit.side==='enemy'||/rival|civil-war|claimant/i.test(name));
   const champion=unit.role==='champion'&&unit.id!=null?String(unit.id):null;
   const result={role,faction,chapter,rank,hero:unit.id==='hero',trainer,civic,escort,staff,mounted,archer,officer,recruit,eastern,armored,armor:armored?(eastern?'scale':'mail'):null,armed:!civic&&!escort,identity,commendations,veteranTier,signum,
-    troop,skirmisher,rival,champion,
+    troop,skirmisher,leader,rival,champion,
     helmet:armored?(eastern?'conical':faction==='Roman'?'ridge':'segmented'):null,
     cloak:officer||!archer&&armored&&faction==='Roman',wounded:escort&&/wounded/i.test(name),
     // A man the rules give no shield carries none (unit.shield false); otherwise the role decides.

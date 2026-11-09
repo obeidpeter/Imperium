@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-wing",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    9
+  ],
+  "use": "A Palmyrene armoured officer, the champion of Chapter IX’s cavalry battle (ch9-wing), in his own body and riding, as the rules have him; the game adds his spear. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Palmyrene armoured cavalry officer of AD 272, a noble of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of gilded bronze scales with short scale sleeves over a long-sleeved purple tunic embroidered with gold vine scrolls, as on Palmyrene funerary portraits, wide purple trousers embroidered down the front, soft riding boots, and a conical iron helmet with a gilded brow band and cheek pieces, face visible. A short trimmed dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611370,
+      "image_seed": 2611371,
+      "texture_seed": 2611372
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T09:05:33.987Z",
+    "requestBody": {
+      "negative_prompt": "plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611370,
+      "image_seed": 2611371,
+      "texture_seed": 2611372,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Palmyrene armoured cavalry officer of AD 272, a noble of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of gilded bronze scales with short scale sleeves over a long-sleeved purple tunic embroidered with gold vine scrolls, as on Palmyrene funerary portraits, wide purple trousers embroidered down the front, soft riding boots, and a conical iron helmet with a gilded brow band and cheek pieces, face visible. A short trimmed dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 9770,
+    "balanceSnapshotBefore": {
+      "balance": 9770,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "87d50122-4384-4b4b-9373-3d0760e17937",
+      "state": "accepted",
+      "requestSha256": "3ea3974e04d54e36990dc82de2815d527c9f45b42784f12fc6eea23f4cf7928a"
+    },
+    "taskId": "3d5bb9f0-d0d7-4e25-9b24-6a01ef90d1c9",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:07:06.405Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-wing.glb",
+    "rawBytes": 46719376,
+    "rawSha256": "985eee83d5b40c7fe991276630e2437775927d8f8a93d07148f6d93fa0759ce3",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Palmyrene armoured cavalry officer of AD 272, a noble of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of gilded bronze scales with short scale sleeves over a long-sleeved purple tunic embroidered with gold vine scrolls, as on Palmyrene funerary portraits, wide purple trousers embroidered down the front, soft riding boots, and a conical iron helmet with a gilded brow band and cheek pieces, face visible. A short trimmed dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611371,
+      "model_seed": 2611370,
+      "texture_seed": 2611372,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T09:05:34.394506Z",
+    "tripoCompletedAt": "2026-11-09T09:07:00.186994Z",
+    "tripoRender": "art-source/models/raw/char-champion-wing-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:13:43.535Z",
+      "requestBody": {
+        "input": "3d5bb9f0-d0d7-4e25-9b24-6a01ef90d1c9"
+      },
+      "submission": {
+        "id": "12ea92aa-b496-436e-b371-ec5ae8217d98",
+        "state": "accepted",
+        "requestSha256": "7177f732cea5c7dee263ccac0927b79ca2ba2b8851a763b17b0905005213ab5a"
+      },
+      "taskId": "1b1f61c1-840e-46fb-99f8-3e4f5590974f",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:13:49.441Z",
+      "requestBody": {
+        "input": "3d5bb9f0-d0d7-4e25-9b24-6a01ef90d1c9",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9555,
+      "balanceSnapshotBefore": {
+        "balance": 9555,
+        "frozen": 0
+      },
+      "submission": {
+        "id": "124d8d73-5491-4a09-aa8c-4d0472ba39e0",
+        "state": "accepted",
+        "requestSha256": "529c92e9b233caadce2e4725b9fe2787c69c27608bef87607e0050204971aaec"
+      },
+      "taskId": "6a461e51-d0e3-434b-818c-4289e26dddfb",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:14:40.047Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-wing-rigged.glb",
+      "rawBytes": 61881308,
+      "rawSha256": "f276f42a1595289830c78e79d18644402da3679647aeae86ac05da6651a5f4e5",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "3d5bb9f0-d0d7-4e25-9b24-6a01ef90d1c9"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:13:49.711244Z",
+      "tripoCompletedAt": "2026-11-09T09:14:35.306036Z"
+    }
+  }
+}

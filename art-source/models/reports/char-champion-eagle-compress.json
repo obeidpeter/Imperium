@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/champion-eagle.glb",
+  "output": "assets/models/characters/champion-eagle.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 575560,
+    "gzipBytes": 438816,
+    "sha256": "e6cb7c3a147b3b701cc45c562eecb6d8661eba5247f64e9daf9d20d66a226da0"
+  },
+  "after": {
+    "bytes": 484756,
+    "gzipBytes": 463145,
+    "sha256": "12c40515ec9441acc58ec9ac187a739396a045de7bc964d88096e2a105aac44f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 14004,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 28632
+      },
+      "bytes": 35492,
+      "psnr": 35.004
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 114722
+      },
+      "bytes": 175084,
+      "psnr": 33.452
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 36012
+      },
+      "bytes": 47852,
+      "psnr": 28.878
+    }
+  ]
+}

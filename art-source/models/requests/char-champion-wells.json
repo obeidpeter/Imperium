@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-wells",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    6
+  ],
+  "use": "A Persian captain of the pursuit, the champion of Chapter VI’s wells (ch6-wells), in his own body; the game adds his parma and spatha. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Sasanian Persian noble captain of AD 260, a tall man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length crimson silk tunic with gold-patterned borders, a belt with gilded fittings, baggy crimson trousers gathered at the ankle, soft yellow leather boots, and a tall conical iron helmet wrapped at its base with a crimson cloth band, face visible. A full black beard and black hair tied at the nape. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "scale armour, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611350,
+      "image_seed": 2611351,
+      "texture_seed": 2611352
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T09:02:02.304Z",
+    "requestBody": {
+      "negative_prompt": "scale armour, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611350,
+      "image_seed": 2611351,
+      "texture_seed": 2611352,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Sasanian Persian noble captain of AD 260, a tall man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length crimson silk tunic with gold-patterned borders, a belt with gilded fittings, baggy crimson trousers gathered at the ankle, soft yellow leather boots, and a tall conical iron helmet wrapped at its base with a crimson cloth band, face visible. A full black beard and black hair tied at the nape. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 9900,
+    "balanceSnapshotBefore": {
+      "balance": 9900,
+      "frozen": 45
+    },
+    "submission": {
+      "id": "cdae5129-e10d-463e-bff1-63f5911939e3",
+      "state": "accepted",
+      "requestSha256": "dd6d1017e9d87b598a6ed4bc663fc15759594a55d2da4dffc545dfc1c93f1a00"
+    },
+    "taskId": "f1bcbd23-480b-4006-8b7f-45484aaef337",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:03:39.045Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-wells.glb",
+    "rawBytes": 43158208,
+    "rawSha256": "6b30fdec6e5ecf870ccc56c4ec5f6faa180b9eff723fa1134036e7a2da3c6842",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Sasanian Persian noble captain of AD 260, a tall man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length crimson silk tunic with gold-patterned borders, a belt with gilded fittings, baggy crimson trousers gathered at the ankle, soft yellow leather boots, and a tall conical iron helmet wrapped at its base with a crimson cloth band, face visible. A full black beard and black hair tied at the nape. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611351,
+      "model_seed": 2611350,
+      "texture_seed": 2611352,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "scale armour, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T09:02:02.734216Z",
+    "tripoCompletedAt": "2026-11-09T09:03:30.825275Z",
+    "tripoRender": "art-source/models/raw/char-champion-wells-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:09:20.628Z",
+      "requestBody": {
+        "input": "f1bcbd23-480b-4006-8b7f-45484aaef337"
+      },
+      "submission": {
+        "id": "8db3e940-098f-44e2-b11b-ef22c45483f2",
+        "state": "accepted",
+        "requestSha256": "73c1d151fc325fb42ab2db95e7f4eb4fbf7df0c4dca17eca0ae61909986766d4"
+      },
+      "taskId": "ee0a1e41-a07d-4c05-8dcd-8400704446d7",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:09:26.401Z",
+      "requestBody": {
+        "input": "f1bcbd23-480b-4006-8b7f-45484aaef337",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9630,
+      "balanceSnapshotBefore": {
+        "balance": 9630,
+        "frozen": 25
+      },
+      "submission": {
+        "id": "23c6507e-53c6-4bac-88ca-c1e37dde09b9",
+        "state": "accepted",
+        "requestSha256": "37929b589d430c32eb362bc78b55d9f4295f065725bec81de59b897ca19c667b"
+      },
+      "taskId": "9fe0bd38-5a42-4405-bddc-84ad5aeb205e",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:10:34.372Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-wells-rigged.glb",
+      "rawBytes": 57667488,
+      "rawSha256": "7f4ca83687f313bd0d96275699217b6335640836c4f268c27607e1e6cbfdac29",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "f1bcbd23-480b-4006-8b7f-45484aaef337"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:09:26.678785Z",
+      "tripoCompletedAt": "2026-11-09T09:10:26.339656Z"
+    }
+  }
+}

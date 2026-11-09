@@ -1,0 +1,165 @@
+{
+  "id": "char-persian-spearman",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    5
+  ],
+  "use": "The Persian spearman (Chapter V), in the leather jerkin and conical helmet his kit lists rather than the guard’s scale coat; the game adds his parma and spear. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Sasanian Persian infantry spearman of AD 256, a young man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length linen tunic dyed saffron-yellow with a red woven border, a cloth sash, baggy brown trousers gathered at the ankle, soft leather boots, and a plain tall conical iron helmet, face visible. Black beard and dark hair to the shoulders. No scale armour, no mail. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "scale armour, mail, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611420,
+      "image_seed": 2611421,
+      "texture_seed": 2611422
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T09:01:40.789Z",
+    "requestBody": {
+      "negative_prompt": "scale armour, mail, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611420,
+      "image_seed": 2611421,
+      "texture_seed": 2611422,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Sasanian Persian infantry spearman of AD 256, a young man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length linen tunic dyed saffron-yellow with a red woven border, a cloth sash, baggy brown trousers gathered at the ankle, soft leather boots, and a plain tall conical iron helmet, face visible. Black beard and dark hair to the shoulders. No scale armour, no mail. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 9945,
+    "balanceSnapshotBefore": {
+      "balance": 9945,
+      "frozen": 45
+    },
+    "submission": {
+      "id": "7e580482-c6db-48fc-8aae-a93c4a80d9b9",
+      "state": "accepted",
+      "requestSha256": "503ed5a1299560a7f683819c466383a4919361e9f3cbf55ac097f364ae0b5e88"
+    },
+    "taskId": "287d2853-2894-4f9c-b125-a05b532d0629",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:03:13.693Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-persian-spearman.glb",
+    "rawBytes": 45673612,
+    "rawSha256": "b4edd694c92bdc9710bac32b43d0bf985454a1a0a09ca36af708e4532005d078",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Sasanian Persian infantry spearman of AD 256, a young man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length linen tunic dyed saffron-yellow with a red woven border, a cloth sash, baggy brown trousers gathered at the ankle, soft leather boots, and a plain tall conical iron helmet, face visible. Black beard and dark hair to the shoulders. No scale armour, no mail. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611421,
+      "model_seed": 2611420,
+      "texture_seed": 2611422,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "scale armour, mail, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T09:01:41.190709Z",
+    "tripoCompletedAt": "2026-11-09T09:03:09.531007Z",
+    "tripoRender": "art-source/models/raw/char-persian-spearman-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:07:46.239Z",
+      "requestBody": {
+        "input": "287d2853-2894-4f9c-b125-a05b532d0629"
+      },
+      "submission": {
+        "id": "d00e4ecd-ae68-48bb-a6af-c2abc201e095",
+        "state": "accepted",
+        "requestSha256": "df6f8d9f20a6a6863ee2b9d23883defda12230b551b82ba8d6660019faaa41fa"
+      },
+      "taskId": "60e64aee-f43d-45ac-8020-2621aeed5250",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:07:52.029Z",
+      "requestBody": {
+        "input": "287d2853-2894-4f9c-b125-a05b532d0629",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9680,
+      "balanceSnapshotBefore": {
+        "balance": 9680,
+        "frozen": 45
+      },
+      "submission": {
+        "id": "1e3c2721-77ce-4282-a945-b47fd48872bc",
+        "state": "accepted",
+        "requestSha256": "4d3f6786554003a29fa175f8611aaad174157d520ff8cbb12480500ba57ad36e"
+      },
+      "taskId": "00429442-0120-4e5e-85a4-0ca0101066b7",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:09:19.730Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-persian-spearman-rigged.glb",
+      "rawBytes": 61039968,
+      "rawSha256": "0932a32981b664edb80e8ccf293380e292477decb837ad996bea7ac7db2c2691",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "287d2853-2894-4f9c-b125-a05b532d0629"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:07:52.341287Z",
+      "tripoCompletedAt": "2026-11-09T09:09:14.624959Z"
+    }
+  }
+}

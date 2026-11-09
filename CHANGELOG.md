@@ -2,7 +2,37 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
-### Release G1's pilot: unit types in bodies of their own, for the owner's review ([the plan](docs/graphics-tripo-plan.md#g1s-pilot-8-november))
+### Release G1: every enemy type and champion in a body of its own ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g1-9-november))
+
+The owner approved the pilot (#92) and the rest of G1 on 9 November. Every enemy unit type now wears a body of its own, as do all eleven champions, and the Persian cavalry rides a horse remade in iron lamellae. Each was generated with Tripo at the standard tier, rigged and bound to the game's skeleton like every body; the code-built figures stay the fallback.
+
+- **Who wears what:**
+  - Chapters I–III: the war leader of a band that fights alone, bare-headed in red, with a torc;
+  - Chapters IV and VII: the Gothic shield guard, in a checked tunic and a segmented helmet, where he wore the noble's body;
+  - Chapter V: the Persian spearmen, in a leather jerkin over saffron linen, apart from the guard's scale coat;
+  - Chapters V and VI: the Persian cavalry's horse, dark bay under iron lamellae that lie flat under the saddle, where the first one's trapper left a raised seat;
+  - Chapter XII: the claimant's archers, in off-white padding with his purple bands, and Aurelian's Dalmatian horse, the soldier's cavalry in the finale, in mail over dark green with a red scarf;
+  - the ten other champions, each in his own body: the wall's war leader in woad blue (IV), the sapper captain in indigo under a Dura-Europos ridge helmet (V), the captain of the pursuit in crimson silk (VI), the standard-breaker in iron scale over turquoise (VI), the mercenary captain in dark green with a Roman belt (VII), the crossing's champion in saffron with red braids (VIII), the armoured officer in gilded scale over purple (IX), the city's captain in iron over white and red (IX), the raiders' grey-bearded chief in undyed wool and wolf fur (X), and the claimant's guard captain in mail over scarlet under a white crest (XII).
+- **The armoured officer rides.** The rules have always mounted him; he was drawn on foot in the Palmyrene spearmen's body. He now rides the cataphracts' horse.
+- **The claimant's men:** his cohorts and archers carry his purple on their shields, with designs of their own, so they read apart from the soldier's teal-shielded men. His reserve cohort is drawn as his legionaries, not as officers. The claimant himself still commands, in the Roman commander's body.
+- **How a body is chosen:** still by the unit as the rules made it, in presentation only: a band's war leader by the name the rules give him, a champion by his id, the Dalmatian horse by its chapter.
+- **In battle:** IN_BATTLE
+- **Not made:** 8 of the 23 types the plan listed. Four already wear a body of their own: the Gothic raider, the war bands' spearman (since the pilot), the Gothic horseman and the Persian guard. Four are not units in the game: a rival guardsman, a rival horseman, a draco-bearer and a centurion. The northern horse's size is runtime work rather than a remake, since the binder sets every horse's back to the one saddle height; it is left for later.
+- **Credits:** 695, within the batch's 780-credit ceiling, and the balance went from 10,200 to 9,505.
+  - Fifteen rigged bodies cost 45 each, and the horse 20.
+  - No generation was rejected. Once Tripo finished a rig but its file did not download; `resume-rig` fetched it by its recorded task ID at no charge.
+  - G1 has spent 1,005 of its 2,300 credits, and has 1,295 left.
+- **Downloads:** the sixteen files take 6,963,768 bytes; the horse replaces one of 550,740. The war leader, in Chapter I's download, has 512-pixel maps (282,216 bytes). Chapter I's download is now 17.5 of its 18 MB, the largest chapter's (XII) 27.5 of 28 MB, and the complete game 65.2 of 80 MB.
+- **Records:** the requests (the first eastern horse's kept, marked replaced), [the G1 credit ledger](art-source/models/graphics-g1-credits.json), the manifest's sixteen entries, the art record with the exact prompts and the review, the asset pipeline guide, the 3D provenance record and the AI-content disclosure (regenerated: 222 of 257 shipped files).
+- **Checks:**
+  - the body tests check every body's chapters against the legal campaign in turns and real time, and which body each type wears: the war leader, the shield guard, each champion and his horse, the claimant's men and the Dalmatian horse;
+  - a shield test checks the claimant's markings;
+  - the horse tests and the ledger test;
+  - the production audit has a specimen for each new body, and one for a Persian rider.
+
+  The review images come from the actor viewer and from the desktop build's battles, reached from New Game by the real-time bot's legal commands, in headless Chromium under a software renderer at High. They are not a hardware or device check.
+
+### Release G1's pilot: unit types in bodies of their own, approved by the owner ([the plan](docs/graphics-tripo-plan.md#g1s-pilot-8-november))
 
 Seven unit types that wore another unit's body now wear their own, and the Palmyrene cataphracts ride a horse of their own. Each was generated with Tripo at the standard tier, rigged and bound to the game's skeleton like every body. The owner reviews them before the rest of G1 is generated.
 

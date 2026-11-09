@@ -46,7 +46,7 @@ export const worldPoint=(world,p)=>({x:p.x-world.map.width*TILE/2,z:p.z-world.ma
 // In a chamber (chamber-world.js) each figure carries the Contest's own readings: his
 // bloc (the toga trim and letter), a member's stance (his posture and marker) and a speaker's Resolve.
 export function stageUnit(actor,{appearance,campActivity}={}){
-  const unit={id:actor.id,name:actor.name,side:actor.side,role:actor.role,...stageTile(actor.x,actor.z),hp:actor.hp,maxHp:actor.maxHp,facing:'east',morale:80,
+  const unit={id:actor.id,name:actor.name,side:actor.side,role:actor.role,...(actor.mounted?{mounted:true}:{}),...stageTile(actor.x,actor.z),hp:actor.hp,maxHp:actor.maxHp,facing:'east',morale:80,
     intent:'',hidden:false,trained:actor.side==='player',shield:actor.kit.some(id=>ITEMS[id]?.shield),crowd:false,
     ...((actor.id==='hero'||actor.side==='player'||actor.veteranId)&&!actor.civic?{equipment:[...actor.kit]}:{}),
     ...(actor.id==='hero'&&appearance?{appearance:{...appearance}}:{}),...(campActivity?{campActivity}:{})};

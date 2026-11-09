@@ -1,0 +1,165 @@
+{
+  "id": "char-rival-archer",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    12
+  ],
+  "use": "The claimant’s archers (Chapter XII), in the padded jacket and helmet their kit lists and the claimant’s off-white and purple, apart from the soldier’s own archers; the game adds the bow and quiver. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman auxiliary archer of AD 275 serving a rival claimant to the throne, a lean man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a quilted padded jacket of off-white linen over a long-sleeved off-white wool tunic with two narrow dark purple bands, a leather belt, close-fitting dark brown wool trousers and closed leather boots, a leather bracer on the left forearm, and a plain iron helmet with cheek guards and a short neck guard, face visible. Clean-shaven. No mail. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, chainmail, scale armour, segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611430,
+      "image_seed": 2611431,
+      "texture_seed": 2611432
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T09:03:14.237Z",
+    "requestBody": {
+      "negative_prompt": "mail, chainmail, scale armour, segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611430,
+      "image_seed": 2611431,
+      "texture_seed": 2611432,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Roman auxiliary archer of AD 275 serving a rival claimant to the throne, a lean man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a quilted padded jacket of off-white linen over a long-sleeved off-white wool tunic with two narrow dark purple bands, a leather belt, close-fitting dark brown wool trousers and closed leather boots, a leather bracer on the left forearm, and a plain iron helmet with cheek guards and a short neck guard, face visible. Clean-shaven. No mail. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 9855,
+    "balanceSnapshotBefore": {
+      "balance": 9855,
+      "frozen": 45
+    },
+    "submission": {
+      "id": "1945dc2f-8247-4396-80ed-2f4f7b5569f9",
+      "state": "accepted",
+      "requestSha256": "983d89b3b93f62cfeb0570ca4e2bb661944fa0154d020079de02c9b773b0885e"
+    },
+    "taskId": "24066f0a-d58d-4f5c-91a9-024f0aff73b1",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:05:01.680Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-rival-archer.glb",
+    "rawBytes": 44681716,
+    "rawSha256": "2f332c2763c9ea67db9f93fa6f0c330b3a873221899ea2b623a7cc96ca940df3",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Roman auxiliary archer of AD 275 serving a rival claimant to the throne, a lean man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a quilted padded jacket of off-white linen over a long-sleeved off-white wool tunic with two narrow dark purple bands, a leather belt, close-fitting dark brown wool trousers and closed leather boots, a leather bracer on the left forearm, and a plain iron helmet with cheek guards and a short neck guard, face visible. Clean-shaven. No mail. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611431,
+      "model_seed": 2611430,
+      "texture_seed": 2611432,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, chainmail, scale armour, segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T09:03:14.870707Z",
+    "tripoCompletedAt": "2026-11-09T09:04:56.601521Z",
+    "tripoRender": "art-source/models/raw/char-rival-archer-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:12:35.180Z",
+      "requestBody": {
+        "input": "24066f0a-d58d-4f5c-91a9-024f0aff73b1"
+      },
+      "submission": {
+        "id": "7706e535-3e6d-4eea-918f-f0a69d8498a0",
+        "state": "accepted",
+        "requestSha256": "ee1f20d36a30fce3a6dcf77e3fd27cb1220a3b6b1667ff7803b5fa72afa5a52c"
+      },
+      "taskId": "9ddf2e87-a67f-43d8-bc03-18f50b543c31",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:12:40.970Z",
+      "requestBody": {
+        "input": "24066f0a-d58d-4f5c-91a9-024f0aff73b1",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9580,
+      "balanceSnapshotBefore": {
+        "balance": 9580,
+        "frozen": 0
+      },
+      "submission": {
+        "id": "61cc85dd-a8fb-4c87-b017-883dd0100ee6",
+        "state": "accepted",
+        "requestSha256": "f5ca4804e0f54bd489b8f24b4757e1c74f4d2b8d3907499b8d356fb8251dc759"
+      },
+      "taskId": "ae74383f-ee92-4d5d-955a-ac3dcd51c0fe",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:13:42.719Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-rival-archer-rigged.glb",
+      "rawBytes": 59733580,
+      "rawSha256": "c2d5a29bfcd522fafcc3db9fd8f7684b7640e72e99deff129ab2df5ddbb458e2",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "24066f0a-d58d-4f5c-91a9-024f0aff73b1"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:12:41.241532Z",
+      "tripoCompletedAt": "2026-11-09T09:13:35.585366Z"
+    }
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-mine",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    5
+  ],
+  "use": "A Persian sapper captain, the champion of Chapter V’s mine (ch5-mine), in his own body; the game adds his parma and spatha. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Sasanian Persian sapper captain of AD 256 at the siege of Dura-Europos, a wiry man of about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length linen tunic dyed dark indigo with an ochre border, a leather belt, baggy trousers gathered at the ankle, soft leather boots, and an iron helmet of two halves joined by a raised central ridge, like the one found in the siege mine at Dura-Europos, with a mail neck guard, face visible. Black beard and dark hair. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "scale armour, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611340,
+      "image_seed": 2611341,
+      "texture_seed": 2611342
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T09:00:11.418Z",
+    "requestBody": {
+      "negative_prompt": "scale armour, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611340,
+      "image_seed": 2611341,
+      "texture_seed": 2611342,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Sasanian Persian sapper captain of AD 256 at the siege of Dura-Europos, a wiry man of about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length linen tunic dyed dark indigo with an ochre border, a leather belt, baggy trousers gathered at the ankle, soft leather boots, and an iron helmet of two halves joined by a raised central ridge, like the one found in the siege mine at Dura-Europos, with a mail neck guard, face visible. Black beard and dark hair. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 9990,
+    "balanceSnapshotBefore": {
+      "balance": 9990,
+      "frozen": 45
+    },
+    "submission": {
+      "id": "a199cb7b-5086-4909-9d59-3bf1ac1d424f",
+      "state": "accepted",
+      "requestSha256": "18892bed3fdfba01b91ba065c288fe8349e4ab34ba2d3bf119bd73d612a7985f"
+    },
+    "taskId": "ae2e241c-ccba-409a-b1fd-5800a6e6a540",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:02:01.718Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-mine.glb",
+    "rawBytes": 45170492,
+    "rawSha256": "84b384f66b18cf57acfdbcd543af77b0088b922954a4e8b50fed946181734a08",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Sasanian Persian sapper captain of AD 256 at the siege of Dura-Europos, a wiry man of about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length linen tunic dyed dark indigo with an ochre border, a leather belt, baggy trousers gathered at the ankle, soft leather boots, and an iron helmet of two halves joined by a raised central ridge, like the one found in the siege mine at Dura-Europos, with a mail neck guard, face visible. Black beard and dark hair. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611341,
+      "model_seed": 2611340,
+      "texture_seed": 2611342,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "scale armour, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T09:00:13.293560Z",
+    "tripoCompletedAt": "2026-11-09T09:01:56.382759Z",
+    "tripoRender": "art-source/models/raw/char-champion-mine-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:08:32.713Z",
+      "requestBody": {
+        "input": "ae2e241c-ccba-409a-b1fd-5800a6e6a540"
+      },
+      "submission": {
+        "id": "e62f16c8-567b-4158-aa27-a62b18cde639",
+        "state": "accepted",
+        "requestSha256": "77babf63afbc02ed9d5e2672753c3bed6b0988d19a1423518f8afb474b9167d3"
+      },
+      "taskId": "f074d1a1-6ff7-4aaa-ad1b-d631771c089a",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:08:38.544Z",
+      "requestBody": {
+        "input": "ae2e241c-ccba-409a-b1fd-5800a6e6a540",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9655,
+      "balanceSnapshotBefore": {
+        "balance": 9655,
+        "frozen": 45
+      },
+      "submission": {
+        "id": "f7600d9c-2d49-490c-9f7a-a3d71b335095",
+        "state": "accepted",
+        "requestSha256": "219c91ddb906eaabb41f85b7dcf1950fa6c348b288421f88ff45549db4613604"
+      },
+      "taskId": "e5cc08d0-1106-4a62-b750-30ef4966a62d",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:09:40.641Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-mine-rigged.glb",
+      "rawBytes": 60133400,
+      "rawSha256": "1370deb512451f48a7a8fc2d5f8b8c1feb580afad22f4b0c0344a9d7f1cb20a2",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "ae2e241c-ccba-409a-b1fd-5800a6e6a540"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:08:38.821194Z",
+      "tripoCompletedAt": "2026-11-09T09:09:35.122186Z"
+    }
+  }
+}

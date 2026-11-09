@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/champion-wells.glb",
+  "output": "assets/models/characters/champion-wells.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 497216,
+    "gzipBytes": 353624,
+    "sha256": "dbc5b19496eded341d3b7f30c6f3e924f7b3dd0bc5c072dbe1f97a030341bea1"
+  },
+  "after": {
+    "bytes": 418936,
+    "gzipBytes": 397555,
+    "sha256": "464985247a123e952b249360741eccf09a72c5fa98b3f426105510bd9c7d0ab2"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13886,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12616
+      },
+      "bytes": 22469,
+      "psnr": 38.896
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 72236
+      },
+      "bytes": 140652,
+      "psnr": 34.166
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11808
+      },
+      "bytes": 29845,
+      "psnr": 36.286
+    }
+  ]
+}

@@ -65,9 +65,12 @@ test('every generated horse has its Tripo task, licence, manifest entry and budg
   const shipped=(await readdir(new URL('assets/models/horses/',root))).filter(f=>f.endsWith('.glb')).map(f=>f.slice(0,-4)).sort();
   assert.deepEqual(shipped,Object.keys(HORSE_BODIES).sort(),'One file per catalogued horse');
   for(const id of shipped){
-    const request=JSON.parse(await file(`art-source/models/requests/${id}.json`)),entry=manifest.assets.find(a=>a.path===horseBodyUrl(id)),p=request.provenance;
+    // A horse remade in a later release ships from that remake's request (<id>-b); the first one stays beside it.
+    const entry=manifest.assets.find(a=>a.path===horseBodyUrl(id));assert.ok(entry,`${id} has provenance in the asset manifest`);
+    assert.match(entry.source.prompt,new RegExp(`^art-source/models/requests/${id}(-[b-z])?\\.json$`),`${id} names its request`);
+    const request=JSON.parse(await file(entry.source.prompt)),p=request.provenance;
     assert.ok(p.taskId&&p.rawSha256,`${id} records its Tripo generation`);assert.match(p.licence,/full rights to use, modify, distribute and commercially exploit/);
-    assert.ok(entry,`${id} has provenance in the asset manifest`);assert.equal(entry.source.taskId,p.taskId);assert.deepEqual(request.chapters,[...HORSE_BODIES[id].chapters]);
+    assert.equal(entry.source.taskId,p.taskId);assert.deepEqual(request.chapters,[...HORSE_BODIES[id].chapters]);
     const bytes=await file(horseBodyUrl(id)),info=await inspectModel(bytes),b=request.budget;
     assert.equal(info.bytes,entry.export.bytes);assert.equal(info.triangles,entry.export.triangles);
     assert.deepEqual(budgetProblems(info,{bytes:b.bytes,triangles:b.triangles+b.overviewTriangles,texture:b.texture,minHeight:b.minHeight,maxHeight:b.maxHeight}),[],id);
