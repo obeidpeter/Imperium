@@ -67,6 +67,41 @@ export function regionalServicePads(e,tileSize=2.5){
   });
 }
 
+/** The tent lines' pitched tents (graphics plan, G3), from the camp's presentation: a pitch whose
+ * every cell is tent-line ground inside the board, as the world blocks it. A stale or partial pitch
+ * leaves its ground bare. Each tent's model faces its door (its local +X gable) along the ridge, a
+ * little turned and sized by a hash of its cell, never by gameplay randomness. */
+export const TENT_MODEL='ch5-leather-tent',TENT_FALLBACK='camp tent lines';
+const tentHash=(x,y,k)=>{const v=Math.sin(x*127.1+y*311.7+k*74.7)*43758.5453;return v-Math.floor(v);};
+export function regionalTentPitches(e,tileSize=2.5){
+  if(!hasRegionalWorld(e)||!/-camp$/.test(e.id))return [];
+  const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
+  return (e.campPresentation?.tentPitches??[]).filter(pitch=>{
+    if(![pitch.x,pitch.z,pitch.width,pitch.depth].every(Number.isFinite)||!['x','z'].includes(pitch.ridge)||![1,-1].includes(pitch.door)||!Array.isArray(pitch.cells)||pitch.cells.length!==2)return false;
+    if(pitch.x-pitch.width/2 < -hx||pitch.x+pitch.width/2 > hx||pitch.z-pitch.depth/2 < -hz||pitch.z+pitch.depth/2 > hz)return false;
+    return pitch.cells.every(c=>Number.isInteger(c.x)&&Number.isInteger(c.y)&&terrainAt(e,c.x,c.y)==='camp');
+  }).map(pitch=>{
+    const [{x:cx,y:cy}]=pitch.cells,turn=(tentHash(cx,cy,1)-.5)*.07;
+    return {id:pitch.id,x:pitch.x,z:pitch.z,cells:pitch.cells,
+      yaw:(pitch.ridge==='z'?-pitch.door*Math.PI/2:pitch.door>0?0:Math.PI)+turn,scale:1.08+tentHash(cx,cy,2)*.06};
+  });
+}
+// The code-built tents, until the model is ready or on Performance: a ridge tent with low walls, its
+// ridge along local X like the model's, one instanced batch the model hides.
+function addRegionalTents({p,m,height,tileSize,instance,geometries},e){
+  const pitches=regionalTentPitches(e,tileSize);if(!pitches.length)return;
+  const geometry=p.geo(new T.BufferGeometry()),wall=.3;
+  const v=[[-.5,0,-.5],[.5,0,-.5],[.5,wall,-.5],[-.5,wall,-.5],[-.5,0,.5],[.5,0,.5],[.5,wall,.5],[-.5,wall,.5],[-.5,1,0],[.5,1,0]];
+  const faces=[[0,3,2],[0,2,1],[4,5,6],[4,6,7],[3,8,9],[3,9,2],[7,6,9],[7,9,8],[0,4,7],[0,7,3],[3,7,8],[1,2,6],[1,6,5],[2,9,6]];
+  geometry.setAttribute('position',new T.Float32BufferAttribute(faces.flat().flatMap(i=>v[i]),3));geometry.computeVertexNormals();
+  for(const pitch of pitches){
+    const size=[3.1*pitch.scale,1.82*pitch.scale,2.06*pitch.scale],c=Math.cos(pitch.yaw),s=Math.sin(pitch.yaw);
+    // The lowest ground under its corners, as a generated model is grounded (scenery-models.js).
+    const y=Math.min(height(pitch.x,pitch.z),...[[-1,-1],[-1,1],[1,-1],[1,1]].map(([u,w])=>{const lx=u*size[0]/2,lz=w*size[2]/2;return height(pitch.x+lx*c+lz*s,pitch.z-lx*s+lz*c);}));
+    instance(TENT_FALLBACK,geometry,m.cloth,[pitch.x,y,pitch.z],size,[0,pitch.yaw,0],new T.Color('#9a7552'));
+  }
+}
+
 const padKindFor=id=>/trough|fountain|cistern|jars/.test(id)?'world-water':/litter|baggage|bundles|relief/.test(id)?'world-local':'world-supply';
 // Cardinal inspection of the final compressed assets established local +X
 // as the shield-boss / scroll-cubby front. Keep their useful faces visible
@@ -164,7 +199,7 @@ export function addRegionalWorld(ctx){
   root.userData.environmentLandmarks??=[];root.userData.environmentLandmarks.push(profile.staging.title,`${profile.region}: connected working courts`);
   if(profile.chapter===9)root.userData.environmentLandmarks.push('connected Palmyrene urban edge');
   addRegionalHabitat(ctx);
-  if(/-camp$/.test(e.id))addRegionalServices(ctx,g);
+  if(/-camp$/.test(e.id)){addRegionalServices(ctx,g);addRegionalTents(ctx,e);}
   return g;
 }
 

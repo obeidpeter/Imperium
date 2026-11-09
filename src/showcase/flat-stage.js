@@ -182,6 +182,16 @@ export function createFlatPresenter(stage,{world:getWorld,alpha:getAlpha,beforeF
       // it, and its name pinned, so that while it is out of sight the name waits at the view's edge with the way it lies.
       const wayOut=markers()&&w.kind==='camp'?flat.encounter?.wayOut:null,exit=wayOut?(w.objects??[]).find(o=>o.kind==='exit'):null;
       if(exit)ellipse(flat.screen(v,exit.x,exit.z),2.2*unit*.7,'#f1d38a',{dash:[6,4],width:2.5});
+      // The tent lines' pitched tents (graphics plan, G3): a leather ridge tent on each pitch, its far roof and
+      // gable first. The ridge runs along u, the roof falls to either side s; h lifts it on the screen.
+      for(const t of w.campPresentation?.tentPitches??[]){
+        const cx=t.x+w.map.width*TILE/2,cz=t.z+w.map.height*TILE/2,alongZ=t.ridge==='z',half=1.7,side=1.13,lift=v.th*2.8,wall=v.th*.7;
+        const pt=(u,s,h)=>{const q=flat.screen(v,alongZ?cx+s:cx+u,alongZ?cz+u:cz+s);return {x:q.x,y:q.y-h};};
+        const face=(points,fill)=>{c.beginPath();points.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.closePath();c.fillStyle=fill;c.fill();c.lineWidth=1;c.strokeStyle='#3b2a1c88';c.stroke();};
+        const roof=s=>[pt(-half,s,0),pt(half,s,0),pt(half,s,wall),pt(half,0,lift),pt(-half,0,lift),pt(-half,s,wall)];
+        const gable=u=>[pt(u,-side,0),pt(u,side,0),pt(u,side,wall),pt(u,0,lift),pt(u,-side,wall)];
+        face(roof(-side),'#6f5038');face(gable(-half),'#5d432e');face(gable(half),'#7d5a3c');face(roof(side),'#946c47');
+      }
       // The armourer's forge (release 11): an anvil on its block, behind him.
       const forge=w.campPresentation?.smithy;
       if(forge){const p=flat.screen(v,forge.x+w.map.width*TILE/2,forge.z+w.map.height*TILE/2);c.fillStyle='#5a4632';c.fillRect(p.x-v.tw*.08,p.y-v.th*.35,v.tw*.16,v.th*.35);

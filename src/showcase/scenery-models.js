@@ -3,7 +3,7 @@ import {createModelLoader} from './model-loader.js';
 import {worldModelUrl} from '../ui/world-catalog.js';
 import {getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
 import {createSceneryModelCache} from './scenery-cache.js';
-import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements} from './environment-regional-world.js';
+import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements,regionalTentPitches,TENT_MODEL,TENT_FALLBACK} from './environment-regional-world.js';
 import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
@@ -49,12 +49,19 @@ function campPad(e,id,tileSize){
   return pad;
 }
 
+// The tent lines (graphics plan, G3): one placement draws every pitched tent from one model, an
+// instanced draw for each of its meshes, and hides the code-built tents (environment-regional-world.js).
+function tentLinePlacements(e,tileSize){
+  const pitches=regionalTentPitches(e,tileSize),url=worldModelUrl(TENT_MODEL);
+  return pitches.length&&url?[{id:TENT_MODEL,key:'tent-lines',url,instances:pitches.map(p=>({x:p.x,z:p.z,yaw:p.yaw,scale:p.scale})),fallbackName:TENT_FALLBACK}]:[];
+}
+
 /** Only confirmed campaign presentation metadata changes a camp placement.
  * Bundles face the departure side after the civilian-priority decision while
  * retaining the same fixed collision pocket. */
 export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false}={}){
   if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
-    ...curiaPlacements(e,{chapter,tileSize})];
+    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize)];
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
@@ -122,7 +129,34 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
     const samples=[[x,z],[box.min.x,box.min.z],[box.min.x,box.max.z],[box.max.x,box.min.z],[box.max.x,box.max.z]].map(([sx,sz])=>heightAt(sx,sz)).filter(Number.isFinite);
     model.position.y=(Number.isFinite(groundY)?groundY:samples.length?Math.min(...samples):0)-box.min.y;
   };
+  // Many copies of one model (the tent lines): an instanced mesh for each of its meshes. Each copy's
+  // footprint is centred on its spot and grounded on the lowest of its corners, like a placed model.
+  const placeInstances=(p,source)=>{
+    source.updateMatrixWorld(true);
+    const box=new T.Box3().setFromObject(source,true),meshes=[];source.traverse(o=>{if(o.isMesh&&!o.isSkinnedMesh)meshes.push(o);});
+    if(box.isEmpty()||!meshes.length||!p.instances?.length)return null;
+    const inverse=source.matrixWorld.clone().invert(),cx=(box.min.x+box.max.x)/2,cz=(box.min.z+box.max.z)/2;
+    const matrices=p.instances.map(item=>{
+      const k=item.scale??1,yaw=item.yaw??0,c=Math.cos(yaw),sn=Math.sin(yaw);
+      const corners=[[box.min.x,box.min.z],[box.min.x,box.max.z],[box.max.x,box.min.z],[box.max.x,box.max.z]].map(([lx,lz])=>{
+        const ux=(lx-cx)*k,uz=(lz-cz)*k;return heightAt(item.x+ux*c+uz*sn,item.z-ux*sn+uz*c);});
+      const ground=Math.min(heightAt(item.x,item.z),...corners.filter(Number.isFinite));
+      return new T.Matrix4().makeTranslation(item.x,(Number.isFinite(ground)?ground:0)-box.min.y*k,item.z)
+        .multiply(new T.Matrix4().makeRotationY(yaw)).multiply(new T.Matrix4().makeScale(k,k,k)).multiply(new T.Matrix4().makeTranslation(-cx,0,-cz));
+    });
+    const group=new T.Group();group.name=p.key??p.id;
+    for(const mesh of meshes){
+      const local=inverse.clone().multiply(mesh.matrixWorld),batch=new T.InstancedMesh(mesh.geometry,mesh.material,matrices.length);
+      matrices.forEach((m,i)=>batch.setMatrixAt(i,m.clone().multiply(local)));batch.instanceMatrix.needsUpdate=true;
+      // White instance colours: the shader programs (and shadow pass) of the scenery's other instanced batches.
+      batch.instanceColor=new T.InstancedBufferAttribute(new Float32Array(matrices.length*3).fill(1),3);
+      batch.name=`${group.name}:${mesh.name||'mesh'}`;batch.castShadow=p.shadow!==false;batch.receiveShadow=true;batch.raycast=()=>{};
+      batch.computeBoundingBox();batch.computeBoundingSphere();group.add(batch);
+    }
+    group.updateMatrixWorld(true);return group;
+  };
   const place=(p,source)=>{
+    if(p.instances)return placeInstances(p,source);
     const component=p.component?source.getObjectByName(p.component):source;if(!component)return null;
     const model=component.clone(true);model.name=p.key??p.id;model.position.set(p.x,0,p.z);model.rotation.y=p.yaw??0;
     if(p.scale)model.scale.set(...p.scale);model.updateMatrixWorld(true);

@@ -21,18 +21,21 @@ export function terrainAtPoint(map,x,z){
 // The grid for a map: `solid` where terrain stops a body or a missile, `walk`
 // where a body's centre may stand (solid ground widened by the clearance),
 // each cell's speed factor and the rules' ground height (high ground 1.6 m).
+// A map's `blocked` tiles ([x, y]: a camp's pitched tents) are solid whatever
+// their ground, which keeps its own name for the ground and the views.
 const byMap=new WeakMap();
 export function navGrid(map){
   const known=byMap.get(map);if(known)return known;
-  const key=`${map.width}x${map.height}:${map.rain?'rain:':''}${JSON.stringify(map.elevations??[])}:${map.terrain.map(row=>row.map(terrainName).join(',')).join(';')}`;
+  const key=`${map.width}x${map.height}:${map.rain?'rain:':''}${JSON.stringify(map.elevations??[])}:${map.blocked?.length?`blocked:${JSON.stringify(map.blocked)}:`:''}${map.terrain.map(row=>row.map(terrainName).join(',')).join(';')}`;
   if(grids.has(key)){byMap.set(map,grids.get(key));return grids.get(key);}
   const cell=MOVEMENT.cell,per=Math.round(TILE/cell),cols=map.width*per,rows=map.height*per,n=cols*rows;
   const solid=new Uint8Array(n),walk=new Uint8Array(n),speed=new Float64Array(n),height=new Float64Array(n);
   const elevations=new Map((map.elevations??[]).map(([x,y,h])=>[`${x},${y}`,h]));
+  const blocked=new Set((map.blocked??[]).map(([x,y])=>y*map.width+x));
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
-    const t=terrainName(map.terrain[Math.floor(r/per)][Math.floor(c/per)]),i=r*cols+c;
-    solid[i]=SOLID.has(t)?1:0;speed[i]=t==='rubble'?.6:MOVEMENT.terrain[t]??1;
-    height[i]=elevations.get(`${Math.floor(c/per)},${Math.floor(r/per)}`)??(t==='high'?HIGH_GROUND:0);
+    const tx=Math.floor(c/per),ty=Math.floor(r/per),t=terrainName(map.terrain[ty][tx]),i=r*cols+c;
+    solid[i]=SOLID.has(t)||blocked.size&&blocked.has(ty*map.width+tx)?1:0;speed[i]=t==='rubble'?.6:MOVEMENT.terrain[t]??1;
+    height[i]=elevations.get(`${tx},${ty}`)??(t==='high'?HIGH_GROUND:0);
   }
   // In rain the slopes are slower to climb (0.38: a step onto high ground costs one more):
   // the high ground's edge, within a metre of the low, is crossed at half speed.

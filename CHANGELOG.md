@@ -2,6 +2,23 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G3's first step: the tent lines pitched ([the plan](docs/graphics-tripo-plan.md#g3s-tent-lines-9-november))
+
+The camps' tent lines were open ground. Now they are pitched with rows of the leather tent that Chapter V's supply camp already had, generated in 0.36, so no credits were spent.
+
+- **Where:** 23 tents in Chapter I's recruit lines, 13 in Chapter II's survivors' lines, 12 in Chapter III's, and a few in the camps of Chapters IV, VI–IX and XII, whose tent lines are smaller and crowded with people: 67 in all. Chapter V's courtyard and the courts of Chapters X and XI have no tent lines.
+- **How they stand:** the rows run a street apart, each pair facing across its street, with an alley every four tents. Each tent takes two cells of tent-line ground, keeps 2 m from any spot a person, object, place or way out can take, and is turned a little and sized a little by its cell, never by gameplay randomness.
+- **Solid:** the soldier walks round a tent, never through it. A camp map's `blocked` tiles are solid for walking whatever their ground, which keeps its own name for the ground and the views (`src/core/realtime/navigation.js`). Every person, object and place stays reachable in every variant tried: both comrades and mentors, each encounter's way out, and every veteran recovering at the valetudinarium. The worn paths and the grass go round the tents.
+- **Drawing:** one instanced draw for each mesh of the tent model carries every tent in a camp. A code-built tent stands on each pitch on Performance and until the model is ready, and the 2D view draws a leather ridge tent on each.
+- **Downloads:** the tent (231,056 bytes) now downloads with the packs of Chapters I–IV, VI–IX and XII.
+- **Checks:** `tests/camp-tents.test.mjs`, covering:
+  - every pitch on tent-line ground inside the board, clear of the pockets and 2 m from every spot;
+  - reachability in every variant, with no route through a tent;
+  - the blocked tiles' grid;
+  - the camp's view of each pitch and the scenery's validation;
+  - the instanced placement, grounded under each tent and hiding the code-built tents;
+  - the tent in each chapter's download.
+
 ### Release G1: every enemy type and champion in a body of its own ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g1-9-november))
 
 The owner approved the pilot (#92) and the rest of G1 on 9 November. Every enemy unit type now wears a body of its own, as do all eleven champions, and the Persian cavalry rides a horse remade in iron lamellae. Each was generated with Tripo at the standard tier, rigged and bound to the game's skeleton like every body; the code-built figures stay the fallback.

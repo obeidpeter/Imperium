@@ -11,6 +11,7 @@
 // 2D board's atlases).
 import {GROUND_FILES} from './ground-layers.js';
 import {PANORAMA_REGIONS,panoramaChapters,panoramaFile} from './panoramas.js';
+import {CAMP_TENT_PITCHES} from '../data/camp-regions.js';
 
 export const WORLD_KINDS=Object.freeze(['prop','landmark','kit','texture','panorama']);
 const asset=(kind,files,chapters)=>Object.freeze({kind,files:Object.freeze(files),chapters:Object.freeze(chapters)});
@@ -27,7 +28,10 @@ export const REGIONAL_REUSED_PROP_CHAPTERS=Object.freeze({
   'ch5-household-bundles':Object.freeze([2,5,8]),'ch5-cistern':Object.freeze([5,6]),
   'ch5-spoil-baskets':Object.freeze([4,5,9]),'ch5-mudbrick-stack':Object.freeze([5,9])
 });
-const reused=id=>asset('prop',[`assets/models/chapters/05/${id}.glb`],REGIONAL_REUSED_PROP_CHAPTERS[id]);
+// The camps whose tent lines pitch Chapter V's leather tent (graphics plan, G3; camp-regions.js).
+export const TENT_LINE_CHAPTERS=Object.freeze(Object.entries(CAMP_TENT_PITCHES).filter(([,list])=>list.length).map(([chapter])=>Number(chapter)));
+const reused=id=>asset('prop',[`assets/models/chapters/05/${id}.glb`],
+  id==='ch5-leather-tent'?[...new Set([...REGIONAL_REUSED_PROP_CHAPTERS[id],...TENT_LINE_CHAPTERS])].sort((a,b)=>a-b):REGIONAL_REUSED_PROP_CHAPTERS[id]);
 // Life about the camps and towns (release 9): Tripo props set out beyond the board like the
 // regional ones (environment-regional-world.js), but never on a camp's service pad.
 export const LIFE_PROP_CHAPTERS=Object.freeze(Object.fromEntries(Object.entries({

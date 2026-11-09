@@ -1,6 +1,6 @@
 import {containersInCamp} from './containers.js';
 import {storyWhen} from './campaign.js';
-import {CAMP_CONTEXT,CAMP_SCENERY_PADS} from './camp-regions.js';
+import {CAMP_CONTEXT,CAMP_SCENERY_PADS,CAMP_TENT_PITCHES} from './camp-regions.js';
 import {campStoryId,campStoryFor} from './camp-stories.js';
 import {activityObjects} from './company-activities.js';
 
@@ -29,7 +29,7 @@ const routineFor=p=>p.id==='sentry'?'watch':p.id==='quartermaster'?'work':['orde
 // The armourer stands at the quartermaster's place in every camp (release 11),
 // at `smithAt` where a camp's court needs him elsewhere.
 const withSmith=data=>data.people.some(p=>p.id==='smith')?data.people:[...data.people,{...STAFF.smith,at:data.smithAt??[2.4,1.2]}];
-const camp=data=>freeze({peaceful:true,sceneryPads:CAMP_SCENERY_PADS[data.chapter]??[],...data,purpose:CAMP_CONTEXT[data.chapter].purpose,
+const camp=data=>freeze({peaceful:true,sceneryPads:CAMP_SCENERY_PADS[data.chapter]??[],tentPitches:CAMP_TENT_PITCHES[data.chapter]??[],...data,purpose:CAMP_CONTEXT[data.chapter].purpose,
   placeNames:CAMP_CONTEXT[data.chapter].placeNames,...(data.placeNames?{placeNames:data.placeNames}:{}),
   reportTree:data.chapter===5?'ch5:report':'hub:report',
   terrain:grid(data.map),places:freeze(data.places),people:freeze(withSmith(data).map(p=>freeze({...p,...(p.routine?{}:routineFor(p)?{routine:routineFor(p)}:{})}))),
