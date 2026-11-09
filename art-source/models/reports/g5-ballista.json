@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-ballista-b.glb",
+    "bytes": 45120452,
+    "sha256": "a944a32fa21448bde57bb788c28bfcaaf05f2ea5616f0040ab6a521f6aeb9dd7",
+    "triangles": 1435178
+  },
+  "output": {
+    "path": "assets/models/world/g5-ballista.glb",
+    "bytes": 230668,
+    "sha256": "7343f424563e48f44135ba3d7f4ba56080bf2a05a167e368613cbf71cf4a6bd9",
+    "triangles": 4410
+  },
+  "settings": {
+    "triangles": 4500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.9167413417523622,
+  "sizeMetres": {
+    "width": 1.9184,
+    "height": 1.6,
+    "depth": 1.2539
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_3aca17f8-1400-4faf-910e-4bc60a2216ff",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_3aca17f8-1400-4faf-910e-4bc60a2216ff",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_3aca17f8-1400-4faf-910e-4bc60a2216ff",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

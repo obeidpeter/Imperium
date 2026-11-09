@@ -1,0 +1,96 @@
+{
+  "id": "g5-countermine",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-countermine, in Chapter V",
+  "chapters": [
+    5
+  ],
+  "use": "Chapter V's countermine (the field object 'countermine') on its cell while it is worked; disabled, its code-built blocked timbering remains.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "The entrance of a Roman countermine dug against an enemy siege mine: a square shaft opening in the ground framed and lined with heavy squared timbers, a sturdy timber windlass with a rope and a bucket standing over it, two woven baskets of excavated earth and a low heap of spoil beside the shaft; about two metres square and one and a half metres high at the windlass. Weathered timber, rope, wicker and earth. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, well with roof, gazebo, house, cave, stairs, mine cart, rails",
+      "model_seed": 2616110,
+      "image_seed": 2616111,
+      "texture_seed": 2616112
+    }
+  },
+  "budget": {
+    "triangles": 7000,
+    "texture": 512,
+    "bytes": 340000,
+    "heightMetres": 1.5,
+    "minHeight": 1.35,
+    "maxHeight": 1.65,
+    "note": "Raised at review from 3,500: at 3,500 the decimation broke the timbers into shards; 7,000 keeps them square. Bytes raised with it from 260,000."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T21:45:12.012Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, well with roof, gazebo, house, cave, stairs, mine cart, rails",
+      "model_seed": 2616110,
+      "image_seed": 2616111,
+      "texture_seed": 2616112,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "The entrance of a Roman countermine dug against an enemy siege mine: a square shaft opening in the ground framed and lined with heavy squared timbers, a sturdy timber windlass with a rope and a bucket standing over it, two woven baskets of excavated earth and a low heap of spoil beside the shaft; about two metres square and one and a half metres high at the windlass. Weathered timber, rope, wicker and earth. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8785,
+    "balanceSnapshotBefore": {
+      "balance": 8785,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "b66789e5-937e-4a4d-af20-0457c8f91958",
+      "state": "accepted",
+      "requestSha256": "9af9c29d8529512eb1b8907f1beae95057bf06a00fe5576c0960ec4aa2970fb7"
+    },
+    "taskId": "d62db6e2-da3d-40e4-ab0c-bc8483e0d72a",
+    "status": "success",
+    "generatedAt": "2026-11-09T21:47:41.399Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-countermine.glb",
+    "rawBytes": 46393152,
+    "rawSha256": "a90941f489a195171840e7472db669c753dbfa03b39f30a28b583482decb98bf",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "The entrance of a Roman countermine dug against an enemy siege mine: a square shaft opening in the ground framed and lined with heavy squared timbers, a sturdy timber windlass with a rope and a bucket standing over it, two woven baskets of excavated earth and a low heap of spoil beside the shaft; about two metres square and one and a half metres high at the windlass. Weathered timber, rope, wicker and earth. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616111,
+      "model_seed": 2616110,
+      "texture_seed": 2616112,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, well with roof, gazebo, house, cave, stairs, mine cart, rails",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T21:45:12.592691Z",
+    "tripoCompletedAt": "2026-11-09T21:47:33.628489Z",
+    "tripoRender": "art-source/models/raw/g5-countermine-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A square shaft framed in heavy timbers, a windlass with rope and bucket over it and two baskets of spoil, as asked. At 3,500 triangles the decimator broke its timbers into shards, so its budget was raised to 7,000 (and its bytes to 340,000): the timbers stay square."
+  }
+}

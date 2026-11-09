@@ -1,0 +1,106 @@
+{
+  "id": "g5-debris-standard",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-debris-standard, in Chapters I, II, III, IV, V, VI, VII, VIII, IX, X and XII (on the web in Chapters II, III and V only)",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12
+  ],
+  "use": "The field after a victory: a beaten force's fallen war banner beside its fallen, on the walked field.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A fallen war banner lying flat on the ground: a long wooden spear shaft broken in two, with a torn and muddied rectangular cloth banner of faded red still tied to its crossbar and a dented bronze finial, lying across a split round shield; about two and a half metres long and thirty centimetres high. Weathered wood, faded red wool, bronze. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, standing flag, flagpole upright, bodies, skeletons, modern flag, eagle statue",
+      "model_seed": 2616280,
+      "image_seed": 2616281,
+      "texture_seed": 2616282
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 0.6,
+    "minHeight": 0.54,
+    "maxHeight": 0.66,
+    "note": "Height set at review from 0.3 m: its shaft came lying across the shield, raised at one end, so 0.6 m keeps the banner about 1.8 m long."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:25:31.177Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, standing flag, flagpole upright, bodies, skeletons, modern flag, eagle statue",
+      "model_seed": 2616280,
+      "image_seed": 2616281,
+      "texture_seed": 2616282,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A fallen war banner lying flat on the ground: a long wooden spear shaft broken in two, with a torn and muddied rectangular cloth banner of faded red still tied to its crossbar and a dented bronze finial, lying across a split round shield; about two and a half metres long and thirty centimetres high. Weathered wood, faded red wool, bronze. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8445,
+    "balanceSnapshotBefore": {
+      "balance": 8445,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "fa9aea8c-fb89-414d-bb4c-5b552f0522c0",
+      "state": "accepted",
+      "requestSha256": "a11051b424393e4ebba7311835376589846b372e697d5c9fa560903e035ae2c4"
+    },
+    "taskId": "74fc8246-c0b8-4f9a-82bb-5b80fd82f967",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:27:08.322Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-debris-standard.glb",
+    "rawBytes": 44524356,
+    "rawSha256": "5fa9beefa05c7ab5eb482713241e6de6df6144c2e43ab1520ae70539417721fa",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A fallen war banner lying flat on the ground: a long wooden spear shaft broken in two, with a torn and muddied rectangular cloth banner of faded red still tied to its crossbar and a dented bronze finial, lying across a split round shield; about two and a half metres long and thirty centimetres high. Weathered wood, faded red wool, bronze. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616281,
+      "model_seed": 2616280,
+      "texture_seed": 2616282,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, standing flag, flagpole upright, bodies, skeletons, modern flag, eagle statue",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:25:32.128391Z",
+    "tripoCompletedAt": "2026-11-09T22:27:05.000165Z",
+    "tripoRender": "art-source/models/raw/g5-debris-standard-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A torn red banner on its crossbar lying flat, its shaft across it and a round shield beneath, as asked. Its shaft came raised at one end on the shield, so it was processed at 0.6 m high (not 0.3) to keep the banner about 1.8 m long."
+  }
+}

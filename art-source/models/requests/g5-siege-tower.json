@@ -1,0 +1,96 @@
+{
+  "id": "g5-siege-tower",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-siege-tower, in Chapters IX and XII (the desktop app only)",
+  "chapters": [
+    9,
+    12
+  ],
+  "use": "Roman siege works behind the line: a siege tower beyond the board's west edge, where the Romans attack a wall (Chapters IX and XII).",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman siege tower: a tall square timber tower of three storeys on four solid wooden wheels, about seven metres high and three metres square, its front and sides covered with overlapping raw hides against fire, an open fighting platform with a drawbridge hinged at the top storey, and heavy corner posts. Weathered dark timber and brown hides. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, castle, stone tower, medieval belfry, windmill, lighthouse, house, flags",
+      "model_seed": 2616180,
+      "image_seed": 2616181,
+      "texture_seed": 2616182
+    }
+  },
+  "budget": {
+    "triangles": 4500,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 7,
+    "minHeight": 6.3,
+    "maxHeight": 7.7
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:01:39.507Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, castle, stone tower, medieval belfry, windmill, lighthouse, house, flags",
+      "model_seed": 2616180,
+      "image_seed": 2616181,
+      "texture_seed": 2616182,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman siege tower: a tall square timber tower of three storeys on four solid wooden wheels, about seven metres high and three metres square, its front and sides covered with overlapping raw hides against fire, an open fighting platform with a drawbridge hinged at the top storey, and heavy corner posts. Weathered dark timber and brown hides. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8645,
+    "balanceSnapshotBefore": {
+      "balance": 8645,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "1d74e49c-1674-42ee-96cc-a74a499a4e57",
+      "state": "accepted",
+      "requestSha256": "35786afbe56692e6f0be81ad1fc473eebde7f1c115b2e3a92a5af3c7a01eb589"
+    },
+    "taskId": "8ab8bd50-ce43-46c4-9e01-f5b97cabae9c",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:04:13.492Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-siege-tower.glb",
+    "rawBytes": 45008312,
+    "rawSha256": "3e190af9820af2b9df61d0d9b6287b0fad804aac97d8b5c1c141923453434afa",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman siege tower: a tall square timber tower of three storeys on four solid wooden wheels, about seven metres high and three metres square, its front and sides covered with overlapping raw hides against fire, an open fighting platform with a drawbridge hinged at the top storey, and heavy corner posts. Weathered dark timber and brown hides. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616181,
+      "model_seed": 2616180,
+      "texture_seed": 2616182,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, castle, stone tower, medieval belfry, windmill, lighthouse, house, flags",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:01:40.062877Z",
+    "tripoCompletedAt": "2026-11-09T22:04:09.001336Z",
+    "tripoRender": "art-source/models/raw/g5-siege-tower-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A three-storey timber tower hung with hides on four spoked wheels, an open fighting platform with a railing at the top; no drawbridge came. Processed at 7.0 m: 3.36 by 3.52 m on the ground."
+  }
+}

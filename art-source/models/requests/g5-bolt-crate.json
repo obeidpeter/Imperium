@@ -1,0 +1,99 @@
+{
+  "id": "g5-bolt-crate",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-bolt-crate, in Chapters VII, VIII, IX and X (the desktop app only)",
+  "chapters": [
+    7,
+    8,
+    9,
+    10
+  ],
+  "use": "The bolt-thrower's ammunition: a crate of bolts beside the carroballista beyond the board's west edge, in the field battles.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman ammunition crate for bolt-shooting engines: a sturdy open wooden box with rope handles, about one metre long and fifty centimetres wide, filled with bundles of iron-tipped wooden bolts tied with cord, lying lengthwise, and two more tied bundles of bolts lying on the ground beside it; about fifty-five centimetres high. Weathered wood, iron points and hemp cord. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, guns, rifles, arrows in a quiver, fireworks, modern crate, pallet of bricks",
+      "model_seed": 2616170,
+      "image_seed": 2616171,
+      "texture_seed": 2616172
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 250000,
+    "heightMetres": 0.75,
+    "minHeight": 0.68,
+    "maxHeight": 0.83,
+    "note": "Height raised at review from 0.55 m: its lid came standing open, so 0.75 m keeps the chest about a metre long. Bytes raised with it from 220,000."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T21:59:04.069Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, guns, rifles, arrows in a quiver, fireworks, modern crate, pallet of bricks",
+      "model_seed": 2616170,
+      "image_seed": 2616171,
+      "texture_seed": 2616172,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman ammunition crate for bolt-shooting engines: a sturdy open wooden box with rope handles, about one metre long and fifty centimetres wide, filled with bundles of iron-tipped wooden bolts tied with cord, lying lengthwise, and two more tied bundles of bolts lying on the ground beside it; about fifty-five centimetres high. Weathered wood, iron points and hemp cord. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8665,
+    "balanceSnapshotBefore": {
+      "balance": 8665,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "0fe9963d-227a-4be8-93b0-ebd01549e5d7",
+      "state": "accepted",
+      "requestSha256": "06c80c8ba815d9f6cb631e9db824f4125d3c286e464e46301aa2fc46e4d58ba4"
+    },
+    "taskId": "de00f092-b53e-4d23-bb4c-0872c253f9c1",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:01:38.530Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-bolt-crate.glb",
+    "rawBytes": 46814580,
+    "rawSha256": "024ab2b4f7688f8138dc051656519b53bf215c380a94e52a6b4d16376914cb24",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman ammunition crate for bolt-shooting engines: a sturdy open wooden box with rope handles, about one metre long and fifty centimetres wide, filled with bundles of iron-tipped wooden bolts tied with cord, lying lengthwise, and two more tied bundles of bolts lying on the ground beside it; about fifty-five centimetres high. Weathered wood, iron points and hemp cord. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616171,
+      "model_seed": 2616170,
+      "texture_seed": 2616172,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, guns, rifles, arrows in a quiver, fireworks, modern crate, pallet of bricks",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T21:59:05.127890Z",
+    "tripoCompletedAt": "2026-11-09T22:01:32.327233Z",
+    "tripoRender": "art-source/models/raw/g5-bolt-crate-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "An open timber chest with rope handles full of corded bundles of iron-tipped bolts, two more bundles on the ground. Its lid came standing open, so it was processed at 0.75 m high (not 0.55) to keep the chest about a metre long; bytes raised to 250,000."
+  }
+}

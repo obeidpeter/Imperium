@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-siege-tower.glb",
+    "bytes": 45008312,
+    "sha256": "3e190af9820af2b9df61d0d9b6287b0fad804aac97d8b5c1c141923453434afa",
+    "triangles": 1424538
+  },
+  "output": {
+    "path": "assets/models/world/g5-siege-tower.glb",
+    "bytes": 288660,
+    "sha256": "516994266856e41d21e8285e4ab4769d08e329f11523e9ac99aab1eb74030479",
+    "triangles": 4410
+  },
+  "settings": {
+    "triangles": 4500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 7.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 6.996522634983551,
+  "sizeMetres": {
+    "width": 3.3631,
+    "height": 7.0,
+    "depth": 3.5181
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_8ab8bd50-ce43-46c4-9e01-f5b97cabae9c",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_8ab8bd50-ce43-46c4-9e01-f5b97cabae9c",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_8ab8bd50-ce43-46c4-9e01-f5b97cabae9c",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "id": "g5-brazier",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-brazier, in Chapters III, IV, V, VI, VII, VIII, IX, X and XII (on the web in Chapters III, V and VI only)",
+  "chapters": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    12
+  ],
+  "use": "The battle's pitch brazier (the field object 'brazier') on its cell while it is unlit or burning, its flame the stage's particle plume; spent, its code-built cold brazier remains.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman pitch brazier for firing an enemy's works: a heavy wrought-iron fire basket of thick bars on three stout iron legs, about one metre high and seventy centimetres across, heaped with lumps of black pitch and split wood, with two round clay pitch pots and a small iron poker standing against one leg. Black iron, dark pitch and rough clay. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, lamp, lantern, candle, flames, fire, smoke, torch, chalice, cauldron with liquid",
+      "model_seed": 2616100,
+      "image_seed": 2616101,
+      "texture_seed": 2616102
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 1,
+    "minHeight": 0.9,
+    "maxHeight": 1.1
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T21:42:04.269Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, lamp, lantern, candle, flames, fire, smoke, torch, chalice, cauldron with liquid",
+      "model_seed": 2616100,
+      "image_seed": 2616101,
+      "texture_seed": 2616102,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman pitch brazier for firing an enemy's works: a heavy wrought-iron fire basket of thick bars on three stout iron legs, about one metre high and seventy centimetres across, heaped with lumps of black pitch and split wood, with two round clay pitch pots and a small iron poker standing against one leg. Black iron, dark pitch and rough clay. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8805,
+    "balanceSnapshotBefore": {
+      "balance": 8805,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "1e6aeade-9e05-4856-8405-ecda2d2dd504",
+      "state": "accepted",
+      "requestSha256": "4b82dfb34a68164ac13587237853970cc20ff9d606117ac599c359b98fc0359a"
+    },
+    "taskId": "0dc30722-dda3-46d8-b061-a4b0eb91e3ac",
+    "status": "success",
+    "generatedAt": "2026-11-09T21:45:02.557Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-brazier.glb",
+    "rawBytes": 45683076,
+    "rawSha256": "e45b4543c20368013021b1c6bce247743dbe45047ec764628b2b53fe1c806fdb",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman pitch brazier for firing an enemy's works: a heavy wrought-iron fire basket of thick bars on three stout iron legs, about one metre high and seventy centimetres across, heaped with lumps of black pitch and split wood, with two round clay pitch pots and a small iron poker standing against one leg. Black iron, dark pitch and rough clay. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616101,
+      "model_seed": 2616100,
+      "texture_seed": 2616102,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, lamp, lantern, candle, flames, fire, smoke, torch, chalice, cauldron with liquid",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T21:42:04.834092Z",
+    "tripoCompletedAt": "2026-11-09T21:44:38.977566Z",
+    "tripoRender": "art-source/models/raw/g5-brazier-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A wrought-iron fire basket on three legs heaped with lumps of pitch, two clay pitch pots in the heap and a poker against a leg, as asked. Processed at 1.0 m; 2,940 triangles."
+  }
+}

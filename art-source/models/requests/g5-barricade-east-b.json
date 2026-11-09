@@ -1,0 +1,97 @@
+{
+  "id": "g5-barricade-east-b",
+  "status": "G5 first batch: rejected at review; not redone, as the timber barricade (g5-barricade) stands in the eastern battles too",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "use": "The battle's barricade (the field object 'barricade') in the eastern battles while it stands; dismantled, its code-built scattered timbers remain. The redo of g5-barricade-east.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A field barricade of the Roman east built in one straight line: a low breastwork about two metres long, one metre high and sixty centimetres deep, made of three heavy palm trunks laid one on another between two pairs of stout upright posts lashed with rope, with a row of four large wicker baskets packed with dusty earth standing close against its front. Rough fibrous palm wood, weathered posts, pale wicker and dusty earth. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, picket fence, plank fence, gate, brick wall, separate screens, sharp stakes, spears, palm leaves",
+      "model_seed": 2616310,
+      "image_seed": 2616311,
+      "texture_seed": 2616312
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 280000,
+    "heightMetres": 1,
+    "minHeight": 0.9,
+    "maxHeight": 1.1
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:30:41.958Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, picket fence, plank fence, gate, brick wall, separate screens, sharp stakes, spears, palm leaves",
+      "model_seed": 2616310,
+      "image_seed": 2616311,
+      "texture_seed": 2616312,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A field barricade of the Roman east built in one straight line: a low breastwork about two metres long, one metre high and sixty centimetres deep, made of three heavy palm trunks laid one on another between two pairs of stout upright posts lashed with rope, with a row of four large wicker baskets packed with dusty earth standing close against its front. Rough fibrous palm wood, weathered posts, pale wicker and dusty earth. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8405,
+    "balanceSnapshotBefore": {
+      "balance": 8405,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "1c343140-d368-4cfd-8ddf-9791e2cbb0b6",
+      "state": "accepted",
+      "requestSha256": "58fd5f5b487ad1e07926523a635a9d6dcb21e7ae4cb65bd6a826fec32ab77695"
+    },
+    "taskId": "285af73d-ca3c-4b26-b7f4-ee628dda77cd",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:33:00.066Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-barricade-east-b.glb",
+    "rawBytes": 47175264,
+    "rawSha256": "195399a9f530a426b44c36e73c7b2ca5f1230cafeca5b5aa5d6dd8359b75773a",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A field barricade of the Roman east built in one straight line: a low breastwork about two metres long, one metre high and sixty centimetres deep, made of three heavy palm trunks laid one on another between two pairs of stout upright posts lashed with rope, with a row of four large wicker baskets packed with dusty earth standing close against its front. Rough fibrous palm wood, weathered posts, pale wicker and dusty earth. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616311,
+      "model_seed": 2616310,
+      "texture_seed": 2616312,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, picket fence, plank fence, gate, brick wall, separate screens, sharp stakes, spears, palm leaves",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:30:42.553640Z",
+    "tripoCompletedAt": "2026-11-09T22:32:54.852745Z",
+    "tripoRender": "art-source/models/raw/g5-barricade-east-b-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render and four views of the raw model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs)",
+    "notes": "Four wicker baskets hanging by ropes from a rail between two posts, over a log: a rack of baskets, not a breastwork, and no barricade at the field's distance. Not redone a second time: the pilot's timber barricade (g5-barricade), sharpened beams lashed with rope, stands in the eastern battles too."
+  }
+}

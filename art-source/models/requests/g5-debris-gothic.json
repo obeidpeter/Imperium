@@ -1,0 +1,102 @@
+{
+  "id": "g5-debris-gothic",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-debris-gothic, in Chapters I, II, III, IV, VII, VIII and X (on the web in Chapters II and III only)",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    7,
+    8,
+    10
+  ],
+  "use": "The field after a victory: what a beaten Gothic band leaves beside its fallen, on the walked field.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Battlefield debris of a beaten Gothic war band lying flat on the ground: three round wooden shields with iron bosses, one split in two, two broken spears with iron heads and a short axe, scattered over about two metres; nothing stands more than twenty centimetres high. Weathered painted wood, dark iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, bodies, skeletons, blood, standing shields, weapon rack, table",
+      "model_seed": 2616250,
+      "image_seed": 2616251,
+      "texture_seed": 2616252
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 250000,
+    "heightMetres": 0.6,
+    "minHeight": 0.54,
+    "maxHeight": 0.66,
+    "note": "Height set at review from 0.22 m: two of its shields came standing on their rims, about 0.6 m across, so 0.6 m keeps the spread at about 1.7 m. Bytes raised at review from 220,000 for its texture."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:18:58.344Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, bodies, skeletons, blood, standing shields, weapon rack, table",
+      "model_seed": 2616250,
+      "image_seed": 2616251,
+      "texture_seed": 2616252,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Battlefield debris of a beaten Gothic war band lying flat on the ground: three round wooden shields with iron bosses, one split in two, two broken spears with iron heads and a short axe, scattered over about two metres; nothing stands more than twenty centimetres high. Weathered painted wood, dark iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8505,
+    "balanceSnapshotBefore": {
+      "balance": 8505,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "7d63c35f-a139-4a23-8b7b-6573ef755006",
+      "state": "accepted",
+      "requestSha256": "30ff63e6cee640bcb9f98593a2d6a7f4aa3aed65cba3c362c92e6f769f03f692"
+    },
+    "taskId": "9f6955ef-0940-42d4-a47e-c962cac1ff78",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:21:21.839Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-debris-gothic.glb",
+    "rawBytes": 45824624,
+    "rawSha256": "ec6bb2464ccfca23dc704c9c2014f512b6bbcde6951511c41a9fee3aee204d37",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Battlefield debris of a beaten Gothic war band lying flat on the ground: three round wooden shields with iron bosses, one split in two, two broken spears with iron heads and a short axe, scattered over about two metres; nothing stands more than twenty centimetres high. Weathered painted wood, dark iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616251,
+      "model_seed": 2616250,
+      "texture_seed": 2616252,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, bodies, skeletons, blood, standing shields, weapon rack, table",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:18:59.066227Z",
+    "tripoCompletedAt": "2026-11-09T22:21:15.945239Z",
+    "tripoRender": "art-source/models/raw/g5-debris-gothic-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "Five round shields with iron bosses, a spear and an axe. Two of the shields came standing on their rims against a spear, not lying flat as asked, so it was processed at 0.6 m high (not 0.22) to keep the shields about 0.6 m across and its spread 1.7 by 1.4 m. Accepted: on the walked field, seen from the camera's height, they read as shields propped where they fell."
+  }
+}

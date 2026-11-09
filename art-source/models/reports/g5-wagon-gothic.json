@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-wagon-gothic.glb",
+    "bytes": 46404944,
+    "sha256": "3fe91881b36207cfbf14dd4f3353cbd227a101ccb76851cdf065b53e45473c79",
+    "triangles": 1461682
+  },
+  "output": {
+    "path": "assets/models/world/g5-wagon-gothic.glb",
+    "bytes": 314536,
+    "sha256": "aaf4e3c325602a578e66ed926c5e107c88f88c4ca3ef4ba6bf7ca803245d9a9f",
+    "triangles": 4409
+  },
+  "settings": {
+    "triangles": 4500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.974745991466355,
+  "sizeMetres": {
+    "width": 2.9705,
+    "height": 1.6,
+    "depth": 1.165
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_58814c1f-562d-45cb-bf0e-d421911da877",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_58814c1f-562d-45cb-bf0e-d421911da877",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_58814c1f-562d-45cb-bf0e-d421911da877",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

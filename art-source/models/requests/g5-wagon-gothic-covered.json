@@ -1,0 +1,102 @@
+{
+  "id": "g5-wagon-gothic-covered",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-wagon-gothic-covered, in Chapters I, II, III, IV, VII, VIII and X (on the web in Chapters II and III only)",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    7,
+    8,
+    10
+  ],
+  "use": "The Goths' wagon laager behind the battle: a covered wagon beyond the board's north edge, in the battles against Gothic bands.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A covered Gothic wagon used as a travelling home: a heavy four-wheeled wagon with solid plank wheels and a hooped frame covered with stitched hides and coarse brown woollen cloth, its back open with a rolled flap, and a long draught pole resting on the ground; about four metres long including the pole, two metres wide and two point four metres high. Dark rough wood, hides and wool. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, spoked wheels, stagecoach, carriage, circus wagon, cannon, modern caravan",
+      "model_seed": 2616220,
+      "image_seed": 2616221,
+      "texture_seed": 2616222
+    }
+  },
+  "budget": {
+    "triangles": 4500,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 2.4,
+    "minHeight": 2.16,
+    "maxHeight": 2.64,
+    "note": "Bytes raised at review from 280,000 for its texture."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:11:55.258Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, spoked wheels, stagecoach, carriage, circus wagon, cannon, modern caravan",
+      "model_seed": 2616220,
+      "image_seed": 2616221,
+      "texture_seed": 2616222,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A covered Gothic wagon used as a travelling home: a heavy four-wheeled wagon with solid plank wheels and a hooped frame covered with stitched hides and coarse brown woollen cloth, its back open with a rolled flap, and a long draught pole resting on the ground; about four metres long including the pole, two metres wide and two point four metres high. Dark rough wood, hides and wool. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8565,
+    "balanceSnapshotBefore": {
+      "balance": 8565,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "7dc67ab5-90a7-4711-9176-ec106bb26aaa",
+      "state": "accepted",
+      "requestSha256": "d5fd6ab42b5eee2b467ec2681250e5bbc9a98fb8ddcb9b9df53eaab791c65144"
+    },
+    "taskId": "f535199a-1050-49b3-b5fd-bb8c930520d2",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:14:08.366Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-wagon-gothic-covered.glb",
+    "rawBytes": 45691528,
+    "rawSha256": "a12d2a221bb4675adb6d249440b01d8dbee883db3b0754569ecac6e2b6a404b4",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A covered Gothic wagon used as a travelling home: a heavy four-wheeled wagon with solid plank wheels and a hooped frame covered with stitched hides and coarse brown woollen cloth, its back open with a rolled flap, and a long draught pole resting on the ground; about four metres long including the pole, two metres wide and two point four metres high. Dark rough wood, hides and wool. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616221,
+      "model_seed": 2616220,
+      "texture_seed": 2616222,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, spoked wheels, stagecoach, carriage, circus wagon, cannon, modern caravan",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:11:55.659859Z",
+    "tripoCompletedAt": "2026-11-09T22:14:03.603491Z",
+    "tripoRender": "art-source/models/raw/g5-wagon-gothic-covered-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A four-wheeled wagon under a hooped cover of stitched hides, its back open, and a pole. Its wheels came spoked; its pole runs out at both ends. Accepted for the distance it stands."
+  }
+}

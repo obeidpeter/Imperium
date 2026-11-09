@@ -18383,8 +18383,8 @@
           }
         }
       },
-      "usage": "The battles' abandoned supply cart (graphics plan, G5): the field object 'stores' on its cell in every battle of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X and XII, in each of its states, its pole west like the code-built cart's shafts (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js), drawn as the scenery's placed models are, with their shader programs. While the supplies are still to be recovered its load (g5-cart-load) stands on its bed, and without the load the code-built cart stands instead. It stands for the code-built cart, which stays its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
-      "loading": "Deferred chapter packs 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 at Balanced/High, preloaded with the battle's world kits; on the web only 2, 3, 4, 5, 6: the web downloads of Chapters I, VII, VIII, IX, X and XII have no room for it (the cart and its load go together), so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the code-built cart.",
+      "usage": "The battles' abandoned supply cart (graphics plan, G5): the field object 'stores' on its cell in every battle of Chapters I, II, III, IV, VII, VIII, X and XII (the eastern battles take g5-cart-east), in each of its states, its pole west like the code-built cart's shafts (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js), drawn as the scenery's placed models are, with their shader programs. While the supplies are still to be recovered its load (g5-cart-load) stands on its bed, and without the load the code-built cart stands instead. It stands for the code-built cart, which stays its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 7, 8, 10, 12 at Balanced/High, preloaded with the battle's world kits; on the web only 2, 3, 4: the web downloads of Chapters I, VII, VIII, X and XII have no room for it (a cart and its load go together), so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the code-built cart.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 252332,
@@ -18439,8 +18439,8 @@
           }
         }
       },
-      "usage": "The supply cart's load (graphics plan, G5): on the bed of the cart (g5-cart) while the supplies are still to be recovered, in the battles of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X and XII, turned with the cart; gone once they are secured, forgone or missed (src/showcase/field-models.js). Decorative only: it takes no picks and changes no route.",
-      "loading": "Deferred chapter packs 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 at Balanced/High, preloaded with the battle's world kits; on the web only 2, 3, 4, 5, 6: the web downloads of Chapters I, VII, VIII, IX, X and XII have no room for it (the cart and its load go together), so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the code-built cart and its sacks.",
+      "usage": "The supply cart's load (graphics plan, G5): on the bed of the cart (g5-cart, or g5-cart-east in the eastern battles) while the supplies are still to be recovered, in the battles of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X and XII, turned with the cart; gone once they are secured, forgone or missed (src/showcase/field-models.js). Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 at Balanced/High, preloaded with the battle's world kits; on the web only 2, 3, 4, 5, 6: the web downloads of Chapters I, VII, VIII, IX, X and XII have no room for it (a cart and its load go together), so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the code-built cart and its sacks.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 222016,
@@ -18551,7 +18551,7 @@
           }
         }
       },
-      "usage": "The Persian ram (graphics plan, G5): the siege work 'ram' at Chapter V's river gate while it stands, its iron head toward the gate, west, like the code-built ram's (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js). Burnt, the code-built charred timbers remain, and they stay its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
+      "usage": "The Persian ram (graphics plan, G5): the siege work 'ram' at Chapter V's river gate while it stands, its iron head toward the gate, west, like the code-built ram's (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js), drawn as the scenery's placed models are, with their shader programs. Burnt, the code-built charred timbers remain, and they stay its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
       "loading": "Deferred chapter packs 5 at Balanced/High, preloaded with the battle's world kits; Performance and a failed download keep the code-built ram.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
@@ -18607,7 +18607,7 @@
           }
         }
       },
-      "usage": "A set piece behind the Roman line (graphics plan, G5): beyond the board's west edge, facing east toward the enemy, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the field battles of Chapters VII, VIII, IX and X (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "usage": "A set piece behind the Roman line (graphics plan, G5): beyond the board's west edge, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the field battles of Chapters VII, VIII, IX and X (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
       "loading": "Deferred chapter packs 7, 8, 9, 10 at Balanced/High, preloaded with the battle's scenery; on the web only 9, 10: the web downloads of Chapters VII and VIII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
@@ -18663,7 +18663,7 @@
           }
         }
       },
-      "usage": "A set piece behind the Roman line (graphics plan, G5): beyond the board's west edge, facing east toward the enemy, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the sieges of Chapters IV, V, IX and XII (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "usage": "A set piece behind the Roman line (graphics plan, G5): beyond the board's west edge, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the sieges of Chapters IV, V, IX and XII (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
       "loading": "Deferred chapter packs 4, 5, 9, 12 at Balanced/High, preloaded with the battle's scenery; on the web only 5, 9: the web downloads of Chapters IV and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
@@ -18677,6 +18677,1014 @@
           "width": 3.2097,
           "height": 2.2,
           "depth": 1.4041
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-brazier",
+      "path": "assets/models/world/g5-brazier.glb",
+      "subject": "Release G5 battle prop: a wrought-iron pitch brazier on three legs, heaped with pitch",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "0dc30722-dda3-46d8-b061-a4b0eb91e3ac",
+        "generatedAt": "2026-11-09T21:45:02.557Z",
+        "prompt": "art-source/models/requests/g5-brazier.json",
+        "rawBytes": 45683076,
+        "rawSha256": "e45b4543c20368013021b1c6bce247743dbe45047ec764628b2b53fe1c806fdb",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.0,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-brazier.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-brazier-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The battles' pitch brazier (graphics plan, G5): the field object 'brazier' on its cell while it is unlit or burning, in Chapters III, IV, V, VI, VII, VIII, IX, X and XII (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js), drawn as the scenery's placed models are, with their shader programs. Burning, it keeps the stage's flame and smoke above its heap of pitch; spent, the code-built cold brazier remains, and it stays its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 3, 4, 5, 6, 7, 8, 9, 10, 12 at Balanced/High, preloaded with the battle's world kits; on the web only 3, 5, 6: the web downloads of Chapters IV, VII, VIII, IX, X and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the code-built brazier.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 211532,
+        "gzipBytes": 203999,
+        "sha256": "f7d4decb954b3b62ca6fc6bfe99d6bb40ebb9d075a599fa8410fe9cf9001a0b5",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.7005,
+          "height": 1.0,
+          "depth": 0.965
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-countermine",
+      "path": "assets/models/world/g5-countermine.glb",
+      "subject": "Release G5 battle prop: a countermine shaft in heavy timbers under a windlass, with baskets of spoil",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "d62db6e2-da3d-40e4-ab0c-bc8483e0d72a",
+        "generatedAt": "2026-11-09T21:47:41.399Z",
+        "prompt": "art-source/models/requests/g5-countermine.json",
+        "rawBytes": 46393152,
+        "rawSha256": "a90941f489a195171840e7472db669c753dbfa03b39f30a28b583482decb98bf",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 7000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.5,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-countermine.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-countermine-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Chapter V's countermine (graphics plan, G5): the field object 'countermine' on its cell while it is worked (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js), drawn as the scenery's placed models are, with their shader programs. Disabled, the code-built blocked timbering remains, and it stays its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 5 at Balanced/High, preloaded with the battle's world kits; Performance and a failed download keep the code-built countermine.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 326952,
+        "gzipBytes": 314153,
+        "sha256": "72ec9386304c81ef95d4903d7d841942c90b477671d1bd41d63a1e74876e3601",
+        "triangles": 6860,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.625,
+          "height": 1.5,
+          "depth": 1.4747
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-siege-ramp",
+      "path": "assets/models/world/g5-siege-ramp.glb",
+      "subject": "Release G5 battle prop: a section of a Persian siege ramp: earth and rubble in a timber-and-reed revetment under a wicker screen",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "0ee92533-7c3e-4633-afbf-f7be1d69e9ab",
+        "generatedAt": "2026-11-09T21:49:55.670Z",
+        "prompt": "art-source/models/requests/g5-siege-ramp.json",
+        "rawBytes": 47290700,
+        "rawSha256": "cd38555929fa4d0f16fed7ab2fd2b98c54d898416c694344c7e6264c26bdbddd",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 3500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-siege-ramp.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-siege-ramp-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Chapter V's Persian siege ramp (graphics plan, G5): the field object 'siege-engine' on its cell while it is worked, rising east like the code-built ramp (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js), drawn as the scenery's placed models are, with their shader programs. Disabled, the code-built burnt planks remain, and they stay its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 5 at Balanced/High, preloaded with the battle's world kits; Performance and a failed download keep the code-built siege ramp.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 279820,
+        "gzipBytes": 270318,
+        "sha256": "29443cf294aba874c5a23e59b32f549247557a33f2168295f1b9970689503dd1",
+        "triangles": 3430,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.9081,
+          "height": 1.6,
+          "depth": 2.4512
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-cart-east",
+      "path": "assets/models/world/g5-cart-east.glb",
+      "subject": "Release G5 battle prop: a two-wheeled eastern supply cart with pale planks and faded red side boards",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "fdf5b52a-f908-4864-acdc-67d8182997c8",
+        "generatedAt": "2026-11-09T21:51:49.365Z",
+        "prompt": "art-source/models/requests/g5-cart-east.json",
+        "rawBytes": 44843624,
+        "rawSha256": "d6298f4586f3a2b3d4f930193faee15966e18cc7c8e54f98194120027643a617",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.2,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-cart-east.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-cart-east-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The eastern battles' abandoned supply cart (graphics plan, G5): the field object 'stores' on its cell in every battle of Chapters V, VI and IX, in each of its states, its pole west like the code-built cart's shafts (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js), drawn as the scenery's placed models are, with their shader programs. While the supplies are still to be recovered the load (g5-cart-load) stands on its bed, and without the load the code-built cart stands instead. It stands for the code-built cart, which stays its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 5, 6, 9 at Balanced/High, preloaded with the battle's world kits; on the web only 5, 6: Chapter IX's web download has no room for it (a cart and its load go together), so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the code-built cart.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 244292,
+        "gzipBytes": 236797,
+        "sha256": "e890a2d705a40b269327c82235ed168e4242ef8d73d3e1130df71aece638db8a",
+        "triangles": 3919,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.3342,
+          "height": 1.2,
+          "depth": 1.3665
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-ballista",
+      "path": "assets/models/world/g5-ballista.glb",
+      "subject": "Release G5 battle prop: a two-armed torsion stone-thrower of brown oak on a timber platform",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3aca17f8-1400-4faf-910e-4bc60a2216ff",
+        "generatedAt": "2026-11-09T22:30:41.381Z",
+        "prompt": "art-source/models/requests/g5-ballista-b.json",
+        "rawBytes": 45120452,
+        "rawSha256": "a944a32fa21448bde57bb788c28bfcaaf05f2ea5616f0040ab6a521f6aeb9dd7",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-ballista.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-ballista-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A set piece behind the Roman line (graphics plan, G5): beyond the board's west edge, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the sieges of Chapters IV, V, IX and XII (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 4, 5, 9, 12 at Balanced/High, preloaded with the battle's scenery; on the web only 5: the web downloads of Chapters IV, IX and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 231816,
+        "gzipBytes": 223939,
+        "sha256": "dc2137ee1dc5b13f036dc1b8f6511e98012abf3838e249c12d5bb4aa9b6c3c0b",
+        "triangles": 4410,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.9184,
+          "height": 1.6,
+          "depth": 1.2539
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-shot-stack",
+      "path": "assets/models/world/g5-shot-stack.glb",
+      "subject": "Release G5 battle prop: a pyramid of dressed stone shot on a timber pallet",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "4b4acfef-df4e-4e56-816a-a9762a3e08b4",
+        "generatedAt": "2026-11-09T21:59:03.094Z",
+        "prompt": "art-source/models/requests/g5-shot-stack.json",
+        "rawBytes": 45357028,
+        "rawSha256": "3e7dbaf4d7dcc8593ec0b12bad774b4ddd37c164aa62f0500e2bf2efbc63c0a0",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-shot-stack.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-shot-stack-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Ammunition beside an engine behind the Roman line (graphics plan, G5): beside the onager (g5-onager) beyond the board's west edge, on the first side of it clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the battles of Chapters IV, V, IX and XII that set the engine out (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 4, 5, 9, 12 at Balanced/High, preloaded with the battle's scenery; on the web only 5: the web downloads of Chapters IV, IX and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 199428,
+        "gzipBytes": 192538,
+        "sha256": "b69576bd8aeda0dbe5cf75c82cea5afac527375e657cac7c161b88a9ba361243",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.8177,
+          "height": 0.6,
+          "depth": 0.7986
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-bolt-crate",
+      "path": "assets/models/world/g5-bolt-crate.glb",
+      "subject": "Release G5 battle prop: an open chest of corded bundles of iron-tipped bolts",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "de00f092-b53e-4d23-bb4c-0872c253f9c1",
+        "generatedAt": "2026-11-09T22:01:38.530Z",
+        "prompt": "art-source/models/requests/g5-bolt-crate.json",
+        "rawBytes": 46814580,
+        "rawSha256": "024ab2b4f7688f8138dc051656519b53bf215c380a94e52a6b4d16376914cb24",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.75,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-bolt-crate.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-bolt-crate-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Ammunition beside an engine behind the Roman line (graphics plan, G5): beside the carroballista (g5-carroballista) beyond the board's west edge, on the first side of it clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the battles of Chapters VII, VIII, IX and X that set the engine out (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 7, 8, 9, 10 at Balanced/High, preloaded with the battle's scenery; not on the web: the web downloads of Chapters VII, VIII, IX and X have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 238820,
+        "gzipBytes": 231105,
+        "sha256": "0fc6a75f06f8e5f7b3dbcb9e5907bd418829dbdae9367a37f8e403fa18674e68",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.9113,
+          "height": 0.75,
+          "depth": 1.0937
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-siege-tower",
+      "path": "assets/models/world/g5-siege-tower.glb",
+      "subject": "Release G5 battle prop: a three-storey Roman siege tower hung with hides, on four wheels",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "8ab8bd50-ce43-46c4-9e01-f5b97cabae9c",
+        "generatedAt": "2026-11-09T22:04:13.492Z",
+        "prompt": "art-source/models/requests/g5-siege-tower.json",
+        "rawBytes": 45008312,
+        "rawSha256": "3e190af9820af2b9df61d0d9b6287b0fad804aac97d8b5c1c141923453434afa",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 7.0,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-siege-tower.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-siege-tower-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A set piece behind the Roman line (graphics plan, G5): beyond the board's west edge, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the battles where the Romans attack a wall of Chapters IX and XII (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 9, 12 at Balanced/High, preloaded with the battle's scenery; not on the web: the web downloads of Chapters IX and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 280420,
+        "gzipBytes": 270546,
+        "sha256": "e4c529e3f1692b2994266eb66a961cd2ff37ef986b56086b13b258705c88a612",
+        "triangles": 4410,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.3631,
+          "height": 7.0,
+          "depth": 3.5181
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-mantlets",
+      "path": "assets/models/world/g5-mantlets.glb",
+      "subject": "Release G5 battle prop: a broad wicker siege mantlet faced with hides, on wheels",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "1b165c32-1b53-4414-95c9-267f1d5fb551",
+        "generatedAt": "2026-11-09T22:35:20.240Z",
+        "prompt": "art-source/models/requests/g5-mantlets-b.json",
+        "rawBytes": 46767796,
+        "rawSha256": "e21a4be8eb083e8c7b5ec8cf0908d62d7fe8ac40f50e2a7c01b6072507e49f2a",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.0,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-mantlets.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-mantlets-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A set piece behind the Roman line (graphics plan, G5): beyond the board's west edge, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the battles where the Romans attack a wall of Chapters IX and XII (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 9, 12 at Balanced/High, preloaded with the battle's scenery; not on the web: the web downloads of Chapters IX and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 263980,
+        "gzipBytes": 255693,
+        "sha256": "e50de273f251d3bb2cddc87c5e9101d2d6862f1292b29380a32001c74aab072c",
+        "triangles": 3920,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.1084,
+          "height": 2.0,
+          "depth": 0.8212
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-fascines",
+      "path": "assets/models/world/g5-fascines.glb",
+      "subject": "Release G5 battle prop: brushwood fascines beside four wicker gabions packed with earth",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "0bb00c9d-586e-4d4a-9d8d-bf9afd78eea6",
+        "generatedAt": "2026-11-09T22:09:50.123Z",
+        "prompt": "art-source/models/requests/g5-fascines.json",
+        "rawBytes": 46155992,
+        "rawSha256": "4c34221ea24244958d720c309669503049a90a18a7d355b0c40a4fb761561013",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 6000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.2,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-fascines.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-fascines-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A set piece behind the Roman line (graphics plan, G5): beyond the board's west edge, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the battles where the Romans attack a wall of Chapters IX and XII (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 9, 12 at Balanced/High, preloaded with the battle's scenery; not on the web: the web downloads of Chapters IX and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 364192,
+        "gzipBytes": 350885,
+        "sha256": "4d4dcfc6c29169f9d8925ad2e86f37650b38e0f2fb3d9fdc624988118419a498",
+        "triangles": 5878,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.1642,
+          "height": 1.2,
+          "depth": 2.6915
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-wagon-gothic",
+      "path": "assets/models/world/g5-wagon-gothic.glb",
+      "subject": "Release G5 battle prop: an open Gothic wagon with wicker sides, heaped with sacks",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "58814c1f-562d-45cb-bf0e-d421911da877",
+        "generatedAt": "2026-11-09T22:11:54.278Z",
+        "prompt": "art-source/models/requests/g5-wagon-gothic.json",
+        "rawBytes": 46404944,
+        "rawSha256": "3fe91881b36207cfbf14dd4f3353cbd227a101ccb76851cdf065b53e45473c79",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-wagon-gothic.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-wagon-gothic-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A set piece behind the enemy (graphics plan, G5): the Gothic bands' wagon laager beyond the board's north edge, which the camera sees behind both armies, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the battles of Chapters I, II, III, IV, VII, VIII and X (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 7, 8, 10 at Balanced/High, preloaded with the battle's scenery; on the web only 2, 3: the web downloads of Chapters I, IV, VII, VIII and X have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 293628,
+        "gzipBytes": 283254,
+        "sha256": "d05da6bbdd9eb447cd96c701c519587600f9ac589c9ef75d1f5e501f6fcd36e7",
+        "triangles": 4409,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.9705,
+          "height": 1.6,
+          "depth": 1.165
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-wagon-gothic-covered",
+      "path": "assets/models/world/g5-wagon-gothic-covered.glb",
+      "subject": "Release G5 battle prop: a covered Gothic wagon under a hooped cover of hides",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f535199a-1050-49b3-b5fd-bb8c930520d2",
+        "generatedAt": "2026-11-09T22:14:08.366Z",
+        "prompt": "art-source/models/requests/g5-wagon-gothic-covered.json",
+        "rawBytes": 45691528,
+        "rawSha256": "a12d2a221bb4675adb6d249440b01d8dbee883db3b0754569ecac6e2b6a404b4",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.4,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-wagon-gothic-covered.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-wagon-gothic-covered-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A set piece behind the enemy (graphics plan, G5): the Gothic bands' wagon laager beyond the board's north edge, which the camera sees behind both armies, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the battles of Chapters I, II, III, IV, VII, VIII and X (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 7, 8, 10 at Balanced/High, preloaded with the battle's scenery; on the web only 2, 3: the web downloads of Chapters I, IV, VII, VIII and X have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 286396,
+        "gzipBytes": 276837,
+        "sha256": "a4feec535f213816819e1e8b9b60bddfe51bc64decabfa65abc16d2198ca150b",
+        "triangles": 4410,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 4.5908,
+          "height": 2.4,
+          "depth": 1.6794
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-persian-tower",
+      "path": "assets/models/world/g5-persian-tower.glb",
+      "subject": "Release G5 battle prop: a Persian siege tower faced with reed mats, on four wheels",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "fe8827b4-27f1-4594-9dd3-ee978a36f7d5",
+        "generatedAt": "2026-11-09T22:16:58.774Z",
+        "prompt": "art-source/models/requests/g5-persian-tower.json",
+        "rawBytes": 45213712,
+        "rawSha256": "cc4fbeb1f08c60d16d8fbffa7034bb8a7f736ac0c49b53e200fc4b7293a4aa3e",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 6.0,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-persian-tower.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-persian-tower-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A set piece behind the enemy (graphics plan, G5): the Persian siege works beyond the board's north edge, which the camera sees behind both armies, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the battles of Chapter V (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 5 at Balanced/High, preloaded with the battle's scenery; Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 285948,
+        "gzipBytes": 274890,
+        "sha256": "565c8728de0b7e5f97446a454aa30ef27edcd2223cfe942f6d0ae940aff735b4",
+        "triangles": 4409,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.2848,
+          "height": 6.0,
+          "depth": 3.2386
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-persian-screens",
+      "path": "assets/models/world/g5-persian-screens.glb",
+      "subject": "Release G5 battle prop: a line of reed-mat siege screens with loopholes",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "68db1312-054c-497c-b8d8-051533290409",
+        "generatedAt": "2026-11-09T22:18:57.413Z",
+        "prompt": "art-source/models/requests/g5-persian-screens.json",
+        "rawBytes": 46843924,
+        "rawSha256": "d2f1d08ae907960e903728273e8fd4e38d7feb43d5e69e9d432096988f44eb3f",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.2,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-persian-screens.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-persian-screens-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A set piece behind the enemy (graphics plan, G5): the Persian siege works beyond the board's north edge, which the camera sees behind both armies, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery (battlePropPlacements, src/showcase/field-models.js), in the battles of Chapter V (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 5 at Balanced/High, preloaded with the battle's scenery; Performance and a failed download leave the ground empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 269032,
+        "gzipBytes": 260444,
+        "sha256": "41cef4ec5a19b17f3547493459c5c5953bad347f9f0fd4d5268842ca28ee9d4b",
+        "triangles": 3918,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.2506,
+          "height": 2.2,
+          "depth": 3.2376
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-debris-gothic",
+      "path": "assets/models/world/g5-debris-gothic.glb",
+      "subject": "Release G5 battle prop: Gothic battle debris: round shields, broken spears and an axe",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "9f6955ef-0940-42d4-a47e-c962cac1ff78",
+        "generatedAt": "2026-11-09T22:21:21.839Z",
+        "prompt": "art-source/models/requests/g5-debris-gothic.json",
+        "rawBytes": 45824624,
+        "rawSha256": "ec6bb2464ccfca23dc704c9c2014f512b6bbcde6951511c41a9fee3aee204d37",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-debris-gothic.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-debris-gothic-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "On the walked field after a won battle (graphics plan, G5): the Gothic bands' gear: up to five spots beside their fallen, spread over the field and clear of its works, chosen from the fallen men's ids with no randomness (aftermathDebrisPlacements, src/showcase/field-models.js; AFTERMATH_DEBRIS_MODELS, src/ui/world-catalog.js), in the battles of Chapters I, II, III, IV, VII, VIII and X. With no code-built stand-in. Decorative only: it takes no picks and changes no route, and nothing in it can be taken.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 7, 8, 10 at Balanced/High, preloaded with the battle's world kits; on the web only 2, 3: the web downloads of Chapters I, IV, VII, VIII and X have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the walked field without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 228160,
+        "gzipBytes": 221666,
+        "sha256": "d569261ab78a1ee32e19a76874ebf9daa386ab829f601460a49f225ef6fdafbb",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.6867,
+          "height": 0.6,
+          "depth": 1.3976
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-debris-east",
+      "path": "assets/models/world/g5-debris-east.glb",
+      "subject": "Release G5 battle prop: eastern battle debris: wicker shields, a broken lance, a quiver and a bow",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e039e74c-43ed-4a7a-aff4-f3314139cde7",
+        "generatedAt": "2026-11-09T22:23:41.995Z",
+        "prompt": "art-source/models/requests/g5-debris-east.json",
+        "rawBytes": 47273960,
+        "rawSha256": "8cd32d0d05f7f1ab0fa09d346ec32ca1c3bdd127dd20f3709e83489b0053c664",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.36,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-debris-east.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-debris-east-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "On the walked field after a won battle (graphics plan, G5): the eastern armies' gear: up to five spots beside their fallen, spread over the field and clear of its works, chosen from the fallen men's ids with no randomness (aftermathDebrisPlacements, src/showcase/field-models.js; AFTERMATH_DEBRIS_MODELS, src/ui/world-catalog.js), in the battles of Chapters V, VI and IX. With no code-built stand-in. Decorative only: it takes no picks and changes no route, and nothing in it can be taken.",
+      "loading": "Deferred chapter packs 5, 6, 9 at Balanced/High, preloaded with the battle's world kits; on the web only 5, 6: Chapter IX's web download has no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the walked field without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 236396,
+        "gzipBytes": 228823,
+        "sha256": "402d7eda0a239e3da4df4f8b0a9aa31093da1e155689e5fe1c142afd5d9a51cb",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.8338,
+          "height": 0.36,
+          "depth": 1.8153
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-debris-roman",
+      "path": "assets/models/world/g5-debris-roman.glb",
+      "subject": "Release G5 battle prop: Roman battle debris: red oval shields, a broken pilum, a sword and a helmet",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "10e3678a-5b4d-475d-9861-706b14233f91",
+        "generatedAt": "2026-11-09T22:25:30.236Z",
+        "prompt": "art-source/models/requests/g5-debris-roman.json",
+        "rawBytes": 43973268,
+        "rawSha256": "ea1737f238cb0663fc8199d7fab9bca43708723eabb8d6ca5019ef859ee69544",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.34,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-debris-roman.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-debris-roman-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "On the walked field after a won battle (graphics plan, G5): the rival Romans' gear: up to five spots beside their fallen, spread over the field and clear of its works, chosen from the fallen men's ids with no randomness (aftermathDebrisPlacements, src/showcase/field-models.js; AFTERMATH_DEBRIS_MODELS, src/ui/world-catalog.js), in the battles of Chapter XII. With no code-built stand-in. Decorative only: it takes no picks and changes no route, and nothing in it can be taken.",
+      "loading": "Deferred chapter packs 12 at Balanced/High, preloaded with the battle's world kits; not on the web: Chapter XII's web download has no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the walked field without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 219676,
+        "gzipBytes": 213199,
+        "sha256": "b92813aed7ad411120a35fd61690ff583dcc4f08a89586fce96157c82e23b0bb",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.3622,
+          "height": 0.34,
+          "depth": 1.1185
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-debris-standard",
+      "path": "assets/models/world/g5-debris-standard.glb",
+      "subject": "Release G5 battle prop: a fallen war banner on its broken shaft across a split shield",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "74fc8246-c0b8-4f9a-82bb-5b80fd82f967",
+        "generatedAt": "2026-11-09T22:27:08.322Z",
+        "prompt": "art-source/models/requests/g5-debris-standard.json",
+        "rawBytes": 44524356,
+        "rawSha256": "5fa9beefa05c7ab5eb482713241e6de6df6144c2e43ab1520ae70539417721fa",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-debris-standard.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-debris-standard-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "On the walked field after a won battle (graphics plan, G5): the fallen war banner: the first of the spots beside the fallen, spread over the field and clear of its works, chosen from the fallen men's ids with no randomness (aftermathDebrisPlacements, src/showcase/field-models.js; AFTERMATH_DEBRIS_MODELS, src/ui/world-catalog.js), in the battles of Chapters I, II, III, IV, V, VI, VII, VIII, IX, X and XII. With no code-built stand-in. Decorative only: it takes no picks and changes no route, and nothing in it can be taken.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12 at Balanced/High, preloaded with the battle's world kits; on the web only 2, 3, 5: the web downloads of Chapters I, IV, VI, VII, VIII, IX, X and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the walked field without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 192924,
+        "gzipBytes": 186445,
+        "sha256": "f56ad263fd6965a8dce291213e34713e159192afd7b56bb8fbd192bda8a4d676",
+        "triangles": 2939,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.8247,
+          "height": 0.6,
+          "depth": 1.8078
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
@@ -18769,13 +19777,13 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 191,
+    "models": 209,
     "textures": 15,
     "src": 1,
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 76052657,
-  "totalModelBytes": 60749179,
+  "totalBundledAssetBytes": 80706069,
+  "totalModelBytes": 65402591,
   "derivedGeometryBytes": 47428
 }

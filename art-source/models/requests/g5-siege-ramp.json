@@ -1,0 +1,96 @@
+{
+  "id": "g5-siege-ramp",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-siege-ramp, in Chapter V",
+  "chapters": [
+    5
+  ],
+  "use": "Chapter V's Persian siege ramp (the field object 'siege-engine') on its cell while it is worked; disabled, its code-built burnt planks remain.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A section of a Persian siege ramp of the third century: a sloping mound of packed earth and rubble held in by a revetment of horizontal timber beams and woven reed hurdles, rising from the ground to about one and a half metres over two and a half metres of length, with a tall woven wicker screen standing at its upper end. Earth, rubble, weathered timber and reed. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, staircase, stone steps, wall, castle, pyramid, tower",
+      "model_seed": 2616120,
+      "image_seed": 2616121,
+      "texture_seed": 2616122
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 290000,
+    "heightMetres": 1.6,
+    "minHeight": 1.44,
+    "maxHeight": 1.76,
+    "note": "Bytes raised at review from 260,000 for its texture: 279,820 at its 3,500-triangle budget."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T21:47:42.333Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, staircase, stone steps, wall, castle, pyramid, tower",
+      "model_seed": 2616120,
+      "image_seed": 2616121,
+      "texture_seed": 2616122,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A section of a Persian siege ramp of the third century: a sloping mound of packed earth and rubble held in by a revetment of horizontal timber beams and woven reed hurdles, rising from the ground to about one and a half metres over two and a half metres of length, with a tall woven wicker screen standing at its upper end. Earth, rubble, weathered timber and reed. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8765,
+    "balanceSnapshotBefore": {
+      "balance": 8765,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "0e0fa2d1-4784-4b6c-a458-89f36c1be40e",
+      "state": "accepted",
+      "requestSha256": "a8f7feb89b984d0f38220da2e5719c35f841ae928d6f44a475f42e7ba28371d5"
+    },
+    "taskId": "0ee92533-7c3e-4633-afbf-f7be1d69e9ab",
+    "status": "success",
+    "generatedAt": "2026-11-09T21:49:55.670Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-siege-ramp.glb",
+    "rawBytes": 47290700,
+    "rawSha256": "cd38555929fa4d0f16fed7ab2fd2b98c54d898416c694344c7e6264c26bdbddd",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A section of a Persian siege ramp of the third century: a sloping mound of packed earth and rubble held in by a revetment of horizontal timber beams and woven reed hurdles, rising from the ground to about one and a half metres over two and a half metres of length, with a tall woven wicker screen standing at its upper end. Earth, rubble, weathered timber and reed. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616121,
+      "model_seed": 2616120,
+      "texture_seed": 2616122,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, staircase, stone steps, wall, castle, pyramid, tower",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T21:47:42.745170Z",
+    "tripoCompletedAt": "2026-11-09T21:49:47.432077Z",
+    "tripoRender": "art-source/models/raw/g5-siege-ramp-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A sloping mound of earth and rubble in a timber-and-reed revetment with a wicker screen at its upper end, as asked; narrow (0.9 m) for its 2.45 m length. Its bytes were raised from 260,000 to 290,000 for its texture."
+  }
+}

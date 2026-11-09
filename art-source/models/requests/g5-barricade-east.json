@@ -1,0 +1,97 @@
+{
+  "id": "g5-barricade-east",
+  "status": "G5 first batch: rejected at review; redone as g5-barricade-east-b",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "use": "The battle's barricade (the field object 'barricade') in the eastern battles while it stands; dismantled, its code-built scattered timbers remain.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A field barricade of woven wicker hurdles: two rectangular hurdles of tightly woven willow and reed on upright stakes, standing side by side in a slight angle and braced from behind by slanting props, about two metres long in all and one point one metres high, with a row of short sharpened stakes driven into the ground in front of them. Pale dry wicker, weathered stakes. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, fence of planks, picket fence, gate, brick wall, medieval, barbed wire, basket with handles",
+      "model_seed": 2616140,
+      "image_seed": 2616141,
+      "texture_seed": 2616142
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 240000,
+    "heightMetres": 1.1,
+    "minHeight": 0.99,
+    "maxHeight": 1.21
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T21:51:50.310Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, fence of planks, picket fence, gate, brick wall, medieval, barbed wire, basket with handles",
+      "model_seed": 2616140,
+      "image_seed": 2616141,
+      "texture_seed": 2616142,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A field barricade of woven wicker hurdles: two rectangular hurdles of tightly woven willow and reed on upright stakes, standing side by side in a slight angle and braced from behind by slanting props, about two metres long in all and one point one metres high, with a row of short sharpened stakes driven into the ground in front of them. Pale dry wicker, weathered stakes. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8725,
+    "balanceSnapshotBefore": {
+      "balance": 8725,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "9011b312-ef19-4560-9e43-ff3a441fc51d",
+      "state": "accepted",
+      "requestSha256": "c56136ae46d8c9760a9471f94484abbf5cc00f2806daf44a4ea2b5be3795e8e1"
+    },
+    "taskId": "7902af2e-381b-4e48-a55a-8ea0d2d7f5ce",
+    "status": "success",
+    "generatedAt": "2026-11-09T21:54:39.582Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-barricade-east.glb",
+    "rawBytes": 46536512,
+    "rawSha256": "c9c18b2130eb425c2a7a08c7cb64e8258c1da689703b18fb9445f55e26b27b65",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A field barricade of woven wicker hurdles: two rectangular hurdles of tightly woven willow and reed on upright stakes, standing side by side in a slight angle and braced from behind by slanting props, about two metres long in all and one point one metres high, with a row of short sharpened stakes driven into the ground in front of them. Pale dry wicker, weathered stakes. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616141,
+      "model_seed": 2616140,
+      "texture_seed": 2616142,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, fence of planks, picket fence, gate, brick wall, medieval, barbed wire, basket with handles",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T21:51:50.947001Z",
+    "tripoCompletedAt": "2026-11-09T21:54:33.927653Z",
+    "tripoRender": "art-source/models/raw/g5-barricade-east-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render and four views of the raw model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs)",
+    "notes": "The two hurdles came standing apart, face to face 1.6 m apart with a pole between them, not side by side in one line, and the row of stakes in front came as flat white blades. Its thin wicker also decimates to a tangle at its budget. Redone as g5-barricade-east-b: a solid breastwork of palm trunks with earth-filled baskets, in one straight line."
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-debris-east.glb",
+    "bytes": 47273960,
+    "sha256": "8cd32d0d05f7f1ab0fa09d346ec32ca1c3bdd127dd20f3709e83489b0053c664",
+    "triangles": 1479179
+  },
+  "output": {
+    "path": "assets/models/world/g5-debris-east.glb",
+    "bytes": 241536,
+    "sha256": "15be651ad7666090921e6dc0729057d03b85bf27c0720d7cf794420e609f3a23",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.36,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.8375833782888262,
+  "sizeMetres": {
+    "width": 1.8338,
+    "height": 0.36,
+    "depth": 1.8153
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_e039e74c-43ed-4a7a-aff4-f3314139cde7",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_e039e74c-43ed-4a7a-aff4-f3314139cde7",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_e039e74c-43ed-4a7a-aff4-f3314139cde7",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

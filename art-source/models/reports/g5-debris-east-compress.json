@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g5-debris-east.glb",
+  "output": "assets/models/world/g5-debris-east.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 241536,
+    "gzipBytes": 170950,
+    "sha256": "15be651ad7666090921e6dc0729057d03b85bf27c0720d7cf794420e609f3a23"
+  },
+  "after": {
+    "bytes": 236396,
+    "gzipBytes": 228823,
+    "sha256": "402d7eda0a239e3da4df4f8b0a9aa31093da1e155689e5fe1c142afd5d9a51cb"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 26384
+      },
+      "bytes": 33062,
+      "psnr": 36.512
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 47110
+      },
+      "bytes": 56248,
+      "psnr": 31.733
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 19010
+      },
+      "bytes": 32115,
+      "psnr": 31.655
+    }
+  ]
+}

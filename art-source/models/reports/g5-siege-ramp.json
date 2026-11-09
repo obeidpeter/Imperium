@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-siege-ramp.glb",
+    "bytes": 47290700,
+    "sha256": "cd38555929fa4d0f16fed7ab2fd2b98c54d898416c694344c7e6264c26bdbddd",
+    "triangles": 1421896
+  },
+  "output": {
+    "path": "assets/models/world/g5-siege-ramp.glb",
+    "bytes": 324668,
+    "sha256": "85b70ee2b642108f4f1aadb3920fdbda33a398912ecd3eac4a5a0a85de1ec543",
+    "triangles": 3430
+  },
+  "settings": {
+    "triangles": 3500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.4837356556957078,
+  "sizeMetres": {
+    "width": 0.9081,
+    "height": 1.6,
+    "depth": 2.4512
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_0ee92533-7c3e-4633-afbf-f7be1d69e9ab",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_0ee92533-7c3e-4633-afbf-f7be1d69e9ab",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_0ee92533-7c3e-4633-afbf-f7be1d69e9ab",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}
