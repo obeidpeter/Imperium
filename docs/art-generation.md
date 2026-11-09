@@ -1943,7 +1943,7 @@ The prompts follow [the historical notes](historical-research.md):
 
 ### Reviewed before shipping
 
-Each model was compared with Tripo's render, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the battles of Chapters III, V, VII, VIII and IX in the desktop build at High, each restored from a moment the real-time bot reached from New Game through the Restore dialog. What it showed, and what was kept:
+Each model was compared with Tripo's render, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the battles of Chapters III, V, VII, VIII, IX and XII in the desktop build at High, each restored from a moment the real-time bot reached from New Game through the Restore dialog. What it showed, and what was kept:
 
 ![The pilot's six models from four sides with a 1.8 m figure for scale](images/g5-pilot-models.jpg)
 
