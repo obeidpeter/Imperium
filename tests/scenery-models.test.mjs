@@ -15,7 +15,7 @@ import {createSceneryOcclusion} from '../src/showcase/environment-occlusion.js';
 import {createModelLoader} from '../src/showcase/model-loader.js';
 import {useNodeWorkers} from './node-workers.mjs';
 import {createSceneryModelCache} from '../src/showcase/scenery-cache.js';
-import {WORLD_CATALOG,worldModelUrl,CAMP_WALL_CHAPTERS} from '../src/ui/world-catalog.js';
+import {WORLD_CATALOG,worldModelUrl,CAMP_WALL_CHAPTERS,BATTLE_PROP_MODELS} from '../src/ui/world-catalog.js';
 import {campWallSections,campTowerSpots} from '../src/showcase/camp-walls.js';
 import {terrainAt} from '../src/showcase/environment-layout.js';
 
@@ -64,7 +64,8 @@ test('every generated model has its request, licence, manifest entry and budget'
 test('Chapter V props stay outside tactical, real-time and camp boards', () => {
   for(const e of [...chapterFiveStarts(),{id:'ch5-mine',width:24,height:24},{id:'ch5-wall',width:24,height:24},{id:'ch5-camp',width:20,height:16}]){
     const placed=sceneryPlacements(e,{chapter:5}),hx=e.width*1.25,hz=e.height*1.25;
-    const props=placed.filter(p=>!p.component);assert.equal(props.length,9,e.id);
+    // Chapter V's nine props; G5's set pieces, beyond the battles' edges, have their own tests (graphics-g5.test.mjs).
+    const props=placed.filter(p=>!p.component&&!BATTLE_PROP_MODELS[p.id]);assert.equal(props.length,9,e.id);
     for(const p of placed)assert.ok(Math.abs(p.x)>hx+1.5||Math.abs(p.z)>hz+1.5,`${e.id}: ${p.id} at ${p.x.toFixed(1)}, ${p.z.toFixed(1)} is off the ${hx*2} × ${hz*2} m board`);
     assert.deepEqual(sceneryPlacements(e,{chapter:5}),placed,'Placement is fixed data, not randomness');
     assert.deepEqual(sceneryPlacements(e,{chapter:4}),[]);assert.deepEqual(sceneryPlacements({...e,id:'ch5-elsewhere'},{chapter:5}),[]);
@@ -166,7 +167,8 @@ test('the camera cutaway covers the generated models like the rest of the scener
 test('preloaded scenery is synchronous, shared across stages, and evicted after leaving its chapter', async () => {
   const [e]=chapterFiveStarts(),placements=sceneryPlacements(e,{chapter:5});
   const landmarks=landmarkModelUrls(e,{chapter:5}).map(([,url])=>url);assert.equal(landmarks.length,3,'Chapter V\'s three generated landmarks');
-  const fieldModels=fieldModelUrls(e,{chapter:5}).map(([,url])=>url);assert.equal(fieldModels.length,4,'the cart, its load, the barricade and the ram (G5)');
+  const fieldModels=fieldModelUrls(e,{chapter:5}).map(([,url])=>url);
+  assert.equal(fieldModels.length,9,'the eastern cart, its load, the barricade, the ram, the brazier, the countermine and the siege ramp, and the walked field\'s gear and banner (G5)');
   assert.deepEqual(sceneryWorkingSet(e,{chapter:5}).sort(),[...new Set([...placements.map(p=>p.url),...['trees-arid','rocks-arid'].map(worldModelUrl),...landmarks,...fieldModels])].sort(),
     'the placed scenery, the region\'s tree and rock kits, the chapter\'s landmarks and the battle\'s field models');
   assert.deepEqual(sceneryWorkingSet(e,{chapter:5,quality:'performance'}),[]);

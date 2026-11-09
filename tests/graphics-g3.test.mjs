@@ -148,7 +148,7 @@ test('the web carries a G3 model only where its chapter\'s download has room; th
     }
   }
   // No web chapter carries the tribunal or the parley awning, so the web build leaves their files out.
-  assert.deepEqual(desktopOnlyWorldFiles().sort(),['g3-parley-awning','g3-tribunal'].map(worldModelUrl).sort());
+  assert.deepEqual(desktopOnlyWorldFiles().filter(f=>/\/g3-/.test(f)).sort(),['g3-parley-awning','g3-tribunal'].map(worldModelUrl).sort());
   // On the web Chapter I's camp shows the palisade and keeps the rest as before; the desktop app shows all ten.
   const e=campOf(1),web=sceneryPlacements(e,{chapter:1,desktop:false}).map(p=>p.id),desk=sceneryPlacements(e,{chapter:1,desktop:true}).map(p=>p.id);
   assert.deepEqual(G3.filter(id=>web.includes(id)),[CAMP_PALISADE]);
