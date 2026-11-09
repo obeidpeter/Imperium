@@ -29,11 +29,11 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | # | Release | Cap | State |
 | --- | --- | --- | --- |
 | 0 | Use what's paid for, then calibrate | 250 | done: calibrated (190 credits, [results](graphics-calibration.md)), and the 3D kit made (seven weapons and helmets, no credits); the landmarks' re-texture skipped |
-| G1 | Armies | 2,300 | [pilot](#g1s-pilot-8-november) approved and merged on 9 November (310 credits); [the rest](#the-rest-of-g1-9-november) made on 9 November (695 credits): fifteen bodies and a horse. 1,295 credits left |
+| G1 | Armies | 1,005 | done: the [pilot](#g1s-pilot-8-november) (310 credits) and [the rest](#the-rest-of-g1-9-november) (695): 22 bodies and 2 horses. Its other 1,295 credits went to G3 and G5 |
 | G2 | Arms and standards | 700 | |
-| G3 | Camps | 1,700 | (1,300, and 400 from G7) |
+| G3 | Camps | 2,400 | next (1,300, 400 from G7 and 700 from G1) |
 | G4 | Animals | 600 | |
-| G5 | Battle and siege | 1,250 | (900, and 350 from G7) |
+| G5 | Battle and siege | 1,845 | (900, 350 from G7 and 595 from G1) |
 | G6 | Faces and people | 1,100 | |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
 | | **Total** | **7,900** | |
@@ -164,7 +164,9 @@ The owner approved the pilot and the proposal above on 9 November. Fifteen bodie
 - **Downloads:** Chapter I's download is 17.5 of its 18 MB, with the war leader at 512-pixel maps. The largest chapter's (XII) is 27.5 of 28 MB, and the complete game 65.2 of 80 MB.
 - **In battle:** IN_BATTLE
 
-**Left of G1: 1,295 credits.** For the owner's decision: RECOMMENDATION
+**Left of G1: 1,295 credits, moved on.** On 9 November the owner left the rest of the plan to my judgement ([decisions 8–11](#after-g1-9-november)):
+- the second bodies for the crowds (about 500 credits) are not made. At the battle camera a figure reads by its outline and main colours, which its type's body already gives, and Chapter XII's download has 0.5 MB left;
+- G1's remaining credits go to the camps (G3, 700) and to battle and siege (G5, 595), so the plan still spends at least 70% of the balance.
 
 Each cap includes about 10% for rejected attempts. G3 and G5 have G7's credits too: each pilot proposes how many more of its own list they buy. Some things stay out of Tripo:
 - the Colosseum, which failed three times there, gets a Blender build;
@@ -199,7 +201,7 @@ Each cap includes about 10% for rejected attempts. G3 and G5 have G7's credits t
    - Chapter I's 3D load stands at 16 of 18 MB;
    - the whole campaign stands at 55 of 80 MB.
 3. **Timing:** step 0 starts now, in parallel with Gate 4. Nothing here changes the rules.
-4. **Review:** each release's pilot goes to the owner before the rest is generated.
+4. **Review:** each release's pilot goes to the owner before the rest is generated. From G3 on, decision 9 replaces this.
 
 After the calibration (8 November):
 
@@ -207,10 +209,17 @@ After the calibration (8 November):
 6. **Step 0c:** skipped; the shipped landmarks stay as they are.
 7. **G7:** skipped. Its 750 credits went where the camera is: 400 to the camps (G3) and 350 to battle and siege (G5), so the plan keeps its 7,900-credit cap, 73.8% of the balance.
 
+### After G1 (9 November)
+
+8. **G1's rest:** approved after the pilot, and made ([the rest of G1](#the-rest-of-g1-9-november)).
+9. **The rest of the plan** is left to my judgement, within each release's cap and the rules below. Each pilot is reviewed in the game before the rest of its release is generated, and its review images go with its PR, rather than to the owner first.
+10. **Order:** the camps (G3), then battle and siege (G5), animals (G4), faces and people (G6), and arms and standards (G2), the standards first. The camps and the siege works are large enough to read at any distance; most of G2's kit is too small to read in battle, where step 0 found the crowds read better with the code-built pieces.
+11. **G1's remaining 1,295 credits** go to G3 (700) and G5 (595); the second crowd bodies are not made. The plan keeps its 7,900-credit cap.
+
 ## Rules for the spend
 
 - **Approvals:**
-  - no task is created before its release is approved;
+  - no task is created before its release is approved (decision 9 approves G2–G6 within their caps);
   - step 0's comparison comes before any bulk spend;
   - each pilot comes before the rest of its release.
 - **Caps:** no cap is exceeded without asking.

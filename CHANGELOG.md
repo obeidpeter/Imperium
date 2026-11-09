@@ -18,10 +18,11 @@ The owner approved the pilot (#92) and the rest of G1 on 9 November. Every enemy
 - **How a body is chosen:** still by the unit as the rules made it, in presentation only: a band's war leader by the name the rules give him, a champion by his id, the Dalmatian horse by its chapter.
 - **In battle:** IN_BATTLE
 - **Not made:** 8 of the 23 types the plan listed. Four already wear a body of their own: the Gothic raider, the war bands' spearman (since the pilot), the Gothic horseman and the Persian guard. Four are not units in the game: a rival guardsman, a rival horseman, a draco-bearer and a centurion. The northern horse's size is runtime work rather than a remake, since the binder sets every horse's back to the one saddle height; it is left for later.
+- **What's next** (the owner's decision of 9 November): G1's other 1,295 credits go to the camps (G3) and to battle and siege (G5), and the second crowd bodies are not made. The releases follow in the order G3, G5, G4, G6 and G2, each pilot reviewed in the game before the rest of its release.
 - **Credits:** 695, within the batch's 780-credit ceiling, and the balance went from 10,200 to 9,505.
   - Fifteen rigged bodies cost 45 each, and the horse 20.
   - No generation was rejected. Once Tripo finished a rig but its file did not download; `resume-rig` fetched it by its recorded task ID at no charge.
-  - G1 has spent 1,005 of its 2,300 credits, and has 1,295 left.
+  - G1 spent 1,005 of its 2,300 credits; the other 1,295 move to G3 and G5.
 - **Downloads:** the sixteen files take 6,963,768 bytes; the horse replaces one of 550,740. The war leader, in Chapter I's download, has 512-pixel maps (282,216 bytes). Chapter I's download is now 17.5 of its 18 MB, the largest chapter's (XII) 27.5 of 28 MB, and the complete game 65.2 of 80 MB.
 - **Records:** the requests (the first eastern horse's kept, marked replaced), [the G1 credit ledger](art-source/models/graphics-g1-credits.json), the manifest's sixteen entries, the art record with the exact prompts and the review, the asset pipeline guide, the 3D provenance record and the AI-content disclosure (regenerated: 222 of 257 shipped files).
 - **Checks:**
