@@ -148,6 +148,8 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
     for(const mesh of meshes){
       const local=inverse.clone().multiply(mesh.matrixWorld),batch=new T.InstancedMesh(mesh.geometry,mesh.material,matrices.length);
       matrices.forEach((m,i)=>batch.setMatrixAt(i,m.clone().multiply(local)));batch.instanceMatrix.needsUpdate=true;
+      // White instance colours: the shader programs (and shadow pass) of the scenery's other instanced batches.
+      batch.instanceColor=new T.InstancedBufferAttribute(new Float32Array(matrices.length*3).fill(1),3);
       batch.name=`${group.name}:${mesh.name||'mesh'}`;batch.castShadow=p.shadow!==false;batch.receiveShadow=true;batch.raycast=()=>{};
       batch.computeBoundingBox();batch.computeBoundingSphere();group.add(batch);
     }

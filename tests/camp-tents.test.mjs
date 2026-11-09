@@ -140,7 +140,8 @@ test('one placement draws every tent from the leather tent, an instanced draw a 
   const slope=(x,z)=>.04*x-.03*z,cache=createSceneryModelCache({load:url=>url===lines.url?loadFile(url):Promise.resolve(new T.Group())});
   const models=createSceneryModels(scene,e,{chapter:1,heightAt:slope,cache});await models.ready;
   const group=models.group.getObjectByName('tent-lines'),batches=group.children.filter(o=>o.isInstancedMesh);
-  assert.ok(batches.length>=1);for(const b of batches)assert.equal(b.count,pitches.length);
+  assert.ok(batches.length>=1);
+  for(const b of batches){assert.equal(b.count,pitches.length);assert.ok(b.instanceColor?.array.every(v=>v===1),'white instance colours: the programs of the other instanced batches');}
   assert.equal(fallback.visible,false,'the model hides the code-built tents');
   // Each tent's footprint is centred on its pitch, inside it, and stands on its lowest corner.
   const [batch]=batches,matrix=new T.Matrix4(),box=new T.Box3();batch.geometry.computeBoundingBox();

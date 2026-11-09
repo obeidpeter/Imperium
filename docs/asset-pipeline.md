@@ -555,3 +555,10 @@ The rest of G1 ([the plan](graphics-tripo-plan.md#the-rest-of-g1-9-november)) ma
   - The manifest entry names the remake's request (`horse-eastern-b.json`), and the horse tests follow `source.prompt`.
   - The first request stays, marked replaced.
 - **Seen in battle,** as the pilot was. Each champion is captured at the moment he stands nearest the soldier ([the art record](art-generation.md#in-battle-1)).
+
+## Release G3's tent lines · 2026-11-09
+
+G3 starts with no new model: Chapter V's leather tent (0.36) pitched on the camps' tent lines ([the plan](graphics-tripo-plan.md#g3s-tent-lines-9-november)). Two things are new in how scenery is placed:
+
+- **Many copies of one model.** A placement with `instances` ([`scenery-models.js`](../src/showcase/scenery-models.js)) draws every copy from one master, as one instanced mesh for each of its meshes, with white instance colours so they share the other instanced batches' programs. Each copy's footprint is centred on its spot and grounded on the lowest of its corners, as a placed model is, and the placement hides one code-built batch (`fallbackName`).
+- **Pitches that block walking.** The tents stand on authored pitches of tent-line ground ([`camp-regions.js`](../src/data/camp-regions.js)), and the camp world lists their cells as the map's `blocked` tiles, solid for walking whatever their ground ([`navigation.js`](../src/core/realtime/navigation.js)). The scenery draws a tent only on a whole pitch of tent-line ground, so a stale pitch leaves its ground bare.
