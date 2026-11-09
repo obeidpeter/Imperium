@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-horse-lines-b.glb",
+    "bytes": 46550444,
+    "sha256": "9237ce5cc975b22fcfb17498da5355650394f2f8a2a70599353d5a04f186e814",
+    "triangles": 1465608
+  },
+  "output": {
+    "path": "assets/models/world/g3-horse-lines.glb",
+    "bytes": 242872,
+    "sha256": "78688e7e6d5e9805bdab7dcdd33c48a6051d5369f8d954cbae8523d21cfcf51f",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.7125545483399978,
+  "sizeMetres": {
+    "width": 1.3004,
+    "height": 1.6,
+    "depth": 2.6256
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_e557698b-05c2-4a2a-b799-22e4caf5893d",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_e557698b-05c2-4a2a-b799-22e4caf5893d",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_e557698b-05c2-4a2a-b799-22e4caf5893d",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

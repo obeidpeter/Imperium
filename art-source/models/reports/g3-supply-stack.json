@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-supply-stack.glb",
+    "bytes": 46006636,
+    "sha256": "3bec1b2d08f692ee2ac87374478afbfdb2ac0729fd74b7bc24c408ea62d1d3b6",
+    "triangles": 1438311
+  },
+  "output": {
+    "path": "assets/models/world/g3-supply-stack.glb",
+    "bytes": 260556,
+    "sha256": "af70c55b2dfe18ce213958c43ad254f65326193543266a134bdb3b44e6a1f872",
+    "triangles": 3163
+  },
+  "settings": {
+    "triangles": 2850,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 4.205528555715204,
+  "sizeMetres": {
+    "width": 3.9677,
+    "height": 1.5,
+    "depth": 3.9577
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_a26c71e8-8281-4306-9e6f-19cf3f00a392",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_a26c71e8-8281-4306-9e6f-19cf3f00a392",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_a26c71e8-8281-4306-9e6f-19cf3f00a392",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

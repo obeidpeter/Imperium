@@ -93,7 +93,7 @@ for(const path of ['./vendor/three/addons/libs/basis/basis_worker.js','./vendor/
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
 for(const path of world){
   assert.ok(build.deferredAssets.includes(path),'World asset built and deferred: '+path);
-  for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterWorldFiles(Number(chapter)).includes(path.slice(2)),'Chapter '+chapter+' and world asset '+path);
+  for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterWorldFiles(Number(chapter),{desktop:build.target==='desktop'}).includes(path.slice(2)),'Chapter '+chapter+' and world asset '+path);
 }
 assert.deepEqual(build.deferredAssets.filter(path=>path.startsWith('./assets/models/chapters/')&&!world.has(path)),[],'Every chapter model is in the world catalog');
 for(const path of build.showcaseAssets.filter(characterBody))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterBodies(Number(chapter)).includes(characterBody(path)),'Chapter '+chapter+' and character body '+path);

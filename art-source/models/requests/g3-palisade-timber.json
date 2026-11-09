@@ -1,0 +1,101 @@
+{
+  "id": "g3-palisade-timber",
+  "status": "generated: awaiting review",
+  "chapters": [
+    1,
+    2,
+    3,
+    7,
+    8,
+    10
+  ],
+  "use": "A section of the camp wall: drawn along the timber-walled camps' wall cells, instanced, in place of the code-built breastwork.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A straight section of a Roman army camp palisade, about two and a half metres long and two metres high: one tight row of upright split oak stakes with sharpened points, a little uneven in height, bound with withies to two horizontal rails behind them, their feet set in a low bank of cut turf. Weathered grey-brown timber. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611630,
+      "image_seed": 2611631,
+      "texture_seed": 2611632
+    }
+  },
+  "budget": {
+    "triangles": 1200,
+    "texture": 512,
+    "bytes": 180000,
+    "heightMetres": 2,
+    "minHeight": 1.8,
+    "maxHeight": 2.2,
+    "note": "Raised from 160,000 bytes at review: the compressed model is 178,716 bytes."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T12:21:23.887Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611630,
+      "image_seed": 2611631,
+      "texture_seed": 2611632,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A straight section of a Roman army camp palisade, about two and a half metres long and two metres high: one tight row of upright split oak stakes with sharpened points, a little uneven in height, bound with withies to two horizontal rails behind them, their feet set in a low bank of cut turf. Weathered grey-brown timber. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9505,
+    "balanceSnapshotBefore": {
+      "balance": 9505,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "b0f4f851-0a08-4639-9d0b-72aa728a394b",
+      "state": "accepted",
+      "requestSha256": "59d46a88bcecc575d4ea0d4d3f7f5b7de4ade04fef0aa3a962fb915d13714de3"
+    },
+    "taskId": "22c6bc13-d45c-4a79-8497-e4eccb4ca0e2",
+    "status": "success",
+    "generatedAt": "2026-11-09T12:23:06.371Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-palisade-timber.glb",
+    "rawBytes": 45995016,
+    "rawSha256": "7ad0af01a95dad074356ff26f4406ed7ca94b3186088f46c2b8ea48ebf009cf3",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A straight section of a Roman army camp palisade, about two and a half metres long and two metres high: one tight row of upright split oak stakes with sharpened points, a little uneven in height, bound with withies to two horizontal rails behind them, their feet set in a low bank of cut turf. Weathered grey-brown timber. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611631,
+      "model_seed": 2611630,
+      "texture_seed": 2611632,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T12:21:24.285888Z",
+    "tripoCompletedAt": "2026-11-09T12:22:57.757400Z",
+    "tripoRender": "art-source/models/raw/g3-palisade-timber-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "Sharpened stakes lashed with two bands, braced behind on an earth bank; the bands face the model's +z, turned outward from the camp, the bank and braces inward. Stretched from 0.77 to 1.14 along its length to fill each wall run."
+  }
+}

@@ -2,6 +2,33 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G3's pilot: the timber camps walled, and the camps furnished ([the plan](docs/graphics-tripo-plan.md#g3s-pilot-9-november))
+
+Eight Tripo models, made for 180 credits and reviewed in the game before the rest of G3 is generated:
+
+- **The timber camps' walls** (Chapters I, II, III, VII, VIII and X):
+  - a palisade of sharpened stakes on an earth bank stands along every wall cell, its sections stretched a little to fill each straight run of wall;
+  - a timber watchtower stands on each corner and either side of each gateway;
+  - the walls were solid already: the rules and every route are unchanged;
+  - the code-built breastwork stays the palisade's fallback, on Performance and until the model is ready.
+- **The camps' furniture**, beyond the board beside the service each belongs to:
+  - an officers' tent by the principia;
+  - a training post with a wicker shield by the drill ground;
+  - by the quartermaster: his stores under a hide, a struck tent rolled with its poles, empty horse lines where cavalry ride (VII, IX, XII), and a raised timber granary (IV, X).
+- **Drawing:** one instanced draw for each model carries a camp's palisade sections and its towers. The breastwork's batches no longer take other parts of the camp, so the palisade hides the breastwork alone.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web a chapter takes only what its download has room for:
+  - Chapter I takes the palisade (17.87 of its 18 MB);
+  - Chapter XII takes none (27.71 of 28 MB);
+  - Chapters VII and VIII now stand within 0.16 MB of their limit;
+  - the complete web game is 66.9 of its 80 MB.
+- **Checks:** `tests/graphics-g3.test.mjs` covers:
+  - the ledger and the 20% stop rule;
+  - each model's budget, manifest entry and compression;
+  - the palisade over every wall cell, and a tower on every corner and gateway;
+  - the furniture only in camps, beyond the board and off the service pads;
+  - each chapter's web and desktop packs;
+  - the instanced drawing, the stretch and grounding of each section, and the breastwork's fallback.
+
 ### Release G3's first step: the tent lines pitched ([the plan](docs/graphics-tripo-plan.md#g3s-tent-lines-9-november))
 
 The camps' tent lines were open ground. Now they are pitched with rows of the leather tent that Chapter V's supply camp already had, generated in 0.36, so no credits were spent.

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-palisade-timber.glb",
+  "output": "assets/models/world/g3-palisade-timber.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 160784,
+    "gzipBytes": 128247,
+    "sha256": "9e250333c5a88c94759ff7311d6d88fc58f62db39de6484d93cd8e9452fb4520"
+  },
+  "after": {
+    "bytes": 178716,
+    "gzipBytes": 173673,
+    "sha256": "596099422e8b571294c3ddd6c9e8b78e89b4d6ed1760479f1e0d10dc6b24b33c"
+  },
+  "geometryUnchanged": true,
+  "triangles": 1174,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31452
+      },
+      "bytes": 35850,
+      "psnr": 34.533
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 37600
+      },
+      "bytes": 49115,
+      "psnr": 34.044
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 26214
+      },
+      "bytes": 39812,
+      "psnr": 34.864
+    }
+  ]
+}

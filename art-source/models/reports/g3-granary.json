@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-granary.glb",
+    "bytes": 44800596,
+    "sha256": "b7d13c24772a6632e5aaa039e6ba9f1bc69f3f606bebfee6b93602989713cdcf",
+    "triangles": 1438378
+  },
+  "output": {
+    "path": "assets/models/world/g3-granary.glb",
+    "bytes": 212200,
+    "sha256": "16bbbf517d0d9e388e4dcd0f5462af25fd05591eb50ec524fe13e5faf4e480a8",
+    "triangles": 3920
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 4.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.991697533055262,
+  "sizeMetres": {
+    "width": 3.5209,
+    "height": 4.0,
+    "depth": 3.7448
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_fbb2f287-94d3-4bac-a2ed-82a365831e97",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_fbb2f287-94d3-4bac-a2ed-82a365831e97",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_fbb2f287-94d3-4bac-a2ed-82a365831e97",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

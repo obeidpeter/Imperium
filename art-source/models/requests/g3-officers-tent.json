@@ -1,0 +1,102 @@
+{
+  "id": "g3-officers-tent",
+  "status": "generated: awaiting review",
+  "chapters": [
+    1,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    12
+  ],
+  "use": "An officers' tent beside the commander's place, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman officer's tent for a field camp: a large rectangular tent of stitched brown goatskin with low upright walls and a pitched roof on two poles and a ridge pole, its front flaps tied open under a small porch awning on two poles, guy ropes running to wooden pegs, a folding camp stool at the entrance. Patched and weathered leather. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611620,
+      "image_seed": 2611621,
+      "texture_seed": 2611622
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 2.6,
+    "minHeight": 2.3,
+    "maxHeight": 2.9
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T12:23:07.843Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611620,
+      "image_seed": 2611621,
+      "texture_seed": 2611622,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman officer's tent for a field camp: a large rectangular tent of stitched brown goatskin with low upright walls and a pitched roof on two poles and a ridge pole, its front flaps tied open under a small porch awning on two poles, guy ropes running to wooden pegs, a folding camp stool at the entrance. Patched and weathered leather. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9465,
+    "balanceSnapshotBefore": {
+      "balance": 9465,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "41c24992-2cf3-4b60-a301-453dba3e76c5",
+      "state": "accepted",
+      "requestSha256": "715dd6fde3e7acf974fb569ecd540e6df54865b728f55bfceeab6929346305d6"
+    },
+    "taskId": "f425a693-9ca4-4f9a-bad8-8b64c0363a68",
+    "status": "success",
+    "generatedAt": "2026-11-09T12:25:11.291Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-officers-tent.glb",
+    "rawBytes": 45796500,
+    "rawSha256": "fc8061dd2e77a73cd003121985be7a2d7fc4c64a15e2c0e8b34f7bcd1c3dd796",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman officer's tent for a field camp: a large rectangular tent of stitched brown goatskin with low upright walls and a pitched roof on two poles and a ridge pole, its front flaps tied open under a small porch awning on two poles, guy ropes running to wooden pegs, a folding camp stool at the entrance. Patched and weathered leather. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611621,
+      "model_seed": 2611620,
+      "texture_seed": 2611622,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T12:23:08.424055Z",
+    "tripoCompletedAt": "2026-11-09T12:25:07.191224Z",
+    "tripoRender": "art-source/models/raw/g3-officers-tent-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A large leather tent with a ridge roof, guy ropes and a door flap; scaled to 0.94 to fit its 4.4 m court."
+  }
+}

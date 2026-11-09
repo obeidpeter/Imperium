@@ -26,7 +26,8 @@ export function batchStaticEnvironment(root,{geometries,exclude=new Set(),instan
   // Repeated parts matching an existing named instance batch (same geometry,
   // material and render flags) join it instead of adding another draw object.
   const flags=o=>[o.castShadow,o.receiveShadow,o.renderOrder,o.layers.mask,o.visible].join(':'),targets=new Map();
-  for(const o of root.children)if(o.isInstancedMesh&&!exclude.has(o)&&!Array.isArray(o.material)&&!o.material.transparent&&!o.material.userData?.environmentVegetation&&!o.userData.environmentDynamic&&!o.morphTexture)targets.set(`${o.geometry.uuid}:${o.material.uuid}:${flags(o)}`,o);
+  // A batch marked replaceable (generated scenery may hide it, environment.js) takes no other parts.
+  for(const o of root.children)if(o.isInstancedMesh&&!exclude.has(o)&&!Array.isArray(o.material)&&!o.material.transparent&&!o.material.userData?.environmentVegetation&&!o.userData.environmentDynamic&&!o.userData.replaceable&&!o.morphTexture)targets.set(`${o.geometry.uuid}:${o.material.uuid}:${flags(o)}`,o);
   const fold=(target,parts)=>{
     const batch=new THREE.InstancedMesh(target.geometry,target.material,target.count+parts.length),local=target.matrixWorld.clone().invert();
     batch.instanceMatrix.array.set(target.instanceMatrix.array.subarray(0,target.count*16));

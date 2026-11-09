@@ -5,9 +5,9 @@ import {campEntrance} from './environment-staging.js';
 // loader. These are visual service courts, never new destinations or blockers.
 export function campServiceForProp(id){
   if(/litter|laundry/.test(id))return 'valetudinarium';
-  if(/table|cabinet|eagle|brazier|carriage/.test(id))return 'principia';
+  if(/table|cabinet|eagle|brazier|carriage|officers/.test(id))return 'principia';
   if(/bread|cook|loom|market|pottery|amphora|beehive|household/.test(id))return 'canabae';
-  if(/grindstone|woodpile|baskets|brick/.test(id))return 'drill';
+  if(/grindstone|woodpile|baskets|brick|training/.test(id))return 'drill';
   return 'quartermaster';
 }
 const overlaps=(a,b)=>a.maxX>b.minX&&a.minX<b.maxX&&a.maxZ>b.minZ&&a.minZ<b.maxZ;

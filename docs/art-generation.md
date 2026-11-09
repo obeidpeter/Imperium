@@ -1791,6 +1791,55 @@ saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, ex
 ```
 
 
+## Release G3's pilot: the camps · 9 November 2026
+
+Release G3 of the [graphics plan](graphics-tripo-plan.md#g3s-pilot-9-november) furnishes the camps. Its pilot, eight models for about a seventh of the release's list, was reviewed in the game before the rest is generated (the owner's decision 9). [The asset pipeline](asset-pipeline.md#release-g3s-pilot-the-timber-camps-walls-and-the-camps-furniture--2026-11-09) has how they are placed.
+
+The models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-09, from the text prompts in their requests only: no reference image or third-party model. The pilot cost 180 credits of its 200-credit ceiling, task by task in [the G3 ledger](../art-source/models/graphics-g3-credits.json), and the balance read 9,505 before and 9,325 after. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Where | Chapters | Tripo task | Triangles | Runtime file |
+| --- | --- | --- | --- | ---: | ---: |
+| g3-palisade-timber | along the timber camps' walls | I, II, III, VII, VIII, X | `22c6bc13-d45c-4a79-8497-e4eccb4ca0e2` | 1,174 | 178,716 bytes |
+| g3-watchtower-timber | on those walls' corners and gateways | I, II, III, VII, VIII, X | `cddc6ba5-0e4c-465b-8e10-17116f4eeb1e` | 2,940 | 229,792 bytes |
+| g3-officers-tent | beside the principia | I, III, IV, VI, VII, VIII, IX, XII | `f425a693-9ca4-4f9a-bad8-8b64c0363a68` | 3,430 | 233,652 bytes |
+| g3-tent-struck | beside the quartermaster | II, VI, VIII | `bf257e30-1de9-452e-977c-1695a5684d63` | 1,960 | 192,892 bytes |
+| g3-horse-lines-b | beside the quartermaster | VII, IX, XII | `e557698b-05c2-4a2a-b799-22e4caf5893d` | 2,940 | 244,108 bytes |
+| g3-training-post | beside the drill ground | I, III, IV, VII | `9f3720a2-45c4-4e88-aa3d-674f595ba769` | 1,960 | 171,928 bytes |
+| g3-supply-stack | beside the quartermaster | I–IV, VI–X, XII | `a26c71e8-8281-4306-9e6f-19cf3f00a392` | 3,163 | 256,652 bytes |
+| g3-granary | beside the quartermaster | IV, X | `fbb2f287-94d3-4bac-a2ed-82a365831e97` | 3,920 | 215,776 bytes |
+
+Every runtime file was processed in Blender to its request's budget (512-pixel maps), compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. Three budgets were raised at review, each noted in its request: the palisade's and the horse lines' bytes, by under 20,000, and the supply stack's triangles, since processing stops at 3,163 whatever the target below it. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`. The first horse lines (`g3-horse-lines`, task `74808e8b-0248-455d-a8e0-d2dd5b79464b`, 20 credits) was rejected at review and is not shipped.
+
+The prompts follow [the historical notes](historical-research.md):
+- **The palisade:** the stakes (*pila muralia*, *sudes*) a marching army carried and drove into the bank of its camp each night.
+- **The towers:** the timber towers of the forts on Trajan's Column, braced, railed and roofed.
+- **The training post:** Vegetius's *palus*, at which recruits fought with a wicker shield and a wooden sword heavier than the real ones (*Epitome* 1.11).
+- **The horse lines:** a picket line with its trough and the four-horned saddle, which had no stirrups.
+- **The granary:** the raised floor of the military *horreum*, aired from beneath.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the camps of Chapters I, IV and VII in the desktop build at High, restored from their earned checkpoints through the Restore dialog. What it showed, and what was kept:
+
+![The pilot's eight models from four sides with a 1.8 m figure for scale](images/g3-pilot-models.jpg)
+
+- **The first horse lines were rejected.** Four small toy-like horses stood in the picket line, despite the prompt and its negative prompt. The second attempt asked for the lines empty and named the animals in the negative prompt. It stands on a plank floor the negative prompt did not keep out. Its saddles carry small metal loops like stirrups, which the cavalry of the period did not have; at 2,940 triangles they no longer read as loops, and the saddles read as leather shapes with pale horns.
+- **The palisade's** stakes are lashed with two bands on one face and braced behind on an earth bank. The bands face outward from the camp. Each section is stretched from 0.77 to 1.14 along its length to fill its run, which spaces its stakes a little closer or wider.
+- **The watchtower** is 6 m high and stands within one wall cell.
+- **The officers' tent** is a large leather tent with a ridge roof and its door flaps open; it is scaled to 0.94 to fit its court.
+- **The supply stack** is barrels, flat-based amphorae and sacks on a straw-lined frame under a hide; one amphora stands apart in front. Flat-based amphorae were made in third-century Gaul, among others.
+- **The training post's** practice sword has a metal hilt with a crossguard, which a Roman wooden sword would not have had; it is small at the camera's distance.
+
+#### In the game
+
+The camps were then seen where a player meets them, in the desktop build at High (which carries every chapter's models), each restored from its earned checkpoint through the Restore dialog: Chapter I and Chapter VII at the Overview and Follow cameras, beside the same views on main with the tent lines.
+
+![Chapters I and VII before (the tent lines, on main) and with the pilot's models, in the desktop build at High](images/g3-pilot-camps.jpg)
+
+- **The walls:** the timber camps read as walled and towered camps from every camera, where the black breastwork read as a low fence. The palisade's pale stakes and earth bank read at the Overview camera, and no section's stretch shows.
+- **The gates:** the gate towers frame the road out where the soldier starts in Chapters I and VII, without hiding him. A tower nearest the camera fills a good part of the frame there.
+- **The furniture** beyond the board is small at the Overview camera.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.

@@ -13,7 +13,8 @@ import {createEnvironmentHorizon} from './environment-horizon.js';
 import {createPanorama} from './environment-panorama.js';
 import {addFinaleApproach} from './environment-finale.js';
 import {addChapterFivePilot,isChapterFivePilot,chapterFivePilotHeight,chapterFiveServicePads,getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
-import {hasRegionalWorld,addRegionalWorld,regionalServicePads,regionalPropPlacements,addRegionalPropFallbacks,getRegionalKitPlacements,regionalComponentDimensions} from './environment-regional-world.js';
+import {hasRegionalWorld,addRegionalWorld,regionalServicePads,regionalPropPlacements,addRegionalPropFallbacks,getRegionalKitPlacements,regionalComponentDimensions,TENT_FALLBACK} from './environment-regional-world.js';
+import {BREASTWORK_BATCHES} from './camp-walls.js';
 import {createArchitecturalGroundSampler} from './environment-composition.js';
 import {createCampGroundSampler} from './camp-composition.js';
 import {addCampWorkyards} from './environment-camp-workyards.js';
@@ -256,6 +257,9 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   for(const [name,batch]of batches){
     yield;
     const mesh=new THREE.InstancedMesh(batch.geometry,batch.material,batch.items.length);mesh.name=name;mesh.castShadow=!['meadow grass','dry meadow grass','fern leaves'].includes(name)&&!perf;mesh.receiveShadow=true;
+    // A batch that generated scenery hides once drawn (the tent lines' tents, the timber camps'
+    // breastwork) stands for its own pieces only: no other part of the scene joins it.
+    if(name===TENT_FALLBACK||BREASTWORK_BATCHES.includes(name))mesh.userData.replaceable=true;
     batch.items.forEach((item,i)=>{dummy.position.set(...item.position);dummy.scale.set(...item.scale);dummy.rotation.set(...item.rotation);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,item.color??white);});mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();root.add(mesh);
   }
   yield;

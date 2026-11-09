@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-tent-struck.glb",
+    "bytes": 45328876,
+    "sha256": "c392842ea591bd5a5752b938437d0d2e6dcba527ac5507fc8546a788b49da32d",
+    "triangles": 1458404
+  },
+  "output": {
+    "path": "assets/models/world/g3-tent-struck.glb",
+    "bytes": 169660,
+    "sha256": "8a105773c2161c95b361ad41f9d50fd316d3005515e34bc51b5d154f2afc172e",
+    "triangles": 1960
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.273196891788441,
+  "sizeMetres": {
+    "width": 1.1098,
+    "height": 0.6,
+    "depth": 2.266
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_bf257e30-1de9-452e-977c-1695a5684d63",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_bf257e30-1de9-452e-977c-1695a5684d63",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_bf257e30-1de9-452e-977c-1695a5684d63",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

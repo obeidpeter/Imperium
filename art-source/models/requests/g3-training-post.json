@@ -1,0 +1,98 @@
+{
+  "id": "g3-training-post",
+  "status": "generated: awaiting review",
+  "chapters": [
+    1,
+    3,
+    4,
+    7
+  ],
+  "use": "A training post at the drill ground.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman training post, a palus: a thick oak post about two metres high, scarred and hacked by sword blows, set in packed earth, with a heavy wicker practice shield and a wooden practice sword leaning against it. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611660,
+      "image_seed": 2611661,
+      "texture_seed": 2611662
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 200000,
+    "heightMetres": 1.9,
+    "minHeight": 1.7,
+    "maxHeight": 2.1
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T12:26:39.037Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611660,
+      "image_seed": 2611661,
+      "texture_seed": 2611662,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman training post, a palus: a thick oak post about two metres high, scarred and hacked by sword blows, set in packed earth, with a heavy wicker practice shield and a wooden practice sword leaning against it. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9405,
+    "balanceSnapshotBefore": {
+      "balance": 9405,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "728e2410-7134-4e82-b311-c902649ad9d0",
+      "state": "accepted",
+      "requestSha256": "f68aaf822b75593691dec05f468d3e0841817b9fc12e208e1b31585c4836c1e9"
+    },
+    "taskId": "9f3720a2-45c4-4e88-aa3d-674f595ba769",
+    "status": "success",
+    "generatedAt": "2026-11-09T12:28:32.110Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-training-post.glb",
+    "rawBytes": 46292504,
+    "rawSha256": "7ef75ce81c145cb3889835eeaf52b97bff10d84de10c892a270ad6be1ac66fd4",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman training post, a palus: a thick oak post about two metres high, scarred and hacked by sword blows, set in packed earth, with a heavy wicker practice shield and a wooden practice sword leaning against it. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611661,
+      "model_seed": 2611660,
+      "texture_seed": 2611662,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T12:26:39.421385Z",
+    "tripoCompletedAt": "2026-11-09T12:28:24.122810Z",
+    "tripoRender": "art-source/models/raw/g3-training-post-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A palus with a round wicker shield and a practice sword leaning on it; the sword has a metal hilt with a crossguard, which a Roman wooden sword would not have had, and is small at the camera's distance."
+  }
+}

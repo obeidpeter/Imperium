@@ -1,9 +1,10 @@
 import * as T from '../../vendor/three/three.module.js';
 import {createModelLoader} from './model-loader.js';
-import {worldModelUrl} from '../ui/world-catalog.js';
+import {worldModelUrl,worldAssetShown,CAMP_WALL_CHAPTERS} from '../ui/world-catalog.js';
+import {campPalisadeSections,campTowerSpots,BREASTWORK_BATCHES} from './camp-walls.js';
 import {getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
 import {createSceneryModelCache} from './scenery-cache.js';
-import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements,regionalTentPitches,TENT_MODEL,TENT_FALLBACK} from './environment-regional-world.js';
+import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements,regionalTentPitches,regionalChapter,TENT_MODEL,TENT_FALLBACK} from './environment-regional-world.js';
 import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
@@ -56,12 +57,31 @@ function tentLinePlacements(e,tileSize){
   return pitches.length&&url?[{id:TENT_MODEL,key:'tent-lines',url,instances:pitches.map(p=>({x:p.x,z:p.z,yaw:p.yaw,scale:p.scale})),fallbackName:TENT_FALLBACK}]:[];
 }
 
+// The timber camps' palisade and towers (G3's pilot, camp-walls.js): an instanced draw for each mesh of
+// each model. The palisade stands for the code-built breastwork, hidden once it is drawn, which stays
+// as its fallback on Performance and until the model is ready; the towers have no stand-in.
+export const CAMP_PALISADE='g3-palisade-timber',CAMP_TOWER='g3-watchtower-timber';
+function campWallPlacements(e,chapter,tileSize){
+  if(chapter!==regionalChapter(e))return [];
+  const sections=CAMP_WALL_CHAPTERS[CAMP_PALISADE].includes(chapter)?campPalisadeSections(e,tileSize):[];
+  const towers=CAMP_WALL_CHAPTERS[CAMP_TOWER].includes(chapter)?campTowerSpots(e,tileSize):[];
+  return [
+    ...(sections.length?[{id:CAMP_PALISADE,key:'camp-palisade',url:worldModelUrl(CAMP_PALISADE),instances:sections.map(({x,z,yaw,length})=>({x,z,yaw,length})),fallbackNames:[...BREASTWORK_BATCHES]}]:[]),
+    ...(towers.length?[{id:CAMP_TOWER,key:'camp-towers',url:worldModelUrl(CAMP_TOWER),instances:towers.map(({x,z,yaw})=>({x,z,yaw}))}]:[])
+  ];
+}
+
 /** Only confirmed campaign presentation metadata changes a camp placement.
  * Bundles face the departure side after the civilian-priority decision while
  * retaining the same fixed collision pocket. */
-export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false}={}){
+export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
+  // On the web, a chapter leaves out the generated scenery its download has no room for (world-catalog.js): the
+  // code-built stand-ins stay where those models would stand. `desktop` overrides the build's own platform (tests).
+  return chapterScenery(e,{chapter,tileSize,withoutGate}).filter(p=>worldAssetShown(p.id,chapter,desktop===undefined?{}:{desktop}));
+}
+function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false}={}){
   if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
-    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize)];
+    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize),...campWallPlacements(e,chapter,tileSize)];
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
@@ -129,20 +149,22 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
     const samples=[[x,z],[box.min.x,box.min.z],[box.min.x,box.max.z],[box.max.x,box.min.z],[box.max.x,box.max.z]].map(([sx,sz])=>heightAt(sx,sz)).filter(Number.isFinite);
     model.position.y=(Number.isFinite(groundY)?groundY:samples.length?Math.min(...samples):0)-box.min.y;
   };
-  // Many copies of one model (the tent lines): an instanced mesh for each of its meshes. Each copy's
-  // footprint is centred on its spot and grounded on the lowest of its corners, like a placed model.
+  // Many copies of one model (the tent lines, the camps' palisade and towers): an instanced mesh for
+  // each of its meshes. Each copy's footprint is centred on its spot and grounded on the lowest of its
+  // corners, like a placed model. A copy takes a uniform scale, or a length along the model's own x,
+  // to which it is stretched (a palisade section to its share of a run).
   const placeInstances=(p,source)=>{
     source.updateMatrixWorld(true);
     const box=new T.Box3().setFromObject(source,true),meshes=[];source.traverse(o=>{if(o.isMesh&&!o.isSkinnedMesh)meshes.push(o);});
     if(box.isEmpty()||!meshes.length||!p.instances?.length)return null;
     const inverse=source.matrixWorld.clone().invert(),cx=(box.min.x+box.max.x)/2,cz=(box.min.z+box.max.z)/2;
     const matrices=p.instances.map(item=>{
-      const k=item.scale??1,yaw=item.yaw??0,c=Math.cos(yaw),sn=Math.sin(yaw);
+      const k=item.scale??1,kx=Number.isFinite(item.length)?item.length/Math.max(.001,box.max.x-box.min.x):k,yaw=item.yaw??0,c=Math.cos(yaw),sn=Math.sin(yaw);
       const corners=[[box.min.x,box.min.z],[box.min.x,box.max.z],[box.max.x,box.min.z],[box.max.x,box.max.z]].map(([lx,lz])=>{
-        const ux=(lx-cx)*k,uz=(lz-cz)*k;return heightAt(item.x+ux*c+uz*sn,item.z-ux*sn+uz*c);});
+        const ux=(lx-cx)*kx,uz=(lz-cz)*k;return heightAt(item.x+ux*c+uz*sn,item.z-ux*sn+uz*c);});
       const ground=Math.min(heightAt(item.x,item.z),...corners.filter(Number.isFinite));
       return new T.Matrix4().makeTranslation(item.x,(Number.isFinite(ground)?ground:0)-box.min.y*k,item.z)
-        .multiply(new T.Matrix4().makeRotationY(yaw)).multiply(new T.Matrix4().makeScale(k,k,k)).multiply(new T.Matrix4().makeTranslation(-cx,0,-cz));
+        .multiply(new T.Matrix4().makeRotationY(yaw)).multiply(new T.Matrix4().makeScale(kx,k,k)).multiply(new T.Matrix4().makeTranslation(-cx,0,-cz));
     });
     const group=new T.Group();group.name=p.key??p.id;
     for(const mesh of meshes){

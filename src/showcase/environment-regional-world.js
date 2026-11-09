@@ -8,7 +8,7 @@ import {terrainAt,distantRiverCentre} from './environment-layout.js';
 import {campPropCourt} from './camp-composition.js';
 import {addSmithy} from './environment-smithy.js';
 import {addWayPost} from './environment-waypost.js';
-import {LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,worldModelUrl} from '../ui/world-catalog.js';
+import {CAMP_PROP_CHAPTERS,LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,worldModelUrl} from '../ui/world-catalog.js';
 import {REGIONAL_WORLD_KITS,REGIONAL_PLANS,REGIONAL_FRONTAGE,REGIONAL_COMPOSITIONS,REGIONAL_CHAPTER_EXTRAS,REGIONAL_HEARINGS,ENCOUNTER_LAYOUTS} from '../ui/world-layouts.js';
 
 // The kits, plans and frontage are data (src/ui/world-layouts.js). Placement
@@ -102,6 +102,9 @@ function addRegionalTents({p,m,height,tileSize,instance,geometries},e){
   }
 }
 
+// Life and the camps' furniture stand in the courts beyond the board, never on a service pad, and have no
+// code-built stand-in.
+const courtOnly=id=>!!(LIFE_PROP_CHAPTERS[id]||CAMP_PROP_CHAPTERS[id]);
 const padKindFor=id=>/trough|fountain|cistern|jars/.test(id)?'world-water':/litter|baggage|bundles|relief/.test(id)?'world-local':'world-supply';
 // Cardinal inspection of the final compressed assets established local +X
 // as the shield-boss / scroll-cubby front. Keep their useful faces visible
@@ -110,16 +113,17 @@ const frontServices=Object.freeze({'equipment-rack':'quartermaster','archive-cab
 const propYaw=(id,x,z,target,fallback=0)=>frontServices[id]&&target&&Number.isFinite(target.x)&&Number.isFinite(target.z)&&Math.hypot(target.x-x,target.z-z)>.01?Math.atan2(z-target.z,target.x-x):fallback;
 export function regionalPropPlacements(e,{chapter=regionalChapter(e),tileSize=2.5}={}){
   if(chapter!==regionalChapter(e)||!hasRegionalWorld(e)||!Number.isInteger(e.width)||!Number.isInteger(e.height)||e.width<=0||e.height<=0)return [];
-  // Life about the camps and towns stands outdoors: not round a council's or the Senate's board.
-  const life=e.kind==='contest'?[]:Object.entries(LIFE_PROP_CHAPTERS);
-  const ids=[...Object.entries(REGIONAL_PROP_CHAPTERS),...Object.entries(REGIONAL_REUSED_PROP_CHAPTERS),...life].filter(([,chapters])=>chapters.includes(chapter)).map(([id])=>id);
+  // Life about the camps and towns stands outdoors: not round a council's or the Senate's board. The
+  // camps' own furniture (graphics plan, G3) stands only in a camp.
+  const life=e.kind==='contest'?[]:Object.entries(LIFE_PROP_CHAPTERS),furniture=/-camp$/.test(e.id??'')?Object.entries(CAMP_PROP_CHAPTERS):[];
+  const ids=[...Object.entries(REGIONAL_PROP_CHAPTERS),...Object.entries(REGIONAL_REUSED_PROP_CHAPTERS),...life,...furniture].filter(([,chapters])=>chapters.includes(chapter)).map(([id])=>id);
   const pads=regionalServicePads(e,tileSize),used=new Set(),hx=e.width*tileSize/2,hz=e.height*tileSize/2,occupied=getRegionalKitPlacements(e,{chapter,tileSize}).map(regionalPlacementBounds);
   const entrance=campEntrance(e,tileSize);
   if(entrance){const {x,z,edge}=entrance,side=edge==='east'||edge==='west',dx=side?Math.sign(x)*14:0,dz=side?0:Math.sign(z)*14;
     occupied.push({minX:Math.min(x,x+dx)-1.8,maxX:Math.max(x,x+dx)+1.8,minZ:Math.min(z,z+dz)-1.8,maxZ:Math.max(z,z+dz)+1.8});}
   const intersects=(a,b)=>a.maxX>b.minX&&a.minX<b.maxX&&a.maxZ>b.minZ&&a.minZ<b.maxZ;
   return ids.map((id,i)=>{
-    const kind=padKindFor(id),pad=id==='river-ferry'||LIFE_PROP_CHAPTERS[id]?null:pads.find(p=>p.id===kind&&!used.has(p.id));
+    const kind=padKindFor(id),pad=id==='river-ferry'||courtOnly(id)?null:pads.find(p=>p.id===kind&&!used.has(p.id));
     if(pad){
       used.add(pad.id);const x=pad.x+.4,z=pad.z,approach=e.campPresentation?.places?.find(place=>place.id===frontServices[id])??{x:0,z:0};
       return {id,url:worldModelUrl(id),x,z,yaw:propYaw(id,x,z,approach),pad:true,padId:pad.id,fitWithin:{width:pad.width-1.4,depth:pad.depth-.6},fallbackName:`world-service-pad:${chapter}:${pad.id}`};
@@ -134,13 +138,13 @@ export function regionalPropPlacements(e,{chapter=regionalChapter(e),tileSize=2.
     const court=campPropCourt(e,id,occupied,{tileSize});
     if(court){
       occupied.push(court.bounds);
-      return {id,url:worldModelUrl(id),x:court.x,z:court.z,yaw:propYaw(id,court.x,court.z,court.approach,court.yaw),court:{service:court.service,approach:court.approach},fitWithin:{width:4.4,depth:4.4},...(LIFE_PROP_CHAPTERS[id]?{}:{fallbackName:`regional-prop:${id}`})};
+      return {id,url:worldModelUrl(id),x:court.x,z:court.z,yaw:propYaw(id,court.x,court.z,court.approach,court.yaw),court:{service:court.service,approach:court.approach},fitWithin:{width:4.4,depth:4.4},...(courtOnly(id)?{}:{fallbackName:`regional-prop:${id}`})};
     }
     let slot=i,x,z,b;
     do{const column=slot%4,row=Math.floor(slot/4);x=[-10,-4,4,10][column];z=hz+5.5+row*6;slot++;b={minX:x-2.35,maxX:x+2.35,minZ:z-2.35,maxZ:z+2.35};}while(occupied.some(other=>intersects(b,other)));
     occupied.push(b);const column=(slot-1)%4;
     // Life has no code-built stand-in: on Performance, or without its model, the place stays empty.
-    return {id,url:worldModelUrl(id),x,z,yaw:propYaw(id,x,z,{x,z:0},column%2?-.12:.12),fitWithin:{width:id==='river-ferry'?4.6:4.4,depth:4.4},...(LIFE_PROP_CHAPTERS[id]?{}:{fallbackName:`regional-prop:${id}`})};
+    return {id,url:worldModelUrl(id),x,z,yaw:propYaw(id,x,z,{x,z:0},column%2?-.12:.12),fitWithin:{width:id==='river-ferry'?4.6:4.4,depth:4.4},...(courtOnly(id)?{}:{fallbackName:`regional-prop:${id}`})};
   });
 }
 

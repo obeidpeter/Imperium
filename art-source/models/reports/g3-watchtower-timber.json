@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-watchtower-timber.glb",
+    "bytes": 44364952,
+    "sha256": "65d2cba5067aed91743034e7cce5c9d6012d907edc222bf70f450a05e7ea8e44",
+    "triangles": 1429292
+  },
+  "output": {
+    "path": "assets/models/world/g3-watchtower-timber.glb",
+    "bytes": 227072,
+    "sha256": "90573e7cdfb365e4a1151408923af7673ddb095a4926e4edcf8be4027b0eb223",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 6.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 6.005112888518336,
+  "sizeMetres": {
+    "width": 2.3212,
+    "height": 6.0,
+    "depth": 2.3392
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_cddc6ba5-0e4c-465b-8e10-17116f4eeb1e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_cddc6ba5-0e4c-465b-8e10-17116f4eeb1e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_cddc6ba5-0e4c-465b-8e10-17116f4eeb1e",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}
