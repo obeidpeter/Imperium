@@ -290,16 +290,22 @@ Six battle and siege models, about a seventh of G5's list, made and reviewed in 
 - **Downloads:** each model downloads with its chapters in the desktop app. On the web:
   - Chapters I, VII and VIII take none (17.87 of 18 MB, 27.95 and 27.92 of 28);
   - IV takes the cart, its load and the barricade (27.91 of 28); IX the two engines (27.86); X the carroballista and the barricade (27.92); XII the barricade (27.95);
-  - II, III, V and VI take all of theirs (V at 24.91, VI at 27.41);
+  - II, III, V and VI take all of theirs (V at 24.91, VI at 27.40);
   - the complete web game is 71.86 of 80 MB.
 - **The review,** in the desktop build at High, each battle restored from a moment the real-time bot reached from New Game, before (G5's files refused) and after:
-REVIEW
+  - the cart and its load (Chapters III and VIII) read at once as an abandoned cart with its load still lashed on;
+  - the barricade's two lattice panels (Chapter XII) stand where the code-built stakes stood. In the press of the fight they are half hidden, as the stakes are, and their thin beams are harder to pick out;
+  - the ram (Chapter V) reads as a siege engine on its ground before the river gate, its iron head toward the gate. From the camera's height its hide roof shows only as dark, ragged pieces;
+  - the onager (Chapters V and IX) reads at once behind the Roman line. The carroballista (Chapter VII) reads less well: at the edge of the view its thin frame and dark timber are hard to tell from the scrub.
 
-![Battles before (the code-built pieces) and with the pilot's models, in the desktop build at High](images/g5-pilot-battles.jpg)
+![Field objects before (the code-built pieces) and with the pilot's models, in the desktop build at High](images/g5-pilot-battles.jpg)
+
+![The set pieces behind the Roman line, before (none) and with the pilot's models](images/g5-pilot-set-pieces.jpg)
 
 #### What G5's pilot proposes
 
 The pilot shows the field objects and the set pieces read in battle, so the rest of G5 buys more of both, in two batches, each reviewed in the game before the next:
+- **What the review teaches the next batch:** from the camera's height, solid shapes read at once (the cart, the onager, the ram's body), while thin frames and lattices (the carroballista, the barricade) are harder to pick out. So the next requests ask for solid timbers and bold silhouettes, and each model is checked at the field's distance before it is placed.
 - **The rest of the list,** about 30 models, about 660 credits with a tenth for rejects:
   - the other field objects on their cells, each with its code-built fallback: the signal station, the pitch brazier (its flame stays the particle plume), the Gothic ladder, the countermine's timbering, the siege ramp, and the side gate and the footbridge outside the fortified fields (7);
   - beyond the west edge, a ballista on its stand and a scorpion (2); before the walls of the sieges, a siege tower and a row of mantlets (2);

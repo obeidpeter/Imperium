@@ -90,6 +90,6 @@
   "review": {
     "date": "2026-11-09",
     "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
-    "notes": "A timber shed on four solid wheels under a pitched roof of dark, ragged hides, the ram beam hung in it on a chain, its long iron head projecting at the model's +x. Turned half round (yaw pi) so the head points west at the gate, like the code-built ram's. Processed at 2.0 m high rather than the request's 2.2, so its 3.04 m length overhangs its 2.5 m cell by about a quarter metre at each end, the head over the gate's cell; at 2.2 m it was 3.35 m long. The head is pointed rather than the blunt one asked for."
+    "notes": "A timber shed on four solid wheels under a pitched roof of dark, ragged hides, the ram beam hung in it on a chain, its long iron head projecting at the model's +x. Turned half round (yaw pi) so the head points west at the gate, like the code-built ram's. Processed at 2.0 m high rather than the request's 2.2, so its 3.04 m length overhangs its 2.5 m cell by about a quarter metre at each end, the head over the gate's cell; at 2.2 m it was 3.35 m long. The head is pointed rather than the blunt one asked for. In the game, from the camera's height, it reads as a siege engine where the code-built frame is thin, though its hide roof shows only as dark, ragged pieces over the timbers."
   }
 }

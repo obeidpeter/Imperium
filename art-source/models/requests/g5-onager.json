@@ -93,6 +93,6 @@
   "review": {
     "date": "2026-11-09",
     "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
-    "notes": "A heavy rectangular timber frame on the ground with a long coil of twisted rope along it, a single throwing arm standing upright at its front with a short crossbar at the top and a rope hanging from it, iron fittings and three dressed stone balls beside it; the padded buffer beam the prompt asked for is missing, and the front beam carries a decorative iron plate. The arm stands at the model's -x, so it turns half round (yaw pi) to face east."
+    "notes": "A heavy rectangular timber frame on the ground with a long coil of twisted rope along it, a single throwing arm standing upright at its front with a short crossbar at the top and a rope hanging from it, iron fittings and three dressed stone balls beside it; the padded buffer beam the prompt asked for is missing, and the front beam carries a decorative iron plate. The arm stands at the model's -x, so it turns half round (yaw pi) to face east. In the game it reads at once behind the Roman line."
   }
 }

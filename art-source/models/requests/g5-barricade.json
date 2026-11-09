@@ -1,6 +1,6 @@
 {
   "id": "g5-barricade",
-  "status": "G5 pilot: processed, compressed and reviewed; in the game at Chapter III's station (desktop build, High)",
+  "status": "G5 pilot: processed, compressed and reviewed; in the game at Chapter XII's confrontation (desktop build, High)",
   "chapters": [
     3,
     4,
@@ -98,6 +98,6 @@
   "review": {
     "date": "2026-11-09",
     "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
-    "notes": "Not the crossed pairs of stakes on one beam the prompt asked for, but a lattice of four sharpened horizontal beams on five sharpened uprights, braced and lashed with rope: a timber obstacle whose points face both ways, as the code-built barricade's stakes do. Kept: it reads as a field obstacle at once. A panel is 1.16 m long at 1.0 m high, so two stand side by side across the cell, east to west, spanning 2.3 m as the code-built barricade's 2 m do. Its thin stakes need their 2,939 triangles; the byte budget rose from 220,000 to 240,000 for them."
+    "notes": "Not the crossed pairs of stakes on one beam the prompt asked for, but a lattice of four sharpened horizontal beams on five sharpened uprights, braced and lashed with rope: a timber obstacle whose points face both ways, as the code-built barricade's stakes do. Kept: it reads as a field obstacle at once. A panel is 1.16 m long at 1.0 m high, so two stand side by side across the cell, east to west, spanning 2.3 m as the code-built barricade's 2 m do. Its thin stakes need their 2,939 triangles; the byte budget rose from 220,000 to 240,000 for them. In the game, in a crowded fight, its thin beams are harder to pick out than the code-built crossed stakes."
   }
 }

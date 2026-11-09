@@ -1956,7 +1956,24 @@ Each model was compared with Tripo's render, then rendered from four sides with 
 
 #### In the game
 
-INGAME
+Each battle was seen twice at the same moment: once with G5's files refused, which leaves the code-built pieces or bare ground where a set piece would stand, and once with them. Each moment was paused and framed with the game's own controls: the zoom, and **Find objective** for the ram.
+
+![Field objects before (the code-built pieces) and with the pilot's models, in the desktop build at High](images/g5-pilot-battles.jpg)
+
+![The set pieces behind the Roman line, before (none) and with the pilot's models](images/g5-pilot-set-pieces.jpg)
+
+- **The cart and its load** (Chapters III and VIII) stand on the cell where the code-built cart and its sacks stood. They read at once as an abandoned cart with its load still lashed on.
+- **The barricade** (Chapter XII) stands as two lattice panels where the code-built crossed stakes stood. In the press of the fight it is half hidden by the men around it, as the stakes are, and its thin beams are harder to pick out than theirs.
+- **The ram** (Chapter V) stands on its ground east of the river gate, its iron head toward the gate. Where the code-built piece is a thin frame, it reads as a wheeled timber engine with its beam slung inside. From the camera's height its hide roof shows only as dark, ragged pieces over the timbers.
+- **The onager** (Chapters V and IX) reads at once behind the Roman line: the frame on the ground, the arm upright, a long shadow.
+- **The carroballista** (Chapter VII) reads less well. At the edge of the view its thin frame and dark timber are hard to tell from the scrub around it.
+- **The set pieces** stand at the top of the view as a battle opens, a few metres beyond the soldiers' starting ground. They pass out of it as the army moves east.
+- **Not seen:**
+  - the cart in its other states (secured, forgone or missed);
+  - the battles of Chapters I, II, IV, VI and X;
+  - the burnt ram's and the dismantled barricade's code-built remains, which are unchanged.
+
+  `tests/graphics-g5.test.mjs` checks every state's placement in every battle.
 
 ## Steam achievement icons · 3 November 2026
 

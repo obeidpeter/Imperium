@@ -93,6 +93,6 @@
   "review": {
     "date": "2026-11-09",
     "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
-    "notes": "Two bronze-cased spring housings joined by an arched iron bar, as on Trajan's Column, with a slider running back along a plank bed, on a cart with four spoked wheels rather than the column's two. The springs stand at the model's -x, so it turns half round (yaw pi) to face east, toward the enemy. 3.3 m long with its pole; the byte budget rose from 280,000 to 290,000 for its 4,409 triangles."
+    "notes": "Two bronze-cased spring housings joined by an arched iron bar, as on Trajan's Column, with a slider running back along a plank bed, on a cart with four spoked wheels rather than the column's two. The springs stand at the model's -x, so it turns half round (yaw pi) to face east, toward the enemy. 3.3 m long with its pole; the byte budget rose from 280,000 to 290,000 for its 4,409 triangles. In the game, at the edge of the view behind the line, its thin frame and dark timber are hard to tell from the scrub; the onager reads better."
   }
 }

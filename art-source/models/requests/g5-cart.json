@@ -100,6 +100,6 @@
   "review": {
     "date": "2026-11-09",
     "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High, before and after",
-    "notes": "A two-wheeled cart with spoked, iron-tyred wheels on a timber axle, a plank bed with low slatted rails, a folded cover on the bed and a pole with a yoke bar resting on the ground. The pole runs along the model's -z, so it turns a quarter (yaw pi/2) to point west like the code-built cart's shafts. Its bed floor stands 0.62 m up, where the load rides."
+    "notes": "A two-wheeled cart with spoked, iron-tyred wheels on a timber axle, a plank bed with low slatted rails, a folded cover on the bed and a pole with a yoke bar resting on the ground. The pole runs along the model's -z, so it turns a quarter (yaw pi/2) to point west like the code-built cart's shafts. Its bed floor stands 0.62 m up, where the load rides. In the game it reads at once as an abandoned cart, with its load on the bed."
   }
 }

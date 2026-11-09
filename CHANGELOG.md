@@ -18,6 +18,9 @@ Six Tripo models, made for 140 credits and reviewed in the game before the rest 
   - an onager, a one-armed stone-thrower, in the sieges of Chapters IV, V, IX and XII.
 
   Each stands on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery. Like the camps' furniture, they have no code-built stand-in.
+- **Reviewed in the game,** before and after, in the battles of Chapters III, V, VII, VIII, IX and XII ([the art record](docs/art-generation.md#release-g5s-pilot-battle-and-siege--9-november-2026)):
+  - the cart, its load, the ram and the onager read at once;
+  - the barricade's thin lattice and the carroballista's thin frame are harder to pick out, so the next batch asks for solid timbers and bold silhouettes.
 - **The first load was rejected** (it came on a four-wheeled cart of its own) and redone: one generation in seven, under the 20% stop rule.
 - **Downloads:** each model downloads with its chapters in the desktop app. On the web:
   - Chapters I, VII and VIII take none;
