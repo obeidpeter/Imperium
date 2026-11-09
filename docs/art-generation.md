@@ -1901,7 +1901,7 @@ Each model was compared with Tripo's render, then rendered from four sides with 
 
 #### In the game
 
-The camps were then seen where a player meets them, in the desktop build at High (which carries every chapter's models), each restored from its earned checkpoint through the Restore dialog: Chapters II, IV, V, VI and IX at the Follow and Overview cameras, Chapters IV, VI and IX beside the same views on main, and Chapters II, IV, VI and IX from the edge of the board beside their courts, the soldier walked there by ordinary move commands. Chapters IV, VI and IX were seen again once the shade and the supply stack had been processed again (below); the images show that build.
+The camps were then seen where a player meets them, in the desktop build at High (which carries every chapter's models), each restored from its earned checkpoint through the Restore dialog: Chapters II, IV, V, VI and IX at the Follow and Overview cameras, Chapters IV, VI and IX beside the same views on main, and Chapters II, IV, VI and IX from the edge of the board beside their courts, and Chapter II beside a tent line, the soldier walked there by ordinary move commands. Chapters IV, VI and IX were seen again once the shade and the supply stack had been processed again (below); the images show that build.
 
 ![Chapters IV, VI and IX before (main, after the pilot) and with the rest of G3, in the desktop build at High](images/g3-rest-camps.jpg)
 
@@ -1910,7 +1910,7 @@ The camps were then seen where a player meets them, in the desktop build at High
 - **The tent lines:** in Chapter II the open tent reads reddish and the patched one pale among the leather tents. The single tents of Chapters IV and VI stay leather.
 - **The furniture,** from the edge of the board at the Follow camera: the commander's pavilion and the pilum rack beyond Chapter II's west wall; the altar beyond Chapter IV's south wall, with the oven there at the Overview camera; the hospital tent and its camp beds beyond Chapter VI's west wall, the archery butt and the pilum rack beside its south-east tower, and the reed-mat shade beyond its south wall; and the hospital tent, the commander's pavilion and the shade beyond Chapter IX's east wall.
 
-![The camps' new furniture, gates and tents at the Follow camera, and Chapter IX's shade and supply stack before and after they were processed again, in the desktop build at High](images/g3-rest-close.jpg)
+![The camps' new furniture, gates and tents at the Follow camera, and the reed-mat shade and the supply stack before and after they were processed again, in the desktop build at High](images/g3-rest-close.jpg)
 
 - **The reed-mat shade was processed again.** At 4,269 triangles its roof and the jars beneath it crumpled into facets at the Follow camera of Chapters VI and IX; at 8,819 they hold, for 121,844 more bytes.
 - **So was the pilot's supply stack.** Beside Chapter IX's hospital tent at the Follow camera, its barrels, amphorae and sacks had crumpled into a heap at 3,163 triangles, the least its processing reaches, which the pilot's review at the Overview camera had not shown. At 5,500 (5,389 triangles, 329,212 bytes) they hold, in four views and in the game. 6,859 and 8,819 triangles held as well, but Chapter VII's web download, which carries the stack, had 129,529 bytes of room: 5,389 takes 72,560 more.
