@@ -184,6 +184,8 @@ G3 starts with its credit-free layer: the camps' tent lines, open ground until n
 - **Downloads:** the tent (231,056 bytes) joins the packs of the nine chapters with tent lines.
 - **What the pilot needs from it:** the smaller camps (IV–IX, XII) fit only a few tents on their board, so their pilot tents also need ground beyond the walls, where the camp continues.
 
+![Chapter I's and Chapter VII's camps before and after the tent lines, in the source tree at High: Chapter I's Overview camera, the soldier walked to a tent line by an ordinary move, and Chapter VII's wide view](images/g3-tent-lines.jpg)
+
 ## Around every release, at no credit cost
 
 - **Pipeline:**
