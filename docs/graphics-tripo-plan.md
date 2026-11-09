@@ -33,7 +33,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
 | G4 | Animals | 600 | |
-| G5 | Battle and siege | 1,845 | [the pilot](#g5s-pilot-9-november) done (140 credits): 6 models. It [proposes](#what-g5s-pilot-proposes) the rest of G5 and where G3's held 1,840 go |
+| G5 | Battle and siege | 1,845 | [the pilot](#g5s-pilot-9-november) (140 credits) and [the first batch](#the-rest-of-g5-the-first-batch-9-november) (440) done: 24 models. The pilot [proposes](#what-g5s-pilot-proposes) where G3's held 1,840 go, and the first batch [what comes next](#what-the-first-batch-proposes), within G5's 1,265 left |
 | G6 | Faces and people | 1,100 | |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
 | | **Total** | **7,900** | |
