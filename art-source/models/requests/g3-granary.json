@@ -1,0 +1,96 @@
+{
+  "id": "g3-granary",
+  "status": "G3 pilot: processed, compressed and reviewed; in the game at Chapter IV's Overview camera (desktop build, High)",
+  "chapters": [
+    4,
+    10
+  ],
+  "use": "A granary beside the quartermaster, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A small Roman military granary, a horreum: a raised timber storehouse on short stone piers, with plank walls, a tiled pitched roof with wide eaves, a ventilation slot under the eaves and a wooden loading step at its door. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611600,
+      "image_seed": 2611601,
+      "texture_seed": 2611602
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 4,
+    "minHeight": 3.6,
+    "maxHeight": 4.4
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T12:23:52.834Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611600,
+      "image_seed": 2611601,
+      "texture_seed": 2611602,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A small Roman military granary, a horreum: a raised timber storehouse on short stone piers, with plank walls, a tiled pitched roof with wide eaves, a ventilation slot under the eaves and a wooden loading step at its door. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9445,
+    "balanceSnapshotBefore": {
+      "balance": 9445,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "3823aed2-4829-42ec-9cd6-66f3ab99e4d6",
+      "state": "accepted",
+      "requestSha256": "8fe4b03b38a1e5599039234074677be4cbd95636a67797024cd97dec52c970dc"
+    },
+    "taskId": "fbb2f287-94d3-4bac-a2ed-82a365831e97",
+    "status": "success",
+    "generatedAt": "2026-11-09T12:26:38.310Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-granary.glb",
+    "rawBytes": 44800596,
+    "rawSha256": "b7d13c24772a6632e5aaa039e6ba9f1bc69f3f606bebfee6b93602989713cdcf",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A small Roman military granary, a horreum: a raised timber storehouse on short stone piers, with plank walls, a tiled pitched roof with wide eaves, a ventilation slot under the eaves and a wooden loading step at its door. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611601,
+      "model_seed": 2611600,
+      "texture_seed": 2611602,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T12:23:53.896698Z",
+    "tripoCompletedAt": "2026-11-09T12:26:33.079024Z",
+    "tripoRender": "art-source/models/raw/g3-granary-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A raised timber storehouse with a tiled roof on short piers."
+  }
+}

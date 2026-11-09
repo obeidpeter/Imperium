@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-officers-tent.glb",
+    "bytes": 45796500,
+    "sha256": "fc8061dd2e77a73cd003121985be7a2d7fc4c64a15e2c0e8b34f7bcd1c3dd796",
+    "triangles": 1456826
+  },
+  "output": {
+    "path": "assets/models/world/g3-officers-tent.glb",
+    "bytes": 228668,
+    "sha256": "e0e1de9463443c7d44cff88ab598b83c25abc3bcd991763907470ed3414753fb",
+    "triangles": 3430
+  },
+  "settings": {
+    "triangles": 3500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 4.684676071367356,
+  "sizeMetres": {
+    "width": 4.3774,
+    "height": 2.6,
+    "depth": 4.6556
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_f425a693-9ca4-4f9a-bad8-8b64c0363a68",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_f425a693-9ca4-4f9a-bad8-8b64c0363a68",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_f425a693-9ca4-4f9a-bad8-8b64c0363a68",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

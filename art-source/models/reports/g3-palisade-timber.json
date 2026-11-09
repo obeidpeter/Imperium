@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-palisade-timber.glb",
+    "bytes": 45995016,
+    "sha256": "7ad0af01a95dad074356ff26f4406ed7ca94b3186088f46c2b8ea48ebf009cf3",
+    "triangles": 1452580
+  },
+  "output": {
+    "path": "assets/models/world/g3-palisade-timber.glb",
+    "bytes": 160784,
+    "sha256": "9e250333c5a88c94759ff7311d6d88fc58f62db39de6484d93cd8e9452fb4520",
+    "triangles": 1175
+  },
+  "settings": {
+    "triangles": 1200,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 7.330740858675758,
+  "sizeMetres": {
+    "width": 7.325,
+    "height": 2.0,
+    "depth": 1.1875
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_22c6bc13-d45c-4a79-8497-e4eccb4ca0e2",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_22c6bc13-d45c-4a79-8497-e4eccb4ca0e2",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_22c6bc13-d45c-4a79-8497-e4eccb4ca0e2",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

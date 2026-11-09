@@ -1,0 +1,97 @@
+{
+  "id": "g3-tent-struck",
+  "status": "G3 pilot: processed, compressed and reviewed; small at the Overview camera in Chapter VIII (desktop build, High)",
+  "chapters": [
+    2,
+    6,
+    8
+  ],
+  "use": "A tent struck for the march, in the camps of the retreats.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman eight-man leather tent struck for the march: its stitched goatskin panels folded and rolled into one long bundle tied with rope, the ridge pole and two upright poles laid beside it, a coil of guy rope and a leather bag of wooden pegs. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611650,
+      "image_seed": 2611651,
+      "texture_seed": 2611652
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 200000,
+    "heightMetres": 0.6,
+    "minHeight": 0.45,
+    "maxHeight": 0.75
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T12:28:32.645Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "model_seed": 2611650,
+      "image_seed": 2611651,
+      "texture_seed": 2611652,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman eight-man leather tent struck for the march: its stitched goatskin panels folded and rolled into one long bundle tied with rope, the ridge pole and two upright poles laid beside it, a coil of guy rope and a leather bag of wooden pegs. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9365,
+    "balanceSnapshotBefore": {
+      "balance": 9365,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "166490e4-d659-4900-bf88-8323b3a2c874",
+      "state": "accepted",
+      "requestSha256": "df4eaeb5fc1b0810b7aa8bf55449cb0bd90bc202f1becf07e73fb56d1e4d3449"
+    },
+    "taskId": "bf257e30-1de9-452e-977c-1695a5684d63",
+    "status": "success",
+    "generatedAt": "2026-11-09T12:30:55.710Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-tent-struck.glb",
+    "rawBytes": 45328876,
+    "rawSha256": "c392842ea591bd5a5752b938437d0d2e6dcba527ac5507fc8546a788b49da32d",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman eight-man leather tent struck for the march: its stitched goatskin panels folded and rolled into one long bundle tied with rope, the ridge pole and two upright poles laid beside it, a coil of guy rope and a leather bag of wooden pegs. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611651,
+      "model_seed": 2611650,
+      "texture_seed": 2611652,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T12:28:33.050931Z",
+    "tripoCompletedAt": "2026-11-09T12:30:47.527009Z",
+    "tripoRender": "art-source/models/raw/g3-tent-struck-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A leather tent rolled and tied, with its poles and coiled rope. Beyond Chapter VIII's east wall, beside the ox cart, it reads as a dark rolled bundle with its rope at one end, small at the Overview camera."
+  }
+}

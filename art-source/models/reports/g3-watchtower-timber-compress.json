@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-watchtower-timber.glb",
+  "output": "assets/models/world/g3-watchtower-timber.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 227072,
+    "gzipBytes": 155239,
+    "sha256": "90573e7cdfb365e4a1151408923af7673ddb095a4926e4edcf8be4027b0eb223"
+  },
+  "after": {
+    "bytes": 229792,
+    "gzipBytes": 222239,
+    "sha256": "ce66ed7766c65c578b7341c10988f6ea74b46963c942af44a8d7f5162b617b16"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10212
+      },
+      "bytes": 18438,
+      "psnr": 41.059
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31692
+      },
+      "bytes": 52420,
+      "psnr": 35.333
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 36736
+      },
+      "bytes": 43226,
+      "psnr": 33.568
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+ "scope": "Release G3 of the graphics plan (docs/graphics-tripo-plan.md): the camps",
+ "authorization": {
+  "credits": 2400,
+  "approvedBy": "Owner",
+  "source": "docs/graphics-tripo-plan.md: release G3, capped at 1,300 credits on 8 November 2026 and raised to 2,400 with G7's 400 (decision 7) and 700 of G1's (decision 11); decision 9 (9 November 2026) leaves the rest of the plan to my judgement within each release's cap, each pilot reviewed in the game before the rest of its release is generated"
+ },
+ "pricing": {
+  "textWithStandardTextures": 20,
+  "source": "the calibration's measured prices (docs/graphics-calibration.md); each task's reported credits_consumed is recorded below"
+ },
+ "batches": [
+  {
+   "batch": "pilot",
+   "date": "2026-11-09",
+   "ceilingCredits": 200,
+   "plannedCredits": 160,
+   "spentCredits": 180,
+   "items": [
+    "g3-palisade-timber",
+    "g3-watchtower-timber",
+    "g3-officers-tent",
+    "g3-tent-struck",
+    "g3-horse-lines-b",
+    "g3-training-post",
+    "g3-supply-stack",
+    "g3-granary"
+   ],
+   "note": "Eight props at standard texture and geometry, 20 credits each, and one rejected generation redone (20 more): 180 credits within the pilot's 200-credit ceiling. The palisade and the watchtower stand on the timber camps' walls; the other six in the camps' courts beyond the board.",
+   "tasks": [
+    {
+     "id": "g3-palisade-timber",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "22c6bc13-d45c-4a79-8497-e4eccb4ca0e2",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-watchtower-timber",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "cddc6ba5-0e4c-465b-8e10-17116f4eeb1e",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-officers-tent",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "f425a693-9ca4-4f9a-bad8-8b64c0363a68",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-granary",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "fbb2f287-94d3-4bac-a2ed-82a365831e97",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-horse-lines",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "74808e8b-0248-455d-a8e0-d2dd5b79464b",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20,
+     "rejectedAtReview": "four small toy-like horses stand in the picket line, despite the prompt and its negative prompt"
+    },
+    {
+     "id": "g3-training-post",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "9f3720a2-45c4-4e88-aa3d-674f595ba769",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-supply-stack",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "a26c71e8-8281-4306-9e6f-19cf3f00a392",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-tent-struck",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "bf257e30-1de9-452e-977c-1695a5684d63",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-horse-lines-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "e557698b-05c2-4a2a-b799-22e4caf5893d",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    }
+   ],
+   "balance": {
+    "before": 9505,
+    "after": 9325,
+    "source": "the account balance read before the first task and after the last (frozen 0)"
+   },
+   "rejected": {
+    "count": 1,
+    "of": 9,
+    "items": [
+     "g3-horse-lines"
+    ],
+    "note": "Four small toy-like horses stood in the picket line, despite the prompt and its negative prompt; the second attempt, g3-horse-lines-b, ships. One of nine generations (11%), under the plan's 20% stop rule."
+   }
+  }
+ ],
+ "spentCredits": 180,
+ "remainingAuthorization": 2220
+}

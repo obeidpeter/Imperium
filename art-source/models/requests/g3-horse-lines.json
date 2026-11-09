@@ -1,0 +1,92 @@
+{
+  "id": "g3-horse-lines",
+  "status": "G3 pilot: rejected at review (four small toy-like horses stand in the picket line, despite the prompt and its negative prompt); redone as g3-horse-lines-b",
+  "chapters": [
+    7,
+    9,
+    12
+  ],
+  "use": "The cavalry's horse lines, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Roman cavalry horse lines without horses: a long rope picket line stretched between two stout wooden posts, a wooden feed trough on trestles beneath it, a heap of hay, and two leather horned saddles resting on a timber rail. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "horse, pony, donkey, mule, animal, rider, person, people, ground plane, terrain, base plate, text, modern objects, fantasy",
+      "model_seed": 2611610,
+      "image_seed": 2611611,
+      "texture_seed": 2611612
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 240000,
+    "heightMetres": 1.6,
+    "minHeight": 1.4,
+    "maxHeight": 1.8
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T12:25:12.759Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "horse, pony, donkey, mule, animal, rider, person, people, ground plane, terrain, base plate, text, modern objects, fantasy",
+      "model_seed": 2611610,
+      "image_seed": 2611611,
+      "texture_seed": 2611612,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Roman cavalry horse lines without horses: a long rope picket line stretched between two stout wooden posts, a wooden feed trough on trestles beneath it, a heap of hay, and two leather horned saddles resting on a timber rail. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9425,
+    "balanceSnapshotBefore": {
+      "balance": 9425,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "251e1c8a-1a98-4c70-bba8-37d2ab18b0d8",
+      "state": "accepted",
+      "requestSha256": "fb1d967d69fc0d699692a5b40a221e850492b601b458659cc18a862a398cef50"
+    },
+    "taskId": "74808e8b-0248-455d-a8e0-d2dd5b79464b",
+    "status": "success",
+    "generatedAt": "2026-11-09T12:27:41.605Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-horse-lines.glb",
+    "rawBytes": 45110076,
+    "rawSha256": "aaf1bf3869cbf5444e77b3817a3f51ec74b9add39773da029770f4461707012b",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Roman cavalry horse lines without horses: a long rope picket line stretched between two stout wooden posts, a wooden feed trough on trestles beneath it, a heap of hay, and two leather horned saddles resting on a timber rail. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611611,
+      "model_seed": 2611610,
+      "texture_seed": 2611612,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "horse, pony, donkey, mule, animal, rider, person, people, ground plane, terrain, base plate, text, modern objects, fantasy",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T12:25:13.490899Z",
+    "tripoCompletedAt": "2026-11-09T12:27:36.415393Z",
+    "tripoRender": "art-source/models/raw/g3-horse-lines-tripo-render.webp"
+  }
+}

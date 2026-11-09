@@ -16881,6 +16881,454 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g3-palisade-timber",
+      "path": "assets/models/world/g3-palisade-timber.glb",
+      "subject": "Release G3 camp prop: a section of timber palisade",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "22c6bc13-d45c-4a79-8497-e4eccb4ca0e2",
+        "generatedAt": "2026-11-09T12:23:06.371Z",
+        "prompt": "art-source/models/requests/g3-palisade-timber.json",
+        "rawBytes": 45995016,
+        "rawSha256": "7ad0af01a95dad074356ff26f4406ed7ca94b3186088f46c2b8ea48ebf009cf3",
+        "program": "graphics-g3",
+        "credits": 20,
+        "processing": {
+          "triangles": 1200,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.0,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g3-palisade-timber.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g3-palisade-timber-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The timber camps' palisade (graphics plan, G3): sections stand along every wall cell of the camps of Chapters I, II, III, VII, VIII and X, stretched to fill each straight run, in one instanced draw (src/showcase/camp-walls.js, scenery-models.js). It stands for the code-built breastwork, which it hides once drawn and which stays as its fallback. Decorative only: the wall cells were solid already; it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 7, 8, 10 at Balanced/High, preloaded with the scene's scenery; Performance and a failed download keep the code-built breastwork.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 178716,
+        "gzipBytes": 173673,
+        "sha256": "596099422e8b571294c3ddd6c9e8b78e89b4d6ed1760479f1e0d10dc6b24b33c",
+        "triangles": 1174,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 7.325,
+          "height": 2.0,
+          "depth": 1.1875
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g3-watchtower-timber",
+      "path": "assets/models/world/g3-watchtower-timber.glb",
+      "subject": "Release G3 camp prop: a timber watchtower",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "cddc6ba5-0e4c-465b-8e10-17116f4eeb1e",
+        "generatedAt": "2026-11-09T12:23:51.944Z",
+        "prompt": "art-source/models/requests/g3-watchtower-timber.json",
+        "rawBytes": 44364952,
+        "rawSha256": "65d2cba5067aed91743034e7cce5c9d6012d907edc222bf70f450a05e7ea8e44",
+        "program": "graphics-g3",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 6.0,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g3-watchtower-timber.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g3-watchtower-timber-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The timber camps' towers (graphics plan, G3): one on each corner of the wall of the camps of Chapters I, II, III, VII, VIII and X, and one at each end of a run that opens on a gateway, in one instanced draw (src/showcase/camp-walls.js). Decorative only: it stands on wall cells, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 7, 8, 10 at Balanced/High, preloaded with the scene's scenery; on the web only 2, 3, 7, 8, 10: Chapter I's web download has no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 229792,
+        "gzipBytes": 222239,
+        "sha256": "ce66ed7766c65c578b7341c10988f6ea74b46963c942af44a8d7f5162b617b16",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.3212,
+          "height": 6.0,
+          "depth": 2.3392
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g3-officers-tent",
+      "path": "assets/models/world/g3-officers-tent.glb",
+      "subject": "Release G3 camp prop: an officers' tent",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f425a693-9ca4-4f9a-bad8-8b64c0363a68",
+        "generatedAt": "2026-11-09T12:25:11.291Z",
+        "prompt": "art-source/models/requests/g3-officers-tent.json",
+        "rawBytes": 45796500,
+        "rawSha256": "fc8061dd2e77a73cd003121985be7a2d7fc4c64a15e2c0e8b34f7bcd1c3dd796",
+        "program": "graphics-g3",
+        "credits": 20,
+        "processing": {
+          "triangles": 3500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g3-officers-tent.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g3-officers-tent-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The camps' furniture (graphics plan, G3): an officers' tent set out in a camp's court beyond the board, beside the principia, in Chapters I, III, IV, VI, VII, VIII, IX and XII (CAMP_PROP_CHAPTERS, src/ui/world-catalog.js). Only in a camp, never on a service pad. Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 3, 4, 6, 7, 8, 9, 12 at Balanced/High, preloaded with the scene's scenery; on the web only 3, 4, 6, 7, 8, 9: Chapter I and XII's web download has no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 233652,
+        "gzipBytes": 225550,
+        "sha256": "96ee5d9d7765f5755857cbdbe313c5ea0318e618c29122c042b3ab57a6a459a7",
+        "triangles": 3430,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 4.3774,
+          "height": 2.6,
+          "depth": 4.6556
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g3-tent-struck",
+      "path": "assets/models/world/g3-tent-struck.glb",
+      "subject": "Release G3 camp prop: a struck tent, rolled with its poles",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "bf257e30-1de9-452e-977c-1695a5684d63",
+        "generatedAt": "2026-11-09T12:30:55.710Z",
+        "prompt": "art-source/models/requests/g3-tent-struck.json",
+        "rawBytes": 45328876,
+        "rawSha256": "c392842ea591bd5a5752b938437d0d2e6dcba527ac5507fc8546a788b49da32d",
+        "program": "graphics-g3",
+        "credits": 20,
+        "processing": {
+          "triangles": 2000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g3-tent-struck.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g3-tent-struck-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The camps' furniture (graphics plan, G3): a struck tent, rolled and tied with its poles, set out in a camp's court beyond the board beside the quartermaster, in Chapters II, VI and VIII, the camps of an army on the move (CAMP_PROP_CHAPTERS). Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 2, 6, 8 at Balanced/High, preloaded with the scene's scenery; Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 192892,
+        "gzipBytes": 186797,
+        "sha256": "2caaa13964d73c8600f2ba0525e8da2103cf0e0e221de64b9f4ed922e1c2b9d2",
+        "triangles": 1960,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.1098,
+          "height": 0.6,
+          "depth": 2.266
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g3-horse-lines",
+      "path": "assets/models/world/g3-horse-lines.glb",
+      "subject": "Release G3 camp prop: cavalry horse lines, empty",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "e557698b-05c2-4a2a-b799-22e4caf5893d",
+        "generatedAt": "2026-11-09T12:32:57.555Z",
+        "prompt": "art-source/models/requests/g3-horse-lines-b.json",
+        "rawBytes": 46550444,
+        "rawSha256": "9237ce5cc975b22fcfb17498da5355650394f2f8a2a70599353d5a04f186e814",
+        "program": "graphics-g3",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g3-horse-lines-b.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g3-horse-lines-b-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The camps' furniture (graphics plan, G3): empty horse lines (a picket rope between posts, a trough on trestles, hay, a bucket and saddles) set out in a camp's court beyond the board beside the quartermaster, in Chapters VII, IX and XII, where cavalry ride (CAMP_PROP_CHAPTERS). Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 7, 9, 12 at Balanced/High, preloaded with the scene's scenery; on the web only 7, 9: Chapter XII's web download has no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 244108,
+        "gzipBytes": 236366,
+        "sha256": "f4a1c31bcc473bbcb8d34b878852588fffb4083a1151f966f5883382f09f35af",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.3004,
+          "height": 1.6,
+          "depth": 2.6256
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g3-training-post",
+      "path": "assets/models/world/g3-training-post.glb",
+      "subject": "Release G3 camp prop: a training post with a wicker shield",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "9f3720a2-45c4-4e88-aa3d-674f595ba769",
+        "generatedAt": "2026-11-09T12:28:32.110Z",
+        "prompt": "art-source/models/requests/g3-training-post.json",
+        "rawBytes": 46292504,
+        "rawSha256": "7ef75ce81c145cb3889835eeaf52b97bff10d84de10c892a270ad6be1ac66fd4",
+        "program": "graphics-g3",
+        "credits": 20,
+        "processing": {
+          "triangles": 2000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.9,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g3-training-post.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g3-training-post-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The camps' furniture (graphics plan, G3): a palus, the recruit's training post, with a wicker shield, set out in a camp's court beyond the board beside the drill ground, in Chapters I, III, IV and VII (CAMP_PROP_CHAPTERS). Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 3, 4, 7 at Balanced/High, preloaded with the scene's scenery; on the web only 3, 4, 7: Chapter I's web download has no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 171928,
+        "gzipBytes": 166897,
+        "sha256": "37932de9e73d49206619a7d126bc82f119220578bac5e2b382018771fb27bf87",
+        "triangles": 1960,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.9406,
+          "height": 1.9,
+          "depth": 0.6599
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g3-supply-stack",
+      "path": "assets/models/world/g3-supply-stack.glb",
+      "subject": "Release G3 camp prop: sacks, barrels and amphorae under a hide",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "a26c71e8-8281-4306-9e6f-19cf3f00a392",
+        "generatedAt": "2026-11-09T12:30:17.456Z",
+        "prompt": "art-source/models/requests/g3-supply-stack.json",
+        "rawBytes": 46006636,
+        "rawSha256": "3bec1b2d08f692ee2ac87374478afbfdb2ac0729fd74b7bc24c408ea62d1d3b6",
+        "program": "graphics-g3",
+        "credits": 20,
+        "processing": {
+          "triangles": 2850,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.5,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g3-supply-stack.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g3-supply-stack-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The camps' furniture (graphics plan, G3): the quartermaster's stores (sacks, barrels and amphorae under a hide) set out in a camp's court beyond the board, beside the quartermaster, in Chapters I, II, III, IV, VI, VII, VIII, IX, X and XII (CAMP_PROP_CHAPTERS). Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 6, 7, 8, 9, 10, 12 at Balanced/High, preloaded with the scene's scenery; on the web only 2, 3, 4, 6, 7, 8, 9, 10: Chapter I and XII's web download has no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 256652,
+        "gzipBytes": 247600,
+        "sha256": "7f4b8a0d39f632c3618f48fd2ad8091e1aed2bf2cf3657441eaf2bb5b46b3d47",
+        "triangles": 3163,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.9677,
+          "height": 1.5,
+          "depth": 3.9577
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g3-granary",
+      "path": "assets/models/world/g3-granary.glb",
+      "subject": "Release G3 camp prop: a raised timber granary",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "fbb2f287-94d3-4bac-a2ed-82a365831e97",
+        "generatedAt": "2026-11-09T12:26:38.310Z",
+        "prompt": "art-source/models/requests/g3-granary.json",
+        "rawBytes": 44800596,
+        "rawSha256": "b7d13c24772a6632e5aaa039e6ba9f1bc69f3f606bebfee6b93602989713cdcf",
+        "program": "graphics-g3",
+        "credits": 20,
+        "processing": {
+          "triangles": 4000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 4.0,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g3-granary.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g3-granary-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The camps' furniture (graphics plan, G3): a raised timber granary (horreum) set out in a camp's court beyond the board, beside the quartermaster, in Chapters IV and X (CAMP_PROP_CHAPTERS). Decorative only: it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 4, 10 at Balanced/High, preloaded with the scene's scenery; Performance and a failed download keep the scene without it.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 215776,
+        "gzipBytes": 207609,
+        "sha256": "cf8a22eda075574e5c16466352ad210593857e181b22071d6ca82c6374e0ce0d",
+        "triangles": 3920,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 3.5209,
+          "height": 4.0,
+          "depth": 3.7448
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -16970,13 +17418,13 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 159,
+    "models": 167,
     "textures": 15,
     "src": 1,
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 68841557,
-  "totalModelBytes": 53538079,
+  "totalBundledAssetBytes": 70565073,
+  "totalModelBytes": 55261595,
   "derivedGeometryBytes": 47428
 }

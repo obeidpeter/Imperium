@@ -31,7 +31,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | 0 | Use what's paid for, then calibrate | 250 | done: calibrated (190 credits, [results](graphics-calibration.md)), and the 3D kit made (seven weapons and helmets, no credits); the landmarks' re-texture skipped |
 | G1 | Armies | 1,005 | done: the [pilot](#g1s-pilot-8-november) (310 credits) and [the rest](#the-rest-of-g1-9-november) (695): 22 bodies and 2 horses. Its other 1,295 credits went to G3 and G5 |
 | G2 | Arms and standards | 700 | |
-| G3 | Camps | 2,400 | in progress: [the tent lines](#g3s-tent-lines-9-november), with no credits; the pilot next (1,300, 400 from G7 and 700 from G1) |
+| G3 | Camps | 2,400 | in progress: [the tent lines](#g3s-tent-lines-9-november), with no credits, and [the pilot](#g3s-pilot-9-november) (180 credits); the rest next, within the 2,220 left (1,300, 400 from G7 and 700 from G1) |
 | G4 | Animals | 600 | |
 | G5 | Battle and siege | 1,845 | (900, 350 from G7 and 595 from G1) |
 | G6 | Faces and people | 1,100 | |
@@ -185,6 +185,51 @@ G3 starts with its credit-free layer: the camps' tent lines, open ground until n
 - **What the pilot needs from it:** the smaller camps (IV–IX, XII) fit only a few tents on their board, so their pilot tents also need ground beyond the walls, where the camp continues.
 
 ![Chapter I's and Chapter VII's camps before and after the tent lines, in the source tree at High: Chapter I's Overview camera, the soldier walked to a tent line by an ordinary move, and Chapter VII's wide view](images/g3-tent-lines.jpg)
+
+### G3's pilot (9 November)
+
+Eight camp models, about a seventh of G3's list, made and reviewed in the game before the rest of G3 (decision 9):
+
+| Model | Where it stands | Chapters |
+| --- | --- | --- |
+| a timber palisade section | along every wall cell of the timber camps, stretched to fill each straight run | I, II, III, VII, VIII, X |
+| a timber watchtower | on each corner of those walls, and at each end of a wall that opens on a gateway | I, II, III, VII, VIII, X |
+| an officers' tent | beside the principia | I, III, IV, VI, VII, VIII, IX, XII |
+| a struck tent, rolled with its poles | beside the quartermaster | II, VI, VIII |
+| empty horse lines | beside the quartermaster | VII, IX, XII |
+| a training post with a wicker shield | beside the drill ground | I, III, IV, VII |
+| the quartermaster's stores under a hide | beside the quartermaster | I–IV, VI–X, XII |
+| a raised timber granary | beside the quartermaster | IV, X |
+
+- **Credits:** 180 of the pilot's 200-credit ceiling: eight generations at 20, and one rejected and redone (the first horse lines had toy-like horses in them). [The ledger](../art-source/models/graphics-g3-credits.json) has every task. G3 has 2,220 credits left.
+- **The walls:** the palisade and towers stand on the wall cells, which were solid already, so the rules and every route are unchanged.
+  - One instanced draw for each model carries a camp's 14 to 29 palisade sections and its 4 to 6 towers.
+  - The palisade hides the code-built breastwork, which stays as its fallback on Performance and until the model is ready. No other part of the camp now joins the breastwork's batches, so hiding them hides nothing else.
+  - The camps walled in stone or mudbrick keep their code-built walls.
+- **The furniture** stands only in a camp, beyond the board: beside the service it belongs to where a court is free, otherwise in the baggage line. Like the props of camp life, it has no code-built stand-in.
+- **Downloads:** decision 2 now applies chapter by chapter.
+  - A model's catalog entry names the chapters whose web download has room for it; the desktop app carries every chapter's models.
+  - Chapter I's web download takes the palisade alone (17.87 of its 18 MB), and Chapter XII's takes none (27.71 of 28 MB with the 2D view).
+  - The web downloads of Chapters VII and VIII now stand within 0.16 MB of their 28 MB limit, so later models for them ship in the desktop app only.
+- **The review,** in the desktop build at High, each camp restored from its earned checkpoint through the Restore dialog:
+  - the timber camps now read as walled and towered camps from every camera, where the black breastwork read as a low fence;
+  - the gate towers frame the road out where the soldier starts in Chapters I and VII, without hiding him;
+  - the palisade's stakes and earth bank read at the Overview camera, and no section's stretch shows;
+  - at the Overview camera, the officers' tent, the horse lines and the granary read beside the walls of Chapters IV and VII; the training post, the stores and Chapter VIII's struck tent are small there.
+
+![Chapters I and VII before (the tent lines, on main) and with the pilot's models, in the desktop build at High](images/g3-pilot-camps.jpg)
+
+**The rest of G3** comes next, within the 2,220 credits left, in the order the camera meets it:
+
+1. the stone and mudbrick camps' walls and towers (IV, VI, IX, XII), placed like the palisade: 4 models;
+2. two more contubernium tents for the tent lines, one with its flaps open on the men's kit and one patched, mixed by cell: 2;
+3. gates between the gate towers, in timber and in stone: 2;
+4. the praetorium's pavilion and the hospital tent, by the principia and the valetudinarium: 2;
+5. the tribunal, an altar and a parley awning, for the camps' assemblies and ceremonies: 3;
+6. pavilions for the camps of the East (V, VI, IX): 2;
+7. a pilum rack, an archery butt and a field oven, where the camps lack them: 3.
+
+About 18 models: 360 credits, and about 400 with the plan's 10% for rejected attempts. They ship in the desktop app wherever a chapter's web download is full (I, VII, VIII and XII). What G3 leaves unspent goes to battle and siege (G5), as G1's did, so the plan still spends at least 70% of the balance.
 
 ## Around every release, at no credit cost
 

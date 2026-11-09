@@ -5,10 +5,12 @@ import * as T from '../vendor/three/three.module.js';
 import {GLTFLoader} from '../vendor/three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from '../vendor/three/addons/libs/meshopt_decoder.module.js';
 import * as G from '../src/core/game.js';
-import {createSceneryModels,sceneryPlacements} from '../src/showcase/scenery-models.js';
+import {createSceneryModels,sceneryPlacements,CAMP_PALISADE,CAMP_TOWER} from '../src/showcase/scenery-models.js';
 import {createSceneryModelCache} from '../src/showcase/scenery-cache.js';
 import {REGIONAL_PROP_CHAPTERS,regionalServicePads,regionalTentPitches} from '../src/showcase/environment-regional-world.js';
-import {LIFE_PROP_CHAPTERS} from '../src/ui/world-catalog.js';
+import {CAMP_PROP_CHAPTERS,LIFE_PROP_CHAPTERS} from '../src/ui/world-catalog.js';
+import {campPalisadeSections,campTowerSpots} from '../src/showcase/camp-walls.js';
+import {terrainAt} from '../src/showcase/environment-layout.js';
 const root=new URL('../',import.meta.url);
 const campaign=JSON.parse(await readFile(new URL('tests/fixtures/campaign-3d.json',root),'utf8'));
 const graphics=JSON.parse(await readFile(new URL('tests/fixtures/graphics-scenes.json',root),'utf8'));
@@ -29,11 +31,15 @@ test('All shipped regional models load completely and keep their true geometry o
     assert.equal((await models.ready).length,models.placements.length,`${e.id} loads every named component and prop`);
     for(const p of models.placements){
       used.add(p.id);const model=models.group.getObjectByName(p.key??p.id);assert.ok(model,p.key??p.id);
-      if(LIFE_PROP_CHAPTERS[p.id])assert.ok(!p.pad,`${e.id}/${p.id}: life stands beyond the board, off the service pads`);
+      if(LIFE_PROP_CHAPTERS[p.id]||CAMP_PROP_CHAPTERS[p.id])assert.ok(!p.pad,`${e.id}/${p.id}: life and the camps' furniture stand beyond the board, off the service pads`);
       const b=new T.Box3().setFromObject(model,true);assert.ok(!b.isEmpty(),p.id+' contains visible geometry');
       if(p.pad){
         const pad=pads.find(pad=>pad.id===p.padId);assert.ok(pad);
         assert.ok(b.min.x>=pad.x-1.401&&b.max.x<=pad.x+2.201&&b.min.z>=pad.z-2.201&&b.max.z<=pad.z+2.201,`${e.id}/${p.id} leaves the left strip clear for visible outcomes`);
+      }else if(p.instances&&(p.id===CAMP_PALISADE||p.id===CAMP_TOWER)){
+        // The timber camps' palisade and towers stand on its wall cells, solid for the rules already (graphics-g3.test.mjs).
+        assert.equal(p.instances.length,(p.id===CAMP_PALISADE?campPalisadeSections(e):campTowerSpots(e)).length);
+        for(const item of p.instances){const x=Math.floor(item.x/2.5+e.width/2),y=Math.floor(item.z/2.5+e.height/2);assert.equal(terrainAt(e,x,y),'wall',`${e.id}/${p.key} stands on the wall`);}
       }else if(p.instances){
         // The tent lines stand on their pitches, which the camp world blocks for walking (camp-tents.test.mjs).
         const pitches=e.campPresentation?.tentPitches??[];assert.equal(p.instances.length,regionalTentPitches(e).length);
@@ -46,7 +52,7 @@ test('All shipped regional models load completely and keep their true geometry o
     }
     assert.equal(JSON.stringify(e),before);models.dispose();assert.equal(scene.children.length,0);
   }
-  for(const id of [...Object.keys(REGIONAL_PROP_CHAPTERS),...Object.keys(LIFE_PROP_CHAPTERS)])assert.ok(used.has(id),`${id} has an authored scene`);
+  for(const id of [...Object.keys(REGIONAL_PROP_CHAPTERS),...Object.keys(LIFE_PROP_CHAPTERS),...Object.keys(CAMP_PROP_CHAPTERS),CAMP_PALISADE,CAMP_TOWER])assert.ok(used.has(id),`${id} has an authored scene`);
   cache.clear();assert.equal(cache.stats().entries,0);
 });
 

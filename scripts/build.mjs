@@ -7,6 +7,7 @@ import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
 import {moduleClosure,staticImportClosure,studyAssets,initialAssets} from './module-closure.mjs';
 import {CAMPAIGN_CHAPTERS,DEMO_LAST_CHAPTER,laterChapterOnly} from './edition.mjs';
+import {desktopOnlyWorldFiles} from '../src/ui/world-catalog.js';
 
 // The target (the Steam plan, docs/steam-plan.md): `web` (the default) is the static site with its service worker and
 // install manifest; `desktop` is the same game for the Electron app in desktop/, which serves it from its own files:
@@ -63,6 +64,12 @@ if(demo){
     const data=await readFile(join(dist,url));omitted.push({url,bytes:data.length,gzipBytes:gzipSync(data).length});await rm(join(dist,url));
   }
 }
+// The web leaves out the world files no chapter's web download carries (world-catalog.js): the desktop app has them.
+const desktopOnly=[];
+if(!desktop)for(const file of desktopOnlyWorldFiles()){
+  const path=join(dist,file);let data;try{data=await readFile(path);}catch(error){if(error.code==='ENOENT')continue;throw error;}
+  desktopOnly.push({url:'./'+file,bytes:data.length,gzipBytes:gzipSync(data).length});await rm(path);
+}
 const list=await files(dist),hash=createHash('sha256'),records=[];
 const workerTemplate=(await readFile(join(root,'scripts/service-worker.template.js'),'utf8')).replaceAll('\r\n','\n');
 hash.update(workerTemplate);
@@ -87,7 +94,7 @@ for(const url of shellModules)if(!assets.includes(url))throw new Error(`The shel
 const showcaseAssets=studyAssets(assets,{shellModules}),showcaseSet=new Set(showcaseAssets);
 const initial=initialAssets(assets,{shellModules,openingArt});
 // The chapters this edition plays: all twelve, or the demo's.
-const chapterGroups=Object.fromEntries(Array.from({length:lastChapter},(_,i)=>[i+1,chapterOfflineAssets(i+1,assets)]));
+const chapterGroups=Object.fromEntries(Array.from({length:lastChapter},(_,i)=>[i+1,chapterOfflineAssets(i+1,assets,{desktop})]));
 // The 2D art each chapter adds for the 2D view and painted figures.
 const chapterFlatGroups=Object.fromEntries(Array.from({length:lastChapter},(_,i)=>[i+1,chapterFlatAssets(i+1)]));
 for(const groups of [chapterGroups,chapterFlatGroups])for(const [chapter,paths]of Object.entries(groups))for(const path of paths)if(!assets.includes(path))throw new Error(`Chapter ${chapter} requires missing asset ${path}`);
@@ -118,6 +125,6 @@ const largestChapterGzipBytes=Math.max(...Object.values(chapterDownloadGzipBytes
 // Keep the initial shell small; authored animation and environments arrive by chapter.
 // The download limits are the web's: the desktop app installs every file at once.
 if(!desktop&&(initialGzipBytes>budget.initialGzipBytes||chapterOneGzipBytes>budget.chapterOneGzipBytes||largestChapterGzipBytes>budget.chapterGroupGzipBytes||completeGzipBytes>budget.completeGzipBytes))throw new Error('Compressed initial '+initialGzipBytes+' / chapter 1 '+chapterOneGzipBytes+' / largest chapter '+largestChapterGzipBytes+' / complete '+completeGzipBytes+' exceed the declared presentation budgets.');
-const report={version:packageInfo.version,target,edition,lastChapter,...(demo?{omittedFiles:omitted.length,omittedBytes:sum(omitted,'bytes'),omittedGzipBytes:sum(omitted,'gzipBytes'),storeUrl:storeUrl||'none yet'}:{}),revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,chapterOneFlatGzipBytes,completeBytes,completeGzipBytes,chapterDownloadGzipBytes,largestChapterGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,chapterGroupBudget:budget.chapterGroupGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/chapter download/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),showcaseAssets,showcaseGzipBytes:sum(records.filter(r=>showcaseSet.has(r.url)),'gzipBytes'),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
+const report={version:packageInfo.version,target,edition,lastChapter,desktopOnlyFiles:desktopOnly.length,desktopOnlyGzipBytes:sum(desktopOnly,'gzipBytes'),...(demo?{omittedFiles:omitted.length,omittedBytes:sum(omitted,'bytes'),omittedGzipBytes:sum(omitted,'gzipBytes'),storeUrl:storeUrl||'none yet'}:{}),revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,chapterOneFlatGzipBytes,completeBytes,completeGzipBytes,chapterDownloadGzipBytes,largestChapterGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,chapterGroupBudget:budget.chapterGroupGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/chapter download/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),showcaseAssets,showcaseGzipBytes:sum(records.filter(r=>showcaseSet.has(r.url)),'gzipBytes'),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
 await writeFile(join(dist,'build-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 

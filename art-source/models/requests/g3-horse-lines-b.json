@@ -1,0 +1,98 @@
+{
+  "id": "g3-horse-lines-b",
+  "status": "G3 pilot: processed, compressed and reviewed; in the game at Chapter VII's Overview camera (desktop build, High)",
+  "chapters": [
+    7,
+    9,
+    12
+  ],
+  "use": "The cavalry's horse lines, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman cavalry picket line in an army field camp, empty: a long tether rope stretched between two stout wooden posts, a wooden feed trough on trestles beneath it, a heap of hay, a wooden water bucket, and two leather four-horned saddles resting on a timber rail. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "horse, horses, pony, foal, donkey, mule, animal, livestock, rider, person, people, ground plane, terrain, base plate, text, modern objects, fantasy",
+      "model_seed": 2611710,
+      "image_seed": 2611711,
+      "texture_seed": 2611712
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 245000,
+    "heightMetres": 1.6,
+    "minHeight": 1.4,
+    "maxHeight": 1.8,
+    "note": "Raised from 240,000 bytes at review: the compressed model is 244,108 bytes."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T12:30:33.880Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "horse, horses, pony, foal, donkey, mule, animal, livestock, rider, person, people, ground plane, terrain, base plate, text, modern objects, fantasy",
+      "model_seed": 2611710,
+      "image_seed": 2611711,
+      "texture_seed": 2611712,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman cavalry picket line in an army field camp, empty: a long tether rope stretched between two stout wooden posts, a wooden feed trough on trestles beneath it, a heap of hay, a wooden water bucket, and two leather four-horned saddles resting on a timber rail. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9345,
+    "balanceSnapshotBefore": {
+      "balance": 9345,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "a175e62d-1706-4e47-b09c-944abf1d486c",
+      "state": "accepted",
+      "requestSha256": "afe9a502b62eb8f5785abd0d313bc85a3d82ba9990fb399a102d5f79e6b8043c"
+    },
+    "taskId": "e557698b-05c2-4a2a-b799-22e4caf5893d",
+    "status": "success",
+    "generatedAt": "2026-11-09T12:32:57.555Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-horse-lines-b.glb",
+    "rawBytes": 46550444,
+    "rawSha256": "9237ce5cc975b22fcfb17498da5355650394f2f8a2a70599353d5a04f186e814",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman cavalry picket line in an army field camp, empty: a long tether rope stretched between two stout wooden posts, a wooden feed trough on trestles beneath it, a heap of hay, a wooden water bucket, and two leather four-horned saddles resting on a timber rail. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611711,
+      "model_seed": 2611710,
+      "texture_seed": 2611712,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "horse, horses, pony, foal, donkey, mule, animal, livestock, rider, person, people, ground plane, terrain, base plate, text, modern objects, fantasy",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T12:30:34.306721Z",
+    "tripoCompletedAt": "2026-11-09T12:32:49.792608Z",
+    "tripoRender": "art-source/models/raw/g3-horse-lines-b-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "Two posts with a picket rope, a trough on trestles, hay, a bucket and saddles, on a plank standing the negative prompt did not keep out. The raw model's saddles carry small metal loops like stirrups, which the cavalry of the period did not have; at 2,940 triangles they no longer read as loops, and the saddles read as leather shapes with pale horns."
+  }
+}

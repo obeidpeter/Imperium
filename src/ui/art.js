@@ -80,7 +80,7 @@ export const isFlatArt=path=>/^\.\/assets\/(?:tactical|animation|world)\//.test(
 export const BUILD_ONLY=Object.freeze(['./vendor/three/addons/libs/basis/basis_transcoder.js']);
 // A chapter's offline pack, for the 3D view: everything but the 2D art, which
 // chapterFlatAssets lists for players of the 2D view or painted figures.
-export function chapterOfflineAssets(chapter,availableFiles=[]) {
+export function chapterOfflineAssets(chapter,availableFiles=[],{desktop}={}) {
   // A restored later chapter may be the first one visited on this device.
   // Every chapter therefore owns the shared renderer dependencies; the worker
   // deduplicates their URLs, so subsequent chapters reuse the same cached bytes.
@@ -93,7 +93,8 @@ export function chapterOfflineAssets(chapter,availableFiles=[]) {
   // generated character body to the chapters whose figures wear it, a generated horse to those
   // whose riders ride it.
   const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),bodies=chapterBodies(n).map(id=>'./'+actorBodyUrl(id)),horses=chapterHorses(n).map(id=>'./'+horseBodyUrl(id));
-  const world=new Set(worldFiles().map(file=>'./'+file)),own=new Set(chapterWorldFiles(n).map(file=>'./'+file));
+  // On the web a chapter's pack carries only the world files its download has room for (world-catalog.js).
+  const world=new Set(worldFiles().map(file=>'./'+file)),own=new Set(chapterWorldFiles(n,desktop===undefined?{}:{desktop}).map(file=>'./'+file));
   const shared3D=availableFiles.filter(path=>own.has(path)||!world.has(path)&&path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/characters/')&&!bodies.includes(path))&&!(path.startsWith('./assets/models/horses/')&&!horses.includes(path))&&![...BUILD_ONLY,'./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
   return [...new Set([...chapterAssets(chapter).filter(path=>!isFlatArt(path)),...shared3D,...chapterAudioAssets(chapter)])];
 }
