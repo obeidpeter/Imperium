@@ -1,6 +1,6 @@
 {
   "id": "g3-tribunal",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game in Chapter IX's far court south of the camp, which its Overview camera leaves just below the bar (desktop build, High)",
   "chapters": [
     1,
     9,
@@ -88,5 +88,10 @@
     "tripoCreatedAt": "2026-11-09T14:18:27.312500Z",
     "tripoCompletedAt": "2026-11-09T14:20:51.793404Z",
     "tripoRender": "art-source/models/raw/g3-tribunal-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A square platform of planks over turf blocks with a short flight of steps and a folding chair on top; at the chair's true scale it is 2.3 m square rather than the 4 m asked. Its steps face local +z, toward the camp."
   }
 }

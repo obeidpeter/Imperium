@@ -1,6 +1,6 @@
 {
   "id": "g3-gate-timber",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game over the road out at Chapter II's Follow camera (desktop build, High)",
   "chapters": [
     1,
     2,
@@ -90,5 +90,10 @@
     "tripoCreatedAt": "2026-11-09T14:08:47.889791Z",
     "tripoCompletedAt": "2026-11-09T14:10:42.278725Z",
     "tripoRender": "art-source/models/raw/g3-gate-timber-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "Two iron-banded oak posts under a braced double lintel; the walkway the prompt asked for is missing. Turned 90° so its span runs along x. It spans a 7.5 m gateway at 1.31 times its width, and Chapters I–III's 12.5 m ones at its 1.35 limit, centred on the road with open ground either side."
   }
 }

@@ -1,6 +1,6 @@
 {
   "id": "g3-tower-mudbrick",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game at the Follow and Overview cameras of Chapters V and VI (desktop build, High)",
   "chapters": [
     5,
     6
@@ -88,5 +88,10 @@
     "tripoCreatedAt": "2026-11-09T13:59:34.304914Z",
     "tripoCompletedAt": "2026-11-09T14:03:07.753132Z",
     "tripoRender": "art-source/models/raw/g3-tower-mudbrick-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A squat, tapering mudbrick tower with cracked plaster, beam ends and a crenellated top on a stone footing. Tripo made it 5.6 m wide; processed 3.75 m high, it is about 3.5 m wide, broad and low like a desert fort's tower."
   }
 }

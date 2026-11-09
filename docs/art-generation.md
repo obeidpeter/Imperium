@@ -1805,10 +1805,10 @@ The models were generated with Tripo's text-to-model API (`v3.1-20260211`, stand
 | g3-tent-struck | beside the quartermaster | II, VI, VIII | `bf257e30-1de9-452e-977c-1695a5684d63` | 1,960 | 192,892 bytes |
 | g3-horse-lines-b | beside the quartermaster | VII, IX, XII | `e557698b-05c2-4a2a-b799-22e4caf5893d` | 2,940 | 244,108 bytes |
 | g3-training-post | beside the drill ground | I, III, IV, VII | `9f3720a2-45c4-4e88-aa3d-674f595ba769` | 1,960 | 171,928 bytes |
-| g3-supply-stack | beside the quartermaster | I–IV, VI–X, XII | `a26c71e8-8281-4306-9e6f-19cf3f00a392` | 3,163 | 256,652 bytes |
+| g3-supply-stack | beside the quartermaster | I–IV, VI–X, XII | `a26c71e8-8281-4306-9e6f-19cf3f00a392` | 5,389 | 329,212 bytes |
 | g3-granary | beside the quartermaster | IV, X | `fbb2f287-94d3-4bac-a2ed-82a365831e97` | 3,920 | 215,776 bytes |
 
-Every runtime file was processed in Blender to its request's budget (512-pixel maps), compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. Three budgets were raised at review, each noted in its request: the palisade's and the horse lines' bytes, by under 20,000, and the supply stack's triangles, since processing stops at 3,163 whatever the target below it. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`. The first horse lines (`g3-horse-lines`, task `74808e8b-0248-455d-a8e0-d2dd5b79464b`, 20 credits) was rejected at review and is not shipped.
+Every runtime file was processed in Blender to its request's budget (512-pixel maps), compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. Three budgets were raised at review, each noted in its request: the palisade's and the horse lines' bytes, by under 20,000, and the supply stack's triangles, since processing stops at 3,163 whatever the target below it. The rest of G3's review in the game raised the supply stack's again, to 5,500, as its barrels and amphorae had crumpled at 3,163 ([the rest's record](#release-g3-the-rest-of-the-camps--9-november-2026)); the table gives the file it ships as now. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`. The first horse lines (`g3-horse-lines`, task `74808e8b-0248-455d-a8e0-d2dd5b79464b`, 20 credits) was rejected at review and is not shipped.
 
 The prompts follow [the historical notes](historical-research.md):
 - **The palisade:** the stakes (*pila muralia*, *sudes*) a marching army carried and drove into the bank of its camp each night.
@@ -1841,6 +1841,81 @@ The camps were then seen where a player meets them, in the desktop build at High
 - **The furniture:** at the Overview camera the officers' tent and the horse lines read beside Chapter VII's walls, and the officers' tent and the granary beside Chapter IV's; the training post and the stores are small there. Beyond Chapter VIII's east wall the struck tent reads as a dark rolled bundle beside the ox cart, with its rope at one end; it too is small there.
 
 ![Chapter VIII's camp at the Overview camera, and the struck tent beside the ox cart enlarged three times, in the desktop build at High](images/g3-pilot-camp-viii.jpg)
+
+## Release G3: the rest of the camps · 9 November 2026
+
+The rest of release G3 of the [graphics plan](graphics-tripo-plan.md#the-rest-of-g3-9-november): eighteen models, made after the pilot's review in the game (the owner's decision 9). [The asset pipeline](asset-pipeline.md#the-rest-of-release-g3--2026-11-09) has how they are placed.
+
+The models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-09, from the text prompts in their requests only: no reference image or third-party model. The rest cost 380 credits of its 400-credit ceiling, task by task in [the G3 ledger](../art-source/models/graphics-g3-credits.json), and the balance read 9,325 before and 8,945 after. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Where | Chapters | Tripo task | Triangles | Runtime file |
+| --- | --- | --- | --- | ---: | ---: |
+| g3-wall-stone | along the stone camps' walls | IV, IX, XII | `0ff42fef-2121-45e5-97b9-b7067418d840` | 1,468 | 177,792 bytes |
+| g3-tower-stone | on those walls' corners and gateways | IV, IX, XII | `910700e0-04af-45a2-9555-c821a2a40697` | 2,938 | 202,528 bytes |
+| g3-gate-stone | over those walls' gateways | IV, IX, XII | `1a896afe-35eb-4065-9403-e6c727b6a832` | 2,450 | 188,016 bytes |
+| g3-wall-mudbrick | along the mudbrick camps' walls | V, VI | `6c31d8b4-01ad-4e06-ad37-2c9c7c71764d` | 1,470 | 181,128 bytes |
+| g3-tower-mudbrick | on those walls' corners and gateways | V, VI | `c52513a3-9d03-401d-9dff-235a0e66abc2` | 2,938 | 188,520 bytes |
+| g3-gate-timber | over the timber camps' gateways | I, II, III, VII, X | `5d1d07bc-ab30-4db9-a9fa-4e0e63625049` | 2,450 | 205,012 bytes |
+| g3-tent-open | on the tent lines | I, II, III, VII, VIII, IX | `d3651f2a-d321-4cab-8b0c-c6a124cd9a35` | 4,409 | 245,584 bytes |
+| g3-tent-patched | on the tent lines | I, II, III, IX, XII | `d029539b-00cb-48b1-86d0-585a28402c39` | 4,410 | 267,056 bytes |
+| g3-praetorium | beside the principia | II, VI, VII, IX | `a3a2726f-7c32-444f-b89f-400dbeadcb0f` | 3,430 | 216,188 bytes |
+| g3-hospital-tent | beside the valetudinarium | II, III, VI, VIII, IX | `5f96d8b5-f04e-471b-96bc-6f63310ac0b4` | 3,430 | 231,220 bytes |
+| g3-tribunal | beside the principia | I, IX, XII | `07accf57-028a-4c95-9b3c-5292bda4f558` | 1,960 | 180,836 bytes |
+| g3-altar | beside the principia | I, IV, XII | `354939f7-7694-434e-a3d5-afaea71975a3` | 1,470 | 150,064 bytes |
+| g3-parley-awning | beside the principia | VIII, IX | `c4b223da-9c34-49e1-910b-70e65348f19b` | 2,450 | 184,808 bytes |
+| g3-pavilion-east | beside the principia | VI, IX | `a1c42151-adc2-4d6b-a210-80a18a4c07b0` | 3,429 | 235,396 bytes |
+| g3-pavilion-shade | beside the canabae | VI, IX | `f1b1c516-cb2c-4b32-93eb-8f4d05d1713a` | 8,819 | 409,696 bytes |
+| g3-pilum-rack-b | beside the drill ground | II, III, VI, VIII, X, XII | `417bca46-ea79-43bc-9bb3-5f39888da9be` | 1,960 | 175,076 bytes |
+| g3-archery-butt | beside the drill ground | III, VI, X, XII | `348ec8b8-fe95-446d-8862-a3de67bfdc2b` | 4,410 | 304,964 bytes |
+| g3-field-oven | beside the canabae | II, IV, VIII, X | `2f590cf3-aa3d-4a69-923b-88bb4a170350` | 2,938 | 190,084 bytes |
+
+Every runtime file was processed in Blender to its request's budget (512-pixel maps), compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. The second pilum rack ships as `g3-pilum-rack.glb`, the id the catalog places. Seven budgets were changed in review, each noted in its request:
+- the mudbrick wall was processed 2.0 m high and the mudbrick tower 3.75 m, lower than asked, so that each wall section is stretched by at most 1.05 along Chapter VI's runs and the tower stays about 3.5 m wide;
+- the open and the patched tents' bytes;
+- the reed-mat shade's, twice: at review to 4,300 triangles, since processing stops at 4,269 whatever the target below it, and in the game to 9,000, where at 4,269 its roof and the jars beneath had crumpled into facets;
+- the archery butt's triangles and bytes: below about 3,400 triangles its straw boss kept its triangles while its easel frame collapsed into sheets, and at 4,410 the frame, the wicker screen and the arrows hold;
+- the field oven's triangles: at 1,960 its loaves, peel and firewood crumpled, and at 2,938 they hold.
+
+The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`. The first pilum rack (`g3-pilum-rack`, task `b8b7df6d-f652-4dfc-ba6d-5edfcdea0276`, 20 credits) was rejected at review and is not shipped.
+
+The prompts follow [the historical notes](historical-research.md) where the sources reach:
+- **The walls and towers** of the stone and mudbrick camps follow the materials the code-built walls already gave them: dressed limestone in the fortress and frontier camps, mudbrick on a stone footing in the desert and the siege lines.
+- **The tribunal:** the raised platform from which a commander addressed his army, as in the address scenes of the Columns of Trajan and Marcus Aurelius.
+- **The pila:** the heavy javelin's long, thin iron shank on an ash shaft, ending in a small pyramidal point. The second rack's heads came out leaf-shaped, which is small at the camera's distance.
+- **The archery butt:** Vegetius has recruits practise archery at targets of brushwood or straw (*Epitome* 1.15).
+- **The field oven:** forts baked in round domed ovens, often built into the back of the rampart, away from the barracks for fear of fire (as the bread oven of camp life).
+- **The pavilions of the East** are evocations for the camps of Chapters VI and IX, not reconstructions.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the camps in the desktop build at High. What it showed, and what was kept:
+
+![The rest's eighteen models from the front and three-quarters with a 1.8 m figure for scale](images/g3-rest-models.jpg)
+
+- **The first pilum rack was rejected.** The whole rack came out dark grey iron, its spears leaf-bladed, with no timber frame or wooden shafts. The second attempt asked for an oak trestle, ash shafts and iron shanks, and named the metal rack and the broad blades in the negative prompt. Its heads still came out leaf-shaped rather than pyramidal, and one is pale; both are small at the camera's distance.
+- **The commander's pavilion** came out round, more like a later pavilion than the square Roman tent the prompt asked for. It is kept because it reads apart from the officers' ridge tent.
+- **The timber gate** has no walkway, which the prompt asked for, and its oak posts are weathered grey.
+- **The stone tower's** corbelled crenellations look a little later than the period. At 3.5 m wide it reaches half a metre beyond its wall cell on each side.
+- **The tribunal and the parley awning** came out smaller than asked (the tribunal 2.3 m square, the awning 2.6 m long), at the true scale of their chair and stools.
+- **The altar's** scrolled bolsters soften into the bowl's rim at 1,470 triangles.
+
+#### In the game
+
+The camps were then seen where a player meets them, in the desktop build at High (which carries every chapter's models), each restored from its earned checkpoint through the Restore dialog: Chapters II, IV, V, VI and IX at the Follow and Overview cameras, Chapters IV, VI and IX beside the same views on main, and Chapters II, IV, VI and IX from the edge of the board beside their courts, the soldier walked there by ordinary move commands. Chapters IV, VI and IX were seen again once the shade and the supply stack had been processed again (below); the images show that build.
+
+![Chapters IV, VI and IX before (main, after the pilot) and with the rest of G3, in the desktop build at High](images/g3-rest-camps.jpg)
+
+- **The walls:** the stone camps (IV, IX) read as stone forts where the code-built parapet read as a low dark band: limestone walls, square towers under red tiled roofs on each corner and either side of each gateway, and a round-arched gate over the road out. The mudbrick camps (V, VI) read as desert forts, their towers broad and low on stone footings. In Chapter V the courtyard's wall stands apart from the fortress kit's red frontage beyond the board. No wall section's stretch shows.
+- **The gates** frame the road out where the soldier starts, without hiding him; the cutaway fades the pier nearest the camera. Chapter II's timber gate stands over its road out between the pilot's watchtowers.
+- **The tent lines:** in Chapter II the open tent reads reddish and the patched one pale among the leather tents. The single tents of Chapters IV and VI stay leather.
+- **The furniture,** from the edge of the board at the Follow camera: the commander's pavilion and the pilum rack beyond Chapter II's west wall; the altar beyond Chapter IV's south wall, with the oven there at the Overview camera; the hospital tent and its camp beds beyond Chapter VI's west wall, the archery butt and the pilum rack beside its south-east tower, and the reed-mat shade beyond its south wall; and the hospital tent, the commander's pavilion and the shade beyond Chapter IX's east wall.
+
+![The camps' new furniture, gates and tents at the Follow camera, and Chapter IX's shade and supply stack before and after they were processed again, in the desktop build at High](images/g3-rest-close.jpg)
+
+- **The reed-mat shade was processed again.** At 4,269 triangles its roof and the jars beneath it crumpled into facets at the Follow camera of Chapters VI and IX; at 8,819 they hold, for 121,844 more bytes.
+- **So was the pilot's supply stack.** Beside Chapter IX's hospital tent at the Follow camera, its barrels, amphorae and sacks had crumpled into a heap at 3,163 triangles, the least its processing reaches, which the pilot's review at the Overview camera had not shown. At 5,500 (5,389 triangles, 329,212 bytes) they hold, in four views and in the game. 6,859 and 8,819 triangles held as well, but Chapter VII's web download, which carries the stack, had 129,529 bytes of room: 5,389 takes 72,560 more.
+- **Not seen in the captures:** Chapter IX's courts are full, so its tribunal and parley awning stand in the far rows south of the camp, about 22 m beyond the board, below the edge of its Overview camera's frame at 1920 × 1080; the striped pavilion, further out to the south-west, shows at the frame's edge. The camera's pan stays over the board, so a player in Chapter IX may never see the tribunal or the awning there. The web therefore leaves both out of Chapter IX's download, which also made room for its other models, and since no other web chapter carries them, the web build leaves out their files; the desktop app keeps them, as it keeps every chapter's models.
+- **Page errors:** none, in Chapters II, IV, V, VI and IX at High.
 
 ## Steam achievement icons · 3 November 2026
 

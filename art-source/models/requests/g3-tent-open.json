@@ -1,6 +1,6 @@
 {
   "id": "g3-tent-open",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game on Chapter II's tent lines at its Follow camera (desktop build, High)",
   "chapters": [
     1,
     2,
@@ -92,5 +92,10 @@
     "tripoCreatedAt": "2026-11-09T14:03:17.054581Z",
     "tripoCompletedAt": "2026-11-09T14:05:44.671349Z",
     "tripoRender": "art-source/models/raw/g3-tent-open-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A goatskin tent with its door tied open on packs and blankets, and two round shields by the entrance; nearly square under a hipped roof, its door facing local +x along the pitch's ridge, like the leather tent's."
   }
 }

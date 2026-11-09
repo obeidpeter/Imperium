@@ -1,6 +1,6 @@
 {
   "id": "g3-tent-patched",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game on Chapter II's tent lines at its Follow camera (desktop build, High)",
   "chapters": [
     1,
     2,
@@ -91,5 +91,10 @@
     "tripoCreatedAt": "2026-11-09T14:05:52.148468Z",
     "tripoCompletedAt": "2026-11-09T14:08:40.371857Z",
     "tripoRender": "art-source/models/raw/g3-tent-patched-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A weathered goatskin ridge tent patched in lighter and darker hide, with a torn door at its gable end; its ridge runs along x and its door faces +x, like the leather tent's."
   }
 }

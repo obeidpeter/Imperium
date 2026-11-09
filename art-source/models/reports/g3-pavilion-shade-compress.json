@@ -9,17 +9,17 @@
     "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
   },
   "before": {
-    "bytes": 299932,
-    "gzipBytes": 184925,
-    "sha256": "d3f487766afde31a2c318e75ae27461721d786d7f2d17a897782813469573457"
+    "bytes": 470504,
+    "gzipBytes": 298517,
+    "sha256": "4331400a361a0b6fa73976a52512d9a11ca95545ad2058f38e9edf5f89717d9b"
   },
   "after": {
-    "bytes": 287852,
-    "gzipBytes": 276694,
-    "sha256": "a84ecf54927e4593bea349824c263b1099f8bad870f3f0035085d40d04786d26"
+    "bytes": 409696,
+    "gzipBytes": 393554,
+    "sha256": "3f9853e6d933f0b133f49d6ca1918a48f1e1ac893be25641d26910e1775df40d"
   },
   "geometryUnchanged": true,
-  "triangles": 4269,
+  "triangles": 8819,
   "textures": [
     {
       "slots": [

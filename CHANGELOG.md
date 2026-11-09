@@ -18,15 +18,19 @@ The rest of G3: eighteen Tripo models, made for 380 credits after the pilot's re
   - by the valetudinarium: a hospital tent with one wall rolled up on two camp beds;
   - by the drill ground: a rack of pila with a red oval shield, and a straw archery butt;
   - by the canabae: a domed clay field oven, and a reed-mat shade over a carpeted floor (VI, IX).
+- **The pilot's supply stack** is processed again at 5,389 triangles: at 3,163 its barrels, amphorae and sacks had crumpled into a heap at the Follow camera.
 - **Downloads:** each model downloads with its chapters in the desktop app. On the web:
   - Chapters I, VII, VIII and XII take none of these models;
-  - Chapter IX leaves out the two new tents and stands at 27.51 of its 28 MB;
-  - Chapter I's 3D download is unchanged at 17.87 of 18 MB, and the complete web game is 70.59 of 80 MB.
+  - Chapter IX leaves out the two new tents, and the tribunal and the parley awning, which stand in its far rows beyond the camera's reach. It stands at 27.34 of its 28 MB;
+  - no other web chapter carries the tribunal or the awning, so the web build leaves out their files;
+  - with the supply stack processed again, Chapter VII stands at 27.94 of 28 MB and VIII at 27.92;
+  - Chapter I's 3D download is unchanged at 17.87 of 18 MB, and the complete web game is 70.42 of 80 MB.
 - **Checks:** `tests/graphics-g3.test.mjs` now also covers:
   - every camp's wall style, with a gate over each gateway, stretched within its limit;
   - the stone camps' instanced wall, towers and gates, and the parapet's fallback;
   - the tent lines' mix, each tent variant downloading only with the chapters whose pitches pick it, and each model over its own code-built tents;
-  - each chapter's web and desktop packs for all 26 of G3's models.
+  - each chapter's web and desktop packs for all 26 of G3's models;
+  - and `scripts/verify-assets.mjs` checks that the web build leaves out the files no web chapter carries.
 
 ### Release G3's pilot: the timber camps walled, and the camps furnished ([the plan](docs/graphics-tripo-plan.md#g3s-pilot-9-november))
 

@@ -26,8 +26,9 @@ test('All shipped regional models load completely and keep their true geometry o
   for(let chapter=1;chapter<=12;chapter++)if(chapter!==5){
     const checkpoint=graphics.scenes.find(s=>s.id===`camp-${chapter}`),world=G.createCampWorld(G.deserialize(JSON.stringify(checkpoint.state)));scenes.push({...world.map,campPresentation:world.campPresentation});
   }
-  for(const e of scenes){
-    const chapter=Number(/^ch(\d+)-/.exec(e.id)[1]),before=JSON.stringify(e),scene=new T.Scene(),models=createSceneryModels(scene,e,{chapter,cache}),pads=regionalServicePads(e),hx=e.width*1.25,hz=e.height*1.25;
+  // The web's placements and the desktop app's, which carries every chapter's models (world-catalog.js).
+  for(const desktop of [false,true])for(const e of scenes){
+    const chapter=Number(/^ch(\d+)-/.exec(e.id)[1]),before=JSON.stringify(e),scene=new T.Scene(),models=createSceneryModels(scene,e,{chapter,cache,desktop}),pads=regionalServicePads(e),hx=e.width*1.25,hz=e.height*1.25;
     assert.equal((await models.ready).length,models.placements.length,`${e.id} loads every named component and prop`);
     for(const p of models.placements){
       used.add(p.id);const model=models.group.getObjectByName(p.key??p.id);assert.ok(model,p.key??p.id);
@@ -49,7 +50,7 @@ test('All shipped regional models load completely and keep their true geometry o
       }else if(p.instances){
         // The tent lines stand on their pitches, which the camp world blocks for walking (camp-tents.test.mjs), each
         // model on its own.
-        const pitches=e.campPresentation?.tentPitches??[];assert.equal(p.instances.length,regionalTentPitches(e).filter(t=>t.model===p.id).length);
+        const pitches=e.campPresentation?.tentPitches??[];assert.equal(p.instances.length,regionalTentPitches(e,2.5,{desktop}).filter(t=>t.model===p.id).length);
         for(const item of p.instances)assert.ok(pitches.some(t=>Math.abs(t.x-item.x)<1e-9&&Math.abs(t.z-item.z)<1e-9),`${e.id}/${p.key} stands on its pitches`);
       }else if(p.floor){
         // The Curia's floor lies flat under the board, below the board's own floor (0.018 m).

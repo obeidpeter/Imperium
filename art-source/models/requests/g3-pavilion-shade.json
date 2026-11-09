@@ -1,6 +1,6 @@
 {
   "id": "g3-pavilion-shade",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beyond the walls of Chapters VI and IX at their Follow and Overview cameras (desktop build, High)",
   "chapters": [
     6,
     9
@@ -23,13 +23,13 @@
     }
   },
   "budget": {
-    "triangles": 4300,
+    "triangles": 9000,
     "texture": 512,
-    "bytes": 290000,
+    "bytes": 420000,
     "heightMetres": 2.5,
     "minHeight": 2.25,
     "maxHeight": 2.75,
-    "note": "Raised from 2,500 triangles and 220,000 bytes at review: processing stops at 4,269 triangles whatever the target below it (its jars, basin, bedding and poles are separate parts), and the compressed model is 287,852 bytes."
+    "note": "Raised from 2,500 triangles and 220,000 bytes at review: processing stops at 4,269 triangles whatever the target below it, and the compressed model is 287,852 bytes. Raised again at the in-game review: at 4,269 triangles its reed roof and the jars, basin and bedding beneath crumpled into facets at the Follow camera; at 8,819 triangles they hold, and the compressed model is 409,696 bytes."
   },
   "provenance": {
     "apiVersion": 3,
@@ -88,5 +88,10 @@
     "tripoCreatedAt": "2026-11-09T14:29:17.211350Z",
     "tripoCompletedAt": "2026-11-09T14:32:00.628553Z",
     "tripoRender": "art-source/models/raw/g3-pavilion-shade-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A flat roof of reed mats with a striped cloth valance on slender poles, over a carpeted floor with clay jars, a copper basin and rolled bedding; open on every side. At 4,269 triangles, where processing stops for any target below it, the roof and the jars crumpled into facets at the Follow camera of Chapters VI and IX; processed again at 9,000 triangles (8,819), they hold."
   }
 }

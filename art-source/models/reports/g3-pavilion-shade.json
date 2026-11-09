@@ -9,12 +9,12 @@
   },
   "output": {
     "path": "assets/models/world/g3-pavilion-shade.glb",
-    "bytes": 299932,
-    "sha256": "d3f487766afde31a2c318e75ae27461721d786d7f2d17a897782813469573457",
-    "triangles": 4269
+    "bytes": 470504,
+    "sha256": "4331400a361a0b6fa73976a52512d9a11ca95545ad2058f38e9edf5f89717d9b",
+    "triangles": 8819
   },
   "settings": {
-    "triangles": 2500,
+    "triangles": 9000,
     "texture": 512,
     "webpQuality": 80,
     "height": 2.5,
@@ -22,11 +22,11 @@
     "mergeDistance": 0.0001,
     "keepSkin": false
   },
-  "scale": 4.091765382456974,
+  "scale": 3.9856180360375815,
   "sizeMetres": {
-    "width": 3.9727,
+    "width": 3.9841,
     "height": 2.5,
-    "depth": 3.9473
+    "depth": 3.8671
   },
   "materials": 1,
   "textures": [

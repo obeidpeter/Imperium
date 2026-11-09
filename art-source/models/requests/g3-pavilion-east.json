@@ -1,6 +1,6 @@
 {
   "id": "g3-pavilion-east",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game in Chapter IX's baggage line south-west of the camp at its Overview camera (desktop build, High)",
   "chapters": [
     6,
     9
@@ -87,5 +87,10 @@
     "tripoCreatedAt": "2026-11-09T14:25:33.704924Z",
     "tripoCompletedAt": "2026-11-09T14:29:08.532670Z",
     "tripoRender": "art-source/models/raw/g3-pavilion-east-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A square tent of madder-red and cream striped linen under a pyramid roof, with a fringed valance, curtains looped open on cushions and a hanging brass lamp; turned 270° so its open front faces the camp. Its stripes are bold in Tripo's render and softer at 512-pixel maps."
   }
 }

@@ -133,8 +133,10 @@ test('the camps\' furniture stands only in a camp, beyond the board and off the 
 });
 
 test('the web carries a G3 model only where its chapter\'s download has room; the desktop app carries them all', () => {
-  // Chapter I takes the palisade alone, VII and VIII the pilot's models, IX all but the two tent variants, XII none.
-  const room=(id,c)=>c!==12&&(c!==1||id===CAMP_PALISADE)&&(![7,8].includes(c)||PILOT.includes(id))&&(c!==9||!TENT_VARIANTS.includes(id));
+  // Chapter I takes the palisade alone, VII and VIII the pilot's models, IX all but the two tent variants, the tribunal
+  // and the parley awning (whose courts there lie beyond the camera's reach), XII none.
+  const IX_OUT=[...TENT_VARIANTS,'g3-tribunal','g3-parley-awning'];
+  const room=(id,c)=>c!==12&&(c!==1||id===CAMP_PALISADE)&&(![7,8].includes(c)||PILOT.includes(id))&&(c!==9||!IX_OUT.includes(id));
   for(const id of G3){
     const entry=WORLD_CATALOG[id];assert.deepEqual(entry.files,[`assets/models/world/${id}.glb`]);
     assert.deepEqual(entry.web,entry.chapters.filter(c=>room(id,c)),`${id}'s web chapters`);
@@ -145,19 +147,20 @@ test('the web carries a G3 model only where its chapter\'s download has room; th
       assert.equal(worldAssetShown(id,chapter,{desktop:true}),true);
     }
   }
-  assert.deepEqual(desktopOnlyWorldFiles(),[],'every G3 model is in some web chapter, so the web build keeps them all');
+  // No web chapter carries the tribunal or the parley awning, so the web build leaves their files out.
+  assert.deepEqual(desktopOnlyWorldFiles().sort(),['g3-parley-awning','g3-tribunal'].map(worldModelUrl).sort());
   // On the web Chapter I's camp shows the palisade and keeps the rest as before; the desktop app shows all ten.
   const e=campOf(1),web=sceneryPlacements(e,{chapter:1,desktop:false}).map(p=>p.id),desk=sceneryPlacements(e,{chapter:1,desktop:true}).map(p=>p.id);
   assert.deepEqual(G3.filter(id=>web.includes(id)),[CAMP_PALISADE]);
   assert.deepEqual(G3.filter(id=>desk.includes(id)).sort(),[CAMP_PALISADE,CAMP_TOWER,'g3-officers-tent','g3-training-post','g3-supply-stack',
     'g3-gate-timber','g3-tent-open','g3-tent-patched','g3-tribunal','g3-altar'].sort());
-  // Chapter IX's web camp has its stone wall, towers and gate and its furniture; its six tents are leather there.
+  // Chapter IX's web camp has its stone wall, towers and gate and most of its furniture; its six tents are leather there.
   const ix=campOf(9),ixWeb=sceneryPlacements(ix,{chapter:9,desktop:false}).map(p=>p.id);
   assert.deepEqual(G3.filter(id=>ixWeb.includes(id)).sort(),WORLD_CATALOG_G3_IX.sort());
   assert.ok(regionalTentPitches(ix,2.5,{desktop:false}).every(p=>p.model===TENT_MODEL));
 });
 const WORLD_CATALOG_G3_IX=['g3-officers-tent','g3-horse-lines','g3-supply-stack','g3-wall-stone','g3-tower-stone','g3-gate-stone','g3-praetorium',
-  'g3-hospital-tent','g3-tribunal','g3-parley-awning','g3-pavilion-east','g3-pavilion-shade'];
+  'g3-hospital-tent','g3-pavilion-east','g3-pavilion-shade'];
 
 // Node has no image decoder: geometry loads in full with placeholder textures.
 async function loadFile(url){
@@ -243,8 +246,11 @@ test('the tent lines mix the leather tent with the open and the patched tents by
   for(const [m,b]of Object.entries(batches)){assert.equal(b?.count,pitches.filter(p=>p.model===m).length,`${m}'s code-built tents`);assert.ok(b.userData.replaceable);}
   // With only the open tent's model ready, its pitches show the model and the others keep their code-built tents.
   const url=worldModelUrl('g3-tent-open'),cache=createSceneryModelCache({load:u=>u===url?loadFile(u):new Promise(()=>{})});
-  const models=createSceneryModels(scene,e,{chapter,cache});await new Promise(r=>setTimeout(r,50));
-  const open=models.group.getObjectByName('tent-lines:g3-tent-open');assert.ok(open);assert.equal(open.children[0].count,pitches.filter(p=>p.model==='g3-tent-open').length);
+  // The others never load, so models.ready never settles: wait for the open tent's placement itself, however
+  // slowly a busy machine parses it.
+  const models=createSceneryModels(scene,e,{chapter,cache});
+  for(let i=0;!models.group.getObjectByName('tent-lines:g3-tent-open');i++){assert.ok(i<2000,'the open tent is placed');await new Promise(r=>setTimeout(r,10));}
+  const open=models.group.getObjectByName('tent-lines:g3-tent-open');assert.equal(open.children[0].count,pitches.filter(p=>p.model==='g3-tent-open').length);
   assert.deepEqual(Object.fromEntries(Object.entries(batches).map(([m,b])=>[m,b.visible])),{[TENT_MODEL]:true,'g3-tent-open':false,'g3-tent-patched':true});
   models.dispose();assert.ok(Object.values(batches).every(b=>b.visible));
   env.dispose();cache.clear();

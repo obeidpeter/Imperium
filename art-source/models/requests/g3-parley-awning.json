@@ -1,6 +1,6 @@
 {
   "id": "g3-parley-awning",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game in Chapter IX's baggage line south of the camp, which its Overview camera leaves just below the bar (desktop build, High)",
   "chapters": [
     8,
     9
@@ -87,5 +87,10 @@
     "tripoCreatedAt": "2026-11-09T14:23:24.410030Z",
     "tripoCompletedAt": "2026-11-09T14:25:27.329881Z",
     "tripoRender": "art-source/models/raw/g3-parley-awning-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A pale linen awning on four poles with guy ropes, over a table with a woven cloth, a jug and cups, and two folding stools facing each other; narrower than asked at its stools' true scale."
   }
 }

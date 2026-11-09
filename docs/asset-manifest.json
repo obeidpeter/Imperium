@@ -17234,7 +17234,7 @@
         "program": "graphics-g3",
         "credits": 20,
         "processing": {
-          "triangles": 2850,
+          "triangles": 5500,
           "texture": 512,
           "webpQuality": 80,
           "height": 1.5,
@@ -17260,16 +17260,16 @@
       "loading": "Deferred chapter packs 1, 2, 3, 4, 6, 7, 8, 9, 10, 12 at Balanced/High, preloaded with the scene's scenery; on the web only 2, 3, 4, 6, 7, 8, 9, 10: Chapter I and XII's web download has no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 256652,
-        "gzipBytes": 247600,
-        "sha256": "7f4b8a0d39f632c3618f48fd2ad8091e1aed2bf2cf3657441eaf2bb5b46b3d47",
-        "triangles": 3163,
+        "bytes": 329212,
+        "gzipBytes": 317413,
+        "sha256": "6ba0a35fb1b02d823271f847e224997bd800418a7421e4c55dfcf8c973e62047",
+        "triangles": 5389,
         "textures": 3,
         "textureEdge": 512,
         "sizeMetres": {
-          "width": 3.9677,
+          "width": 3.9355,
           "height": 1.5,
-          "depth": 3.9577
+          "depth": 3.9382
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
@@ -17932,7 +17932,7 @@
         }
       },
       "usage": "The camps' furniture (graphics plan, G3): a raised platform of planks over turf blocks with a short flight of steps and a folding chair, the commander's tribunal, set out in a camp's court beyond the board, beside the principia, the commander's place, where its court has room and otherwise in the baggage line, in Chapters I, IX and XII (CAMP_PROP_CHAPTERS, src/ui/world-catalog.js). Only in a camp, never on a service pad. Decorative only: it takes no picks and changes no route.",
-      "loading": "Deferred chapter packs 1, 9, 12 at Balanced/High, preloaded with the scene's scenery; on the web only 9: the web downloads of Chapters I and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
+      "loading": "Deferred chapter packs 1, 9, 12 at Balanced/High, preloaded with the scene's scenery; no web download carries it: those of Chapters I and XII have no room for it, and in Chapter IX its court lies beyond the camera's reach, so the web build leaves it out and it ships in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 180836,
@@ -18044,7 +18044,7 @@
         }
       },
       "usage": "The camps' furniture (graphics plan, G3): a pale linen awning on four poles over a table with a woven cloth, a jug and cups, and two folding stools facing each other, set out in a camp's court beyond the board, beside the principia, the commander's place, where its court has room and otherwise in the baggage line, in Chapters VIII and IX (CAMP_PROP_CHAPTERS, src/ui/world-catalog.js). Only in a camp, never on a service pad. Decorative only: it takes no picks and changes no route.",
-      "loading": "Deferred chapter packs 8, 9 at Balanced/High, preloaded with the scene's scenery; on the web only 9: Chapter VIII's web download has no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
+      "loading": "Deferred chapter packs 8, 9 at Balanced/High, preloaded with the scene's scenery; no web download carries it: Chapter VIII's has no room for it, and in Chapter IX its court lies beyond the camera's reach, so the web build leaves it out and it ships in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the scene without it.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 184808,
@@ -18134,7 +18134,7 @@
         "program": "graphics-g3",
         "credits": 20,
         "processing": {
-          "triangles": 2500,
+          "triangles": 9000,
           "texture": 512,
           "webpQuality": 80,
           "height": 2.5,
@@ -18160,16 +18160,16 @@
       "loading": "Deferred chapter packs 6, 9 at Balanced/High, preloaded with the scene's scenery; Performance and a failed download keep the scene without it.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 287852,
-        "gzipBytes": 276694,
-        "sha256": "a84ecf54927e4593bea349824c263b1099f8bad870f3f0035085d40d04786d26",
-        "triangles": 4269,
+        "bytes": 409696,
+        "gzipBytes": 393554,
+        "sha256": "3f9853e6d933f0b133f49d6ca1918a48f1e1ac893be25641d26910e1775df40d",
+        "triangles": 8819,
         "textures": 3,
         "textureEdge": 512,
         "sizeMetres": {
-          "width": 3.9727,
+          "width": 3.9841,
           "height": 2.5,
-          "depth": 3.9473
+          "depth": 3.8671
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
@@ -18433,13 +18433,13 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 167,
+    "models": 185,
     "textures": 15,
     "src": 1,
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 70565073,
-  "totalModelBytes": 55261595,
+  "totalBundledAssetBytes": 74571601,
+  "totalModelBytes": 59268123,
   "derivedGeometryBytes": 47428
 }

@@ -140,11 +140,12 @@ export function preloadSceneryModels(e,{chapter,quality='balanced',load}={}){
   return Promise.all(leases.map(lease=>lease.ready.then(scene=>!!scene,()=>false)));
 }
 
-// withoutGate: Aurelian's walls stand at the finale's gate road, so its arch steps aside.
-export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null,cache=masters,withoutGate=false}={}){
+// withoutGate: Aurelian's walls stand at the finale's gate road, so its arch steps aside. desktop overrides the
+// build's own platform, as sceneryPlacements' does (tests).
+export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null,cache=masters,withoutGate=false,desktop}={}){
   const group=new T.Group();group.name='generated scenery';scene.add(group);
   const library=load?createSceneryModelCache({maxIdle:0,load}):cache;
-  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter,withoutGate}),urls=[...new Set(placements.map(p=>p.url))];
+  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter,withoutGate,desktop}),urls=[...new Set(placements.map(p=>p.url))];
   const leases=new Map(urls.map(url=>[url,{lease:library.acquire(url),preparing:0,used:false,released:false}]));
   const kept=[...urls,...worldKitUrls(e,quality,chapter)];library.setWorkingSet(kept);
   if(library===masters&&preload?.key===preloadKey(kept))releasePreload();

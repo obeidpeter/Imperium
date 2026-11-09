@@ -1,6 +1,6 @@
 {
   "id": "g3-praetorium",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beyond Chapter II's west wall at its Follow camera, and beyond Chapter IX's east wall at its Overview camera (desktop build, High)",
   "chapters": [
     2,
     6,
@@ -89,5 +89,10 @@
     "tripoCreatedAt": "2026-11-09T14:13:37.624873Z",
     "tripoCompletedAt": "2026-11-09T14:16:16.644665Z",
     "tripoRender": "art-source/models/raw/g3-praetorium-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A round pavilion of red leather under a conical roof with a finial, a fringed porch on poles and two folding chairs. The prompt asked for a square tent: this reads more like a later pavilion than a Roman tent, and is kept because it reads apart from the officers' ridge tent."
   }
 }

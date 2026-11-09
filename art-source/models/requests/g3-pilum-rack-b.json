@@ -1,6 +1,6 @@
 {
   "id": "g3-pilum-rack-b",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beyond the walls of Chapters II and VI at their Follow cameras (desktop build, High)",
   "chapters": [
     2,
     3,
@@ -91,5 +91,10 @@
     "tripoCreatedAt": "2026-11-09T14:44:33.140790Z",
     "tripoCompletedAt": "2026-11-09T14:46:16.479547Z",
     "tripoRender": "art-source/models/raw/g3-pilum-rack-b-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "An oak trestle rack of seven pila, ash shafts with dark iron heads and squared collars, and a red oval shield with a boss leaning on one end; turned 270° so it stands broadside to the camp. The heads came out leaf-shaped rather than pyramidal, and one is pale; both are small at the camera's distance. The first attempt, g3-pilum-rack, was rejected."
   }
 }

@@ -1,6 +1,6 @@
 {
   "id": "g3-field-oven",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beyond Chapter IV's south wall at its Overview camera (desktop build, High)",
   "chapters": [
     2,
     4,
@@ -90,5 +90,10 @@
     "tripoCreatedAt": "2026-11-09T14:37:24.408207Z",
     "tripoCompletedAt": "2026-11-09T14:39:54.148172Z",
     "tripoRender": "art-source/models/raw/g3-field-oven-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A clay dome on a dry-stone base, its arched mouth sooted, a peel leaning on it, firewood stacked behind and loaves on a board; turned 270° so its mouth faces the camp. At 1,960 triangles the loaves and the wood crumpled; at 2,938 they hold."
   }
 }

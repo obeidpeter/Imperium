@@ -1,6 +1,6 @@
 {
   "id": "g3-altar",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beyond Chapter IV's south wall at its Follow and Overview cameras (desktop build, High)",
   "chapters": [
     1,
     4,
@@ -88,5 +88,10 @@
     "tripoCreatedAt": "2026-11-09T14:20:58.016535Z",
     "tripoCompletedAt": "2026-11-09T14:23:17.155628Z",
     "tripoRender": "art-source/models/raw/g3-altar-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A limestone altar: a bowl on a squared shaft over a two-step base, with a laurel wreath and a bronze dish at its foot. At 1,470 triangles its scrolled bolsters soften into the bowl's rim."
   }
 }

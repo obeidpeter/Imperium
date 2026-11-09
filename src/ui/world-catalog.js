@@ -80,15 +80,16 @@ export const TENT_VARIANT_CHAPTERS=Object.freeze({
 // What a chapter's web download has room for of G3's models (presentation-budget.js). After the pilot,
 // Chapter I's 3D download stood at 17.87 of its 18 MB, and Chapters VII's, VIII's and XII's (with the 2D
 // view) within 0.3 MB of their 28 MB: Chapter I takes the palisade alone, VII and VIII the pilot's models
-// and XII none. The rest's eleven models for Chapter IX came to 2.33 MB against its 2.33 MB of room: IX
-// leaves out the open and the patched tents, one pitch each, which take the leather tent on the web. Every
-// other chapter takes all of its models. The desktop app has them all.
+// and XII none. The rest's eleven models for Chapter IX came to 2.45 MB against its 2.33 MB of room: IX
+// leaves out the open and the patched tents, one pitch each, which take the leather tent on the web, and
+// the tribunal and the parley awning, whose courts there lie beyond the camera's reach, so no web chapter
+// carries those two. Every other chapter takes all of its models. The desktop app has them all.
 const G3_WEB_ROOM=Object.freeze({
   1:Object.freeze(['g3-palisade-timber']),
   7:Object.freeze(['g3-palisade-timber','g3-watchtower-timber','g3-officers-tent','g3-horse-lines','g3-training-post','g3-supply-stack']),
   8:Object.freeze(['g3-palisade-timber','g3-watchtower-timber','g3-officers-tent','g3-tent-struck','g3-supply-stack']),
   9:Object.freeze(['g3-officers-tent','g3-horse-lines','g3-supply-stack','g3-wall-stone','g3-tower-stone','g3-gate-stone','g3-praetorium',
-    'g3-hospital-tent','g3-tribunal','g3-parley-awning','g3-pavilion-east','g3-pavilion-shade']),
+    'g3-hospital-tent','g3-pavilion-east','g3-pavilion-shade']),
   12:Object.freeze([])
 });
 const g3=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,chapters.filter(c=>!G3_WEB_ROOM[c]||G3_WEB_ROOM[c].includes(id)));

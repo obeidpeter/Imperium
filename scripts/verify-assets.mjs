@@ -1,13 +1,14 @@
 // Run after npm run build. Development-only asset and worker regression checks.
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import vm from 'node:vm';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
 import {BUILD_ONLY,chapterAudioAssets} from '../src/ui/art.js';
 import {chapterBodies,chapterHorses} from '../src/ui/actor-body-catalog.js';
-import {chapterWorldFiles,worldFiles} from '../src/ui/world-catalog.js';
+import {chapterWorldFiles,desktopOnlyWorldFiles,worldFiles} from '../src/ui/world-catalog.js';
 
 const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
 for(const asset of manifest.assets){
@@ -81,8 +82,11 @@ assert.deepEqual(await readFile('dist/'+retiredCharacterAtlas.slice(2)),await re
 for(const path of activeAtlases)assert.ok(build.showcaseAssets.includes(path),'Active atlas omitted from the complete inventory: '+path);
 const femaleAssets=['./assets/models/roman-woman-v018.glb','./assets/textures/complexion-female-v018.webp'];
 for(const path of femaleAssets)assert.ok(build.showcaseAssets.includes(path)&&build.deferredAssets.includes(path),'Complete deferred inventory retains female resources: '+path);
-// A world asset belongs to the chapters the world catalog names.
+// A world asset belongs to the chapters the world catalog names. The web build leaves out the
+// files no web chapter carries (the desktop app has them all), so they are neither built nor listed there.
 const world=new Set(worldFiles().map(file=>'./'+file));
+const desktopOnly=new Set(build.target==='desktop'?[]:desktopOnlyWorldFiles().map(file=>'./'+file));
+assert.equal(build.desktopOnlyFiles,desktopOnly.size,'Desktop-only world files left out of the web build');
 // A generated character body belongs to the chapters whose figures wear it.
 const characterBody=path=>/^\.\/assets\/models\/characters\/([\w-]+)\.glb$/.exec(path)?.[1];
 // A generated horse belongs to the chapters whose riders ride it.
@@ -92,6 +96,10 @@ for(const path of BUILD_ONLY)assert.ok(build.deferredAssets.includes(path)&&Obje
 for(const path of ['./vendor/three/addons/libs/basis/basis_worker.js','./vendor/three/addons/libs/basis/basis_transcoder.wasm','./vendor/three/addons/libs/meshopt_decoder.module.js'])assert.ok(shared3D.includes(path),'Every chapter decodes compressed models: '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
 for(const path of world){
+  if(desktopOnly.has(path)){
+    assert.ok(!existsSync('dist/'+path.slice(2))&&![...build.initialAssets,...build.deferredAssets,...Object.values(build.chapterAssets).flat()].includes(path),'Desktop-only world asset left out of the web build: '+path);
+    continue;
+  }
   assert.ok(build.deferredAssets.includes(path),'World asset built and deferred: '+path);
   for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterWorldFiles(Number(chapter),{desktop:build.target==='desktop'}).includes(path.slice(2)),'Chapter '+chapter+' and world asset '+path);
 }

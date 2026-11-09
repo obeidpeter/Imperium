@@ -1,6 +1,6 @@
 {
   "id": "g3-wall-stone",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game at the Follow and Overview cameras of Chapters IV and IX (desktop build, High)",
   "chapters": [
     4,
     9,
@@ -88,5 +88,10 @@
     "tripoCreatedAt": "2026-11-09T13:53:00.656358Z",
     "tripoCompletedAt": "2026-11-09T13:55:19.524837Z",
     "tripoRender": "art-source/models/raw/g3-wall-stone-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "Coursed limestone with a footing and string courses under a box parapet, without distinct merlons. At 1,468 triangles the courses soften and the normal map keeps the joints; its two faces are alike, so its facing does not matter. Each section is stretched 0.93 to 1.17 along the stone camps' runs."
   }
 }

@@ -1,6 +1,6 @@
 {
   "id": "g3-archery-butt",
-  "status": "generated: awaiting review",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beside Chapter VI's south-east tower at its Follow camera (desktop build, High)",
   "chapters": [
     3,
     6,
@@ -90,5 +90,10 @@
     "tripoCreatedAt": "2026-11-09T14:34:27.810616Z",
     "tripoCompletedAt": "2026-11-09T14:37:16.983032Z",
     "tripoRender": "art-source/models/raw/g3-archery-butt-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A round straw target with faded rings on a timber easel, arrows in its face and on the ground, and a wicker screen beside it; turned 270° so its face looks toward the camp. Below about 3,400 triangles its easel collapsed into sheets; at 4,410 the frame, the screen and the arrows hold."
   }
 }

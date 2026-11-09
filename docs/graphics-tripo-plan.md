@@ -251,11 +251,15 @@ Eighteen more camp models, made after the pilot's review in the game (decision 9
   - Chapter XI, a portico in Rome, keeps its code-built walls. Chapter V's courtyard takes the mudbrick wall and towers too.
 - **The tent lines** mix the two new tents with the leather tent by a hash of each pitch's first cell, a quarter of the pitches each. Each model hides only its own pitches' code-built tents. Chapters IV and VI pitch one tent each, which falls to the leather tent.
 - **The furniture** stands beside its service where a court is free, otherwise in the baggage line, as the pilot's does.
+- **Reviewed in the game,** two models were processed again at more triangles, as their parts had crumpled into facets at the Follow camera: the reed-mat shade (8,819 triangles) and the pilot's supply stack (5,389, the most Chapter VII's web room could take). [The art record](art-generation.md#release-g3-the-rest-of-the-camps--9-november-2026) has the review.
 - **Downloads:** each model downloads with its chapters in the desktop app. On the web:
   - Chapters I, VII, VIII and XII take none of the rest's models, as decided after the pilot;
-  - Chapter IX's share came to 2.33 MB against its 2.33 MB of room: it leaves out the two new tents, one pitch each, which stay leather on the web (27.51 of 28 MB);
-  - every other chapter takes all its models: IV at 27.14 MB, VI at 26.53 and X at 27.33 of 28;
-  - Chapter I's 3D download is unchanged at 17.87 of 18 MB, and the complete web game is 70.59 of 80 MB.
+  - Chapter IX's share came to 2.45 MB against its 2.33 MB of room. It leaves out the two new tents, one pitch each, which stay leather on the web, and the tribunal and the parley awning, which stand in its far rows beyond the camera's reach (27.34 of 28 MB). No other web chapter carries those two, so the web build leaves out their files (0.35 MB);
+  - every other chapter takes all its models: IV at 27.21 MB, VI at 26.71 and X at 27.40 of 28;
+  - with the supply stack processed again, Chapter VII's download stands at 27.94 of 28 MB and VIII's at 27.92;
+  - Chapter I's 3D download is unchanged at 17.87 of 18 MB, and the complete web game is 70.42 of 80 MB.
+
+![Chapters IV, VI and IX before (main, after the pilot) and with the rest of G3, in the desktop build at High](images/g3-rest-camps.jpg)
 
 #### What G3 leaves
 
