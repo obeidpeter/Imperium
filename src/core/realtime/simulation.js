@@ -48,9 +48,9 @@ export function createWorld({map,seed,actors,controlled='hero',options={},weathe
   practice=false,kind='field',scale=null,squads=null,command=null,chapter=null,rng=null}){
   if(!map?.terrain||!Number.isInteger(map.width)||!Number.isInteger(map.height))throw new Error('A real-time world needs a tile map.');
   const world={version:WORLD_VERSION,kind,tick:0,seed:seed>>>0,rng:rng?{...rng}:splitStreams(seed>>>0),
-    // Rain (slower slopes, navigation.js) and structure heights belong to the map the world walks.
+    // Rain (slower slopes, navigation.js), structure heights and a camp's pitched tents belong to the map the world walks.
     map:{id:map.id??'map',width:map.width,height:map.height,terrain:map.terrain.map(row=>row.map(t=>typeof t==='string'?t:t?.type??'grass')),
-      ...(map.rain?{rain:true}:{}),...(map.elevations?{elevations:map.elevations.map(e=>[...e])}:{})},scale,
+      ...(map.rain?{rain:true}:{}),...(map.elevations?{elevations:map.elevations.map(e=>[...e])}:{}),...(map.blocked?.length?{blocked:map.blocked.map(c=>[...c])}:{})},scale,
     weather,timeOfDay,difficulty,practice,heroId:'hero',controlled,options:{keepFighting:false,drawToAttack:true,...options},status:'active',
     actors:actors.map(makeActor),party:[...party],projectiles:[],objects:objects.map(o=>({...o,done:!!o.done,...(Array.isArray(o.contents)?{contents:[...o.contents]}:{}),
       ...(o.lock?{lock:{...o.lock,...(o.lock.force?{force:{...o.lock.force}}:{})}}:{})})),mission,

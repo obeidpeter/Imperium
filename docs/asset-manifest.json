@@ -5088,8 +5088,8 @@
           "previousSha256": "5f62a77089572ace87e6478c9d777986596be7cc20a18758e13eee5f1804192d"
         }
       },
-      "usage": "Off-board scenery: a soldiers' tent at the corner of the Chapter V supply camp; decorative, outside the playable board, never a game cell.",
-      "loading": "Shared deferred chapter packs 5, 6 at Balanced/High, with complete procedural fallback. The approved Chapter V placement is preserved; other uses follow full rules bounds or validated blocked service pockets.",
+      "usage": "Off-board scenery: a soldiers' tent at the corner of the Chapter V supply camp; decorative, outside the playable board, never a game cell. Since release G3 it is also every tent of the tent lines in the camps of Chapters I–IV, VI–IX and XII, drawn instanced on authored pitches whose cells the camp world blocks for walking (src/data/camp-regions.js).",
+      "loading": "Shared deferred chapter packs 1, 2, 3, 4, 5, 6, 7, 8, 9, 12 at Balanced/High, with complete procedural fallback (code-built tents on the tent lines). The approved Chapter V placement is preserved; other uses follow full rules bounds, validated blocked service pockets or validated tent pitches.",
       "export": {
         "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 231056,

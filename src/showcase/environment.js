@@ -217,13 +217,15 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   const normals=blade.attributes.normal;for(let i=0;i<normals.count;i++){const n=new THREE.Vector3(normals.getX(i)*.5,Math.abs(normals.getY(i))+.85,normals.getZ(i)*.5).normalize();normals.setXYZ(i,n.x,n.y,n.z);}
   const grassCount=profile.civic?0:Math.round((perf?2400:high?13000:8500)*(profile.vegetation==='arid'?.12:profile.vegetation==='reeds'?.4:1));
   yield;
+  // No tuft grows through a pitched tent's floor (the tent lines, environment-regional-world.js).
+  const tentTiles=new Set((e.campPresentation?.tentPitches??[]).flatMap(t=>(t.cells??[]).map(c=>c.y*e.width+c.x)));
   for(let i=0;i<grassCount;i++){
     if(i%1024===1023)yield;
     const x=(hash(i,31)-.5)*Math.max(65,halfX*2+24),z=(hash(i,32)-.5)*Math.max(55,halfZ*2+24);
     if(profile.distantWater&&z<riverZ+11&&z>riverZ-11)continue;
     const tile=worldToGrid(x,z,e,tileSize),inside=isPlayable(x,z,e,tileSize),type=inside?terrainAt(e,tile.x,tile.y):'grass';
     const patch=noise(x*.55,z*.55,71);
-    if(['rock','wall','river','ford','stone','chamber','marsh'].includes(type)||hash(i,9)>patch*.85+(inside?(training?-.23:.1):.24)||(profile.architecture==='fort'&&Math.abs(x-fortX)<1))continue;
+    if(['rock','wall','river','ford','stone','chamber','marsh'].includes(type)||inside&&tentTiles.has(tile.y*e.width+tile.x)||hash(i,9)>patch*.85+(inside?(training?-.23:.1):.24)||(profile.architecture==='fort'&&Math.abs(x-fortX)<1))continue;
     if(roadDistance(x,z)<tileSize*(.34+hash(i,15)*.14)||precinctRoute(x,z)>.12)continue;
     const s=inside?(training?.065:.12)+hash(i,4)*.12:.18+hash(i,4)*.39,dry=hash(i,114)>.83;
     instance(dry?'dry meadow grass':'meadow grass',blade,dry?m.dryGrass:m.grass,[x,height(x,z)-.01,z],[s*(.7+hash(i,8)*.6),s,s],[0,hash(i,4)*6.28,0],new THREE.Color().setRGB(.71+hash(i,2)*.25,.77+hash(i,5)*.2,.59+hash(i,1)*.24));

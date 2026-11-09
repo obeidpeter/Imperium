@@ -1,5 +1,5 @@
 import {campFor,CAMP_PLACES,campPlaceName,campPersonPresent,campPersonSpot} from '../../data/camps.js';
-import {CAMP_CONTEXT,CAMP_FIELD_DETAILS} from '../../data/camp-regions.js';
+import {CAMP_CONTEXT,CAMP_FIELD_DETAILS,tentCells} from '../../data/camp-regions.js';
 import {CHAPTERS} from '../../data/campaign.js';
 import {createWorld} from './simulation.js';
 import {FINE,layoutFor,upsampleTerrain,soldierSpec} from './campaign-encounter.js';
@@ -93,12 +93,20 @@ function campPresentationBase(state){
       const xs=p.cells.map(c=>c[0]),ys=p.cells.map(c=>c[1]),minX=Math.min(...xs),maxX=Math.max(...xs)+1,minZ=Math.min(...ys),maxZ=Math.max(...ys)+1;
       return {id:p.id,kind:p.kind,cells:p.cells.map(([x,y])=>({x,y})),x:(minX+maxX)*FINE/2-hx,z:(minZ+maxZ)*FINE/2-hz,
         width:(maxX-minX)*FINE,depth:(maxZ-minZ)*FINE,yaw:0,ground:'stone',fallbackName:`ch5-service-pad:${p.id}`};}),
+    tentPitches:tentPitchesOf(camp,hx,hz),
     // Existing service actors perform these in place. Coordinates are centred
     // presentation metres for nearby scenery; they never drive navigation.
     ambient:ambientOf(state,camp,point)
   };
 }
 
+// The tent lines' pitched tents (graphics plan, G3), in centred presentation metres: each pitch's
+// centre, its extent along x (width) and z (depth), its ridge and the way its door faces. The world
+// blocks their cells; the scenery draws a tent on each.
+const tentPitchesOf=(camp,hx,hz)=>(camp.tentPitches??[]).map(pitch=>{
+  const [x,y,ridge,door]=pitch,cells=tentCells(pitch),width=(ridge==='x'?2:1)*FINE,depth=(ridge==='z'?2:1)*FINE;
+  return {id:`tent:${x},${y}`,cells:cells.map(([cx,cy])=>({x:cx,y:cy})),x:x*FINE+width/2-hx,z:y*FINE+depth/2-hz,width,depth,ridge,door};
+});
 // The routines the camp's present people perform where they stand.
 const ambientOf=(state,camp,point)=>camp.people.filter(p=>p.routine&&campPersonPresent(state,p)).map(p=>{const spot=campPersonSpot(state,p);return {id:p.id,routine:p.routine,...point(spot.place,spot.at)};});
 function regionalCampPresentation(state){
@@ -137,12 +145,15 @@ function regionalCampPresentation(state){
       const xs=p.cells.map(c=>c[0]),ys=p.cells.map(c=>c[1]),minX=Math.min(...xs),maxX=Math.max(...xs)+1,minZ=Math.min(...ys),maxZ=Math.max(...ys)+1;
       return {id:p.id,kind:p.kind,cells:p.cells.map(([x,y])=>({x,y})),x:(minX+maxX)*FINE/2-hx,z:(minZ+maxZ)*FINE/2-hz,
         width:(maxX-minX)*FINE,depth:(maxZ-minZ)*FINE,yaw:0,ground:camp.ground,fallbackName:`world-service-pad:${state.chapter}:${p.id}`};}),
+    tentPitches:tentPitchesOf(camp,hx,hz),
     ambient:ambientOf(state,camp,point)};
 }
 export function createCampWorld(state){
   const camp=campView(state);if(!camp)return null;
   const layout=layoutFor(camp.terrain[0].length,camp.terrain.length,camp.scale),fine=upsampleTerrain(camp.terrain,layout,camp.ground);
   for(const pad of camp.sceneryPads??[])for(const [x,y]of pad.cells)fine.terrain[y][x]='rock';
+  // The tent lines' pitched tents stand on their own ground, solid for walking (navigation.js).
+  const blocked=(camp.tentPitches??[]).flatMap(tentCells);
   const place=(id,offset)=>campPoint(layout,camp.places[id],offset);
   const entry=place(camp.entry,[0,-3]);
   const actors=[{...soldierSpec(state,{at:[entry.x,entry.z],face:[0,-1]}),standingPreset:null}];
@@ -158,7 +169,7 @@ export function createCampWorld(state){
   const exit=campExitFor(state);
   if(exit){const at=place(exit.place,exit.at);objects.push({id:exit.id,kind:'exit',name:exit.name,x:at.x,z:at.z,work_s:.3,toggle:true,
     verb:exit.verb,hint:exit.hint,exit:{to:exit.to,area:exit.area}});}
-  const world=createWorld({map:{id:camp.id,...fine},seed:1000+state.chapter,actors,controlled:'hero',objects,kind:'camp',mission:null});
+  const world=createWorld({map:{id:camp.id,...fine,...(blocked.length?{blocked}:{})},seed:1000+state.chapter,actors,controlled:'hero',objects,kind:'camp',mission:null});
   world.layout={kx:[...layout.kx],ky:[...layout.ky],k:layout.k};world.title=camp.title;world.campId=camp.id;world.chapter=state.chapter;
   if(camp.peaceful===true)world.peaceful=true;
   world.places=Object.fromEntries(CAMP_PLACES.map(id=>[id,{name:campPlaceName(state.chapter,id),...place(id)}]));

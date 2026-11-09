@@ -53,12 +53,14 @@ export function createCampGroundSampler(e,{tileSize=2.5,props=[]}={}){
   const cell=p=>({x:Math.max(0,Math.min(width-1,Math.floor((p.x+hx)/tileSize))),y:Math.max(0,Math.min(height-1,Math.floor((p.z+hz)/tileSize)))});
   const point=i=>({x:(i%width+.5)*tileSize-hx,z:(Math.floor(i/width)+.5)*tileSize-hz});
   const gate=cell(places.find(p=>p.id==='gate')??places[0]),start=gate.y*width+gate.x,dist=new Float64Array(width*height).fill(Infinity),prev=new Int32Array(width*height).fill(-1),open=new Set([start]);dist[start]=0;
+  // The worn ways go round the tent lines' pitched tents, as the soldier walks.
+  const tents=new Set((e.campPresentation.tentPitches??[]).flatMap(t=>(t.cells??[]).map(c=>c.y*width+c.x)));
   while(open.size){
     let n=-1;for(const i of open)if(n<0||dist[i]<dist[n])n=i;open.delete(n);
     const x=n%width,y=Math.floor(n/width);
     for(const [dx,dy]of [[0,-1],[-1,0],[1,0],[0,1]]){
       const xx=x+dx,yy=y+dy;if(xx<0||yy<0||xx>=width||yy>=height)continue;
-      const type=terrainAt(e,xx,yy);if(!walkable.has(type))continue;
+      const type=terrainAt(e,xx,yy);if(!walkable.has(type)||tents.has(yy*width+xx))continue;
       const j=yy*width+xx,d=dist[n]+(type==='road'?1:1.65);
       if(d<dist[j]){dist[j]=d;prev[j]=n;open.add(j);}
     }

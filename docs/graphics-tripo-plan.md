@@ -31,7 +31,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | 0 | Use what's paid for, then calibrate | 250 | done: calibrated (190 credits, [results](graphics-calibration.md)), and the 3D kit made (seven weapons and helmets, no credits); the landmarks' re-texture skipped |
 | G1 | Armies | 1,005 | done: the [pilot](#g1s-pilot-8-november) (310 credits) and [the rest](#the-rest-of-g1-9-november) (695): 22 bodies and 2 horses. Its other 1,295 credits went to G3 and G5 |
 | G2 | Arms and standards | 700 | |
-| G3 | Camps | 2,400 | next (1,300, 400 from G7 and 700 from G1) |
+| G3 | Camps | 2,400 | in progress: [the tent lines](#g3s-tent-lines-9-november), with no credits; the pilot next (1,300, 400 from G7 and 700 from G1) |
 | G4 | Animals | 600 | |
 | G5 | Battle and siege | 1,845 | (900, 350 from G7 and 595 from G1) |
 | G6 | Faces and people | 1,100 | |
@@ -173,6 +173,16 @@ The owner approved the pilot and the proposal above on 9 November. Fifteen bodie
 Each cap includes about 10% for rejected attempts. G3 and G5 have G7's credits too: each pilot proposes how many more of its own list they buy. Some things stay out of Tripo:
 - the Colosseum, which failed three times there, gets a Blender build;
 - terrain, trees and water stay with the existing code and Blender kits.
+
+### G3's tent lines (9 November)
+
+G3 starts with its credit-free layer: the camps' tent lines, open ground until now, are pitched with the leather tent generated for Chapter V's supply camp in 0.36. The pilot's tents then replace it on the same pitches.
+
+- **The pitches** are data (`src/data/camp-regions.js`): two cells of tent-line ground a tent, in rows a street apart, each pair facing across its street, with an alley every four tents. A tent keeps 2 m from any spot a person, object, place or way out can take. That leaves 23 tents in Chapter I, 13 in II, 12 in III, and 1 to 6 in IV, VI–IX and XII, whose tent lines are small and crowded; 67 in all.
+- **Walking:** a pitched tent is solid. The camp map's `blocked` tiles keep their ground's name, so the ground, the 2D view and the rules' terrain are unchanged, and every target stays reachable in every variant tried.
+- **Drawing:** one instanced draw for each of the model's meshes carries every tent in a camp, which the plan asked of repeated props. A code-built tent stands on each pitch on Performance and until the model is ready.
+- **Downloads:** the tent (231,056 bytes) joins the packs of the nine chapters with tent lines.
+- **What the pilot needs from it:** the smaller camps (IV–IX, XII) fit only a few tents on their board, so their pilot tents also need ground beyond the walls, where the camp continues.
 
 ## Around every release, at no credit cost
 

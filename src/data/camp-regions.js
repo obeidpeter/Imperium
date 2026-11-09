@@ -10,6 +10,20 @@ const PAD_CORNERS={1:[[20,7],[21,12],[20,20]],2:[[20,5],[20,13],[17,20]],3:[[22,
   9:[[6,7],[16,13],[12,13]],10:[[1,1],[16,13],[8,13]],11:[[14,6],[14,1],[6,1]],12:[[16,13],[8,1],[3,13]]};
 export const CAMP_SCENERY_PADS=Object.freeze(Object.fromEntries(Object.entries(PAD_CORNERS).map(([chapter,corners])=>[chapter,Object.freeze(corners.map(([x,y],i)=>
   Object.freeze({id:['world-supply','world-water','world-local'][i],kind:['supplies','water','local'][i],cells:Object.freeze([[x,y],[x+1,y],[x,y+1],[x+1,y+1]].map(Object.freeze))})))])));
+// The tent lines' pitches (graphics plan, G3): a contubernium's tent on two fine cells of tent-line
+// ground, [x, y, ridge, door]. The ridge runs along x (cells x,y and x+1,y) or z (x,y and x,y+1), and the
+// door faces +1 or -1 along it. Rows stand a street apart, each pair facing across its street, with an
+// alley every four tents; every tent keeps 2 m from any spot a person, object, place or way out can take,
+// and is solid for walking, like a pocket (tests/camp-tents.test.mjs).
+const PITCHES={
+  1:[[3,3,'z',1],[4,3,'z',1],[5,3,'z',1],[6,3,'z',1],[8,3,'z',1],[3,6,'z',-1],[8,6,'z',-1],[18,3,'x',1],[18,4,'x',1],[18,5,'x',1],[18,6,'x',1],[18,8,'x',-1],
+    [21,3,'x',-1],[21,4,'x',-1],[21,5,'x',-1],[21,6,'x',-1],[23,12,'z',1],[24,12,'z',1],[25,12,'z',1],[26,12,'z',1],[21,15,'z',-1],[22,15,'z',-1],[26,15,'z',-1]],
+  2:[[21,3,'x',1],[21,4,'x',1],[21,7,'x',1],[21,8,'x',1],[24,3,'x',-1],[24,8,'x',-1],[3,6,'z',1],[8,6,'z',1],[3,16,'z',1],[4,16,'z',1],[5,16,'z',1],[6,16,'z',1],[8,16,'z',1]],
+  3:[[3,3,'z',1],[4,3,'z',1],[5,3,'z',1],[6,3,'z',1],[8,3,'z',1],[3,6,'z',-1],[8,6,'z',-1],[21,7,'z',1],[22,7,'z',1],[23,7,'z',1],[23,12,'z',1],[26,12,'z',1]],
+  4:[[2,10,'z',-1]],6:[[4,2,'x',1]],7:[[8,2,'z',1],[8,8,'z',1],[9,8,'z',1],[10,8,'z',1],[11,8,'z',1]],8:[[6,8,'z',1],[7,8,'z',1]],
+  9:[[6,2,'x',1],[6,3,'x',1],[6,4,'x',1],[6,5,'x',1],[12,2,'x',1],[12,5,'x',1]],12:[[3,2,'x',1],[6,2,'x',-1],[6,3,'x',-1],[14,2,'z',1]]};
+export const tentCells=([x,y,ridge])=>ridge==='x'?[[x,y],[x+1,y]]:[[x,y],[x,y+1]];
+export const CAMP_TENT_PITCHES=Object.freeze(Object.fromEntries(Object.entries(PITCHES).map(([chapter,list])=>[chapter,Object.freeze(list.map(Object.freeze))])));
 export const CAMP_CONTEXT=Object.freeze({
   1:context('Learn the camp, settle the lost javelin, and prepare for the boundary road.',
     'Boot marks cross the drill sand. Beyond the standards, the Danube carries timber downstream; the recruit’s world is still small enough to walk across.',
