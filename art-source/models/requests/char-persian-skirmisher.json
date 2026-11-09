@@ -1,0 +1,165 @@
+{
+  "id": "char-persian-skirmisher",
+  "status": "bound, quantized and compressed: G1 pilot, awaiting the owner's review",
+  "chapters": [
+    6
+  ],
+  "use": "Persian raiders (skirmishers) of Chapter VI's two battles, light-armed javelin men; the game adds the javelins and sword. Release G1's pilot.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Sasanian Persian skirmisher of the mid-3rd century AD, a light-armed javelin man, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length tunic of undyed linen with a woven red border at the hem and cuffs, belted with a brown cloth sash, baggy trousers gathered at the ankle, soft leather shoes, and a soft rounded felt cap. Black beard and dark hair to the shoulders. No armour, no helmet. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, mail, scale, lamellar, helmet, turban, cloak, cape, shield, weapon, spear, javelin, sword, bow, quiver, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611220,
+      "image_seed": 2611221,
+      "texture_seed": 2611222
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "pilot",
+    "creditCeiling": 345,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T23:05:50.991Z",
+    "requestBody": {
+      "negative_prompt": "armour, mail, scale, lamellar, helmet, turban, cloak, cape, shield, weapon, spear, javelin, sword, bow, quiver, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611220,
+      "image_seed": 2611221,
+      "texture_seed": 2611222,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Sasanian Persian skirmisher of the mid-3rd century AD, a light-armed javelin man, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length tunic of undyed linen with a woven red border at the hem and cuffs, belted with a brown cloth sash, baggy trousers gathered at the ankle, soft leather shoes, and a soft rounded felt cap. Black beard and dark hair to the shoulders. No armour, no helmet. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10470,
+    "balanceSnapshotBefore": {
+      "balance": 10470,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "aa48e64b-c0a2-4d6d-a50c-5e83ad07840a",
+      "state": "accepted",
+      "requestSha256": "0621e61fd8e9093942d7ba7ff4dba6e1b7dd5229adaadfaec9a7cc1b653cf839"
+    },
+    "taskId": "a69dc59a-eec4-4539-b95c-894c030c4d34",
+    "status": "success",
+    "generatedAt": "2026-11-08T23:07:43.707Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-persian-skirmisher.glb",
+    "rawBytes": 44943148,
+    "rawSha256": "fa600cd6c5f1e4414d905f3c8773831ed88acc6d7a4810a6fcc4ab21439f6db4",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Sasanian Persian skirmisher of the mid-3rd century AD, a light-armed javelin man, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length tunic of undyed linen with a woven red border at the hem and cuffs, belted with a brown cloth sash, baggy trousers gathered at the ankle, soft leather shoes, and a soft rounded felt cap. Black beard and dark hair to the shoulders. No armour, no helmet. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611221,
+      "model_seed": 2611220,
+      "texture_seed": 2611222,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, mail, scale, lamellar, helmet, turban, cloak, cape, shield, weapon, spear, javelin, sword, bow, quiver, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T23:05:51.652699Z",
+    "tripoCompletedAt": "2026-11-08T23:07:37.150944Z",
+    "tripoRender": "art-source/models/raw/char-persian-skirmisher-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-08T23:14:58.986Z",
+      "requestBody": {
+        "input": "a69dc59a-eec4-4539-b95c-894c030c4d34"
+      },
+      "submission": {
+        "id": "8b101659-a8ae-40b6-a519-1873ea493839",
+        "state": "accepted",
+        "requestSha256": "d57891d703a6e3d5bd2dfa3822080c1a13e34290174cd46cbf1d60ecdbdb479e"
+      },
+      "taskId": "c359d73a-c910-4f7e-b4bd-5fbdfdea374d",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-08T23:15:04.715Z",
+      "requestBody": {
+        "input": "a69dc59a-eec4-4539-b95c-894c030c4d34",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 10300,
+      "balanceSnapshotBefore": {
+        "balance": 10300,
+        "frozen": 40
+      },
+      "submission": {
+        "id": "26195077-beeb-4e4f-8a6b-ea0ea2edaf0b",
+        "state": "accepted",
+        "requestSha256": "be942f0778247c427f8a1176c47e841a6eae7277a773dc412522968e567ab739"
+      },
+      "taskId": "062ca361-4fcb-4cef-9e4e-650c2a538388",
+      "status": "success",
+      "generatedAt": "2026-11-08T23:15:55.896Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-persian-skirmisher-rigged.glb",
+      "rawBytes": 59980164,
+      "rawSha256": "0e17808de92bd02f1659ee32d66d42a2a6c0ce8c03840844c994328d275a66e9",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "a69dc59a-eec4-4539-b95c-894c030c4d34"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-08T23:15:04.971548Z",
+      "tripoCompletedAt": "2026-11-08T23:15:51.496200Z"
+    }
+  }
+}

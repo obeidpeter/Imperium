@@ -3,8 +3,7 @@
   "status": "bound on its own rest pose, quantized and compressed: shipped",
   "chapters": [
     5,
-    6,
-    9
+    6
   ],
   "use": "The armoured horse of the Persian and Palmyrene heavy cavalry, mesh only: skinned in Blender to the game's own horse skeleton (scripts/assets/bind-horse.py), so its hooves stay planted, its rider seated, and formations and fallen horses work as with the code-built horse, which stays the stand-in.",
   "generator": {

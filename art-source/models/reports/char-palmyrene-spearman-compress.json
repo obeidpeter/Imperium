@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/palmyrene-spearman.glb",
+  "output": "assets/models/characters/palmyrene-spearman.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 555324,
+    "gzipBytes": 401931,
+    "sha256": "b51b47e450c26a3c37b6e56b548e3b2e559e6641c284daa10ca78ea207756d28"
+  },
+  "after": {
+    "bytes": 472840,
+    "gzipBytes": 450899,
+    "sha256": "03ecb2be3b30bb199b86e9ef5a74233979d35fe3402faae564ef86808ee74c8b"
+  },
+  "geometryUnchanged": true,
+  "triangles": 14013,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 20202
+      },
+      "bytes": 30429,
+      "psnr": 36.798
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 89078
+      },
+      "bytes": 162841,
+      "psnr": 34.614
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31456
+      },
+      "bytes": 43574,
+      "psnr": 31.05
+    }
+  ]
+}

@@ -5746,7 +5746,7 @@
         }
       },
       "usage": "Armoured Gothic warriors and riders; the game adds the spear, shield and horse.",
-      "loading": "Deferred local GLB in the offline groups of Chapters IV, VII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapters IV, VII and VIII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 441704,
@@ -11020,8 +11020,8 @@
           "report": "art-source/models/reports/char-roman-cavalry-compress.json"
         }
       },
-      "usage": "Mounted Roman riders: the game adds the shield, weapons and cloak and seats him on his horse.",
-      "loading": "Deferred local GLB in the offline groups of Chapters VII, IX and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "usage": "Mounted Roman riders: the game adds the shield, weapons and cloak and seats him on his horse. In Chapter IX the Moorish horse ride in his place (release G1).",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII and XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures whose kit it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 417964,
@@ -11070,7 +11070,7 @@
         }
       },
       "usage": "The horses of Gothic riders, under the game's own saddle; the code-built horse stays the stand-in wherever the model is absent.",
-      "loading": "Deferred local GLB in the offline groups of Chapter VII only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for the riders it fits (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
+      "loading": "Deferred local GLB in the offline groups of Chapters VII and VIII only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for the riders it fits (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 19 horse joints at its own rest pose (horse-coat, horse-coat-overview), with a point where each hoof stands (fore-right-sole and so on), KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 421324,
@@ -11120,8 +11120,8 @@
           "report": "art-source/models/reports/horse-eastern-compress.json"
         }
       },
-      "usage": "The horses of Persian and Palmyrene riders, under the game's own saddle; the code-built horse stays the stand-in wherever the model is absent.",
-      "loading": "Deferred local GLB in the offline groups of Chapters V, VI and IX only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for the riders it fits (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
+      "usage": "The horses of Persian riders, under the game's own saddle; the code-built horse stays the stand-in wherever the model is absent. The Palmyrene cataphracts ride horse-cataphract since release G1.",
+      "loading": "Deferred local GLB in the offline groups of Chapters V and VI only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for the riders it fits (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 19 horse joints at its own rest pose (horse-coat, horse-coat-overview), with a point where each hoof stands (fore-right-sole and so on), KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
         "bytes": 550740,
@@ -15597,6 +15597,450 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-gothic-skirmisher",
+      "path": "assets/models/characters/gothic-skirmisher.glb",
+      "subject": "Generated character body: a young Gothic skirmisher of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "7c8a8e44-993c-4bf8-9dd3-c2a384f68380",
+        "generatedAt": "2026-11-08T20:20:21.892Z",
+        "rigTaskId": "7f1bf80a-4f0c-4026-86df-c7f11749f79a",
+        "riggedAt": "2026-11-08T20:23:15.864Z",
+        "prompt": "art-source/models/requests/char-gothic-skirmisher.json",
+        "rawBytes": 45203012,
+        "rawSha256": "79ad449349ecc6b74f0fef4757faf8cf2ec8225b10efed1464c4bb9f93b4b887",
+        "riggedBytes": 60303404,
+        "riggedSha256": "5006c9966f52a3703b18dd416e6b2703c2b59e6934a47d5fdaf475c349f13ee1",
+        "program": "graphics-g1",
+        "credits": 0,
+        "creditsNote": "No credits of release G1: paid in step 0's calibration (art-source/models/graphics-calibration-credits.json) as cal-gothic-skirmisher-standard",
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-gothic-skirmisher.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-08",
+          "report": "art-source/models/reports/char-gothic-skirmisher-compress.json"
+        }
+      },
+      "usage": "Gothic skirmishers, the young javelin men of the war bands of Chapters I and II, where one marches on with the reinforcements; the game adds the sword and javelins.md). It is the standard-tier body bought for step 0's calibration (cal-gothic-skirmisher-standard), shipped from its own request with the calibration's task IDs and digests, so release G1 spends nothing on it.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I and II only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 408220,
+        "sha256": "d907c190b9830c32964ee9fb3f7c582c177959cc68ac7ce60728fc1c8f23f177",
+        "triangles": 13780,
+        "nearTriangles": 11280,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5946,
+          "height": 1.766,
+          "depth": 0.3859
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-gothic-warband",
+      "path": "assets/models/characters/gothic-warband.glb",
+      "subject": "Generated character body: a Gothic war-band spearman of the mid-3rd century AD, in a leather jerkin and segmented helmet",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "ed7c6087-9578-4aa1-9d7e-5524bdc270f1",
+        "generatedAt": "2026-11-08T23:03:34.904Z",
+        "rigTaskId": "e66dd26e-11a4-4ee3-b734-d6cb4b979ec8",
+        "riggedAt": "2026-11-08T23:13:15.647Z",
+        "prompt": "art-source/models/requests/char-gothic-warband.json",
+        "rawBytes": 45547648,
+        "rawSha256": "ad43da279dc8fb0c79ca0e92e9719fdd906aace3936ec6f736f1bd14d0057d9e",
+        "riggedBytes": 60985676,
+        "riggedSha256": "8a6655c87bacbc2bb8f280a1a82f795af195ed2795ae1d9868bbb7eb4aac2b36",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-gothic-warband.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-08",
+          "report": "art-source/models/reports/char-gothic-warband-compress.json"
+        }
+      },
+      "usage": "Gothic warriors (infantry): the war bands' helmeted spearmen in Chapters II, IV, VII and VIII; the game adds the spear and round shield.md).",
+      "loading": "Deferred local GLB in the offline groups of Chapters II, IV, VII and VIII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 421260,
+        "sha256": "2a2c43fa5efc3379740c2dc5f0c41dcbffae66ec99546bce43796ffc1d63727e",
+        "triangles": 13863,
+        "nearTriangles": 11363,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5945,
+          "height": 1.7909,
+          "depth": 0.3911
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-gate",
+      "path": "assets/models/characters/champion-gate.glb",
+      "subject": "Generated character body: the war band's chieftain, Chapter IV's gate champion, with his gold torc",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "ca9f3eb1-015b-40b8-903f-96b9a35cd652",
+        "generatedAt": "2026-11-08T23:05:50.046Z",
+        "rigTaskId": "10395c0c-7008-4be5-b1f8-143f4ecb7c66",
+        "riggedAt": "2026-11-08T23:14:50.978Z",
+        "prompt": "art-source/models/requests/char-champion-gate.json",
+        "rawBytes": 43511868,
+        "rawSha256": "abec1b68a6aac0333392c3f51a46f662bab78a4b1b82ddbaa5da29da8992207a",
+        "riggedBytes": 57895656,
+        "riggedSha256": "d6f28ef5f04bd3304a8980a1a9c263fe92218e28c20a172dc5d31728c21bbfb4",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-gate.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-08",
+          "report": "art-source/models/reports/char-champion-gate-compress.json"
+        }
+      },
+      "usage": "The war band's chieftain, the champion of Chapter IV's gate battle (ch4-gate), in his own body; the game adds his round shield and chieftain's axe.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IV only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 437144,
+        "sha256": "4c97575ab279495d72c8ecffcdd37a20b8a5a1881b5294576e516d422e2d8e8a",
+        "triangles": 13886,
+        "nearTriangles": 11386,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6401,
+          "height": 1.7631,
+          "depth": 0.3939
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-persian-skirmisher",
+      "path": "assets/models/characters/persian-skirmisher.glb",
+      "subject": "Generated character body: a Sasanian Persian skirmisher of the mid-3rd century AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "a69dc59a-eec4-4539-b95c-894c030c4d34",
+        "generatedAt": "2026-11-08T23:07:43.707Z",
+        "rigTaskId": "062ca361-4fcb-4cef-9e4e-650c2a538388",
+        "riggedAt": "2026-11-08T23:15:55.896Z",
+        "prompt": "art-source/models/requests/char-persian-skirmisher.json",
+        "rawBytes": 44943148,
+        "rawSha256": "fa600cd6c5f1e4414d905f3c8773831ed88acc6d7a4810a6fcc4ab21439f6db4",
+        "riggedBytes": 59980164,
+        "riggedSha256": "0e17808de92bd02f1659ee32d66d42a2a6c0ce8c03840844c994328d275a66e9",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-persian-skirmisher.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-08",
+          "report": "art-source/models/reports/char-persian-skirmisher-compress.json"
+        }
+      },
+      "usage": "Persian raiders (skirmishers) of Chapter VI's two battles, light-armed javelin men; the game adds the javelins and sword.",
+      "loading": "Deferred local GLB in the offline groups of Chapter VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 423236,
+        "sha256": "e8937ab9d62168c71e64cc21144ab2cb0657d9e27d0ea89aad8c3b0145a63209",
+        "triangles": 13723,
+        "nearTriangles": 11224,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5962,
+          "height": 1.8021,
+          "depth": 0.4206
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-palmyrene-spearman",
+      "path": "assets/models/characters/palmyrene-spearman.glb",
+      "subject": "Generated character body: a Palmyrene infantry spearman of the 270s AD, in a padded jerkin",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "551e4849-1420-4ea0-91af-20f8b0519b33",
+        "generatedAt": "2026-11-08T23:09:16.686Z",
+        "rigTaskId": "a13c1ad5-ba58-4155-bd12-dc71b68aaeb3",
+        "riggedAt": "2026-11-08T23:16:57.632Z",
+        "prompt": "art-source/models/requests/char-palmyrene-spearman.json",
+        "rawBytes": 44151056,
+        "rawSha256": "66420a926f12177a468e3dfaaf0e72ccf7fc78dc8f83cf2b54a59a0e2feabc6b",
+        "riggedBytes": 58708828,
+        "riggedSha256": "bf8d0b7135a8bd00dc0697462e150eb4cee2fa74ad5b6987c618dd3eb35f6c7e",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-palmyrene-spearman.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-08",
+          "report": "art-source/models/reports/char-palmyrene-spearman-compress.json"
+        }
+      },
+      "usage": "Palmyrene infantry (spearmen) of Chapter IX's two battles, in a padded jerkin, so the scale-armoured guard stands apart from them; the game adds the spear and round shield.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 472840,
+        "sha256": "03ecb2be3b30bb199b86e9ef5a74233979d35fe3402faae564ef86808ee74c8b",
+        "triangles": 14013,
+        "nearTriangles": 11513,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5982,
+          "height": 1.7807,
+          "depth": 0.4025
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-rival-legionary",
+      "path": "assets/models/characters/rival-legionary.glb",
+      "subject": "Generated character body: a Roman legionary of a rival claimant, in mail over an off-white tunic",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "a07a6901-559f-4966-9e0e-60e19e70a2db",
+        "generatedAt": "2026-11-08T23:15:35.999Z",
+        "rigTaskId": "6e0ce422-414c-436a-80f8-19656a5d1fc0",
+        "riggedAt": "2026-11-08T23:17:52.099Z",
+        "prompt": "art-source/models/requests/char-rival-legionary-b.json",
+        "rawBytes": 44884416,
+        "rawSha256": "15826a4f7d01073f5af5faf9d25965eb4b1e78b0982c16a0424c07d5b675bc14",
+        "riggedBytes": 59605488,
+        "riggedSha256": "1102dc49295de0318ecf411807ebf02190195516cb9bb0b6fce299f33cb86849",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-rival-legionary-b.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-08",
+          "report": "art-source/models/reports/char-rival-legionary-b-compress.json"
+        }
+      },
+      "usage": "Rival Roman infantry: the claimant's civil-war cohorts in Chapter XII, in off-white tunics so they no longer wear the player's own soldiers' bodies; the game adds the shield, sword and pilum.",
+      "loading": "Deferred local GLB in the offline groups of Chapter XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 432828,
+        "sha256": "5208631889135a320286ae76f378dbe2b6f46d5dcbe51eeb6ffb1694fba6633e",
+        "triangles": 13709,
+        "nearTriangles": 11210,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5891,
+          "height": 1.7653,
+          "depth": 0.3502
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-roman-moorish-cavalry",
+      "path": "assets/models/characters/roman-moorish-cavalry.glb",
+      "subject": "Generated character body: a Moorish light cavalryman of Aurelian's army in the 270s AD",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "c6176082-f573-4e9a-9e1b-1e13bad5597f",
+        "generatedAt": "2026-11-08T23:13:22.757Z",
+        "rigTaskId": "2a4f991d-2818-4c2f-91a4-e7c0cb918828",
+        "riggedAt": "2026-11-08T23:16:33.192Z",
+        "prompt": "art-source/models/requests/char-roman-moorish-cavalry.json",
+        "rawBytes": 45420788,
+        "rawSha256": "68c4b34f0478ce081c2617ecb00c33b9d550a747bc8e6186c6d9ad047ca01623",
+        "riggedBytes": 60505328,
+        "riggedSha256": "806d4bf844bdc4d5ba1408ace0d192d5c479abb97a7f6eed22941497633eec7f",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-roman-moorish-cavalry.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-08",
+          "report": "art-source/models/reports/char-roman-moorish-cavalry-compress.json"
+        }
+      },
+      "usage": "Aurelian's Moorish horse: the Roman cavalry squad of Chapter IX's battles (Zosimus 1.52 names the Mauretanian horse in his army at Emesa), bare-headed; the game adds the shield, spear, cloak and horse.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 418212,
+        "sha256": "4730645729ebc91d49a4c8355f1667478b5af26cdc21dd1181baa2dc56d356a9",
+        "triangles": 13753,
+        "nearTriangles": 11253,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5914,
+          "height": 1.7616,
+          "depth": 0.3542
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "horse-cataphract",
+      "path": "assets/models/horses/horse-cataphract.glb",
+      "subject": "Generated horse: a Palmyrene cataphract's horse of the 270s AD, chestnut under a trapper of bronze scales",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), mesh only; bound to the game's horse skeleton on its own legs' rest pose in Blender 5.2.2 LTS by scripts/assets/bind-horse.py, its colour, normals and roughness baked from the full-detail mesh; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "15f4f317-3226-4092-80a2-2d57f047818c",
+        "generatedAt": "2026-11-08T23:15:20.920Z",
+        "prompt": "art-source/models/requests/horse-cataphract.json",
+        "rawBytes": 47424808,
+        "rawSha256": "b115a654ff429a335bd3f96ff5f226de32bdc93358755b0f7d5fb08561ac29c2",
+        "program": "graphics-g1",
+        "credits": 20,
+        "processing": {
+          "triangles": 9000,
+          "overviewTriangles": 1800,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/horse-cataphract.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-08",
+          "report": "art-source/models/reports/horse-cataphract-compress.json"
+        }
+      },
+      "usage": "The Palmyrene cataphracts' horse in Chapter IX, mesh only, in a trapper of bronze scales that lies flat along the back under the game's saddle (the eastern horse's leaves a raised seat): skinned in Blender to the game's own horse skeleton (scripts/assets/bind-horse.py), as the other horses are; the code-built horse stays the stand-in.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for the riders it fits (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 19 horse joints at its own rest pose (horse-coat, horse-coat-overview), with a point where each hoof stands (fore-right-sole and so on), KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 492908,
+        "sha256": "421c974af077244c5e091a889b9d083fc77090fca498fddda4f7cd14fc9bea1b",
+        "triangles": 10800,
+        "nearTriangles": 9000,
+        "overviewTriangles": 1800,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5969,
+          "height": 2.1475,
+          "depth": 2.0528
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -15686,13 +16130,13 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 136,
+    "models": 144,
     "textures": 15,
     "src": 1,
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 58921881,
-  "totalModelBytes": 43618403,
+  "totalBundledAssetBytes": 62428529,
+  "totalModelBytes": 47125051,
   "derivedGeometryBytes": 47428
 }

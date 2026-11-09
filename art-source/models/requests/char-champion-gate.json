@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-gate",
+  "status": "bound, quantized and compressed: G1 pilot, awaiting the owner's review",
+  "chapters": [
+    4
+  ],
+  "use": "The war band's chieftain, the champion of Chapter IV's gate battle (ch4-gate), in his own body; the game adds his round shield and chieftain's axe. Release G1's pilot.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Gothic war-band chieftain of the mid-3rd century AD, a powerful man of about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a fitted jerkin of dark leather studded with bronze over a long-sleeved red wool tunic with a woven border, a heavy twisted gold torc at the neck, a broad belt with silver fittings, dark wool trousers with leg bindings and leather boots, and an iron segmented helmet with bronze bands, cheek pieces and a short mail neck guard, face visible. Grey-streaked long hair and a full grey-brown beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "horns, wings, plate armour, fur cape, cloak, crown, shield, weapon, axe, sword, spear, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611210,
+      "image_seed": 2611211,
+      "texture_seed": 2611212
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "pilot",
+    "creditCeiling": 345,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T23:03:36.045Z",
+    "requestBody": {
+      "negative_prompt": "horns, wings, plate armour, fur cape, cloak, crown, shield, weapon, axe, sword, spear, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611210,
+      "image_seed": 2611211,
+      "texture_seed": 2611212,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Gothic war-band chieftain of the mid-3rd century AD, a powerful man of about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a fitted jerkin of dark leather studded with bronze over a long-sleeved red wool tunic with a woven border, a heavy twisted gold torc at the neck, a broad belt with silver fittings, dark wool trousers with leg bindings and leather boots, and an iron segmented helmet with bronze bands, cheek pieces and a short mail neck guard, face visible. Grey-streaked long hair and a full grey-brown beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10490,
+    "balanceSnapshotBefore": {
+      "balance": 10490,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "34acad36-735f-4dc2-b26d-afb885e91841",
+      "state": "accepted",
+      "requestSha256": "bb17e0c82ebd3d519683ecf990830fbe8b157ffea089ee5db2844477616f18ad"
+    },
+    "taskId": "ca9f3eb1-015b-40b8-903f-96b9a35cd652",
+    "status": "success",
+    "generatedAt": "2026-11-08T23:05:50.046Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-gate.glb",
+    "rawBytes": 43511868,
+    "rawSha256": "abec1b68a6aac0333392c3f51a46f662bab78a4b1b82ddbaa5da29da8992207a",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Gothic war-band chieftain of the mid-3rd century AD, a powerful man of about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a fitted jerkin of dark leather studded with bronze over a long-sleeved red wool tunic with a woven border, a heavy twisted gold torc at the neck, a broad belt with silver fittings, dark wool trousers with leg bindings and leather boots, and an iron segmented helmet with bronze bands, cheek pieces and a short mail neck guard, face visible. Grey-streaked long hair and a full grey-brown beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611211,
+      "model_seed": 2611210,
+      "texture_seed": 2611212,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "horns, wings, plate armour, fur cape, cloak, crown, shield, weapon, axe, sword, spear, skulls, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T23:03:36.955422Z",
+    "tripoCompletedAt": "2026-11-08T23:05:44.268558Z",
+    "tripoRender": "art-source/models/raw/char-champion-gate-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-08T23:13:15.986Z",
+      "requestBody": {
+        "input": "ca9f3eb1-015b-40b8-903f-96b9a35cd652"
+      },
+      "submission": {
+        "id": "b93cd5ea-35ce-4189-b9df-6ecde6820d34",
+        "state": "accepted",
+        "requestSha256": "b42101deea4c53a4795137968a4f6e23dd85d99ac71bd22ffd44367ab236529e"
+      },
+      "taskId": "5ef44ce4-26f6-4faa-9bf1-9dc9ea5dd789",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-08T23:13:22.465Z",
+      "requestBody": {
+        "input": "ca9f3eb1-015b-40b8-903f-96b9a35cd652",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 10365,
+      "balanceSnapshotBefore": {
+        "balance": 10365,
+        "frozen": 0
+      },
+      "submission": {
+        "id": "873e7851-2330-4b1b-934b-6e8ee7af8d5a",
+        "state": "accepted",
+        "requestSha256": "bdc41dc75723bbfb0c5528926c15314de20fdf48e5700b6e8679fe3ad1589970"
+      },
+      "taskId": "10395c0c-7008-4be5-b1f8-143f4ecb7c66",
+      "status": "success",
+      "generatedAt": "2026-11-08T23:14:50.978Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-gate-rigged.glb",
+      "rawBytes": 57895656,
+      "rawSha256": "d6f28ef5f04bd3304a8980a1a9c263fe92218e28c20a172dc5d31728c21bbfb4",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "ca9f3eb1-015b-40b8-903f-96b9a35cd652"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-08T23:13:22.731383Z",
+      "tripoCompletedAt": "2026-11-08T23:14:16.273429Z"
+    }
+  }
+}

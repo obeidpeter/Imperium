@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/roman-moorish-cavalry.glb",
+  "output": "assets/models/characters/roman-moorish-cavalry.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 469132,
+    "gzipBytes": 340474,
+    "sha256": "bc25b4e37a8942ded289c731d300981b67e034ce71db3873ad6123aced85e7e4"
+  },
+  "after": {
+    "bytes": 418212,
+    "gzipBytes": 397842,
+    "sha256": "4730645729ebc91d49a4c8355f1667478b5af26cdc21dd1181baa2dc56d356a9"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13753,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 15950
+      },
+      "bytes": 27820,
+      "psnr": 37.476
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 58334
+      },
+      "bytes": 143811,
+      "psnr": 38.136
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 17596
+      },
+      "bytes": 36854,
+      "psnr": 38.66
+    }
+  ]
+}

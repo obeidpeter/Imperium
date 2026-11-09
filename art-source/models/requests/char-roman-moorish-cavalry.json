@@ -1,0 +1,165 @@
+{
+  "id": "char-roman-moorish-cavalry",
+  "status": "bound, quantized and compressed: G1 pilot, awaiting the owner's review",
+  "chapters": [
+    9
+  ],
+  "use": "Aurelian's Moorish horse: the Roman cavalry squad of Chapter IX's battles (Zosimus 1.52 names the Mauretanian horse in his army at Emesa), bare-headed; the game adds the shield, spear, cloak and horse. Release G1's pilot.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Moorish light cavalryman of the Roman army in the 270s AD, a Berber horseman from Mauretania, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved belted tunic of undyed wool to just above the knee with a narrow red border, a narrow leather belt, close-fitting light brown wool trousers and soft leather boots. Brown skin, dark hair in tight curled ringlets and a short curly beard. No helmet, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "helmet, armour, mail, turban, hood, robe, cloak, cape, shield, weapon, spear, javelin, sword, bow, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611250,
+      "image_seed": 2611251,
+      "texture_seed": 2611252
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "pilot",
+    "creditCeiling": 345,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T23:11:29.599Z",
+    "requestBody": {
+      "negative_prompt": "helmet, armour, mail, turban, hood, robe, cloak, cape, shield, weapon, spear, javelin, sword, bow, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611250,
+      "image_seed": 2611251,
+      "texture_seed": 2611252,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Moorish light cavalryman of the Roman army in the 270s AD, a Berber horseman from Mauretania, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved belted tunic of undyed wool to just above the knee with a narrow red border, a narrow leather belt, close-fitting light brown wool trousers and soft leather boots. Brown skin, dark hair in tight curled ringlets and a short curly beard. No helmet, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10410,
+    "balanceSnapshotBefore": {
+      "balance": 10410,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "d0535634-8beb-4f39-955f-8a4f1e41918d",
+      "state": "accepted",
+      "requestSha256": "31b7ab8b654ba2c5c72cdbdfb44c24016fb04ddc54f8fc2412c6b7b81536e606"
+    },
+    "taskId": "c6176082-f573-4e9a-9e1b-1e13bad5597f",
+    "status": "success",
+    "generatedAt": "2026-11-08T23:13:22.757Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-roman-moorish-cavalry.glb",
+    "rawBytes": 45420788,
+    "rawSha256": "68c4b34f0478ce081c2617ecb00c33b9d550a747bc8e6186c6d9ad047ca01623",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Moorish light cavalryman of the Roman army in the 270s AD, a Berber horseman from Mauretania, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved belted tunic of undyed wool to just above the knee with a narrow red border, a narrow leather belt, close-fitting light brown wool trousers and soft leather boots. Brown skin, dark hair in tight curled ringlets and a short curly beard. No helmet, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611251,
+      "model_seed": 2611250,
+      "texture_seed": 2611252,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "helmet, armour, mail, turban, hood, robe, cloak, cape, shield, weapon, spear, javelin, sword, bow, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T23:11:30.201054Z",
+    "tripoCompletedAt": "2026-11-08T23:13:18.382353Z",
+    "tripoRender": "art-source/models/raw/char-roman-moorish-cavalry-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-08T23:15:36.961Z",
+      "requestBody": {
+        "input": "c6176082-f573-4e9a-9e1b-1e13bad5597f"
+      },
+      "submission": {
+        "id": "ef53caa2-721c-4b08-aad7-04c6de2a0f40",
+        "state": "accepted",
+        "requestSha256": "4dff3436b61a7edaa0380a55c5a0f4c46f7cd8785e184536dc0047dec23fd74f"
+      },
+      "taskId": "16b0ff4d-4048-40d4-af9f-f3fdf107f4d8",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-08T23:15:42.710Z",
+      "requestBody": {
+        "input": "c6176082-f573-4e9a-9e1b-1e13bad5597f",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 10275,
+      "balanceSnapshotBefore": {
+        "balance": 10275,
+        "frozen": 25
+      },
+      "submission": {
+        "id": "55303da5-3234-49b9-a29b-b48a1973f6c3",
+        "state": "accepted",
+        "requestSha256": "89c11ff6628eb91b13ab188eff3c56ce63f5f0c622bc3e8c0ea8757b74ea096d"
+      },
+      "taskId": "2a4f991d-2818-4c2f-91a4-e7c0cb918828",
+      "status": "success",
+      "generatedAt": "2026-11-08T23:16:33.192Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-roman-moorish-cavalry-rigged.glb",
+      "rawBytes": 60505328,
+      "rawSha256": "806d4bf844bdc4d5ba1408ace0d192d5c479abb97a7f6eed22941497633eec7f",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "c6176082-f573-4e9a-9e1b-1e13bad5597f"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-08T23:15:42.972203Z",
+      "tripoCompletedAt": "2026-11-08T23:16:25.975787Z"
+    }
+  }
+}

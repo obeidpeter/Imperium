@@ -1,0 +1,168 @@
+{
+  "id": "char-gothic-warband",
+  "status": "bound, quantized and compressed: G1 pilot, awaiting the owner's review",
+  "chapters": [
+    2,
+    4,
+    7,
+    8
+  ],
+  "use": "Gothic warriors (infantry): the war bands' helmeted spearmen in Chapters II, IV, VII and VIII; the game adds the spear and round shield. Release G1's pilot (docs/graphics-tripo-plan.md).",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Gothic warrior of the mid-3rd century AD, a spearman of a war band, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of thick brown leather over a long-sleeved dark green-brown wool tunic to mid-thigh, a leather belt, loose grey wool trousers wrapped with leg bindings and leather shoes, and a simple iron segmented helmet of riveted plates with a brow band and small cheek pieces, face visible. Fair hair to the shoulders and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, shield, weapon, spear, sword, axe, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611200,
+      "image_seed": 2611201,
+      "texture_seed": 2611202
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "pilot",
+    "creditCeiling": 345,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T23:02:00.488Z",
+    "requestBody": {
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, shield, weapon, spear, sword, axe, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611200,
+      "image_seed": 2611201,
+      "texture_seed": 2611202,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Gothic warrior of the mid-3rd century AD, a spearman of a war band, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of thick brown leather over a long-sleeved dark green-brown wool tunic to mid-thigh, a leather belt, loose grey wool trousers wrapped with leg bindings and leather shoes, and a simple iron segmented helmet of riveted plates with a brow band and small cheek pieces, face visible. Fair hair to the shoulders and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10510,
+    "balanceSnapshotBefore": {
+      "balance": 10510,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "af849055-a6e9-4439-b302-7112e1d623be",
+      "state": "accepted",
+      "requestSha256": "8d655d0276cd4c89db5557125a7585fe12a0dde1430e335ce3f93b7d3bf22afc"
+    },
+    "taskId": "ed7c6087-9578-4aa1-9d7e-5524bdc270f1",
+    "status": "success",
+    "generatedAt": "2026-11-08T23:03:34.904Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-gothic-warband.glb",
+    "rawBytes": 45547648,
+    "rawSha256": "ad43da279dc8fb0c79ca0e92e9719fdd906aace3936ec6f736f1bd14d0057d9e",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Gothic warrior of the mid-3rd century AD, a spearman of a war band, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of thick brown leather over a long-sleeved dark green-brown wool tunic to mid-thigh, a leather belt, loose grey wool trousers wrapped with leg bindings and leather shoes, and a simple iron segmented helmet of riveted plates with a brow band and small cheek pieces, face visible. Fair hair to the shoulders and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611201,
+      "model_seed": 2611200,
+      "texture_seed": 2611202,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, shield, weapon, spear, sword, axe, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T23:02:01.130958Z",
+    "tripoCompletedAt": "2026-11-08T23:03:28.074213Z",
+    "tripoRender": "art-source/models/raw/char-gothic-warband-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-08T23:12:14.274Z",
+      "requestBody": {
+        "input": "ed7c6087-9578-4aa1-9d7e-5524bdc270f1"
+      },
+      "submission": {
+        "id": "308f9d0a-8124-476a-aa07-3c4d95fc84e5",
+        "state": "accepted",
+        "requestSha256": "a0088e5d3ebcd95f831451c85d11508eb2394357845b71190ee69b42c8c3d7bb"
+      },
+      "taskId": "a55a3842-eb3d-4c50-9f93-64f4379f7a76",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-08T23:12:20.046Z",
+      "requestBody": {
+        "input": "ed7c6087-9578-4aa1-9d7e-5524bdc270f1",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 10390,
+      "balanceSnapshotBefore": {
+        "balance": 10390,
+        "frozen": 20
+      },
+      "submission": {
+        "id": "00b76f90-7153-45cc-bd56-fab25b09ea28",
+        "state": "accepted",
+        "requestSha256": "dbedf385556974ac58bf36ae638c770f1bddc6d93a15af4e6ac2fde26ebe1fdb"
+      },
+      "taskId": "e66dd26e-11a4-4ee3-b734-d6cb4b979ec8",
+      "status": "success",
+      "generatedAt": "2026-11-08T23:13:15.647Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-gothic-warband-rigged.glb",
+      "rawBytes": 60985676,
+      "rawSha256": "8a6655c87bacbc2bb8f280a1a82f795af195ed2795ae1d9868bbb7eb4aac2b36",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "ed7c6087-9578-4aa1-9d7e-5524bdc270f1"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-08T23:12:20.305614Z",
+      "tripoCompletedAt": "2026-11-08T23:13:11.534067Z"
+    }
+  }
+}

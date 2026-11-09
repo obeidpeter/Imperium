@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/persian-skirmisher.glb",
+  "output": "assets/models/characters/persian-skirmisher.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 482804,
+    "gzipBytes": 337987,
+    "sha256": "6c9536b5d86ed9e35fa6c5af0256004ab9ba2a4af58334f1762978d594e8f516"
+  },
+  "after": {
+    "bytes": 423236,
+    "gzipBytes": 400937,
+    "sha256": "e8937ab9d62168c71e64cc21144ab2cb0657d9e27d0ea89aad8c3b0145a63209"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13723,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10806
+      },
+      "bytes": 20342,
+      "psnr": 40.408
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 55532
+      },
+      "bytes": 139711,
+      "psnr": 37.726
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 18234
+      },
+      "bytes": 36695,
+      "psnr": 37.829
+    }
+  ]
+}

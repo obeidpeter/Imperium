@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/rival-legionary.glb",
+  "output": "assets/models/characters/rival-legionary.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 533812,
+    "gzipBytes": 402185,
+    "sha256": "f4da4dfdccb3b666955f2671293a5f6f2eda9448652742921e10812136cfda01"
+  },
+  "after": {
+    "bytes": 432828,
+    "gzipBytes": 411805,
+    "sha256": "5208631889135a320286ae76f378dbe2b6f46d5dcbe51eeb6ffb1694fba6633e"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13709,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 20694
+      },
+      "bytes": 29903,
+      "psnr": 36.467
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 103782
+      },
+      "bytes": 144006,
+      "psnr": 31.361
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 29014
+      },
+      "bytes": 46654,
+      "psnr": 31.605
+    }
+  ]
+}

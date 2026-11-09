@@ -1,0 +1,102 @@
+{
+  "id": "char-rival-legionary",
+  "status": "rejected at review: the armour came out as banded segmented plate with shoulder plates (no segmented plate for AD 250–275, docs/historical-research.md), with bare arms and open sandals; replaced by char-rival-legionary-b, which reuses Quintus's and the Roman cavalryman's chainmail wording. Not rigged, not shipped.",
+  "chapters": [
+    12
+  ],
+  "use": "Rival Roman infantry: the claimant's civil-war cohorts in Chapter XII, in off-white tunics so they no longer wear the player's own soldiers' bodies; the game adds the shield, sword and pilum. Release G1's pilot.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman legionary of the mid-3rd century AD serving a rival claimant, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an iron mail shirt to mid-thigh over a long-sleeved off-white wool tunic with two narrow dark purple bands, a broad leather belt with a bronze ring buckle, close-fitting dark brown wool trousers and closed leather boots, and an iron helmet of the Niederbieber type with crossed reinforcing bars on the bowl, wide cheek guards and a deep neck guard. Clean-shaven weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "lorica segmentata, segmented plate armour, muscled cuirass, crest, plume, red tunic, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611240,
+      "image_seed": 2611241,
+      "texture_seed": 2611242
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "pilot",
+    "creditCeiling": 345,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T23:09:17.603Z",
+    "requestBody": {
+      "negative_prompt": "lorica segmentata, segmented plate armour, muscled cuirass, crest, plume, red tunic, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611240,
+      "image_seed": 2611241,
+      "texture_seed": 2611242,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Roman legionary of the mid-3rd century AD serving a rival claimant, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an iron mail shirt to mid-thigh over a long-sleeved off-white wool tunic with two narrow dark purple bands, a broad leather belt with a bronze ring buckle, close-fitting dark brown wool trousers and closed leather boots, and an iron helmet of the Niederbieber type with crossed reinforcing bars on the bowl, wide cheek guards and a deep neck guard. Clean-shaven weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10430,
+    "balanceSnapshotBefore": {
+      "balance": 10430,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "b94f156e-6115-4953-9df6-8b00431536de",
+      "state": "accepted",
+      "requestSha256": "99a01bf01ea1130587b4b3f58d8da6bb97249e7a76b6c553c465268ff0b31953"
+    },
+    "taskId": "935077b8-8885-43fb-b6d4-7161bc5518a7",
+    "status": "success",
+    "generatedAt": "2026-11-08T23:11:16.900Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-rival-legionary.glb",
+    "rawBytes": 45174076,
+    "rawSha256": "a7312fac54a2e292136d3c4b384a78a56c1ca02e81a7d2ab8ce59d54d42cfc82",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Roman legionary of the mid-3rd century AD serving a rival claimant, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears an iron mail shirt to mid-thigh over a long-sleeved off-white wool tunic with two narrow dark purple bands, a broad leather belt with a bronze ring buckle, close-fitting dark brown wool trousers and closed leather boots, and an iron helmet of the Niederbieber type with crossed reinforcing bars on the bowl, wide cheek guards and a deep neck guard. Clean-shaven weathered face. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611241,
+      "model_seed": 2611240,
+      "texture_seed": 2611242,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "lorica segmentata, segmented plate armour, muscled cuirass, crest, plume, red tunic, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T23:09:18.106758Z",
+    "tripoCompletedAt": "2026-11-08T23:10:49.729366Z",
+    "tripoRender": "art-source/models/raw/char-rival-legionary-tripo-render.webp"
+  },
+  "rejected": {
+    "reviewedAt": "2026-11-08",
+    "reason": "segmented plate armour, bare arms, open sandals",
+    "replacedBy": "char-rival-legionary-b"
+  }
+}

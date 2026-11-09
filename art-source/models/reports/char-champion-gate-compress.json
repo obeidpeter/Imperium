@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/champion-gate.glb",
+  "output": "assets/models/characters/champion-gate.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 515924,
+    "gzipBytes": 381153,
+    "sha256": "066ffe70b0d825edc747b0163b2e055ab0589c69a6a92da7c9fe4f7d9f9fe476"
+  },
+  "after": {
+    "bytes": 437144,
+    "gzipBytes": 415748,
+    "sha256": "4c97575ab279495d72c8ecffcdd37a20b8a5a1881b5294576e516d422e2d8e8a"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13886,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 20468
+      },
+      "bytes": 29310,
+      "psnr": 35.828
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 68628
+      },
+      "bytes": 136789,
+      "psnr": 34.948
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 35802
+      },
+      "bytes": 49150,
+      "psnr": 29.622
+    }
+  ]
+}

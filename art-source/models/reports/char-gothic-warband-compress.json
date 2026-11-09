@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/gothic-warband.glb",
+  "output": "assets/models/characters/gothic-warband.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 489244,
+    "gzipBytes": 339171,
+    "sha256": "c06b62c1ebdfdbbb5fcde88c9e2ed861f76fa32dbe4bd7a5969ab7d2a41b9a24"
+  },
+  "after": {
+    "bytes": 421260,
+    "gzipBytes": 399522,
+    "sha256": "2a2c43fa5efc3379740c2dc5f0c41dcbffae66ec99546bce43796ffc1d63727e"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13863,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7184
+      },
+      "bytes": 14371,
+      "psnr": 42.664
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 50546
+      },
+      "bytes": 134416,
+      "psnr": 37.817
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 23130
+      },
+      "bytes": 41180,
+      "psnr": 32.86
+    }
+  ]
+}

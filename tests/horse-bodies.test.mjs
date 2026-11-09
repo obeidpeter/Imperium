@@ -100,7 +100,8 @@ test('a generated horse stands as it was made, its legs turning from their own r
 test('a figure rides its side\'s generated horse: the code-built horse goes but its saddle, and one skin follows the horse\'s joints', async () => {
   assert.equal(horseBodyId({mounted:true,faction:'Roman'}),'horse-roman');assert.equal(horseBodyId({mounted:false,faction:'Roman'}),null);
   assert.equal(horseBodyId({mounted:true,faction:'Gothic'}),'horse-northern');
-  for(const faction of ['Persian','Palmyrene'])assert.equal(horseBodyId({mounted:true,faction}),'horse-eastern',`${faction} riders ride the armoured horse`);
+  assert.equal(horseBodyId({mounted:true,faction:'Persian'}),'horse-eastern','Persian riders ride the armoured horse');
+  assert.equal(horseBodyId({mounted:true,faction:'Palmyrene'}),'horse-cataphract','Palmyrene cataphracts ride their own, under bronze scales');
   assert.equal(horseBodyId({mounted:true,faction:'Civilian'}),null);
   const a=createActor(romanRider,{chapter:7,horseLibrary:library});
   assert.equal(await a.ready,true);const g=a.group;assert.equal(g.userData.actor.horse,'horse-roman');

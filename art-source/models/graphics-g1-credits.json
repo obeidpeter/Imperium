@@ -1,0 +1,277 @@
+{
+ "scope": "Release G1 of the graphics plan (docs/graphics-tripo-plan.md): the armies' bodies and horses",
+ "authorization": {
+  "credits": 2300,
+  "approvedBy": "Owner",
+  "source": "docs/graphics-tripo-plan.md, approved 8 November 2026: release G1, capped at 2,300 credits, its pilot of about 15% reviewed by the owner before the rest is generated; the owner started the pilot on 8 November 2026 (\"Yes, start G1's pilot\")"
+ },
+ "pricing": {
+  "textWithStandardTextures": 20,
+  "bipedRig": 25,
+  "rigCheck": 0,
+  "source": "the calibration's measured prices (docs/graphics-calibration.md); each task's reported credits_consumed is recorded below"
+ },
+ "batches": [
+  {
+   "batch": "pilot",
+   "date": "2026-11-08",
+   "ceilingCredits": 345,
+   "plannedCredits": 290,
+   "spentCredits": 310,
+   "items": [
+    "char-gothic-skirmisher",
+    "char-gothic-warband",
+    "char-champion-gate",
+    "char-persian-skirmisher",
+    "char-palmyrene-spearman",
+    "char-rival-legionary",
+    "char-rival-legionary-b",
+    "char-roman-moorish-cavalry",
+    "horse-cataphract"
+   ],
+   "note": "Six rigged bodies (45 credits each), one horse bound to the game's own horse skeleton without a rig (20), and one rejected generation redone (20 more and its rig 25): 310 credits within the pilot's 345-credit ceiling. The Gothic skirmisher is the standard-tier body step 0's calibration bought (cal-gothic-skirmisher-standard): it ships from its own request with the calibration's task IDs and digests, and costs G1 nothing.",
+   "tasks": [
+    {
+     "id": "char-gothic-warband",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "ed7c6087-9578-4aa1-9d7e-5524bdc270f1",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-gothic-warband",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "a55a3842-eb3d-4c50-9f93-64f4379f7a76",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-gothic-warband",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "e66dd26e-11a4-4ee3-b734-d6cb4b979ec8",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-champion-gate",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "ca9f3eb1-015b-40b8-903f-96b9a35cd652",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-champion-gate",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "5ef44ce4-26f6-4faa-9bf1-9dc9ea5dd789",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-champion-gate",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "10395c0c-7008-4be5-b1f8-143f4ecb7c66",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-persian-skirmisher",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "a69dc59a-eec4-4539-b95c-894c030c4d34",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-persian-skirmisher",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "c359d73a-c910-4f7e-b4bd-5fbdfdea374d",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-persian-skirmisher",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "062ca361-4fcb-4cef-9e4e-650c2a538388",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-palmyrene-spearman",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "551e4849-1420-4ea0-91af-20f8b0519b33",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-palmyrene-spearman",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "30c0059e-34ad-4982-a49f-8134b3bfb57c",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-palmyrene-spearman",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "a13c1ad5-ba58-4155-bd12-dc71b68aaeb3",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-rival-legionary",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "935077b8-8885-43fb-b6d4-7161bc5518a7",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20,
+     "rejectedAtReview": "segmented plate armour, bare arms, open sandals"
+    },
+    {
+     "id": "char-roman-moorish-cavalry",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "c6176082-f573-4e9a-9e1b-1e13bad5597f",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-roman-moorish-cavalry",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "16b0ff4d-4048-40d4-af9f-f3fdf107f4d8",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-roman-moorish-cavalry",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "2a4f991d-2818-4c2f-91a4-e7c0cb918828",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "horse-cataphract",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "15f4f317-3226-4092-80a2-2d57f047818c",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-rival-legionary-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "a07a6901-559f-4966-9e0e-60e19e70a2db",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-rival-legionary-b",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "a138b9d6-fa26-4b72-aae3-a933e43e4ff7",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-rival-legionary-b",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "6e0ce422-414c-436a-80f8-19656a5d1fc0",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    }
+   ],
+   "balance": {
+    "before": 10510,
+    "after": 10200,
+    "source": "the account balance read before the first task and after the last (frozen 0)"
+   },
+   "rejected": {
+    "count": 1,
+    "of": 8,
+    "items": [
+     "char-rival-legionary"
+    ],
+    "note": "Its armour came out as banded segmented plate; the second attempt, char-rival-legionary-b, ships. One of eight generations (12.5%), under the plan's 20% stop rule."
+   }
+  }
+ ],
+ "spentCredits": 310,
+ "remainingAuthorization": 1990
+}

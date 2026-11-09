@@ -1,0 +1,101 @@
+{
+  "id": "horse-cataphract",
+  "status": "bound on its own rest pose, quantized and compressed: G1 pilot, awaiting the owner's review",
+  "chapters": [
+    9
+  ],
+  "use": "The Palmyrene cataphracts' horse in Chapter IX, mesh only, in a trapper of bronze scales that lies flat along the back under the game's saddle (the eastern horse's leaves a raised seat): skinned in Blender to the game's own horse skeleton (scripts/assets/bind-horse.py), as the other horses are; the code-built horse stays the stand-in. Release G1's pilot.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "An armoured horse of the Palmyrene heavy cavalry of the 270s AD, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A tall, strong horse about 1.55 metres at the withers, chestnut coat with a dark mane and tail. It wears a close-fitting armour trapper of small overlapping bronze scales sewn on leather, covering the neck, chest, flanks and hindquarters down to the belly and lying flat and smooth along the back, where a saddle will sit on top, and a plain leather bridle; the legs below the trapper are bare. Realistic proportions, anatomically accurate, worn and practical. No saddle, no saddle cloth, no rider, no face mask, no plumes, no spikes, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, raised seat, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611260,
+      "image_seed": 2611261,
+      "texture_seed": 2611262
+    }
+  },
+  "budget": {
+    "triangles": 9000,
+    "overviewTriangles": 2000,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 2.05,
+    "minHeight": 1.8,
+    "maxHeight": 2.3
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "pilot",
+    "creditCeiling": 345,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T23:13:23.624Z",
+    "requestBody": {
+      "negative_prompt": "saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, raised seat, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611260,
+      "image_seed": 2611261,
+      "texture_seed": 2611262,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "An armoured horse of the Palmyrene heavy cavalry of the 270s AD, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A tall, strong horse about 1.55 metres at the withers, chestnut coat with a dark mane and tail. It wears a close-fitting armour trapper of small overlapping bronze scales sewn on leather, covering the neck, chest, flanks and hindquarters down to the belly and lying flat and smooth along the back, where a saddle will sit on top, and a plain leather bridle; the legs below the trapper are bare. Realistic proportions, anatomically accurate, worn and practical. No saddle, no saddle cloth, no rider, no face mask, no plumes, no spikes, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10340,
+    "balanceSnapshotBefore": {
+      "balance": 10340,
+      "frozen": 25
+    },
+    "submission": {
+      "id": "db5aec80-8d55-4e99-ac9f-2ddb8b194861",
+      "state": "accepted",
+      "requestSha256": "a7d812223715155d5b953bcdc74fc18bfe886dd024a0612369bf29ddfacf11b0"
+    },
+    "taskId": "15f4f317-3226-4092-80a2-2d57f047818c",
+    "status": "success",
+    "generatedAt": "2026-11-08T23:15:20.920Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/horse-cataphract.glb",
+    "rawBytes": 47424808,
+    "rawSha256": "b115a654ff429a335bd3f96ff5f226de32bdc93358755b0f7d5fb08561ac29c2",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "An armoured horse of the Palmyrene heavy cavalry of the 270s AD, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A tall, strong horse about 1.55 metres at the withers, chestnut coat with a dark mane and tail. It wears a close-fitting armour trapper of small overlapping bronze scales sewn on leather, covering the neck, chest, flanks and hindquarters down to the belly and lying flat and smooth along the back, where a saddle will sit on top, and a plain leather bridle; the legs below the trapper are bare. Realistic proportions, anatomically accurate, worn and practical. No saddle, no saddle cloth, no rider, no face mask, no plumes, no spikes, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611261,
+      "model_seed": 2611260,
+      "texture_seed": 2611262,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, raised seat, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T23:13:24.261268Z",
+    "tripoCompletedAt": "2026-11-08T23:15:16.424611Z",
+    "tripoRender": "art-source/models/raw/horse-cataphract-tripo-render.webp"
+  },
+  "binding": {
+    "options": [],
+    "note": "Bound whole: its tail hangs clear of the ground, so the binder's tail cut (--tail-above) was not needed."
+  }
+}

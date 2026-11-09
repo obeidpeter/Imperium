@@ -519,3 +519,24 @@ The near level is textured. The overview level, which the figure's overview and 
 - which figures wear what;
 - the fit, the fallbacks and the late rebuild;
 - that no figure frees a master.
+
+## Release G1's pilot: a unit type's own body · 2026-11-08
+
+Release G1 of the [graphics plan](graphics-tripo-plan.md#g1s-pilot-8-november) gives unit types that wore another unit's body one of their own. Its pilot made seven bodies and a horse, generated, rigged, bound and compressed as every body is ([the workflow](#workflow-for-each-asset), [the binding script](#the-binding-script)), at the shipped bodies' settings: `--triangles 12000 --overview-triangles 2500 --texture 1024 --detail-texture 512`, and for the horse `--horse --triangles 9000 --overview-triangles 1800`.
+
+- **Which unit wears it.** [`actor-kit.js`](../src/showcase/actor-kit.js) adds presentation-only fields to a figure's kit, read from the unit as the rules made it:
+  - `troop`: its own role (`infantry`, `guard`, `raider`, `archer`, `cavalry`, `champion` and so on), before the kit maps it to a drawing role;
+  - `skirmisher`: a war band's skirmisher, by name;
+  - `rival`: a Roman in the claimant's service, by side or name. A cohort that takes the oath is renamed by the rules and drawn as the soldier's own;
+  - `champion`: a champion's id.
+
+  A fit in [`actor-body-catalog.js`](../src/ui/actor-body-catalog.js) may name any of them, and a chapter. The type bodies come first in the catalog, since the first fit that matches is worn; every other figure keeps the body it wore.
+- **Reinforcements.** A unit's variant can depend on its place in the battle: Chapter I's and II's skirmisher arrives with the reinforcement wave. The chapter test (`tests/actor-bodies.test.mjs`) therefore also looks at each battle's waves, single men and squads. It found Chapter VIII's Gothic cavalry wave wearing the noble's body and riding the northern horse without either in Chapter VIII's download.
+- **A second attempt** keeps the first request beside it: `char-rival-legionary.json` is marked rejected, and the body ships from `char-rival-legionary-b.json`. The body's manifest entry names the request it came from (`source.prompt`), and the records test follows it.
+- **A body bought for another purpose** ships from a request of its own that carries the original's task IDs and digests: `char-gothic-skirmisher.json` is the calibration's standard-tier skirmisher (`reusedFrom`), so its credits are not spent twice.
+- **A failed download.** Twice in the pilot Tripo finished a task but its file did not download. `resume` (or `resume-rig`) fetched it again by the recorded task ID, with no new task and no new charge.
+- **Seen in battle.** A body is reviewed where players meet it, as well as in the actor viewer.
+  - A battle is reached from New Game by the real-time bot's legal commands and restored through the desktop build's Restore dialog at High.
+  - It is captured twice: as built, and with the earlier body served under the new file's name.
+  - At the battle camera a figure is about 70 to 100 pixels tall, so a type reads by its outline and main colours ([the art record](art-generation.md#in-battle)). A prompt names those first.
+- **Credits** are recorded task by task in [`graphics-g1-credits.json`](../art-source/models/graphics-g1-credits.json), and `tests/graphics-g1.test.mjs` reconciles them with the requests, the manifest and the account's balance.
