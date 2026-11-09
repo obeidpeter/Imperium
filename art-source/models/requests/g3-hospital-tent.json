@@ -1,0 +1,99 @@
+{
+  "id": "g3-hospital-tent",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beyond the walls of Chapters VI and IX at their Follow and Overview cameras (desktop build, High)",
+  "chapters": [
+    2,
+    3,
+    6,
+    8,
+    9
+  ],
+  "use": "A field hospital tent beside the valetudinarium, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman army field hospital tent: a long rectangular tent of stitched pale leather about four metres long, one side wall rolled up to show two low wooden camp beds with woollen blankets inside, a folding table with bandage rolls and bronze instruments, and water jars at the entrance. Weathered materials. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, camping tent, nylon, zip, modern tent, red cross, medical cross",
+      "model_seed": 2611890,
+      "image_seed": 2611891,
+      "texture_seed": 2611892
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 2.4,
+    "minHeight": 2.16,
+    "maxHeight": 2.64
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T14:16:22.898Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, camping tent, nylon, zip, modern tent, red cross, medical cross",
+      "model_seed": 2611890,
+      "image_seed": 2611891,
+      "texture_seed": 2611892,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman army field hospital tent: a long rectangular tent of stitched pale leather about four metres long, one side wall rolled up to show two low wooden camp beds with woollen blankets inside, a folding table with bandage rolls and bronze instruments, and water jars at the entrance. Weathered materials. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9145,
+    "balanceSnapshotBefore": {
+      "balance": 9145,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "cb469037-5c4c-4453-afce-2bf72dec3f31",
+      "state": "accepted",
+      "requestSha256": "67f609da625ed9259278edc84aed8eef8402c22d2ef70545b19f67c7e16a0dd9"
+    },
+    "taskId": "5f96d8b5-f04e-471b-96bc-6f63310ac0b4",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:18:25.791Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-hospital-tent.glb",
+    "rawBytes": 45392900,
+    "rawSha256": "45bbae873e05c39f2df312515731fe42174920636b159e43112f24ea0eec9a4d",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman army field hospital tent: a long rectangular tent of stitched pale leather about four metres long, one side wall rolled up to show two low wooden camp beds with woollen blankets inside, a folding table with bandage rolls and bronze instruments, and water jars at the entrance. Weathered materials. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611891,
+      "model_seed": 2611890,
+      "texture_seed": 2611892,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, camping tent, nylon, zip, modern tent, red cross, medical cross",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T14:16:23.531590Z",
+    "tripoCompletedAt": "2026-11-09T14:18:18.783705Z",
+    "tripoRender": "art-source/models/raw/g3-hospital-tent-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A long pale leather tent with one wall rolled up on two camp beds with blankets, a table of bandages and bronze instruments, and water jars; turned 270° so its open side faces the camp."
+  }
+}

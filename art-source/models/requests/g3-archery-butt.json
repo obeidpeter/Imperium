@@ -1,0 +1,99 @@
+{
+  "id": "g3-archery-butt",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beside Chapter VI's south-east tower at its Follow camera (desktop build, High)",
+  "chapters": [
+    3,
+    6,
+    10,
+    12
+  ],
+  "use": "An archery butt beside the drill ground, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman army archery practice butt: a large round target of tightly bound straw on a timber easel stand, painted rings faded on its face, several arrows stuck in it and a few lying on the ground, a wicker screen beside it. Weathered straw and wood. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, modern target, foam, plastic, medieval",
+      "model_seed": 2611960,
+      "image_seed": 2611961,
+      "texture_seed": 2611962
+    }
+  },
+  "budget": {
+    "triangles": 4500,
+    "texture": 512,
+    "bytes": 310000,
+    "heightMetres": 1.8,
+    "minHeight": 1.62,
+    "maxHeight": 1.98,
+    "note": "Raised from 2,000 triangles and 200,000 bytes at review: below about 3,400 triangles the straw boss keeps its triangles and the easel frame collapses into sheets; at 4,410 the frame, the wicker screen and the arrows hold, and the compressed model is 304,964 bytes."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T14:34:27.174Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, modern target, foam, plastic, medieval",
+      "model_seed": 2611960,
+      "image_seed": 2611961,
+      "texture_seed": 2611962,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman army archery practice butt: a large round target of tightly bound straw on a timber easel stand, painted rings faded on its face, several arrows stuck in it and a few lying on the ground, a wicker screen beside it. Weathered straw and wood. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9005,
+    "balanceSnapshotBefore": {
+      "balance": 9005,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "84a75763-0c4f-46d6-97ee-b6ccfb9cf021",
+      "state": "accepted",
+      "requestSha256": "a4bcb98c5a3f007498f3415ca4642ec87b6089609e653c60b5f7254e06d56da8"
+    },
+    "taskId": "348ec8b8-fe95-446d-8862-a3de67bfdc2b",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:37:22.750Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-archery-butt.glb",
+    "rawBytes": 46898148,
+    "rawSha256": "b3fba41d4b860e2366309d07af99484cf0ec0e70ecd62e85db8573c061a701a3",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman army archery practice butt: a large round target of tightly bound straw on a timber easel stand, painted rings faded on its face, several arrows stuck in it and a few lying on the ground, a wicker screen beside it. Weathered straw and wood. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611961,
+      "model_seed": 2611960,
+      "texture_seed": 2611962,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, modern target, foam, plastic, medieval",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T14:34:27.810616Z",
+    "tripoCompletedAt": "2026-11-09T14:37:16.983032Z",
+    "tripoRender": "art-source/models/raw/g3-archery-butt-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A round straw target with faded rings on a timber easel, arrows in its face and on the ground, and a wicker screen beside it; turned 270° so its face looks toward the camp. Below about 3,400 triangles its easel collapsed into sheets; at 4,410 the frame, the screen and the arrows hold."
+  }
+}

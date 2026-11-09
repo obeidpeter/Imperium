@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-wall-stone.glb",
+    "bytes": 46525264,
+    "sha256": "ef5bc3775e5a11c4f5e809d4c4c0bca37c78969bc1251704a30bf4e7347ab7e5",
+    "triangles": 1429466
+  },
+  "output": {
+    "path": "assets/models/world/g3-wall-stone.glb",
+    "bytes": 157908,
+    "sha256": "439d5f4c2674c73044ca9e711d55f5cbc1724b20dbf227c8e454f40e94ac5b53",
+    "triangles": 1468
+  },
+  "settings": {
+    "triangles": 1500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 5.38190704645216,
+  "sizeMetres": {
+    "width": 5.3489,
+    "height": 2.6,
+    "depth": 1.4554
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_0ff42fef-2121-45e5-97b9-b7067418d840",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_0ff42fef-2121-45e5-97b9-b7067418d840",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_0ff42fef-2121-45e5-97b9-b7067418d840",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

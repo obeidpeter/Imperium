@@ -133,8 +133,242 @@
     ],
     "note": "Four small toy-like horses stood in the picket line, despite the prompt and its negative prompt; the second attempt, g3-horse-lines-b, ships. One of nine generations (11%), under the plan's 20% stop rule."
    }
+  },
+  {
+   "batch": "rest",
+   "date": "2026-11-09",
+   "ceilingCredits": 400,
+   "plannedCredits": 360,
+   "spentCredits": 380,
+   "items": [
+    "g3-wall-stone",
+    "g3-tower-stone",
+    "g3-wall-mudbrick",
+    "g3-tower-mudbrick",
+    "g3-tent-open",
+    "g3-tent-patched",
+    "g3-gate-timber",
+    "g3-gate-stone",
+    "g3-praetorium",
+    "g3-hospital-tent",
+    "g3-tribunal",
+    "g3-altar",
+    "g3-parley-awning",
+    "g3-pavilion-east",
+    "g3-pavilion-shade",
+    "g3-archery-butt",
+    "g3-field-oven",
+    "g3-pilum-rack-b"
+   ],
+   "note": "Eighteen props at standard texture and geometry, 20 credits each, and one rejected generation redone (20 more): 380 credits within the rest's 400-credit ceiling. The stone and mudbrick walls and towers stand on their camps' walls, the two gates over the gateways, the two tents among Chapter V's leather tent on the tent lines, and the other ten in the camps' courts beyond the board.",
+   "tasks": [
+    {
+     "id": "g3-wall-stone",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "0ff42fef-2121-45e5-97b9-b7067418d840",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-tower-stone",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "910700e0-04af-45a2-9555-c821a2a40697",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-wall-mudbrick",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "6c31d8b4-01ad-4e06-ad37-2c9c7c71764d",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-tower-mudbrick",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "c52513a3-9d03-401d-9dff-235a0e66abc2",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-tent-open",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "d3651f2a-d321-4cab-8b0c-c6a124cd9a35",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-tent-patched",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "d029539b-00cb-48b1-86d0-585a28402c39",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-gate-timber",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "5d1d07bc-ab30-4db9-a9fa-4e0e63625049",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-gate-stone",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "1a896afe-35eb-4065-9403-e6c727b6a832",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-praetorium",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "a3a2726f-7c32-444f-b89f-400dbeadcb0f",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-hospital-tent",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "5f96d8b5-f04e-471b-96bc-6f63310ac0b4",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-tribunal",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "07accf57-028a-4c95-9b3c-5292bda4f558",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-altar",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "354939f7-7694-434e-a3d5-afaea71975a3",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-parley-awning",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "c4b223da-9c34-49e1-910b-70e65348f19b",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-pavilion-east",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "a1c42151-adc2-4d6b-a210-80a18a4c07b0",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-pavilion-shade",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "f1b1c516-cb2c-4b32-93eb-8f4d05d1713a",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-pilum-rack",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "b8b7df6d-f652-4dfc-ba6d-5edfcdea0276",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20,
+     "rejectedAtReview": "the whole rack came out dark grey iron, its spears leaf-bladed rather than the pilum's small pyramidal point on a thin iron shank, with no timber frame or wooden shafts"
+    },
+    {
+     "id": "g3-archery-butt",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "348ec8b8-fe95-446d-8862-a3de67bfdc2b",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-field-oven",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "2f590cf3-aa3d-4a69-923b-88bb4a170350",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g3-pilum-rack-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "417bca46-ea79-43bc-9bb3-5f39888da9be",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    }
+   ],
+   "balance": {
+    "before": 9325,
+    "after": 8945,
+    "source": "the account balance read before the first task and after the last (frozen 0)"
+   },
+   "rejected": {
+    "count": 1,
+    "of": 19,
+    "items": [
+     "g3-pilum-rack"
+    ],
+    "note": "The whole rack came out dark grey iron, its spears leaf-bladed, with no timber frame or wooden shafts; the second attempt, g3-pilum-rack-b, ships as g3-pilum-rack. One of nineteen generations (5%), under the plan's 20% stop rule."
+   }
   }
  ],
- "spentCredits": 180,
- "remainingAuthorization": 2220
+ "spentCredits": 560,
+ "remainingAuthorization": 1840
 }

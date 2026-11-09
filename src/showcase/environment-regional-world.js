@@ -8,7 +8,7 @@ import {terrainAt,distantRiverCentre} from './environment-layout.js';
 import {campPropCourt} from './camp-composition.js';
 import {addSmithy} from './environment-smithy.js';
 import {addWayPost} from './environment-waypost.js';
-import {CAMP_PROP_CHAPTERS,LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,worldModelUrl} from '../ui/world-catalog.js';
+import {CAMP_PROP_CHAPTERS,LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,TENT_VARIANT_CHAPTERS,worldAssetShown,worldModelUrl} from '../ui/world-catalog.js';
 import {REGIONAL_WORLD_KITS,REGIONAL_PLANS,REGIONAL_FRONTAGE,REGIONAL_COMPOSITIONS,REGIONAL_CHAPTER_EXTRAS,REGIONAL_HEARINGS,ENCOUNTER_LAYOUTS} from '../ui/world-layouts.js';
 
 // The kits, plans and frontage are data (src/ui/world-layouts.js). Placement
@@ -72,8 +72,17 @@ export function regionalServicePads(e,tileSize=2.5){
  * leaves its ground bare. Each tent's model faces its door (its local +X gable) along the ridge, a
  * little turned and sized by a hash of its cell, never by gameplay randomness. */
 export const TENT_MODEL='ch5-leather-tent',TENT_FALLBACK='camp tent lines';
+/** The tent lines' other tents (G3's rest): a quarter of the pitches each, by a hash of the pitch's first cell. */
+export const TENT_VARIANTS=Object.freeze(['g3-tent-open','g3-tent-patched']);
+/** The code-built tents' batch for a pitch's model: each model hides only its own pitches' stand-ins. */
+export const tentFallbackName=model=>model===TENT_MODEL?TENT_FALLBACK:`${TENT_FALLBACK}: ${model}`;
 const tentHash=(x,y,k)=>{const v=Math.sin(x*127.1+y*311.7+k*74.7)*43758.5453;return v-Math.floor(v);};
-export function regionalTentPitches(e,tileSize=2.5){
+/** The tent a pitch's first cell picks, a quarter each for the two variants (null for the leather tent),
+ * whether or not its chapter shows it: TENT_VARIANT_CHAPTERS names the chapters whose pitches pick each. */
+export const tentVariantOf=pitch=>{const [{x,y}]=pitch.cells;return TENT_VARIANTS[Math.floor(tentHash(x,y,3)*4)]??null;};
+/** The tent lines' pitches, each with its model: the leather tent, or a variant where the chapter shows it
+ * (on the web only where its download carries it, world-catalog.js). `desktop` overrides the platform (tests). */
+export function regionalTentPitches(e,tileSize=2.5,{desktop}={}){
   if(!hasRegionalWorld(e)||!/-camp$/.test(e.id))return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
   return (e.campPresentation?.tentPitches??[]).filter(pitch=>{
@@ -81,13 +90,14 @@ export function regionalTentPitches(e,tileSize=2.5){
     if(pitch.x-pitch.width/2 < -hx||pitch.x+pitch.width/2 > hx||pitch.z-pitch.depth/2 < -hz||pitch.z+pitch.depth/2 > hz)return false;
     return pitch.cells.every(c=>Number.isInteger(c.x)&&Number.isInteger(c.y)&&terrainAt(e,c.x,c.y)==='camp');
   }).map(pitch=>{
-    const [{x:cx,y:cy}]=pitch.cells,turn=(tentHash(cx,cy,1)-.5)*.07;
-    return {id:pitch.id,x:pitch.x,z:pitch.z,cells:pitch.cells,
+    const [{x:cx,y:cy}]=pitch.cells,turn=(tentHash(cx,cy,1)-.5)*.07,chapter=regionalChapter(e);
+    const variant=tentVariantOf(pitch),shown=variant&&TENT_VARIANT_CHAPTERS[variant].includes(chapter)&&worldAssetShown(variant,chapter,desktop===undefined?{}:{desktop});
+    return {id:pitch.id,x:pitch.x,z:pitch.z,cells:pitch.cells,model:shown?variant:TENT_MODEL,
       yaw:(pitch.ridge==='z'?-pitch.door*Math.PI/2:pitch.door>0?0:Math.PI)+turn,scale:1.08+tentHash(cx,cy,2)*.06};
   });
 }
 // The code-built tents, until the model is ready or on Performance: a ridge tent with low walls, its
-// ridge along local X like the model's, one instanced batch the model hides.
+// ridge along local X like the models', one instanced batch for each model, which that model hides.
 function addRegionalTents({p,m,height,tileSize,instance,geometries},e){
   const pitches=regionalTentPitches(e,tileSize);if(!pitches.length)return;
   const geometry=p.geo(new T.BufferGeometry()),wall=.3;
@@ -98,7 +108,7 @@ function addRegionalTents({p,m,height,tileSize,instance,geometries},e){
     const size=[3.1*pitch.scale,1.82*pitch.scale,2.06*pitch.scale],c=Math.cos(pitch.yaw),s=Math.sin(pitch.yaw);
     // The lowest ground under its corners, as a generated model is grounded (scenery-models.js).
     const y=Math.min(height(pitch.x,pitch.z),...[[-1,-1],[-1,1],[1,-1],[1,1]].map(([u,w])=>{const lx=u*size[0]/2,lz=w*size[2]/2;return height(pitch.x+lx*c+lz*s,pitch.z-lx*s+lz*c);}));
-    instance(TENT_FALLBACK,geometry,m.cloth,[pitch.x,y,pitch.z],size,[0,pitch.yaw,0],new T.Color('#9a7552'));
+    instance(tentFallbackName(pitch.model),geometry,m.cloth,[pitch.x,y,pitch.z],size,[0,pitch.yaw,0],new T.Color('#9a7552'));
   }
 }
 

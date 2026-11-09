@@ -14,7 +14,9 @@ import {createSceneryOcclusion} from '../src/showcase/environment-occlusion.js';
 import {createModelLoader} from '../src/showcase/model-loader.js';
 import {useNodeWorkers} from './node-workers.mjs';
 import {createSceneryModelCache} from '../src/showcase/scenery-cache.js';
-import {WORLD_CATALOG,worldModelUrl} from '../src/ui/world-catalog.js';
+import {WORLD_CATALOG,worldModelUrl,CAMP_WALL_CHAPTERS} from '../src/ui/world-catalog.js';
+import {campWallSections,campTowerSpots} from '../src/showcase/camp-walls.js';
+import {terrainAt} from '../src/showcase/environment-layout.js';
 
 const root=new URL('../',import.meta.url),file=path=>readFile(new URL(path,root));
 const manifest=JSON.parse(await file('docs/asset-manifest.json'));
@@ -116,6 +118,11 @@ test('shipped prop and kit footprints never overlap playable ground outside thei
     for(const p of models.placements){
       const model=models.group.getObjectByName(p.key??p.id),box=new T.Box3().setFromObject(model,true);
       if(p.pad){const pad=e.campPresentation.sceneryPads.find(pad=>pad.id===p.id);assert.ok(box.min.x>=pad.x-pad.width/2+.29&&box.max.x<=pad.x+pad.width/2-.29&&box.min.z>=pad.z-pad.depth/2+.29&&box.max.z<=pad.z+pad.depth/2-.29,p.id+' fits its blocked pocket');}
+      else if(p.instances&&CAMP_WALL_CHAPTERS[p.id]){
+        // The courtyard's mudbrick wall and towers (G3) stand on its wall cells, solid for the rules already.
+        const spots=p.key==='camp-towers'?campTowerSpots(e):campWallSections(e);assert.equal(p.instances.length,spots.length,`${e.id}: ${p.key}`);
+        for(const item of p.instances)assert.equal(terrainAt(e,Math.floor(item.x/2.5+e.width/2),Math.floor(item.z/2.5+e.height/2)),'wall',`${e.id}: ${p.key} stands on the wall`);
+      }
       else assert.ok(box.max.x < -hx || box.min.x > hx || box.max.z < -hz || box.min.z > hz,`${e.id}: ${p.key??p.id} actual geometry clears the playable rectangle`);
     }
     models.dispose();
@@ -215,7 +222,7 @@ test('a preload stays pinned under unrelated warm-up pressure and needs no late 
     return root;
   };
   await preloadSceneryModels(e,{chapter:5,load});
-  for(let i=0;i<20;i++)await warmSceneryModel(`test-pressure-${i}`,load);
+  for(let i=0;i<SCENERY_IDLE_MASTERS;i++)await warmSceneryModel(`test-pressure-${i}`,load);
   assert.equal(sceneryResidency().idle,SCENERY_IDLE_MASTERS,'idle pressure is bounded while the ten pilot assets remain pinned');
   let prepared=0;const models=createSceneryModels(new T.Scene(),e,{chapter:5,prepare:async()=>{prepared++;}});
   assert.equal(models.group.children.length,placements.length,'all preloaded instances exist immediately behind the veil');

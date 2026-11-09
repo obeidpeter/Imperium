@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-gate-timber.glb",
+    "bytes": 47350632,
+    "sha256": "ca37b10059b05a703a1eb3cb9d1d21b194efeefd446ec7adfe972c0e0f741d0d",
+    "triangles": 1481468
+  },
+  "output": {
+    "path": "assets/models/world/g3-gate-timber.glb",
+    "bytes": 195584,
+    "sha256": "5a3a620b9a567586e994a90d621dc3edc0c200381a0de16cd37d8e92a4e9aeb3",
+    "triangles": 2450
+  },
+  "settings": {
+    "triangles": 2500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 5.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 90.0
+  },
+  "scale": 5.731257854671971,
+  "sizeMetres": {
+    "width": 5.7211,
+    "height": 5.0,
+    "depth": 1.9941
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_5d1d07bc-ab30-4db9-a9fa-4e0e63625049",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_5d1d07bc-ab30-4db9-a9fa-4e0e63625049",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_5d1d07bc-ab30-4db9-a9fa-4e0e63625049",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

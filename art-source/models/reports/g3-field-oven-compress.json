@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-field-oven.glb",
+  "output": "assets/models/world/g3-field-oven.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 181864,
+    "gzipBytes": 128703,
+    "sha256": "0cba39788510f42a0c3a6d363f2764662a11f8def43e77d4233347b6da7b6478"
+  },
+  "after": {
+    "bytes": 190084,
+    "gzipBytes": 183103,
+    "sha256": "4dc1c4018ea41998f6d39c576cc4f95e04a71a8e79ec77d7df41d0d47b2ff942"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2938,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9214
+      },
+      "bytes": 19826,
+      "psnr": 42.364
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 38020
+      },
+      "bytes": 55418,
+      "psnr": 33.18
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 4942
+      },
+      "bytes": 17755,
+      "psnr": 45.396
+    }
+  ]
+}

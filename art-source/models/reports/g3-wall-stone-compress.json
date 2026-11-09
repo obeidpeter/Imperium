@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-wall-stone.glb",
+  "output": "assets/models/world/g3-wall-stone.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 157908,
+    "gzipBytes": 130225,
+    "sha256": "439d5f4c2674c73044ca9e711d55f5cbc1724b20dbf227c8e454f40e94ac5b53"
+  },
+  "after": {
+    "bytes": 177792,
+    "gzipBytes": 173196,
+    "sha256": "0df4ab32f657002c1d8b99f780b52be89f29b31574ca32bf516be884d6776782"
+  },
+  "geometryUnchanged": true,
+  "triangles": 1468,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 43082
+      },
+      "bytes": 43577,
+      "psnr": 33.059
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31278
+      },
+      "bytes": 47339,
+      "psnr": 35.698
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16632
+      },
+      "bytes": 34875,
+      "psnr": 38.021
+    }
+  ]
+}

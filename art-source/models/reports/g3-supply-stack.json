@@ -9,12 +9,12 @@
   },
   "output": {
     "path": "assets/models/world/g3-supply-stack.glb",
-    "bytes": 260556,
-    "sha256": "af70c55b2dfe18ce213958c43ad254f65326193543266a134bdb3b44e6a1f872",
-    "triangles": 3163
+    "bytes": 357928,
+    "sha256": "4447dcecee06f22f30c5c74242bedff5d4ee6de2a40ff765f038eded71b2f7b4",
+    "triangles": 5389
   },
   "settings": {
-    "triangles": 2850,
+    "triangles": 5500,
     "texture": 512,
     "webpQuality": 80,
     "height": 1.5,
@@ -22,11 +22,11 @@
     "mergeDistance": 0.0001,
     "keepSkin": false
   },
-  "scale": 4.205528555715204,
+  "scale": 4.023966963457492,
   "sizeMetres": {
-    "width": 3.9677,
+    "width": 3.9355,
     "height": 1.5,
-    "depth": 3.9577
+    "depth": 3.9382
   },
   "materials": 1,
   "textures": [

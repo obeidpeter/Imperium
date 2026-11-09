@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-pavilion-shade.glb",
+  "output": "assets/models/world/g3-pavilion-shade.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 470504,
+    "gzipBytes": 298517,
+    "sha256": "4331400a361a0b6fa73976a52512d9a11ca95545ad2058f38e9edf5f89717d9b"
+  },
+  "after": {
+    "bytes": 409696,
+    "gzipBytes": 393554,
+    "sha256": "3f9853e6d933f0b133f49d6ca1918a48f1e1ac893be25641d26910e1775df40d"
+  },
+  "geometryUnchanged": true,
+  "triangles": 8819,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 21318
+      },
+      "bytes": 29849,
+      "psnr": 38.603
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 41880
+      },
+      "bytes": 53606,
+      "psnr": 32.897
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12608
+      },
+      "bytes": 32057,
+      "psnr": 42.773
+    }
+  ]
+}

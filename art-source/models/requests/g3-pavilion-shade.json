@@ -1,0 +1,97 @@
+{
+  "id": "g3-pavilion-shade",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beyond the walls of Chapters VI and IX at their Follow and Overview cameras (desktop build, High)",
+  "chapters": [
+    6,
+    9
+  ],
+  "use": "A sun shelter of the eastern camps, beside the canabae, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A sun shelter of the Roman camps on the eastern desert frontier: a flat roof of woven reed mats and striped cloth on six slender timber poles, about four metres long, three metres wide and two and a half metres high, over a low platform spread with a patterned carpet, with large clay water jars, a copper basin and rolled bedding in its shade. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, gazebo, modern furniture, umbrella, nylon",
+      "model_seed": 2611940,
+      "image_seed": 2611941,
+      "texture_seed": 2611942
+    }
+  },
+  "budget": {
+    "triangles": 9000,
+    "texture": 512,
+    "bytes": 420000,
+    "heightMetres": 2.5,
+    "minHeight": 2.25,
+    "maxHeight": 2.75,
+    "note": "Raised from 2,500 triangles and 220,000 bytes at review: processing stops at 4,269 triangles whatever the target below it, and the compressed model is 287,852 bytes. Raised again at the in-game review: at 4,269 triangles its reed roof and the jars, basin and bedding beneath crumpled into facets at the Follow camera; at 8,819 triangles they hold, and the compressed model is 409,696 bytes."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T14:29:16.420Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, gazebo, modern furniture, umbrella, nylon",
+      "model_seed": 2611940,
+      "image_seed": 2611941,
+      "texture_seed": 2611942,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A sun shelter of the Roman camps on the eastern desert frontier: a flat roof of woven reed mats and striped cloth on six slender timber poles, about four metres long, three metres wide and two and a half metres high, over a low platform spread with a patterned carpet, with large clay water jars, a copper basin and rolled bedding in its shade. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9045,
+    "balanceSnapshotBefore": {
+      "balance": 9045,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "1c125c09-4a62-426a-bc80-c814bdc5e280",
+      "state": "accepted",
+      "requestSha256": "18bceeaa57e282e8b8cda8b355e41d48d7b2d809e46a81cb3291988a0d5c8e9b"
+    },
+    "taskId": "f1b1c516-cb2c-4b32-93eb-8f4d05d1713a",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:32:06.013Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-pavilion-shade.glb",
+    "rawBytes": 45880284,
+    "rawSha256": "44aa7ed47339383b9585c1a9c2c15fe2f36c2b04b53ad8ae73e1aba0a964a6c4",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A sun shelter of the Roman camps on the eastern desert frontier: a flat roof of woven reed mats and striped cloth on six slender timber poles, about four metres long, three metres wide and two and a half metres high, over a low platform spread with a patterned carpet, with large clay water jars, a copper basin and rolled bedding in its shade. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611941,
+      "model_seed": 2611940,
+      "texture_seed": 2611942,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, gazebo, modern furniture, umbrella, nylon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T14:29:17.211350Z",
+    "tripoCompletedAt": "2026-11-09T14:32:00.628553Z",
+    "tripoRender": "art-source/models/raw/g3-pavilion-shade-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A flat roof of reed mats with a striped cloth valance on slender poles, over a carpeted floor with clay jars, a copper basin and rolled bedding; open on every side. At 4,269 triangles, where processing stops for any target below it, the roof and the jars crumpled into facets at the Follow camera of Chapters VI and IX; processed again at 9,000 triangles (8,819), they hold."
+  }
+}

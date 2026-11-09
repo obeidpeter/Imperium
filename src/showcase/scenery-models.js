@@ -1,10 +1,10 @@
 import * as T from '../../vendor/three/three.module.js';
 import {createModelLoader} from './model-loader.js';
-import {worldModelUrl,worldAssetShown,CAMP_WALL_CHAPTERS} from '../ui/world-catalog.js';
-import {campPalisadeSections,campTowerSpots,BREASTWORK_BATCHES} from './camp-walls.js';
+import {worldModelUrl,worldAssetShown,CAMP_WALL_CHAPTERS,CAMP_WALL_MODELS} from '../ui/world-catalog.js';
+import {campWallStyle,campWallSections,campTowerSpots,campGateways,campGateSpan,BREASTWORK_BATCHES,CAMP_PARAPET_BATCHES} from './camp-walls.js';
 import {getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
 import {createSceneryModelCache} from './scenery-cache.js';
-import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements,regionalTentPitches,regionalChapter,TENT_MODEL,TENT_FALLBACK} from './environment-regional-world.js';
+import {hasRegionalWorld,getRegionalKitPlacements,regionalPropPlacements,regionalTentPitches,regionalChapter,TENT_MODEL,TENT_VARIANTS,tentFallbackName} from './environment-regional-world.js';
 import {boardKitUrl} from './board-kit.js';
 import {sceneTreeKitUrl} from './tree-kit.js';
 import {sceneRockKitUrl} from './rock-kit.js';
@@ -50,24 +50,31 @@ function campPad(e,id,tileSize){
   return pad;
 }
 
-// The tent lines (graphics plan, G3): one placement draws every pitched tent from one model, an
-// instanced draw for each of its meshes, and hides the code-built tents (environment-regional-world.js).
-function tentLinePlacements(e,tileSize){
-  const pitches=regionalTentPitches(e,tileSize),url=worldModelUrl(TENT_MODEL);
-  return pitches.length&&url?[{id:TENT_MODEL,key:'tent-lines',url,instances:pitches.map(p=>({x:p.x,z:p.z,yaw:p.yaw,scale:p.scale})),fallbackName:TENT_FALLBACK}]:[];
+// The tent lines (graphics plan, G3): one placement for each tent model draws its pitches, an instanced
+// draw for each of its meshes, and hides those pitches' code-built tents (environment-regional-world.js).
+function tentLinePlacements(e,tileSize,desktop){
+  const pitches=regionalTentPitches(e,tileSize,{desktop});
+  return [TENT_MODEL,...TENT_VARIANTS].flatMap(model=>{
+    const own=pitches.filter(p=>p.model===model),url=worldModelUrl(model);
+    return own.length&&url?[{id:model,key:model===TENT_MODEL?'tent-lines':`tent-lines:${model}`,url,instances:own.map(p=>({x:p.x,z:p.z,yaw:p.yaw,scale:p.scale})),fallbackName:tentFallbackName(model)}]:[];
+  });
 }
 
-// The timber camps' palisade and towers (G3's pilot, camp-walls.js): an instanced draw for each mesh of
-// each model. The palisade stands for the code-built breastwork, hidden once it is drawn, which stays
-// as its fallback on Performance and until the model is ready; the towers have no stand-in.
-export const CAMP_PALISADE='g3-palisade-timber',CAMP_TOWER='g3-watchtower-timber';
+// The camps' walls (G3, camp-walls.js): for a camp's wall style, its wall along the runs, its towers and its
+// gates, an instanced draw for each mesh of each model. The wall stands for the code-built breastwork or
+// parapet, hidden once it is drawn, which stays as its fallback on Performance and until the model is ready;
+// the towers and gates have no stand-in.
+export const CAMP_PALISADE=CAMP_WALL_MODELS.timber.wall,CAMP_TOWER=CAMP_WALL_MODELS.timber.tower;
 function campWallPlacements(e,chapter,tileSize){
-  if(chapter!==regionalChapter(e))return [];
-  const sections=CAMP_WALL_CHAPTERS[CAMP_PALISADE].includes(chapter)?campPalisadeSections(e,tileSize):[];
-  const towers=CAMP_WALL_CHAPTERS[CAMP_TOWER].includes(chapter)?campTowerSpots(e,tileSize):[];
+  const style=campWallStyle(e),set=CAMP_WALL_MODELS[style];
+  if(chapter!==regionalChapter(e)||!set)return [];
+  const used=id=>!!id&&!!CAMP_WALL_CHAPTERS[id]?.includes(chapter);
+  const sections=used(set.wall)?campWallSections(e,tileSize):[],towers=used(set.tower)?campTowerSpots(e,tileSize):[],gates=used(set.gate)?campGateways(e,tileSize):[];
+  const timber=style==='timber';
   return [
-    ...(sections.length?[{id:CAMP_PALISADE,key:'camp-palisade',url:worldModelUrl(CAMP_PALISADE),instances:sections.map(({x,z,yaw,length})=>({x,z,yaw,length})),fallbackNames:[...BREASTWORK_BATCHES]}]:[]),
-    ...(towers.length?[{id:CAMP_TOWER,key:'camp-towers',url:worldModelUrl(CAMP_TOWER),instances:towers.map(({x,z,yaw})=>({x,z,yaw}))}]:[])
+    ...(sections.length?[{id:set.wall,key:timber?'camp-palisade':'camp-wall',url:worldModelUrl(set.wall),instances:sections.map(({x,z,yaw,length})=>({x,z,yaw,length})),fallbackNames:timber?[...BREASTWORK_BATCHES]:[CAMP_PARAPET_BATCHES[style]]}]:[]),
+    ...(towers.length?[{id:set.tower,key:'camp-towers',url:worldModelUrl(set.tower),instances:towers.map(({x,z,yaw})=>({x,z,yaw}))}]:[]),
+    ...(gates.length?[{id:set.gate,key:'camp-gates',url:worldModelUrl(set.gate),instances:gates.map(g=>({x:g.x,z:g.z,yaw:g.yaw,length:campGateSpan(style,g)}))}]:[])
   ];
 }
 
@@ -77,11 +84,11 @@ function campWallPlacements(e,chapter,tileSize){
 export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
   // On the web, a chapter leaves out the generated scenery its download has no room for (world-catalog.js): the
   // code-built stand-ins stay where those models would stand. `desktop` overrides the build's own platform (tests).
-  return chapterScenery(e,{chapter,tileSize,withoutGate}).filter(p=>worldAssetShown(p.id,chapter,desktop===undefined?{}:{desktop}));
+  return chapterScenery(e,{chapter,tileSize,withoutGate,desktop}).filter(p=>worldAssetShown(p.id,chapter,desktop===undefined?{}:{desktop}));
 }
-function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false}={}){
+function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
   if(hasRegionalWorld(e))return [...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
-    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize),...campWallPlacements(e,chapter,tileSize)];
+    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize,desktop),...campWallPlacements(e,chapter,tileSize)];
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
@@ -94,14 +101,15 @@ function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false}={}){
       fitWithin:{width:pad.width-.6,depth:pad.depth-.6},fallbackName:`ch5-service-pad:${pad.id}`};
     return {id:m.id,url:sceneryModelUrl(m.id),x,z,yaw};
   });
-  return [...props,...getChapterFiveKitPlacements(e,{chapter,tileSize}).map((p,i)=>({...p,key:`${p.id}:${p.component}:${i}`,url:sceneryModelUrl(p.id)}))];
+  // Chapter V's staging courtyard keeps its own props; its mudbrick walls are the camps' (G3).
+  return [...props,...getChapterFiveKitPlacements(e,{chapter,tileSize}).map((p,i)=>({...p,key:`${p.id}:${p.component}:${i}`,url:sceneryModelUrl(p.id)})),...campWallPlacements(e,chapter,tileSize)];
 }
 
 // Each master's materials share the imported art's programs (model-materials.js).
 const loadScene=url=>createModelLoader().loadAsync(url).then(gltf=>normaliseModelMaterials(gltf.scene));
-/** Idle masters kept between stages: enough for any one scene's working set (at most 16 since
- * release 9's landmarks and life), so a chapter's next stage finds its models still warm. */
-export const SCENERY_IDLE_MASTERS=20;
+/** Idle masters kept between stages: enough for any one scene's working set (at most 31, Chapter IX's camp, since
+ * G3 furnished and walled the camps), so a chapter's next stage finds its models still warm. */
+export const SCENERY_IDLE_MASTERS=36;
 const masters=createSceneryModelCache({maxIdle:SCENERY_IDLE_MASTERS,load:loadScene});
 export const warmSceneryModel=(url,load)=>masters.warm(url,load);
 export const sceneryMaster=url=>masters.master(url);
@@ -132,11 +140,12 @@ export function preloadSceneryModels(e,{chapter,quality='balanced',load}={}){
   return Promise.all(leases.map(lease=>lease.ready.then(scene=>!!scene,()=>false)));
 }
 
-// withoutGate: Aurelian's walls stand at the finale's gate road, so its arch steps aside.
-export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null,cache=masters,withoutGate=false}={}){
+// withoutGate: Aurelian's walls stand at the finale's gate road, so its arch steps aside. desktop overrides the
+// build's own platform, as sceneryPlacements' does (tests).
+export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt=()=>0,load=null,prepare=null,cache=masters,withoutGate=false,desktop}={}){
   const group=new T.Group();group.name='generated scenery';scene.add(group);
   const library=load?createSceneryModelCache({maxIdle:0,load}):cache;
-  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter,withoutGate}),urls=[...new Set(placements.map(p=>p.url))];
+  const placements=quality==='performance'?[]:sceneryPlacements(e,{chapter,withoutGate,desktop}),urls=[...new Set(placements.map(p=>p.url))];
   const leases=new Map(urls.map(url=>[url,{lease:library.acquire(url),preparing:0,used:false,released:false}]));
   const kept=[...urls,...worldKitUrls(e,quality,chapter)];library.setWorkingSet(kept);
   if(library===masters&&preload?.key===preloadKey(kept))releasePreload();

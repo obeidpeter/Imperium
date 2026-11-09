@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-tower-stone.glb",
+  "output": "assets/models/world/g3-tower-stone.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 192872,
+    "gzipBytes": 144277,
+    "sha256": "cab63524743fe8b1d783bfa197eed5d166889b5b125dd6881b9aa9056db9e82d"
+  },
+  "after": {
+    "bytes": 202528,
+    "gzipBytes": 196432,
+    "sha256": "c509df678a6b8a7afef0d44a2242db7a0965f4998f9b7f9b9710b16f41cceb3a"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2938,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7956
+      },
+      "bytes": 16762,
+      "psnr": 44.185
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 26932
+      },
+      "bytes": 48871,
+      "psnr": 35.826
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 34492
+      },
+      "bytes": 44634,
+      "psnr": 33.768
+    }
+  ]
+}

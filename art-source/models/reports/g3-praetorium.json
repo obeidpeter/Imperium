@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-praetorium.glb",
+    "bytes": 46109860,
+    "sha256": "5bd70d239f986e45ca538dac07b5b2ac7d8263e6612b365074e2c61c0de75355",
+    "triangles": 1490026
+  },
+  "output": {
+    "path": "assets/models/world/g3-praetorium.glb",
+    "bytes": 215900,
+    "sha256": "54f48e7cad84592354fcaaff68c1d35095c101d5d4ef570cc9b5e4634b84e2a6",
+    "triangles": 3430
+  },
+  "settings": {
+    "triangles": 3500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 3.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 4.297724200119893,
+  "sizeMetres": {
+    "width": 4.2536,
+    "height": 3.2,
+    "depth": 3.5738
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_a3a2726f-7c32-444f-b89f-400dbeadcb0f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_a3a2726f-7c32-444f-b89f-400dbeadcb0f",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_a3a2726f-7c32-444f-b89f-400dbeadcb0f",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

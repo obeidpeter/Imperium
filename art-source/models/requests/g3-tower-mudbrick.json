@@ -1,0 +1,97 @@
+{
+  "id": "g3-tower-mudbrick",
+  "status": "G3 rest: processed, compressed and reviewed; in the game at the Follow and Overview cameras of Chapters V and VI (desktop build, High)",
+  "chapters": [
+    5,
+    6
+  ],
+  "use": "A tower of the camp wall: on the mudbrick-walled camps' wall corners and either side of their gateways.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A square mudbrick tower of a Roman fort on the desert frontier, about two and a half metres wide on each side and six metres high: sun-dried mud brick under cracked mud plaster on a footing of rough stones, small slit windows, the ends of palm-trunk beams projecting below a flat roof with a stepped crenellated parapet. Pale sandy brown and ochre. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, curtain wall, gate, door, castle, medieval, minaret, mosque, dome",
+      "model_seed": 2611830,
+      "image_seed": 2611831,
+      "texture_seed": 2611832
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 240000,
+    "heightMetres": 3.75,
+    "minHeight": 3.4,
+    "maxHeight": 4.1,
+    "note": "Lowered from 6 m at review: the model came out as wide as it is tall (5.6 m at 6 m). At 3.75 m it stands 3.5 m wide, as the stone tower does, on its wall cell, and about twice the height of the 2 m mudbrick wall: broad and low, as desert forts' towers were."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T13:59:33.715Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, curtain wall, gate, door, castle, medieval, minaret, mosque, dome",
+      "model_seed": 2611830,
+      "image_seed": 2611831,
+      "texture_seed": 2611832,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A square mudbrick tower of a Roman fort on the desert frontier, about two and a half metres wide on each side and six metres high: sun-dried mud brick under cracked mud plaster on a footing of rough stones, small slit windows, the ends of palm-trunk beams projecting below a flat roof with a stepped crenellated parapet. Pale sandy brown and ochre. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9265,
+    "balanceSnapshotBefore": {
+      "balance": 9265,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "95b21c3e-eb46-4d72-a8f3-603c1b9fcac2",
+      "state": "accepted",
+      "requestSha256": "049580a7d79af0cfde0e0db1968c2243f06d52cd171eb98b19e7002deaba0a4d"
+    },
+    "taskId": "c52513a3-9d03-401d-9dff-235a0e66abc2",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:03:15.695Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-tower-mudbrick.glb",
+    "rawBytes": 46778044,
+    "rawSha256": "819193d88ef0a1f8267d8e0e333029190be24a4046811ac96953df9f791c618e",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A square mudbrick tower of a Roman fort on the desert frontier, about two and a half metres wide on each side and six metres high: sun-dried mud brick under cracked mud plaster on a footing of rough stones, small slit windows, the ends of palm-trunk beams projecting below a flat roof with a stepped crenellated parapet. Pale sandy brown and ochre. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611831,
+      "model_seed": 2611830,
+      "texture_seed": 2611832,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, curtain wall, gate, door, castle, medieval, minaret, mosque, dome",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T13:59:34.304914Z",
+    "tripoCompletedAt": "2026-11-09T14:03:07.753132Z",
+    "tripoRender": "art-source/models/raw/g3-tower-mudbrick-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A squat, tapering mudbrick tower with cracked plaster, beam ends and a crenellated top on a stone footing. Tripo made it 5.6 m wide; processed 3.75 m high, it is about 3.5 m wide, broad and low like a desert fort's tower."
+  }
+}

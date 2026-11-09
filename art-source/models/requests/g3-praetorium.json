@@ -1,0 +1,98 @@
+{
+  "id": "g3-praetorium",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beyond Chapter II's west wall at its Follow camera, and beyond Chapter IX's east wall at its Overview camera (desktop build, High)",
+  "chapters": [
+    2,
+    6,
+    7,
+    9
+  ],
+  "use": "The commander's pavilion beside the principia, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman commander's field pavilion: a large square tent of stitched dark red-brown leather about four metres on each side, with upright walls and a tall pyramid roof on a central pole, a deep porch awning on two poles over the open doorway, a woven fringe along the eaves, guy ropes to wooden pegs, a folding campaign chair and a small table under the porch. Weathered but well kept. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, camping tent, nylon, zip, modern tent, circus tent",
+      "model_seed": 2611880,
+      "image_seed": 2611881,
+      "texture_seed": 2611882
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 3.2,
+    "minHeight": 2.88,
+    "maxHeight": 3.52
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T14:13:37.235Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, camping tent, nylon, zip, modern tent, circus tent",
+      "model_seed": 2611880,
+      "image_seed": 2611881,
+      "texture_seed": 2611882,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman commander's field pavilion: a large square tent of stitched dark red-brown leather about four metres on each side, with upright walls and a tall pyramid roof on a central pole, a deep porch awning on two poles over the open doorway, a woven fringe along the eaves, guy ropes to wooden pegs, a folding campaign chair and a small table under the porch. Weathered but well kept. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9165,
+    "balanceSnapshotBefore": {
+      "balance": 9165,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "65bd9f9c-1b9a-4e88-a054-168e1c160918",
+      "state": "accepted",
+      "requestSha256": "d9e24bbf0c31628cace775ffff45cb3225c47ce1c086d7f7a6f95ff1929db2d0"
+    },
+    "taskId": "a3a2726f-7c32-444f-b89f-400dbeadcb0f",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:16:21.798Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-praetorium.glb",
+    "rawBytes": 46109860,
+    "rawSha256": "5bd70d239f986e45ca538dac07b5b2ac7d8263e6612b365074e2c61c0de75355",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman commander's field pavilion: a large square tent of stitched dark red-brown leather about four metres on each side, with upright walls and a tall pyramid roof on a central pole, a deep porch awning on two poles over the open doorway, a woven fringe along the eaves, guy ropes to wooden pegs, a folding campaign chair and a small table under the porch. Weathered but well kept. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611881,
+      "model_seed": 2611880,
+      "texture_seed": 2611882,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, camping tent, nylon, zip, modern tent, circus tent",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T14:13:37.624873Z",
+    "tripoCompletedAt": "2026-11-09T14:16:16.644665Z",
+    "tripoRender": "art-source/models/raw/g3-praetorium-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A round pavilion of red leather under a conical roof with a finial, a fringed porch on poles and two folding chairs. The prompt asked for a square tent: this reads more like a later pavilion than a Roman tent, and is kept because it reads apart from the officers' ridge tent."
+  }
+}

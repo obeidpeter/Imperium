@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-parley-awning.glb",
+    "bytes": 46169360,
+    "sha256": "360f83a4a6c8f5fffca831ff1d9f31de33150f52836560562e74d3c732f1b645",
+    "triangles": 1497164
+  },
+  "output": {
+    "path": "assets/models/world/g3-parley-awning.glb",
+    "bytes": 167992,
+    "sha256": "4c98092f6ab0d50e36c5996b64fe5f5590d0b2d6e61b9d97e5c2b6710d7d2fe0",
+    "triangles": 2450
+  },
+  "settings": {
+    "triangles": 2500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.6495299535307772,
+  "sizeMetres": {
+    "width": 1.4995,
+    "height": 2.6,
+    "depth": 2.6047
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_c4b223da-9c34-49e1-910b-70e65348f19b",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_c4b223da-9c34-49e1-910b-70e65348f19b",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_c4b223da-9c34-49e1-910b-70e65348f19b",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "id": "g3-altar",
+  "status": "G3 rest: processed, compressed and reviewed; in the game beyond Chapter IV's south wall at its Follow and Overview cameras (desktop build, High)",
+  "chapters": [
+    1,
+    4,
+    12
+  ],
+  "use": "The camp's altar, beside the principia, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman army camp altar of pale carved limestone, about one point two metres high on a two-step base: a squared shaft with a moulded cornice, scrolled bolsters at the top corners and a shallow bowl for offerings with ashes in it; a laurel wreath laid at its foot and a bronze offering dish on the step. Weathered stone. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, inscription, christian cross, tombstone, gravestone, fire pit",
+      "model_seed": 2611910,
+      "image_seed": 2611911,
+      "texture_seed": 2611912
+    }
+  },
+  "budget": {
+    "triangles": 1500,
+    "texture": 512,
+    "bytes": 180000,
+    "heightMetres": 1.3,
+    "minHeight": 1.17,
+    "maxHeight": 1.43
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T14:20:56.926Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, inscription, christian cross, tombstone, gravestone, fire pit",
+      "model_seed": 2611910,
+      "image_seed": 2611911,
+      "texture_seed": 2611912,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman army camp altar of pale carved limestone, about one point two metres high on a two-step base: a squared shaft with a moulded cornice, scrolled bolsters at the top corners and a shallow bowl for offerings with ashes in it; a laurel wreath laid at its foot and a bronze offering dish on the step. Weathered stone. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9105,
+    "balanceSnapshotBefore": {
+      "balance": 9105,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "226a6f30-76c2-421a-a81c-826c907098f1",
+      "state": "accepted",
+      "requestSha256": "65acca16c31331ff069f5fe6fa914066759efbb9122108e1e49910f1dea85911"
+    },
+    "taskId": "354939f7-7694-434e-a3d5-afaea71975a3",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:23:23.001Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-altar.glb",
+    "rawBytes": 44253480,
+    "rawSha256": "87d7bf9951793b9177a6d7887dfde69ea9f7c31e1bab2e9252b8125302a4c61d",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman army camp altar of pale carved limestone, about one point two metres high on a two-step base: a squared shaft with a moulded cornice, scrolled bolsters at the top corners and a shallow bowl for offerings with ashes in it; a laurel wreath laid at its foot and a bronze offering dish on the step. Weathered stone. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611911,
+      "model_seed": 2611910,
+      "texture_seed": 2611912,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, inscription, christian cross, tombstone, gravestone, fire pit",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T14:20:58.016535Z",
+    "tripoCompletedAt": "2026-11-09T14:23:17.155628Z",
+    "tripoRender": "art-source/models/raw/g3-altar-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "A limestone altar: a bowl on a squared shaft over a two-step base, with a laurel wreath and a bronze dish at its foot. At 1,470 triangles its scrolled bolsters soften into the bowl's rim."
+  }
+}

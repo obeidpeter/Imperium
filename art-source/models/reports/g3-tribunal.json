@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-tribunal.glb",
+    "bytes": 45600604,
+    "sha256": "bff9c766360d0e946784bc3da9f7d0f5e4bd4be293dc56261fa62fa0ff318c07",
+    "triangles": 1425242
+  },
+  "output": {
+    "path": "assets/models/world/g3-tribunal.glb",
+    "bytes": 158828,
+    "sha256": "2af4a66b28fab32b52853e9ef0307ef7257092c4229e7cd9388cbd91783b922f",
+    "triangles": 1960
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.3,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.662327894344191,
+  "sizeMetres": {
+    "width": 2.2739,
+    "height": 2.3,
+    "depth": 2.6604
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_07accf57-028a-4c95-9b3c-5292bda4f558",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_07accf57-028a-4c95-9b3c-5292bda4f558",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_07accf57-028a-4c95-9b3c-5292bda4f558",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

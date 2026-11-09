@@ -1,0 +1,97 @@
+{
+  "id": "g3-wall-mudbrick",
+  "status": "G3 rest: processed, compressed and reviewed; in the game at the Follow and Overview cameras of Chapters V and VI (desktop build, High)",
+  "chapters": [
+    5,
+    6
+  ],
+  "use": "A section of the camp wall: drawn along the mudbrick-walled camps' wall cells, instanced, in place of the code-built parapet.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A straight section of the mudbrick enclosure wall of a Roman fort on the desert frontier, about five metres long, two and a half metres high and one metre thick: sun-dried mud bricks laid in courses on a footing of rough fieldstones, coated in cracked mud plaster that has fallen away in patches to show the brickwork, a rounded parapet with small stepped crenellations along one face. Pale sandy brown and ochre. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, gate, door, arch, tower, castle, medieval",
+      "model_seed": 2611820,
+      "image_seed": 2611821,
+      "texture_seed": 2611822
+    }
+  },
+  "budget": {
+    "triangles": 1500,
+    "texture": 512,
+    "bytes": 200000,
+    "heightMetres": 2.0,
+    "minHeight": 1.8,
+    "maxHeight": 2.2,
+    "note": "Lowered from 2.6 m at review: at 2.0 m its sections are 5.95 m long and fit the mudbrick camps' short runs (V, VI) within 0.92 to 1.05 of their length, where at 2.6 m they would have been stretched up to 1.45 times."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T13:57:55.268Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, gate, door, arch, tower, castle, medieval",
+      "model_seed": 2611820,
+      "image_seed": 2611821,
+      "texture_seed": 2611822,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A straight section of the mudbrick enclosure wall of a Roman fort on the desert frontier, about five metres long, two and a half metres high and one metre thick: sun-dried mud bricks laid in courses on a footing of rough fieldstones, coated in cracked mud plaster that has fallen away in patches to show the brickwork, a rounded parapet with small stepped crenellations along one face. Pale sandy brown and ochre. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9285,
+    "balanceSnapshotBefore": {
+      "balance": 9285,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "140f51a8-53a5-4a51-86aa-f972f7b96f59",
+      "state": "accepted",
+      "requestSha256": "1e3d5d0120fd19fb1997cf9d0d5eca8f7ab880dfa97ed384e7dc76f1c3d4432a"
+    },
+    "taskId": "6c31d8b4-01ad-4e06-ad37-2c9c7c71764d",
+    "status": "success",
+    "generatedAt": "2026-11-09T13:59:32.707Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-wall-mudbrick.glb",
+    "rawBytes": 45953368,
+    "rawSha256": "834af9699c23ff31591ac6c0c7c05ce2dca185a257df773e7eb5eef0c156a9f6",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A straight section of the mudbrick enclosure wall of a Roman fort on the desert frontier, about five metres long, two and a half metres high and one metre thick: sun-dried mud bricks laid in courses on a footing of rough fieldstones, coated in cracked mud plaster that has fallen away in patches to show the brickwork, a rounded parapet with small stepped crenellations along one face. Pale sandy brown and ochre. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611821,
+      "model_seed": 2611820,
+      "texture_seed": 2611822,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, gate, door, arch, tower, castle, medieval",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T13:57:55.885502Z",
+    "tripoCompletedAt": "2026-11-09T13:59:26.758798Z",
+    "tripoRender": "art-source/models/raw/g3-wall-mudbrick-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "Sandy mudbrick with fallen plaster, stepped crenellations on both faces and a footing of rounded stones. Processed 2.0 m high rather than 2.6, so its sections stretch 0.92 to 1.05 along the runs of Chapters V and VI; at 2.6 m some would have stretched 1.45."
+  }
+}

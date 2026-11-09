@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-archery-butt.glb",
+    "bytes": 46898148,
+    "sha256": "b3fba41d4b860e2366309d07af99484cf0ec0e70ecd62e85db8573c061a701a3",
+    "triangles": 1431109
+  },
+  "output": {
+    "path": "assets/models/world/g3-archery-butt.glb",
+    "bytes": 339760,
+    "sha256": "a960844cd637a64ff19f33e7a6a623657c6cced79fb1792636f75f52f68bb77d",
+    "triangles": 4410
+  },
+  "settings": {
+    "triangles": 4500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 270.0
+  },
+  "scale": 1.8301769128239063,
+  "sizeMetres": {
+    "width": 1.2826,
+    "height": 1.8,
+    "depth": 1.8182
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_348ec8b8-fe95-446d-8862-a3de67bfdc2b",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_348ec8b8-fe95-446d-8862-a3de67bfdc2b",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_348ec8b8-fe95-446d-8862-a3de67bfdc2b",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

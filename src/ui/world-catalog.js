@@ -47,22 +47,51 @@ export const LIFE_PROP_CHAPTERS=Object.freeze(Object.fromEntries(Object.entries(
   'life-travel-carriage':[7,11,12],'life-market-stall':[9,10,11,12],
   'life-pottery-stall':[6,9,11,12]
 }).map(([id,chapters])=>[id,Object.freeze(chapters)])));
-// The camps' own furniture (graphics plan, G3's pilot): Tripo props set out in a camp's courts beyond
-// the board, each beside the service it belongs to (camp-composition.js). Only in a camp, and like
-// life with no code-built stand-in: without its model the place stays empty.
+// The camps' own furniture (graphics plan, G3): Tripo props set out in a camp's courts beyond the board,
+// each beside the service it belongs to (camp-composition.js). Only in a camp, and like life with no
+// code-built stand-in: without its model the place stays empty. The pilot's six, then the rest's ten.
 export const CAMP_PROP_CHAPTERS=Object.freeze(Object.fromEntries(Object.entries({
   'g3-officers-tent':[1,3,4,6,7,8,9,12],'g3-tent-struck':[2,6,8],'g3-horse-lines':[7,9,12],
-  'g3-training-post':[1,3,4,7],'g3-supply-stack':[1,2,3,4,6,7,8,9,10,12],'g3-granary':[4,10]
+  'g3-training-post':[1,3,4,7],'g3-supply-stack':[1,2,3,4,6,7,8,9,10,12],'g3-granary':[4,10],
+  'g3-praetorium':[2,6,7,9],'g3-hospital-tent':[2,3,6,8,9],'g3-tribunal':[1,9,12],'g3-altar':[1,4,12],
+  'g3-parley-awning':[8,9],'g3-pavilion-east':[6,9],'g3-pavilion-shade':[6,9],
+  'g3-pilum-rack':[2,3,6,8,10,12],'g3-archery-butt':[3,6,10,12],'g3-field-oven':[2,4,8,10]
 }).map(([id,chapters])=>[id,Object.freeze(chapters)])));
-// The timber camps' palisade and towers (G3's pilot), on their wall cells (camp-walls.js). The palisade
-// stands for the code-built breastwork, which stays as its fallback.
-export const CAMP_WALL_CHAPTERS=Object.freeze({
-  'g3-palisade-timber':Object.freeze([1,2,3,7,8,10]),'g3-watchtower-timber':Object.freeze([1,2,3,7,8,10])
+// The camps' walls (G3), on their wall cells (camp-walls.js): each wall style's wall, its towers on the corners
+// and either side of a gateway, and its gate over a gateway. A wall stands for the code-built breastwork or
+// parapet, which stays as its fallback; towers and gates have no stand-in.
+export const CAMP_WALL_MODELS=Object.freeze({
+  timber:Object.freeze({wall:'g3-palisade-timber',tower:'g3-watchtower-timber',gate:'g3-gate-timber'}),
+  stone:Object.freeze({wall:'g3-wall-stone',tower:'g3-tower-stone',gate:'g3-gate-stone'}),
+  mudbrick:Object.freeze({wall:'g3-wall-mudbrick',tower:'g3-tower-mudbrick'})
 });
-// What a chapter's web download has room for of G3's models (presentation-budget.js): Chapter I's 3D
-// download stood at 17.69 of its 18 MB and the largest chapter's (XII, with the 2D view) at 27.71 of
-// 28 MB, so Chapter I takes the palisade alone and Chapter XII none. The desktop app has them all.
-const G3_WEB_ROOM=Object.freeze({1:Object.freeze(['g3-palisade-timber']),12:Object.freeze([])});
+export const CAMP_WALL_CHAPTERS=Object.freeze({
+  'g3-palisade-timber':Object.freeze([1,2,3,7,8,10]),'g3-watchtower-timber':Object.freeze([1,2,3,7,8,10]),
+  'g3-gate-timber':Object.freeze([1,2,3,7,10]),
+  'g3-wall-stone':Object.freeze([4,9,12]),'g3-tower-stone':Object.freeze([4,9,12]),'g3-gate-stone':Object.freeze([4,9,12]),
+  'g3-wall-mudbrick':Object.freeze([5,6]),'g3-tower-mudbrick':Object.freeze([5,6])
+});
+// The tent lines' other tents (G3's rest): a contubernium's tent with its flaps open and a patched one, mixed
+// by cell with Chapter V's leather tent (environment-regional-world.js), each with the chapters whose tent lines
+// pitch it: Chapters IV's and VI's single tents both fall to the leather one.
+export const TENT_VARIANT_CHAPTERS=Object.freeze({
+  'g3-tent-open':Object.freeze([1,2,3,7,8,9]),'g3-tent-patched':Object.freeze([1,2,3,9,12])
+});
+// What a chapter's web download has room for of G3's models (presentation-budget.js). After the pilot,
+// Chapter I's 3D download stood at 17.87 of its 18 MB, and Chapters VII's, VIII's and XII's (with the 2D
+// view) within 0.3 MB of their 28 MB: Chapter I takes the palisade alone, VII and VIII the pilot's models
+// and XII none. The rest's eleven models for Chapter IX came to 2.45 MB against its 2.33 MB of room: IX
+// leaves out the open and the patched tents, one pitch each, which take the leather tent on the web, and
+// the tribunal and the parley awning, whose courts there lie beyond the camera's reach, so no web chapter
+// carries those two. Every other chapter takes all of its models. The desktop app has them all.
+const G3_WEB_ROOM=Object.freeze({
+  1:Object.freeze(['g3-palisade-timber']),
+  7:Object.freeze(['g3-palisade-timber','g3-watchtower-timber','g3-officers-tent','g3-horse-lines','g3-training-post','g3-supply-stack']),
+  8:Object.freeze(['g3-palisade-timber','g3-watchtower-timber','g3-officers-tent','g3-tent-struck','g3-supply-stack']),
+  9:Object.freeze(['g3-officers-tent','g3-horse-lines','g3-supply-stack','g3-wall-stone','g3-tower-stone','g3-gate-stone','g3-praetorium',
+    'g3-hospital-tent','g3-pavilion-east','g3-pavilion-shade']),
+  12:Object.freeze([])
+});
 const g3=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,chapters.filter(c=>!G3_WEB_ROOM[c]||G3_WEB_ROOM[c].includes(id)));
 // The generated landmarks on the chapters' horizons (release 9), with the chapters whose
 // LANDMARK_LAYOUT (world-layouts.js) names each. The Colosseum keeps its code-built outline.
@@ -117,7 +146,7 @@ export const WORLD_CATALOG=Object.freeze({
   'rocks-arid':asset('kit',['assets/models/scenery/rocks-arid.glb'],[5,6,9]),
   ...Object.fromEntries(Object.entries(REGIONAL_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
   ...Object.fromEntries(Object.entries(LIFE_PROP_CHAPTERS).map(([id,chapters])=>[id,asset('prop',[`assets/models/world/${id}.glb`],chapters)])),
-  ...Object.fromEntries(Object.entries({...CAMP_PROP_CHAPTERS,...CAMP_WALL_CHAPTERS}).map(([id,chapters])=>[id,g3(id,chapters)])),
+  ...Object.fromEntries(Object.entries({...CAMP_PROP_CHAPTERS,...CAMP_WALL_CHAPTERS,...TENT_VARIANT_CHAPTERS}).map(([id,chapters])=>[id,g3(id,chapters)])),
   ...Object.fromEntries(Object.entries(LANDMARK_CHAPTERS).map(([id,chapters])=>[id,asset('landmark',[`assets/models/landmarks/${id}.glb`],chapters)])),
   // The ground's photographed layers (ground-layers.js), shared by every chapter.
   'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12]),
