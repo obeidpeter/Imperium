@@ -1427,6 +1427,20 @@ Each model was compared with its Tripo render and then, bound, in the game's act
 - **The chieftain** stands apart from his men: dark leather studded with bronze, red sleeves, the gold torc he drops as loot, and a helmet banded in bronze.
 - **The skirmisher** is the calibration's: at the game's distance the standard tier showed no less than the detailed ([the calibration](graphics-calibration.md)).
 
+#### In battle
+
+The bodies were then seen where a player meets them, in four battles of the desktop build at High. Each moment was reached from New Game by the real-time bot's legal commands and restored through the Restore dialog. It was captured twice: with the pilot's bodies, and with the bodies the types wore before served under the same files' names. Chapter VI's and XII's moments were kept where the most of the changed type stood within 9 m of the soldier.
+
+![Four battles before and after G1's pilot, crops at the game's own pixels in the desktop build at High](images/g1-pilot-battles.jpg)
+
+A figure stands about 70 to 100 pixels tall in a 1,080-pixel frame, and its shield covers much of its body. What reads there is a figure's outline and its main colours:
+- **IV:** the war bands' helmets and dark jerkins, where the body before was bare-headed;
+- **VI:** the skirmisher's undyed linen and felt cap, where the body before wore a scale coat and a helmet;
+- **IX:** the Moorish riders' bare heads, the Palmyrene spearmen's leather and linen in place of bronze scale, and the cataphract's chestnut horse in place of a grey one;
+- **XII:** the claimant's cohorts, in dark mail over off-white, now read apart from the soldier's own legionaries, whose body they wore before. They still carry the same shields as his men.
+
+Finer work shows only close up: the chieftain's torc, the leather's rivets and the purple band at the rival's hem.
+
 #### Exact prompts
 
 **char-gothic-skirmisher**

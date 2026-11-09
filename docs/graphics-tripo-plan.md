@@ -117,16 +117,29 @@ Seven bodies and a horse, one for each of G1's categories, in the game for the o
 - **Credits:** 310: six rigged bodies (45 each), the horse (20), and one rejected generation redone (the first rival legionary came out in segmented plate). [The ledger](../art-source/models/graphics-g1-credits.json) has every task.
 - **How a body is chosen:** by what the rules made the unit (its role, a skirmisher's or a claimant's name, a champion's id), in presentation only; a type's body is matched before its faction's.
 - **Downloads:** Chapter I's download is now 17.2 of its 18 MB, so at most two more of Chapter I's bodies fit the web build at the bodies' 1,024-pixel maps. The rest can take the cast's 512-pixel maps, as release 8 did, or ship in the desktop app only, as decision 2 allows.
+- **In battle:** the change is modest at the battle camera ([the art record](art-generation.md#in-battle) has the method).
+  - A figure stands about 70 to 100 pixels tall in a 1,080-pixel frame, and its shield covers much of its body.
+  - What reads is a figure's outline and its main colours: a helmet or a bare head, light cloth or dark armour, a horse's coat.
+  - The clearest gain is Chapter XII, where the claimant's cohorts no longer look like the soldier's own men.
+  - Close up, in the actor viewer, every body is plainly its own.
 
-**Proposed for the rest of G1, after the owner's review** (about 1,500 credits, within the cap):
-- **A body for every unit type still without one (23):**
-  - Gothic: the axe raider, the spearman, the band's war leader, the shield guard and the horseman;
-  - Persian: the spearman and the guard;
-  - rival Romans: the guardsman, the archer and the horseman;
-  - Roman specialists: Dalmatian cavalry, a draco-bearer and a centurion;
-  - the other ten champions. The mounted Palmyrene officer is drawn on foot today, and would ride.
-- **A second body for the crowds seen most (10):** each squad wears one of its type's bodies by its identity, so neighbouring squads differ. The war bands, the raiders, the Persian and Palmyrene spearmen, the claimant's legionaries, and the soldier's own legionaries, archers and cavalry.
-- **Two horses:** the northern horse remade at its own smaller size, and a Persian horse in iron lamellae, apart from the Palmyrene bronze.
+  ![Four battles before and after the pilot, crops at the game's own pixels in the desktop build at High](images/g1-pilot-battles.jpg)
+
+**Proposed for the rest of G1, for the owner's decision.** G1 has 1,990 credits left.
+- **Now, about 1,200 credits** (1,075 at the measured prices, and the plan's 10% for rejected attempts):
+  - **a body for every unit type still without one (23):**
+    - Gothic: the axe raider, the spearman, the band's war leader, the shield guard and the horseman;
+    - Persian: the spearman and the guard;
+    - rival Romans: the guardsman, the archer and the horseman;
+    - Roman specialists: Dalmatian cavalry, a draco-bearer and a centurion;
+    - the other ten champions. The mounted Palmyrene officer is drawn on foot today, and would ride.
+  - **two horses:** the northern horse remade at its own smaller size, and a Persian horse in iron lamellae, apart from the Palmyrene bronze.
+  - Each prompt gives its type a headgear and a main colour of its own, since those are what read in battle. Each body is seen at the battle camera before it ships.
+- **Afterwards, about 500 credits:** a second body for the crowds seen most (10).
+  - Each squad would wear one of its type's bodies by its identity, so neighbouring squads differ: the war bands, the raiders, the Persian and Palmyrene spearmen, the claimant's legionaries, and the soldier's own legionaries, archers and cavalry.
+  - It is decided once the new type bodies have been seen in battle, because it is the part least likely to show there.
+- **Chapter I's web download:** the bodies that do not fit take 512-pixel maps. A figure 100 pixels tall cannot show a finer one.
+- **At no credit cost:** the claimant's cohorts could carry shield markings of their own. Their shields are still the soldier's men's.
 
 Each cap includes about 10% for rejected attempts. G3 and G5 have G7's credits too: each pilot proposes how many more of its own list they buy. Some things stay out of Tripo:
 - the Colosseum, which failed three times there, gets a Blender build;

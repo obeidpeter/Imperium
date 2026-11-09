@@ -535,4 +535,8 @@ Release G1 of the [graphics plan](graphics-tripo-plan.md#g1s-pilot-8-november) g
 - **A second attempt** keeps the first request beside it: `char-rival-legionary.json` is marked rejected, and the body ships from `char-rival-legionary-b.json`. The body's manifest entry names the request it came from (`source.prompt`), and the records test follows it.
 - **A body bought for another purpose** ships from a request of its own that carries the original's task IDs and digests: `char-gothic-skirmisher.json` is the calibration's standard-tier skirmisher (`reusedFrom`), so its credits are not spent twice.
 - **A failed download.** Twice in the pilot Tripo finished a task but its file did not download. `resume` (or `resume-rig`) fetched it again by the recorded task ID, with no new task and no new charge.
+- **Seen in battle.** A body is reviewed where players meet it, as well as in the actor viewer.
+  - A battle is reached from New Game by the real-time bot's legal commands and restored through the desktop build's Restore dialog at High.
+  - It is captured twice: as built, and with the earlier body served under the new file's name.
+  - At the battle camera a figure is about 70 to 100 pixels tall, so a type reads by its outline and main colours ([the art record](art-generation.md#in-battle)). A prompt names those first.
 - **Credits** are recorded task by task in [`graphics-g1-credits.json`](../art-source/models/graphics-g1-credits.json), and `tests/graphics-g1.test.mjs` reconciles them with the requests, the manifest and the account's balance.

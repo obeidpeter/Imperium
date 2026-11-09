@@ -13,8 +13,9 @@ Seven unit types that wore another unit's body now wear their own, and the Palmy
   - Chapter VI: Persian skirmishers, light-armed in linen and a felt cap, no longer in the guard's scale coat;
   - Chapter IX: Palmyrene infantry, in a leather corselet over linen, apart from the bronze-scaled guard;
   - Chapter IX: Aurelian's Moorish horse, the Roman cavalry of the Palmyrene war (Zosimus names them at Emesa), and the cataphracts' chestnut horse under bronze scales;
-  - Chapter XII: the claimant's civil-war cohorts, in mail over an off-white tunic with purple bands, no longer in the soldier's own legionaries' bodies.
+  - Chapter XII: the claimant's civil-war cohorts, in mail over an off-white tunic with a purple band at the hem, no longer in the soldier's own legionaries' bodies.
 - **How a body is chosen:** by the unit's own role and name, in presentation only. A type's body is matched before its faction's, and champions by their id. Every other figure keeps the body it wore.
+- **In battle** ([the review](docs/art-generation.md#in-battle)): a figure's outline and main colours read at the battle camera, so the change there is modest. The clearest gain is Chapter XII, where the claimant's cohorts no longer look like the soldier's own men.
 - **Found on the way:** the chapter check now counts the reinforcements that march on mid-battle. Chapter VIII's Gothic cavalry wave wore the noble's body and rode the northern horse, but neither was in Chapter VIII's download. Both are now.
 - **Credits:** 310 of G1's 2,300, and the balance went from 10,510 to 10,200.
   - Six rigged bodies cost 45 each, and the horse 20.
@@ -26,7 +27,7 @@ Seven unit types that wore another unit's body now wear their own, and the Palmy
   - the horse tests;
   - a ledger test checks the credits task by task.
 
-  The review images come from the actor viewer, in headless Chromium under a software renderer at High. They are not a hardware or device check.
+  The review images come from the actor viewer and from four battles of the desktop build, reached from New Game by the real-time bot's legal commands, in headless Chromium under a software renderer at High. They are not a hardware or device check.
 
 ### The owner's choices after the calibration ([the plan](docs/graphics-tripo-plan.md#the-owners-decisions-8-november))
 
