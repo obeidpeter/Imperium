@@ -11091,50 +11091,50 @@
     {
       "id": "horse-eastern",
       "path": "assets/models/horses/horse-eastern.glb",
-      "subject": "Generated horse: an armoured horse of the Sasanian and Palmyrene heavy cavalry of the mid-3rd century AD, grey under a trapper of iron scales",
+      "subject": "Generated horse: a Sasanian heavy cavalry horse of the mid-3rd century AD, dark bay under a trapper of iron lamellae flat along the back",
       "source": {
         "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), mesh only; bound to the game's horse skeleton on its own legs' rest pose in Blender 5.2.2 LTS by scripts/assets/bind-horse.py, its colour, normals and roughness baked from the full-detail mesh; quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
         "generator": "Tripo",
         "modelVersion": "v3.1-20260211",
-        "taskId": "e082a6db-94f6-46a1-a3c0-6d73f031ad61",
-        "generatedAt": "2026-10-28T20:59:25.280Z",
-        "prompt": "art-source/models/requests/horse-eastern.json",
-        "rawBytes": 46332944,
-        "rawSha256": "49bbd1652214105cba657c4685e61cbc2c4178c3bda0ae34c4f9ebbbffe624af",
+        "taskId": "8afcbf1f-595e-4a3d-9df4-ea6645f863a7",
+        "generatedAt": "2026-11-09T09:08:52.256Z",
+        "prompt": "art-source/models/requests/horse-eastern-b.json",
+        "rawBytes": 46171752,
+        "rawSha256": "ae06e64c1cabc75164ec6d949a86d14bd757c565e65b1f1ece1011e8629e31fc",
+        "program": "graphics-g1",
+        "credits": 20,
         "processing": {
           "triangles": 9000,
           "overviewTriangles": 1800,
           "texture": 1024,
           "detailTexture": 512,
           "webpQuality": 80,
-          "sharpAngle": 60,
-          "tailAbove": 0.55,
-          "tailVerticesTrimmed": 28
+          "sharpAngle": 60
         },
-        "report": "art-source/models/reports/horse-eastern.json",
+        "report": "art-source/models/reports/horse-eastern-b.json",
         "compression": {
           "tool": "scripts/assets/compress.mjs",
           "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
           "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
-          "compressedAt": "2026-10-28",
-          "report": "art-source/models/reports/horse-eastern-compress.json"
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/horse-eastern-b-compress.json"
         }
       },
-      "usage": "The horses of Persian riders, under the game's own saddle; the code-built horse stays the stand-in wherever the model is absent. The Palmyrene cataphracts ride horse-cataphract since release G1.",
+      "usage": "The Persian horse of Chapters V and VI, mesh only, remade in a trapper of iron lamellae that lies flat along the back under the game’s saddle (the first eastern horse’s left a raised seat), replacing it: skinned in Blender to the game’s own horse skeleton (scripts/assets/bind-horse.py), as the other horses are; the code-built horse stays the stand-in.",
       "loading": "Deferred local GLB in the offline groups of Chapters V and VI only (src/ui/art.js); loaded by src/showcase/horse-bodies.js for the riders it fits (src/ui/actor-body-catalog.js), at every quality. A rider keeps the code-built horse until the model loads, or if it fails.",
       "export": {
         "format": "GLB 2.0 skinned to the game's 19 horse joints at its own rest pose (horse-coat, horse-coat-overview), with a point where each hoof stands (fore-right-sole and so on), KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
-        "bytes": 550740,
-        "sha256": "05729967f5a23e10a0a14e863b089770d4140d261dac46533e38fe91c78811b2",
-        "triangles": 10859,
-        "nearTriangles": 8929,
-        "overviewTriangles": 1930,
+        "bytes": 551620,
+        "sha256": "c056f4b19389e64bdc068fe49f40091bfd1c6dba03e620f7fc31e8bf654066df",
+        "triangles": 10800,
+        "nearTriangles": 9000,
+        "overviewTriangles": 1800,
         "textures": 3,
         "textureEdge": 1024,
         "sizeMetres": {
-          "width": 0.5463,
-          "height": 1.9956,
-          "depth": 2.138
+          "width": 0.6757,
+          "height": 2.0576,
+          "depth": 2.3434
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
@@ -16041,6 +16041,846 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-wall",
+      "path": "assets/models/characters/champion-wall.glb",
+      "subject": "Generated character body: the war band's war leader, Chapter IV's wall champion, in woad blue under a tall conical helmet",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "17a4ef90-6e3f-4284-ba78-abaea183560a",
+        "generatedAt": "2026-11-09T08:54:13.864Z",
+        "rigTaskId": "ea696362-e327-450c-95c0-86e2c289c056",
+        "riggedAt": "2026-11-09T08:59:43.461Z",
+        "prompt": "art-source/models/requests/char-champion-wall.json",
+        "rawBytes": 44652020,
+        "rawSha256": "ce19e829392df1aa6de5ab5698d0d40e1efd8cbfb08f8a7962e15bec2cb8080f",
+        "riggedBytes": 59547232,
+        "riggedSha256": "6e1fbc6acf7ff60cb73100f798fb051aa9a43aa7e9f2e9607ca8f477e423d242",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-wall.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-wall-compress.json"
+        }
+      },
+      "usage": "The war band’s war leader, the champion of Chapter IV’s wall battle (ch4-wall), in his own body; the game adds his round shield and spear.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IV only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 422988,
+        "sha256": "f1e24531b4844589de321670705d83ea2ab6b86df22c7d7d0766e37e9009f05a",
+        "triangles": 13843,
+        "nearTriangles": 11344,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5868,
+          "height": 1.8627,
+          "depth": 0.4104
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-mine",
+      "path": "assets/models/characters/champion-mine.glb",
+      "subject": "Generated character body: a Sasanian sapper captain of AD 256, in indigo linen and a ridge helmet after the one found in the siege mine at Dura-Europos",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "ae2e241c-ccba-409a-b1fd-5800a6e6a540",
+        "generatedAt": "2026-11-09T09:02:01.718Z",
+        "rigTaskId": "e5cc08d0-1106-4a62-b750-30ef4966a62d",
+        "riggedAt": "2026-11-09T09:09:40.641Z",
+        "prompt": "art-source/models/requests/char-champion-mine.json",
+        "rawBytes": 45170492,
+        "rawSha256": "84b384f66b18cf57acfdbcd543af77b0088b922954a4e8b50fed946181734a08",
+        "riggedBytes": 60133400,
+        "riggedSha256": "1370deb512451f48a7a8fc2d5f8b8c1feb580afad22f4b0c0344a9d7f1cb20a2",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-mine.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-mine-compress.json"
+        }
+      },
+      "usage": "A Persian sapper captain, the champion of Chapter V’s mine (ch5-mine), in his own body; the game adds his parma and spatha.",
+      "loading": "Deferred local GLB in the offline groups of Chapter V only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 447320,
+        "sha256": "3f8e7c198a23acc64ffe63fc2f9be483a22d14211966e4c8189d9dc87d3a9fa4",
+        "triangles": 13890,
+        "nearTriangles": 11391,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5899,
+          "height": 1.7965,
+          "depth": 0.3804
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-wells",
+      "path": "assets/models/characters/champion-wells.glb",
+      "subject": "Generated character body: a Sasanian captain of the pursuit of AD 260, in crimson silk under a cloth-wrapped conical helmet",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f1bcbd23-480b-4006-8b7f-45484aaef337",
+        "generatedAt": "2026-11-09T09:03:39.045Z",
+        "rigTaskId": "9fe0bd38-5a42-4405-bddc-84ad5aeb205e",
+        "riggedAt": "2026-11-09T09:10:34.372Z",
+        "prompt": "art-source/models/requests/char-champion-wells.json",
+        "rawBytes": 43158208,
+        "rawSha256": "6b30fdec6e5ecf870ccc56c4ec5f6faa180b9eff723fa1134036e7a2da3c6842",
+        "riggedBytes": 57667488,
+        "riggedSha256": "7f4ca83687f313bd0d96275699217b6335640836c4f268c27607e1e6cbfdac29",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-wells.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-wells-compress.json"
+        }
+      },
+      "usage": "A Persian captain of the pursuit, the champion of Chapter VI’s wells (ch6-wells), in his own body; the game adds his parma and spatha.",
+      "loading": "Deferred local GLB in the offline groups of Chapter VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 418936,
+        "sha256": "464985247a123e952b249360741eccf09a72c5fa98b3f426105510bd9c7d0ab2",
+        "triangles": 13886,
+        "nearTriangles": 11386,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6173,
+          "height": 1.8836,
+          "depth": 0.3693
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-eagle",
+      "path": "assets/models/characters/champion-eagle.glb",
+      "subject": "Generated character body: a Sasanian veteran in iron scale over turquoise, Chapter VI's standard-breaker",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b30502a4-0127-44d5-8d95-08b7a7a320df",
+        "generatedAt": "2026-11-09T09:05:32.983Z",
+        "rigTaskId": "9ed90a8c-e9b3-4565-8119-55e47dece3d7",
+        "riggedAt": "2026-11-09T09:12:34.360Z",
+        "prompt": "art-source/models/requests/char-champion-eagle.json",
+        "rawBytes": 45483208,
+        "rawSha256": "2009df53ef304b6b3154c81fe12e7f8ed818faecca38438c70c51657278d3696",
+        "riggedBytes": 60124248,
+        "riggedSha256": "44641fcf04c241523a3ba6ef5fb96e5f85f91493f098c6355c5c0b64877f7361",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-eagle.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-eagle-compress.json"
+        }
+      },
+      "usage": "The raiders’ standard-breaker, the champion of Chapter VI’s eagle battle (ch6-eagle), in his own body; the game adds his parma and spatha.",
+      "loading": "Deferred local GLB in the offline groups of Chapter VI only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 484756,
+        "sha256": "12c40515ec9441acc58ec9ac187a739396a045de7bc964d88096e2a105aac44f",
+        "triangles": 14004,
+        "nearTriangles": 11504,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6209,
+          "height": 1.7852,
+          "depth": 0.4009
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-legion",
+      "path": "assets/models/characters/champion-legion.glb",
+      "subject": "Generated character body: a Germanic mercenary captain of the 260s AD in a Roman usurper's pay, in dark green with a Roman military belt",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3e8a39f0-ba7c-46b3-9eda-25c917270dff",
+        "generatedAt": "2026-11-09T08:56:33.720Z",
+        "rigTaskId": "b7194fad-5b63-40e5-a20b-e57117818db4",
+        "riggedAt": "2026-11-09T09:01:51.095Z",
+        "prompt": "art-source/models/requests/char-champion-legion.json",
+        "rawBytes": 43404712,
+        "rawSha256": "ec3ab720d92a067d9b72fb034157f742ba822ec88b4e77d378e5f6e233307958",
+        "riggedBytes": 57821304,
+        "riggedSha256": "476a354b1b82ec9445b2abb73aa0681ec68a8ce383ca7605f5ea8f3eab18c07b",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-legion.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-legion-compress.json"
+        }
+      },
+      "usage": "A mercenary captain in the usurper’s pay, the champion of Chapter VII’s legion battle (ch7-legion), in his own body; the game adds his round shield and spatha.",
+      "loading": "Deferred local GLB in the offline groups of Chapter VII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 430356,
+        "sha256": "bef33311c39bbd352fd244fb42dfa17c595e0b43784b8d2ca677a0a1c1c63aaa",
+        "triangles": 13787,
+        "nearTriangles": 11288,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6066,
+          "height": 1.7481,
+          "depth": 0.3671
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-crossing",
+      "path": "assets/models/characters/champion-crossing.glb",
+      "subject": "Generated character body: the war band's champion of the 270s AD, in saffron yellow with red braids",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3b567ea7-f9b8-4f7c-b7c9-239d12057b87",
+        "generatedAt": "2026-11-09T08:58:17.080Z",
+        "rigTaskId": "8327d231-dbda-4dba-8a8c-d1409a5e26d7",
+        "riggedAt": "2026-11-09T09:03:51.049Z",
+        "prompt": "art-source/models/requests/char-champion-crossing.json",
+        "rawBytes": 45130040,
+        "rawSha256": "bc143c5706c790cdeb1aab1159a3be00d2890e6d7a47a9e860116a0ec6803e0f",
+        "riggedBytes": 60206424,
+        "riggedSha256": "099c1e94a2fee8dbb1bb590797d588810f565657fcbd9565ae329ca7e3f38df2",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-crossing.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-crossing-compress.json"
+        }
+      },
+      "usage": "The war band’s champion, the champion of Chapter VIII’s crossing (ch8-crossing), in his own body; the game adds his round shield and axe.",
+      "loading": "Deferred local GLB in the offline groups of Chapter VIII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 436424,
+        "sha256": "cc71ffd8f8f607251dd08dd04724cdf9e82d1ba5cfbb1ea252b172b5666400e6",
+        "triangles": 13769,
+        "nearTriangles": 11269,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.596,
+          "height": 1.7788,
+          "depth": 0.3948
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-wing",
+      "path": "assets/models/characters/champion-wing.glb",
+      "subject": "Generated character body: a Palmyrene armoured cavalry officer of AD 272, in gilded scale over embroidered purple",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3d5bb9f0-d0d7-4e25-9b24-6a01ef90d1c9",
+        "generatedAt": "2026-11-09T09:07:06.405Z",
+        "rigTaskId": "6a461e51-d0e3-434b-818c-4289e26dddfb",
+        "riggedAt": "2026-11-09T09:14:40.047Z",
+        "prompt": "art-source/models/requests/char-champion-wing.json",
+        "rawBytes": 46719376,
+        "rawSha256": "985eee83d5b40c7fe991276630e2437775927d8f8a93d07148f6d93fa0759ce3",
+        "riggedBytes": 61881308,
+        "riggedSha256": "f276f42a1595289830c78e79d18644402da3679647aeae86ac05da6651a5f4e5",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-wing.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-wing-compress.json"
+        }
+      },
+      "usage": "A Palmyrene armoured officer, the champion of Chapter IX’s cavalry battle (ch9-wing), in his own body and riding, as the rules have him; the game adds his spear.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 450104,
+        "sha256": "df65150f47392d1966f747c763555c31aa292e55b057d520a1dd87c56ab80f1f",
+        "triangles": 13873,
+        "nearTriangles": 11373,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5759,
+          "height": 1.7857,
+          "depth": 0.4193
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-city",
+      "path": "assets/models/characters/champion-city.glb",
+      "subject": "Generated character body: a Palmyrene city captain of AD 272, in iron plates over white and red",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "3199c783-ef76-41e4-8b30-c413dc4aaf4f",
+        "generatedAt": "2026-11-09T08:56:02.363Z",
+        "rigTaskId": "f3eccf2c-239e-4d39-87cc-a00de7d47bb1",
+        "riggedAt": "2026-11-09T09:00:53.586Z",
+        "prompt": "art-source/models/requests/char-champion-city.json",
+        "rawBytes": 46379152,
+        "rawSha256": "1900a3a89bd871ae01247d61d904950eb76980f89e82fca61102b489d155debf",
+        "riggedBytes": 61726716,
+        "riggedSha256": "076b4a58131adbe1c735d4d9095430fe2ee8224851cb3d24ea7e3018bb197e40",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-city.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-city-compress.json"
+        }
+      },
+      "usage": "The city’s defending captain, the champion of Chapter IX’s city (ch9-city), in his own body; the game adds his parma and spatha.",
+      "loading": "Deferred local GLB in the offline groups of Chapter IX only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 443396,
+        "sha256": "bb1d9c9ae46cf9152cfeee4049bf68370cd04ec5c47b779d6675ecff313e9fab",
+        "triangles": 13977,
+        "nearTriangles": 11477,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6003,
+          "height": 1.9017,
+          "depth": 0.4483
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-road",
+      "path": "assets/models/characters/champion-road.glb",
+      "subject": "Generated character body: the raiders' chief of the 270s AD, grey-bearded, in undyed wool and a fur-edged jerkin",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "6d2783af-3a9c-46e6-a2e2-13fc19aaf66c",
+        "generatedAt": "2026-11-09T09:00:10.433Z",
+        "rigTaskId": "84c796b5-bed4-402c-86c4-b1c2e5e72020",
+        "riggedAt": "2026-11-09T09:07:34.268Z",
+        "prompt": "art-source/models/requests/char-champion-road.json",
+        "rawBytes": 43251732,
+        "rawSha256": "aa8577f45c6bb556ffa00d1359b646182adf608ebcdc21c4568ec418a63851a2",
+        "riggedBytes": 57571164,
+        "riggedSha256": "fdd5fa4af028f86671d93fc119620401491d1139df3ba8c197c51bb6229808bc",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-road.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-road-compress.json"
+        }
+      },
+      "usage": "The raiders’ chief, the champion of Chapter X’s road (ch10-road), in his own body; the game adds his round shield and axe.",
+      "loading": "Deferred local GLB in the offline groups of Chapter X only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 448440,
+        "sha256": "cef1e6903dafc9b19b33031671769a4f354aefb902a58ece8848d0f7f58b47bd",
+        "triangles": 13994,
+        "nearTriangles": 11494,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6578,
+          "height": 1.7825,
+          "depth": 0.4272
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-champion-guard",
+      "path": "assets/models/characters/champion-guard.glb",
+      "subject": "Generated character body: a rival claimant's guard captain of AD 275, in mail over scarlet under a plumed helmet",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "761bc946-fc7a-425b-a35c-a0ed8145d7d9",
+        "generatedAt": "2026-11-09T08:57:55.027Z",
+        "rigTaskId": "5de4594a-52df-4d60-bacf-f772a502da4f",
+        "riggedAt": "2026-11-09T09:02:48.464Z",
+        "prompt": "art-source/models/requests/char-champion-guard.json",
+        "rawBytes": 45194080,
+        "rawSha256": "05484e5603cf3d784e301ec3a221d5ea416a5b874f1709d93c3b0600d53bbc05",
+        "riggedBytes": 59668396,
+        "riggedSha256": "1d81f9013b7d6ddfa38f1b32b5b79fff50228110e29039b113f55ee8f6c4128b",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-champion-guard.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-champion-guard-compress.json"
+        }
+      },
+      "usage": "The claimant’s guard captain, the champion of Chapter XII’s confrontation (ch12-confrontation), in his own body; the game adds his scutum and spatha.",
+      "loading": "Deferred local GLB in the offline groups of Chapter XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 464140,
+        "sha256": "cce568406eb47016b66258327b678e47a9b240a6d7ab24d16e22701cb815c11b",
+        "triangles": 13787,
+        "nearTriangles": 11287,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6131,
+          "height": 1.8973,
+          "depth": 0.3785
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-gothic-warleader",
+      "path": "assets/models/characters/gothic-warleader.glb",
+      "subject": "Generated character body: the war leader of a Gothic band of the mid-3rd century AD, in red with a torc and headband",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "8ccec7f0-0f69-4ef4-b653-e38f98c7f818",
+        "generatedAt": "2026-11-09T08:59:43.842Z",
+        "rigTaskId": "aec7fff7-dce2-4fd5-ad6a-cfa039fbf4ef",
+        "riggedAt": "2026-11-09T09:06:26.017Z",
+        "prompt": "art-source/models/requests/char-gothic-warleader.json",
+        "rawBytes": 45797248,
+        "rawSha256": "fd829af57d6e218061baa5b89f677931faacfa661d0e416b9bddc937660680ea",
+        "riggedBytes": 61098184,
+        "riggedSha256": "15308e9a55430e9b0a0a489b678cce02f2e30e113946961bb9b981c7e3e54d82",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-gothic-warleader.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-gothic-warleader-compress.json"
+        }
+      },
+      "usage": "The war leader of a Gothic band that fights alone (Chapters I–III), whom the rules choose as its hardiest man and name its war leader, in his own body; the game adds his weapon.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, II and III only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 282216,
+        "sha256": "6b11431139493947ddabcb5c8ffee6047b05d486f96d5ba2633da3c9517b3594",
+        "triangles": 13859,
+        "nearTriangles": 11360,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.5897,
+          "height": 1.7561,
+          "depth": 0.3896
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-gothic-guard",
+      "path": "assets/models/characters/gothic-guard.glb",
+      "subject": "Generated character body: a Gothic shield guard of the mid-3rd century AD, in a jerkin over a checked tunic and a segmented helmet",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "a7eef95a-1f0e-4c77-ad77-a2a20e75491f",
+        "generatedAt": "2026-11-09T09:01:40.172Z",
+        "rigTaskId": "2b3e2083-b3ef-44af-84e3-47b8d7ec2c04",
+        "riggedAt": "2026-11-09T09:08:32.276Z",
+        "prompt": "art-source/models/requests/char-gothic-guard.json",
+        "rawBytes": 44272468,
+        "rawSha256": "d3c5f35a8cde74b20d8b0818fde2529c36ac83a3c7a997b3fae5654612c62d71",
+        "riggedBytes": 59054604,
+        "riggedSha256": "390d8beb76edbdc32212de5e96f0507b8033e5bd3418f491b981fa07cc8941c1",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-gothic-guard.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-gothic-guard-compress.json"
+        }
+      },
+      "usage": "The Gothic shield guard (Chapters IV and VII), in a body of his own in the jerkin and segmented helmet his kit lists, apart from the war band’s by colour; the game adds his round shield and spear.",
+      "loading": "Deferred local GLB in the offline groups of Chapters IV and VII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 428312,
+        "sha256": "ecd65324c77b21c2bb60aa5f0a35bec8d6fdd08f64d4e3c5d740a969dc3b3cc2",
+        "triangles": 13855,
+        "nearTriangles": 11355,
+        "overviewTriangles": 2500,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.5891,
+          "height": 1.7566,
+          "depth": 0.4156
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-persian-spearman",
+      "path": "assets/models/characters/persian-spearman.glb",
+      "subject": "Generated character body: a Sasanian infantry spearman of AD 256, in a leather jerkin over saffron linen and a conical helmet",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "287d2853-2894-4f9c-b125-a05b532d0629",
+        "generatedAt": "2026-11-09T09:03:13.693Z",
+        "rigTaskId": "00429442-0120-4e5e-85a4-0ca0101066b7",
+        "riggedAt": "2026-11-09T09:09:19.730Z",
+        "prompt": "art-source/models/requests/char-persian-spearman.json",
+        "rawBytes": 45673612,
+        "rawSha256": "b4edd694c92bdc9710bac32b43d0bf985454a1a0a09ca36af708e4532005d078",
+        "riggedBytes": 61039968,
+        "riggedSha256": "0932a32981b664edb80e8ccf293380e292477decb837ad996bea7ac7db2c2691",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-persian-spearman.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-persian-spearman-compress.json"
+        }
+      },
+      "usage": "The Persian spearman (Chapter V), in the leather jerkin and conical helmet his kit lists rather than the guard’s scale coat; the game adds his parma and spear.",
+      "loading": "Deferred local GLB in the offline groups of Chapter V only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 414900,
+        "sha256": "f4287998684e3204882abbbc180cbd01e02fadb3e90d8dcd3d105b8cd8aec740",
+        "triangles": 13744,
+        "nearTriangles": 11245,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6078,
+          "height": 1.8009,
+          "depth": 0.3713
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-rival-archer",
+      "path": "assets/models/characters/rival-archer.glb",
+      "subject": "Generated character body: a rival claimant's auxiliary archer of AD 275, in off-white padding and purple bands",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "24066f0a-d58d-4f5c-91a9-024f0aff73b1",
+        "generatedAt": "2026-11-09T09:05:01.680Z",
+        "rigTaskId": "ae74383f-ee92-4d5d-955a-ac3dcd51c0fe",
+        "riggedAt": "2026-11-09T09:13:42.719Z",
+        "prompt": "art-source/models/requests/char-rival-archer.json",
+        "rawBytes": 44681716,
+        "rawSha256": "2f332c2763c9ea67db9f93fa6f0c330b3a873221899ea2b623a7cc96ca940df3",
+        "riggedBytes": 59733580,
+        "riggedSha256": "c2d5a29bfcd522fafcc3db9fd8f7684b7640e72e99deff129ab2df5ddbb458e2",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-rival-archer.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-rival-archer-compress.json"
+        }
+      },
+      "usage": "The claimant’s archers (Chapter XII), in the padded jacket and helmet their kit lists and the claimant’s off-white and purple, apart from the soldier’s own archers; the game adds the bow and quiver.",
+      "loading": "Deferred local GLB in the offline groups of Chapter XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 404160,
+        "sha256": "d6fb100286ffea6263063c39457959b032578fa6275f7854fb33fc91f03fe427",
+        "triangles": 13770,
+        "nearTriangles": 11271,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6008,
+          "height": 1.7834,
+          "depth": 0.3847
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "body-roman-dalmatian-cavalry",
+      "path": "assets/models/characters/roman-dalmatian-cavalry.glb",
+      "subject": "Generated character body: a Roman cavalryman of Aurelian's equites Dalmatae, in mail over dark green with a red scarf",
+      "source": {
+        "method": "Tripo text-to-model (v3.1-20260211) from a text prompt only (no reference image or third-party model), rigged by Tripo's biped auto-rig, bound to the game's skeleton in Blender 5.2.2 LTS by scripts/assets/bind-character.py and quantized by scripts/assets/quantize-model.mjs, then compressed by scripts/assets/compress.mjs",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "9c3224a0-79ad-4ea7-b728-819bf7d01ed1",
+        "generatedAt": "2026-11-09T09:06:50.884Z",
+        "rigTaskId": "067ebf1e-ef0c-49df-b8a7-a69d628c9d31",
+        "riggedAt": "2026-11-09T09:15:52.748Z",
+        "prompt": "art-source/models/requests/char-roman-dalmatian-cavalry.json",
+        "rawBytes": 46769300,
+        "rawSha256": "125a32ec15109acccbf27aa7d10703aba9b0c503d1e8af5e48df3b69b1f3f687",
+        "riggedBytes": 62049604,
+        "riggedSha256": "e2fff83b743f7783f6b56eeb4bf984c4f5a97a3a6558f92f8a4680b53b64288b",
+        "program": "graphics-g1",
+        "credits": 45,
+        "processing": {
+          "triangles": 12000,
+          "overviewTriangles": 2500,
+          "texture": 1024,
+          "detailTexture": 512,
+          "webpQuality": 80,
+          "clavicleDegrees": 10,
+          "sharpAngle": 60
+        },
+        "report": "art-source/models/reports/char-roman-dalmatian-cavalry.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "textures": "KTX2, Basis Universal v1.16.4 ETC1S at quality 128 with mipmaps; colour maps sRGB, normal and data maps linear",
+          "geometry": "EXT_meshopt_compression after reordering for size; no filters or new quantization, every triangle checked unchanged",
+          "compressedAt": "2026-11-09",
+          "report": "art-source/models/reports/char-roman-dalmatian-cavalry-compress.json"
+        }
+      },
+      "usage": "Aurelian’s Dalmatian horse, the equites Dalmatae, the Roman cavalry of Chapter XII, in a body of their own; the game adds the parma and spatha and seats them on the Roman horse.",
+      "loading": "Deferred local GLB in the offline groups of Chapter XII only (src/ui/art.js); loaded by src/showcase/actor-bodies.js for the figures it fits (src/ui/actor-body-catalog.js), at every quality. A figure keeps its procedural body until the model loads, or if it fails.",
+      "export": {
+        "format": "GLB 2.0 skinned to the game's 15 body joints in its bind pose, with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu), quantized vertex data (KHR_mesh_quantization) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 435700,
+        "sha256": "cc6ee5c820cb1e43029fe2e5d9bdbc5afa19902eaf0681b18a7a23be8e9dc4e2",
+        "triangles": 13705,
+        "nearTriangles": 11206,
+        "overviewTriangles": 2499,
+        "textures": 3,
+        "textureEdge": 1024,
+        "sizeMetres": {
+          "width": 0.6021,
+          "height": 1.7529,
+          "depth": 0.353
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -16108,7 +16948,7 @@
       "license": "Original project work over CC0-1.0 anatomy and skin. No purchased, commissioned or third-party character art. Provenance does not guarantee exclusive copyright."
     }
   ],
-  "updatedAt": "2026-11-08T00:00:00.000Z",
+  "updatedAt": "2026-11-09T00:00:00.000Z",
   "totalArtworkBytes": 7543220,
   "budgets": {
     "portraitsBytes": 400000,
@@ -16130,13 +16970,13 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 144,
+    "models": 159,
     "textures": 15,
     "src": 1,
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 62428529,
-  "totalModelBytes": 47125051,
+  "totalBundledAssetBytes": 68841557,
+  "totalModelBytes": 53538079,
   "derivedGeometryBytes": 47428
 }

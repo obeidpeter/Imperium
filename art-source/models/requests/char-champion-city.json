@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-city",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    9
+  ],
+  "use": "The city’s defending captain, the champion of Chapter IX’s city (ch9-city), in his own body; the game adds his parma and spatha. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Palmyrene city captain of AD 272, a stern man of about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of silver-grey iron scales over a long-sleeved white tunic with broad red embroidered borders at the hem and cuffs, wide white trousers with a red embroidered stripe down the front, soft leather boots, and a conical iron helmet with a short white horsehair tuft at the top, face visible. A full greying beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611380,
+      "image_seed": 2611381,
+      "texture_seed": 2611382
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T08:53:27.347Z",
+    "requestBody": {
+      "negative_prompt": "plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611380,
+      "image_seed": 2611381,
+      "texture_seed": 2611382,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Palmyrene city captain of AD 272, a stern man of about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of silver-grey iron scales over a long-sleeved white tunic with broad red embroidered borders at the hem and cuffs, wide white trousers with a red embroidered stripe down the front, soft leather boots, and a conical iron helmet with a short white horsehair tuft at the top, face visible. A full greying beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10180,
+    "balanceSnapshotBefore": {
+      "balance": 10180,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "bad80566-946e-4f64-8fde-754eb737e163",
+      "state": "accepted",
+      "requestSha256": "ad79be18e34ea66306e7292392bf742ea8e89167a64b8f1242c509ed2c1b09c7"
+    },
+    "taskId": "3199c783-ef76-41e4-8b30-c413dc4aaf4f",
+    "status": "success",
+    "generatedAt": "2026-11-09T08:56:02.363Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-city.glb",
+    "rawBytes": 46379152,
+    "rawSha256": "1900a3a89bd871ae01247d61d904950eb76980f89e82fca61102b489d155debf",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Palmyrene city captain of AD 272, a stern man of about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of silver-grey iron scales over a long-sleeved white tunic with broad red embroidered borders at the hem and cuffs, wide white trousers with a red embroidered stripe down the front, soft leather boots, and a conical iron helmet with a short white horsehair tuft at the top, face visible. A full greying beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611381,
+      "model_seed": 2611380,
+      "texture_seed": 2611382,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T08:53:28.097318Z",
+    "tripoCompletedAt": "2026-11-09T08:55:56.503939Z",
+    "tripoRender": "art-source/models/raw/char-champion-city-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T08:59:43.932Z",
+      "requestBody": {
+        "input": "3199c783-ef76-41e4-8b30-c413dc4aaf4f"
+      },
+      "submission": {
+        "id": "690e5aad-d824-44d4-9883-aefb46ee798d",
+        "state": "accepted",
+        "requestSha256": "dd4072fb0ac8d07154327d4a0ab1e5ee390bdd184c74a3429ec9c0c6ee9d75f9"
+      },
+      "taskId": "bf6038dd-7715-46eb-9b91-fdd3ef9273f1",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T08:59:49.890Z",
+      "requestBody": {
+        "input": "3199c783-ef76-41e4-8b30-c413dc4aaf4f",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 10015,
+      "balanceSnapshotBefore": {
+        "balance": 10015,
+        "frozen": 40
+      },
+      "submission": {
+        "id": "6a3abbd8-bf53-436b-b9d7-5cb6abeb996c",
+        "state": "accepted",
+        "requestSha256": "859691c46bc120621922f82140945509cdef7af858459768f754f62629482a4a"
+      },
+      "taskId": "f3eccf2c-239e-4d39-87cc-a00de7d47bb1",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:00:53.586Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-city-rigged.glb",
+      "rawBytes": 61726716,
+      "rawSha256": "076b4a58131adbe1c735d4d9095430fe2ee8224851cb3d24ea7e3018bb197e40",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "3199c783-ef76-41e4-8b30-c413dc4aaf4f"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T08:59:50.175675Z",
+      "tripoCompletedAt": "2026-11-09T09:00:48.252853Z"
+    }
+  }
+}

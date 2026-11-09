@@ -1,0 +1,165 @@
+{
+  "id": "char-roman-dalmatian-cavalry",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    12
+  ],
+  "use": "Aurelian’s Dalmatian horse, the equites Dalmatae, the Roman cavalry of Chapter XII, in a body of their own; the game adds the parma and spatha and seats them on the Roman horse. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman cavalryman of the equites Dalmatae, Aurelian’s Dalmatian horse of the 270s AD, a lean man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved dark green wool tunic, a red wool scarf knotted at the neck, a broad leather belt with a bronze ring buckle, close-fitting brown wool trousers and closed leather riding boots, and an iron cavalry helmet with a low central ridge, large cheek guards and a short neck guard, face visible. Short dark hair and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611440,
+      "image_seed": 2611441,
+      "texture_seed": 2611442
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T09:05:02.714Z",
+    "requestBody": {
+      "negative_prompt": "segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611440,
+      "image_seed": 2611441,
+      "texture_seed": 2611442,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Roman cavalryman of the equites Dalmatae, Aurelian’s Dalmatian horse of the 270s AD, a lean man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved dark green wool tunic, a red wool scarf knotted at the neck, a broad leather belt with a bronze ring buckle, close-fitting brown wool trousers and closed leather riding boots, and an iron cavalry helmet with a low central ridge, large cheek guards and a short neck guard, face visible. Short dark hair and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 9790,
+    "balanceSnapshotBefore": {
+      "balance": 9790,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "9947790d-46ea-47ab-97b4-affc30b6f827",
+      "state": "accepted",
+      "requestSha256": "e4fa4e8dd2ed3cb8c9ad63e0f0bcdbdf79d1935d1c0844d8dcfbedd2b92013a6"
+    },
+    "taskId": "9c3224a0-79ad-4ea7-b728-819bf7d01ed1",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:06:50.884Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-roman-dalmatian-cavalry.glb",
+    "rawBytes": 46769300,
+    "rawSha256": "125a32ec15109acccbf27aa7d10703aba9b0c503d1e8af5e48df3b69b1f3f687",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Roman cavalryman of the equites Dalmatae, Aurelian’s Dalmatian horse of the 270s AD, a lean man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved dark green wool tunic, a red wool scarf knotted at the neck, a broad leather belt with a bronze ring buckle, close-fitting brown wool trousers and closed leather riding boots, and an iron cavalry helmet with a low central ridge, large cheek guards and a short neck guard, face visible. Short dark hair and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611441,
+      "model_seed": 2611440,
+      "texture_seed": 2611442,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T09:05:03.114309Z",
+    "tripoCompletedAt": "2026-11-09T09:06:44.591864Z",
+    "tripoRender": "art-source/models/raw/char-roman-dalmatian-cavalry-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:14:40.847Z",
+      "requestBody": {
+        "input": "9c3224a0-79ad-4ea7-b728-819bf7d01ed1"
+      },
+      "submission": {
+        "id": "97ce1a53-668a-44d3-8a9e-d7725aa14646",
+        "state": "accepted",
+        "requestSha256": "fe69ea2777e7f91baf1b8da6d09a18d39663d68c220998cc9ebe54407d0e33e6"
+      },
+      "taskId": "87d16c8a-2273-4d71-9e60-4d5d78881812",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:14:46.772Z",
+      "requestBody": {
+        "input": "9c3224a0-79ad-4ea7-b728-819bf7d01ed1",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9530,
+      "balanceSnapshotBefore": {
+        "balance": 9530,
+        "frozen": 0
+      },
+      "submission": {
+        "id": "1794aed8-e1e5-4706-88c6-79cccb6433c5",
+        "state": "accepted",
+        "requestSha256": "59f112a1d631d95754ca6662bdb622756d8179248a8f4950b16645c663944377"
+      },
+      "taskId": "067ebf1e-ef0c-49df-b8a7-a69d628c9d31",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:15:52.748Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-roman-dalmatian-cavalry-rigged.glb",
+      "rawBytes": 62049604,
+      "rawSha256": "e2fff83b743f7783f6b56eeb4bf984c4f5a97a3a6558f92f8a4680b53b64288b",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "9c3224a0-79ad-4ea7-b728-819bf7d01ed1"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:14:47.057619Z",
+      "tripoCompletedAt": "2026-11-09T09:15:46.007624Z"
+    }
+  }
+}

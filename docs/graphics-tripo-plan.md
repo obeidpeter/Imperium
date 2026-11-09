@@ -29,11 +29,11 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | # | Release | Cap | State |
 | --- | --- | --- | --- |
 | 0 | Use what's paid for, then calibrate | 250 | done: calibrated (190 credits, [results](graphics-calibration.md)), and the 3D kit made (seven weapons and helmets, no credits); the landmarks' re-texture skipped |
-| G1 | Armies | 2,300 | pilot made on 8 November (310 credits): seven bodies and a horse, [awaiting the owner's review](#g1s-pilot-8-november) |
+| G1 | Armies | 1,005 | done: the [pilot](#g1s-pilot-8-november) (310 credits) and [the rest](#the-rest-of-g1-9-november) (695): 22 bodies and 2 horses. Its other 1,295 credits went to G3 and G5 |
 | G2 | Arms and standards | 700 | |
-| G3 | Camps | 1,700 | (1,300, and 400 from G7) |
+| G3 | Camps | 2,400 | next (1,300, 400 from G7 and 700 from G1) |
 | G4 | Animals | 600 | |
-| G5 | Battle and siege | 1,250 | (900, and 350 from G7) |
+| G5 | Battle and siege | 1,845 | (900, 350 from G7 and 595 from G1) |
 | G6 | Faces and people | 1,100 | |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
 | | **Total** | **7,900** | |
@@ -125,7 +125,7 @@ Seven bodies and a horse, one for each of G1's categories, in the game for the o
 
   ![Four battles before and after the pilot, crops at the game's own pixels in the desktop build at High](images/g1-pilot-battles.jpg)
 
-**Proposed for the rest of G1, for the owner's decision.** G1 has 1,990 credits left.
+**Proposed for the rest of G1, and approved by the owner on 9 November** ([what was made](#the-rest-of-g1-9-november)). G1 had 1,990 credits left.
 - **Now, about 1,200 credits** (1,075 at the measured prices, and the plan's 10% for rejected attempts):
   - **a body for every unit type still without one (23):**
     - Gothic: the axe raider, the spearman, the band's war leader, the shield guard and the horseman;
@@ -140,6 +140,35 @@ Seven bodies and a horse, one for each of G1's categories, in the game for the o
   - It is decided once the new type bodies have been seen in battle, because it is the part least likely to show there.
 - **Chapter I's web download:** the bodies that do not fit take 512-pixel maps. A figure 100 pixels tall cannot show a finer one.
 - **At no credit cost:** the claimant's cohorts could carry shield markings of their own. Their shields are still the soldier's men's.
+
+### The rest of G1 (9 November)
+
+The owner approved the pilot and the proposal above on 9 November. Fifteen bodies and a horse were made, reviewed and shipped:
+
+| Category | Body | Worn by | Chapters |
+| --- | --- | --- | --- |
+| Gothic | a war leader, bare-headed in red, with a torc | the war leader of a band that fights alone | I–III |
+| Gothic | a shield guard in a checked tunic and a segmented helmet | the shield guard (he wore the noble's body) | IV, VII |
+| Persian | a spearman in a leather jerkin over saffron linen | the spearmen (they wore the guard's scale coat) | V |
+| Rival Romans | an archer in off-white padding with the claimant's purple | the claimant's archers (they wore the soldier's archers' body) | XII |
+| Roman specialists | a Dalmatian horseman in mail over dark green, with a red scarf | the soldier's cavalry in the finale | XII |
+| Champions | a body each for the ten who had none | the wall's war leader (IV), the sapper captain (V), the captain of the pursuit and the standard-breaker (VI), the mercenary captain (VII), the crossing's champion (VIII), the armoured officer, who now rides, and the city's captain (IX), the raiders' chief (X) and the claimant's guard captain (XII) | IV–XII |
+| Horses | a dark bay under iron lamellae, flat along the back | the Persian cavalry, in place of the first eastern horse | V, VI |
+
+- **Credits:** 695 of the batch's 780-credit ceiling: fifteen rigged bodies at 45 and the horse at 20. No generation was rejected. [The ledger](../art-source/models/graphics-g1-credits.json) has every task.
+- **Not made: 8 of the proposal's 23 types.** The game's own data showed:
+  - four already wear a body of their own: the Gothic raider, the war bands' spearman (the pilot's), the Gothic horseman and the Persian guard;
+  - four are not units in the game: a rival guardsman, a rival horseman, a draco-bearer and a centurion.
+- **The northern horse** is not remade. The binder sets every horse's back to the game's one saddle height, so a smaller remake would come out the same size. A smaller northern horse needs runtime work, with its rider lowered, and no credits.
+- **At no credit cost:** the claimant's cohorts and archers carry his purple on their shields, with designs of their own.
+- **Downloads:** Chapter I's download is 17.5 of its 18 MB, with the war leader at 512-pixel maps. The largest chapter's (XII) is 27.5 of 28 MB, and the complete game 65.2 of 80 MB.
+- **In battle** ([the art record](art-generation.md#in-battle-1)): whole squads in a colour of their own read best, the Persian spearmen's saffron and the claimant's archers' off-white, and so does the armoured officer, now mounted. A champion reads as the one figure in his own colour; the dark bodies (the shield guard, the sapper captain, the mercenary captain) barely differ from before. The claimant's purple shields read more than any body.
+
+  ![G1's remaining bodies at the battle camera, crops at the game's own pixels in the desktop build at High](images/g1-rest-battles.jpg)
+
+**Left of G1: 1,295 credits, moved on.** On 9 November the owner left the rest of the plan to my judgement ([decisions 8–11](#after-g1-9-november)):
+- the second bodies for the crowds (about 500 credits) are not made. At the battle camera a figure reads by its outline and main colours, which its type's body already gives, and Chapter XII's download has 0.5 MB left;
+- G1's remaining credits go to the camps (G3, 700) and to battle and siege (G5, 595), so the plan still spends at least 70% of the balance.
 
 Each cap includes about 10% for rejected attempts. G3 and G5 have G7's credits too: each pilot proposes how many more of its own list they buy. Some things stay out of Tripo:
 - the Colosseum, which failed three times there, gets a Blender build;
@@ -174,7 +203,7 @@ Each cap includes about 10% for rejected attempts. G3 and G5 have G7's credits t
    - Chapter I's 3D load stands at 16 of 18 MB;
    - the whole campaign stands at 55 of 80 MB.
 3. **Timing:** step 0 starts now, in parallel with Gate 4. Nothing here changes the rules.
-4. **Review:** each release's pilot goes to the owner before the rest is generated.
+4. **Review:** each release's pilot goes to the owner before the rest is generated. From G3 on, decision 9 replaces this.
 
 After the calibration (8 November):
 
@@ -182,10 +211,17 @@ After the calibration (8 November):
 6. **Step 0c:** skipped; the shipped landmarks stay as they are.
 7. **G7:** skipped. Its 750 credits went where the camera is: 400 to the camps (G3) and 350 to battle and siege (G5), so the plan keeps its 7,900-credit cap, 73.8% of the balance.
 
+### After G1 (9 November)
+
+8. **G1's rest:** approved after the pilot, and made ([the rest of G1](#the-rest-of-g1-9-november)).
+9. **The rest of the plan** is left to my judgement, within each release's cap and the rules below. Each pilot is reviewed in the game before the rest of its release is generated, and its review images go with its PR, rather than to the owner first.
+10. **Order:** the camps (G3), then battle and siege (G5), animals (G4), faces and people (G6), and arms and standards (G2), the standards first. The camps and the siege works are large enough to read at any distance; most of G2's kit is too small to read in battle, where step 0 found the crowds read better with the code-built pieces.
+11. **G1's remaining 1,295 credits** go to G3 (700) and G5 (595); the second crowd bodies are not made. The plan keeps its 7,900-credit cap.
+
 ## Rules for the spend
 
 - **Approvals:**
-  - no task is created before its release is approved;
+  - no task is created before its release is approved (decision 9 approves G2–G6 within their caps);
   - step 0's comparison comes before any bulk spend;
   - each pilot comes before the rest of its release.
 - **Caps:** no cap is exceeded without asking.

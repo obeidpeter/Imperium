@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-road",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    10
+  ],
+  "use": "The raiders’ chief, the champion of Chapter X’s road (ch10-road), in his own body; the game adds his round shield and axe. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Gothic raiders’ chief of the 270s AD, a weathered man of about fifty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather edged with grey wolf fur over a long-sleeved undyed grey-white wool tunic to mid-thigh, a broad belt with silver studs, dark wool trousers with leg bindings and leather boots, and an iron segmented helmet darkened with age, face visible. Long grey hair and a long grey beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, cloak, cape, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611330,
+      "image_seed": 2611331,
+      "texture_seed": 2611332
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T08:58:18.289Z",
+    "requestBody": {
+      "negative_prompt": "mail, plate armour, horns, wings, cloak, cape, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611330,
+      "image_seed": 2611331,
+      "texture_seed": 2611332,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Gothic raiders’ chief of the 270s AD, a weathered man of about fifty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather edged with grey wolf fur over a long-sleeved undyed grey-white wool tunic to mid-thigh, a broad belt with silver studs, dark wool trousers with leg bindings and leather boots, and an iron segmented helmet darkened with age, face visible. Long grey hair and a long grey beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10080,
+    "balanceSnapshotBefore": {
+      "balance": 10080,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "764e52ea-e20e-455a-95ca-7bdcfb6d954b",
+      "state": "accepted",
+      "requestSha256": "e26a9e2f78f85532dffba039f455d89a1c21cc1f51c7aed0d6f2f1c699c0f2d3"
+    },
+    "taskId": "6d2783af-3a9c-46e6-a2e2-13fc19aaf66c",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:00:10.433Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-road.glb",
+    "rawBytes": 43251732,
+    "rawSha256": "aa8577f45c6bb556ffa00d1359b646182adf608ebcdc21c4568ec418a63851a2",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Gothic raiders’ chief of the 270s AD, a weathered man of about fifty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather edged with grey wolf fur over a long-sleeved undyed grey-white wool tunic to mid-thigh, a broad belt with silver studs, dark wool trousers with leg bindings and leather boots, and an iron segmented helmet darkened with age, face visible. Long grey hair and a long grey beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611331,
+      "model_seed": 2611330,
+      "texture_seed": 2611332,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, cloak, cape, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T08:58:18.878640Z",
+    "tripoCompletedAt": "2026-11-09T09:00:00.240179Z",
+    "tripoRender": "art-source/models/raw/char-champion-road-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:06:37.258Z",
+      "requestBody": {
+        "input": "6d2783af-3a9c-46e6-a2e2-13fc19aaf66c"
+      },
+      "submission": {
+        "id": "e6146153-75ca-48f9-a648-74e07ae7789c",
+        "state": "accepted",
+        "requestSha256": "c7a9bbdc97317040c6eee5616a265332a4e30c7de8d66542bb823316494cdcc6"
+      },
+      "taskId": "84f3bb18-96ae-4cc4-804f-9ca268882925",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:06:43.076Z",
+      "requestBody": {
+        "input": "6d2783af-3a9c-46e6-a2e2-13fc19aaf66c",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9750,
+      "balanceSnapshotBefore": {
+        "balance": 9750,
+        "frozen": 40
+      },
+      "submission": {
+        "id": "0def283c-426b-42c5-bfb9-4bc66b278d24",
+        "state": "accepted",
+        "requestSha256": "e973ffd59edd2debce34c1d7bcaa814bf806509d4d852bfeeb9d94977c9a31e2"
+      },
+      "taskId": "84c796b5-bed4-402c-86c4-b1c2e5e72020",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:07:34.268Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-road-rigged.glb",
+      "rawBytes": 57571164,
+      "rawSha256": "fdd5fa4af028f86671d93fc119620401491d1139df3ba8c197c51bb6229808bc",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "6d2783af-3a9c-46e6-a2e2-13fc19aaf66c"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:06:43.478848Z",
+      "tripoCompletedAt": "2026-11-09T09:07:28.733437Z"
+    }
+  }
+}

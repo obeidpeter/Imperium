@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/champion-city.glb",
+  "output": "assets/models/characters/champion-city.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 522748,
+    "gzipBytes": 384245,
+    "sha256": "75d8042f72e98208b183874fa53fe617e42a20aa7326980d51b454c23bac7a9d"
+  },
+  "after": {
+    "bytes": 443396,
+    "gzipBytes": 420633,
+    "sha256": "bb1d9c9ae46cf9152cfeee4049bf68370cd04ec5c47b779d6675ecff313e9fab"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13977,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 20020
+      },
+      "bytes": 28620,
+      "psnr": 35.987
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 77988
+      },
+      "bytes": 143874,
+      "psnr": 35.835
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 26248
+      },
+      "bytes": 40663,
+      "psnr": 27.225
+    }
+  ]
+}

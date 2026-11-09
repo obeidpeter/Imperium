@@ -70,6 +70,9 @@ const DESIGNS={
 export const SHIELD_DESIGNS=Object.freeze(Object.keys(DESIGNS));
 const FACTION_DESIGNS={Roman:['wreath','rosette','rings','rays','wings'],Gothic:['halved','quartered','ringed','rimmed'],Persian:['wicker'],Palmyrene:['round-rosette','round-rings']};
 const NAMED={lucan:'sun',sabinus:'chevron',varro:'bars'};
+// The claimant's men (Chapter XII) carry his colours: a purple board with bold rings or rays, so
+// they read apart from the soldier's own teal shields across the field (graphics plan, G1).
+const RIVAL_DESIGNS=['rings','rays'],CLAIMANT=0x5b3866;
 // Germanic field colours: red and yellow ochre, soot black, chalk and a woad blue-grey.
 const FIELDS=[0x8a3b26,0xa8843c,0x2d2722,0xcdbf9c,0x4c5b66];
 const HIDE=0x9a7d56,WITHY=0x6b5338;
@@ -80,6 +83,7 @@ export function shieldDesign(kit={},identity={}){
   const seed=Number(kit.identity)>>>0;
   if(NAMED[identity.key])return {id:NAMED[identity.key]};
   if(kit.hero)return {id:'wreath'};
+  if(kit.rival)return {id:RIVAL_DESIGNS[(seed>>>3)%RIVAL_DESIGNS.length],base:CLAIMANT};
   const designs=FACTION_DESIGNS[kit.faction]??FACTION_DESIGNS.Roman,id=designs[(seed>>>3)%designs.length];
   if(kit.faction==='Persian')return {id,base:HIDE,field:WITHY};
   if(kit.faction==='Gothic'){const field=FIELDS[(seed>>>7)%FIELDS.length];return {id,field};}

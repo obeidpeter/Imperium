@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/gothic-warleader.glb",
+  "output": "assets/models/characters/gothic-warleader.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 423656,
+    "gzipBytes": 289927,
+    "sha256": "093db3c3fbc6ec3ab472ee5f59ed363d1358109ffe21ffa5ca01fa6188a14db5"
+  },
+  "after": {
+    "bytes": 282216,
+    "gzipBytes": 260981,
+    "sha256": "6b11431139493947ddabcb5c8ffee6047b05d486f96d5ba2633da3c9517b3594"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13859,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 2222
+      },
+      "bytes": 5264,
+      "psnr": 42.526
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 21854
+      },
+      "bytes": 46986,
+      "psnr": 35.204
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13016
+      },
+      "bytes": 14011,
+      "psnr": 30.501
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "id": "char-gothic-guard",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    4,
+    7
+  ],
+  "use": "The Gothic shield guard (Chapters IV and VII), in a body of his own in the jerkin and segmented helmet his kit lists, apart from the war band’s by colour; the game adds his round shield and spear. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Gothic shield guard of the mid-3rd century AD, a heavyset man of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of thick dark leather over a long-sleeved wool tunic to mid-thigh woven in a dark green and brown check, like the tunic found at Thorsberg, a broad leather belt, checked wool trousers with leg bindings and leather shoes, and an iron segmented helmet with bronze strips and cheek pieces, face visible. Brown hair and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611410,
+      "image_seed": 2611411,
+      "texture_seed": 2611412
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T08:59:44.868Z",
+    "requestBody": {
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611410,
+      "image_seed": 2611411,
+      "texture_seed": 2611412,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Gothic shield guard of the mid-3rd century AD, a heavyset man of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of thick dark leather over a long-sleeved wool tunic to mid-thigh woven in a dark green and brown check, like the tunic found at Thorsberg, a broad leather belt, checked wool trousers with leg bindings and leather shoes, and an iron segmented helmet with bronze strips and cheek pieces, face visible. Brown hair and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10035,
+    "balanceSnapshotBefore": {
+      "balance": 10035,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "0ad990fd-d810-4526-bd2f-f14c34167288",
+      "state": "accepted",
+      "requestSha256": "d4309ee024de09e4670d4c6f7e7b872b83ff8618bf15b800629ca674e26ab0ce"
+    },
+    "taskId": "a7eef95a-1f0e-4c77-ad77-a2a20e75491f",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:01:40.172Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-gothic-guard.glb",
+    "rawBytes": 44272468,
+    "rawSha256": "d3c5f35a8cde74b20d8b0818fde2529c36ac83a3c7a997b3fae5654612c62d71",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Gothic shield guard of the mid-3rd century AD, a heavyset man of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of thick dark leather over a long-sleeved wool tunic to mid-thigh woven in a dark green and brown check, like the tunic found at Thorsberg, a broad leather belt, checked wool trousers with leg bindings and leather shoes, and an iron segmented helmet with bronze strips and cheek pieces, face visible. Brown hair and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611411,
+      "model_seed": 2611410,
+      "texture_seed": 2611412,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T08:59:45.624292Z",
+    "tripoCompletedAt": "2026-11-09T09:01:35.736346Z",
+    "tripoRender": "art-source/models/raw/char-gothic-guard-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:07:34.645Z",
+      "requestBody": {
+        "input": "a7eef95a-1f0e-4c77-ad77-a2a20e75491f"
+      },
+      "submission": {
+        "id": "5eb81450-248f-4cbb-8084-86e942f3257a",
+        "state": "accepted",
+        "requestSha256": "ea447d56cd771b09de5af9b6f00c854bf364310ff37b582e0717ccd53ff35409"
+      },
+      "taskId": "d2f6744b-b485-4e1b-98e9-cf61e52208eb",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:07:40.425Z",
+      "requestBody": {
+        "input": "a7eef95a-1f0e-4c77-ad77-a2a20e75491f",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9705,
+      "balanceSnapshotBefore": {
+        "balance": 9705,
+        "frozen": 20
+      },
+      "submission": {
+        "id": "5e9087ff-0bac-4cd5-bdb8-1e79bd343ef7",
+        "state": "accepted",
+        "requestSha256": "ee6777150f650781127ce44c70f75fa8436c180494f4304367d58e0c88281b11"
+      },
+      "taskId": "2b3e2083-b3ef-44af-84e3-47b8d7ec2c04",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:08:32.276Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-gothic-guard-rigged.glb",
+      "rawBytes": 59054604,
+      "rawSha256": "390d8beb76edbdc32212de5e96f0507b8033e5bd3418f491b981fa07cc8941c1",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "a7eef95a-1f0e-4c77-ad77-a2a20e75491f"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:07:40.704039Z",
+      "tripoCompletedAt": "2026-11-09T09:08:28.009665Z"
+    }
+  }
+}

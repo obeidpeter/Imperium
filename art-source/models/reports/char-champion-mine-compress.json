@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/champion-mine.glb",
+  "output": "assets/models/characters/champion-mine.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 506540,
+    "gzipBytes": 372119,
+    "sha256": "bdcbec7877e053af1de5a012f52e35c65d7aa9ec1629bea655a9d96e9c955e18"
+  },
+  "after": {
+    "bytes": 447320,
+    "gzipBytes": 426287,
+    "sha256": "3f8e7c198a23acc64ffe63fc2f9be483a22d14211966e4c8189d9dc87d3a9fa4"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13890,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12874
+      },
+      "bytes": 24482,
+      "psnr": 40.08
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 71938
+      },
+      "bytes": 151992,
+      "psnr": 35.579
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 33254
+      },
+      "bytes": 53184,
+      "psnr": 31.14
+    }
+  ]
+}

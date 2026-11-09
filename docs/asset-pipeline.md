@@ -540,3 +540,18 @@ Release G1 of the [graphics plan](graphics-tripo-plan.md#g1s-pilot-8-november) g
   - It is captured twice: as built, and with the earlier body served under the new file's name.
   - At the battle camera a figure is about 70 to 100 pixels tall, so a type reads by its outline and main colours ([the art record](art-generation.md#in-battle)). A prompt names those first.
 - **Credits** are recorded task by task in [`graphics-g1-credits.json`](../art-source/models/graphics-g1-credits.json), and `tests/graphics-g1.test.mjs` reconciles them with the requests, the manifest and the account's balance.
+
+## The rest of release G1 · 2026-11-09
+
+The rest of G1 ([the plan](graphics-tripo-plan.md#the-rest-of-g1-9-november)) made fifteen bodies and a horse as the pilot did, at the same settings. It added the following to how a body is chosen and made:
+
+- **The war leader.** In Chapters I–III a band that fights alone has one leader: the rules name its hardiest man "<faction> war leader" ([`bands.js`](../src/core/realtime/bands.js)). The kit's `leader` field reads that name, and a champion is never one.
+- **A champion the rules mount.** The Palmyrene armoured officer is `mounted` in the rules, but his role is a champion's, so he was drawn on foot. The stage now passes `mounted` to the figure ([`live-figures.js`](../src/showcase/live-figures.js)), and his kit seats him on his faction's horse.
+- **The claimant's men.** The claimant himself (`Rival claimant`) is drawn as an officer. "The claimant's" reserve cohort and guard captain are his soldiers, in the rival bodies.
+- **A fit may name a chapter, and a field that must be false.** Aurelian's Dalmatian horse is the Roman cavalry of Chapter XII only (`chapter: 12`). `rival: false` keeps any horsemen of the claimant off it.
+- **Shield markings, at no credit cost.** The claimant's cohorts and archers carry his purple, with two designs of their own (`base` and the design in [`shield-patterns.js`](../src/showcase/shield-patterns.js)). The soldier's men keep their teal.
+- **A smaller map for a tight download.** A body worn in Chapter I takes 512-pixel maps (`--texture 512 --detail-texture 256`), as the cast's did in release 8. The war leader's file is 282,216 bytes. A figure about 100 pixels tall at the battle camera cannot show a finer map.
+- **A remade horse keeps its id and file name.**
+  - The manifest entry names the remake's request (`horse-eastern-b.json`), and the horse tests follow `source.prompt`.
+  - The first request stays, marked replaced.
+- **Seen in battle,** as the pilot was. Each champion is captured at the moment he stands nearest the soldier ([the art record](art-generation.md#in-battle-1)).

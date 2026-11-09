@@ -1,0 +1,165 @@
+{
+  "id": "char-champion-eagle",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    6
+  ],
+  "use": "The raiders’ standard-breaker, the champion of Chapter VI’s eagle battle (ch6-eagle), in his own body; the game adds his parma and spatha. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Sasanian Persian veteran warrior of AD 260, a scarred, powerful man of about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a knee-length coat of small iron scales over a long-sleeved turquoise-blue tunic with patterned borders, a broad leather belt, baggy trousers gathered at the ankle, soft leather boots, and a domed conical iron helmet with a gilded bronze brow band and a mail aventail covering the neck and shoulders, face visible. A thick black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611360,
+      "image_seed": 2611361,
+      "texture_seed": 2611362
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T09:03:39.597Z",
+    "requestBody": {
+      "negative_prompt": "plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611360,
+      "image_seed": 2611361,
+      "texture_seed": 2611362,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Sasanian Persian veteran warrior of AD 260, a scarred, powerful man of about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a knee-length coat of small iron scales over a long-sleeved turquoise-blue tunic with patterned borders, a broad leather belt, baggy trousers gathered at the ankle, soft leather boots, and a domed conical iron helmet with a gilded bronze brow band and a mail aventail covering the neck and shoulders, face visible. A thick black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 9810,
+    "balanceSnapshotBefore": {
+      "balance": 9810,
+      "frozen": 70
+    },
+    "submission": {
+      "id": "71bd55ad-e6bc-4cff-8306-e5dcf8baf2aa",
+      "state": "accepted",
+      "requestSha256": "283ab5f89f11bd079f7f63ad93e706049a04a23b9f3d2805259c7e1ef7df3cc2"
+    },
+    "taskId": "b30502a4-0127-44d5-8d95-08b7a7a320df",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:05:32.983Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-champion-eagle.glb",
+    "rawBytes": 45483208,
+    "rawSha256": "2009df53ef304b6b3154c81fe12e7f8ed818faecca38438c70c51657278d3696",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Sasanian Persian veteran warrior of AD 260, a scarred, powerful man of about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a knee-length coat of small iron scales over a long-sleeved turquoise-blue tunic with patterned borders, a broad leather belt, baggy trousers gathered at the ankle, soft leather boots, and a domed conical iron helmet with a gilded bronze brow band and a mail aventail covering the neck and shoulders, face visible. A thick black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611361,
+      "model_seed": 2611360,
+      "texture_seed": 2611362,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T09:03:40.000574Z",
+    "tripoCompletedAt": "2026-11-09T09:05:25.123239Z",
+    "tripoRender": "art-source/models/raw/char-champion-eagle-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:10:35.349Z",
+      "requestBody": {
+        "input": "b30502a4-0127-44d5-8d95-08b7a7a320df"
+      },
+      "submission": {
+        "id": "09cda6b6-e524-4bb5-a3e1-093756a31b8c",
+        "state": "accepted",
+        "requestSha256": "411c86fac337b3bdebc75e65fa171c1d0f38a879d80e4532e011a99ed733e1ed"
+      },
+      "taskId": "b752a376-a607-4128-b3bb-d304a62ca5bc",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:10:41.142Z",
+      "requestBody": {
+        "input": "b30502a4-0127-44d5-8d95-08b7a7a320df",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9605,
+      "balanceSnapshotBefore": {
+        "balance": 9605,
+        "frozen": 0
+      },
+      "submission": {
+        "id": "cfcbef81-8e5f-4df1-8c2b-eccd0d60206a",
+        "state": "accepted",
+        "requestSha256": "ad4f16238727a61bed56d73bb1571756cb064376939f4698414f24df791664ab"
+      },
+      "taskId": "9ed90a8c-e9b3-4565-8119-55e47dece3d7",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:12:34.360Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-champion-eagle-rigged.glb",
+      "rawBytes": 60124248,
+      "rawSha256": "44641fcf04c241523a3ba6ef5fb96e5f85f91493f098c6355c5c0b64877f7361",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "b30502a4-0127-44d5-8d95-08b7a7a320df"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:10:41.965919Z",
+      "tripoCompletedAt": "2026-11-09T09:12:25.849582Z"
+    }
+  }
+}

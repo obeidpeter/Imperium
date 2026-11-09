@@ -1,0 +1,98 @@
+{
+  "id": "horse-eastern-b",
+  "status": "bound on its own rest pose, quantized and compressed: G1, shipped in place of horse-eastern (its first attempt)",
+  "chapters": [
+    5,
+    6
+  ],
+  "use": "The Persian horse of Chapters V and VI, mesh only, remade in a trapper of iron lamellae that lies flat along the back under the game’s saddle (the first eastern horse’s left a raised seat), replacing it: skinned in Blender to the game’s own horse skeleton (scripts/assets/bind-horse.py), as the other horses are; the code-built horse stays the stand-in. Release G1.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "An armoured horse of the Sasanian Persian heavy cavalry of the mid-3rd century AD, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A tall, strong horse about 1.55 metres at the withers, dark bay coat with a black mane and a short black tail. It wears a close-fitting armour trapper of small iron lamellae laced in rows on leather, covering the neck, chest, flanks and hindquarters down to the belly and lying flat and smooth along the back, where a saddle will sit on top, and a plain leather bridle; the legs below the trapper are bare. Realistic proportions, anatomically accurate, worn and practical. No saddle, no saddle cloth, no rider, no face mask, no plumes, no spikes, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, raised seat, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611450,
+      "image_seed": 2611451,
+      "texture_seed": 2611452
+    }
+  },
+  "budget": {
+    "triangles": 9000,
+    "overviewTriangles": 2000,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 2.05,
+    "minHeight": 1.8,
+    "maxHeight": 2.3
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T09:06:51.516Z",
+    "requestBody": {
+      "negative_prompt": "saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, raised seat, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611450,
+      "image_seed": 2611451,
+      "texture_seed": 2611452,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "An armoured horse of the Sasanian Persian heavy cavalry of the mid-3rd century AD, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A tall, strong horse about 1.55 metres at the withers, dark bay coat with a black mane and a short black tail. It wears a close-fitting armour trapper of small iron lamellae laced in rows on leather, covering the neck, chest, flanks and hindquarters down to the belly and lying flat and smooth along the back, where a saddle will sit on top, and a plain leather bridle; the legs below the trapper are bare. Realistic proportions, anatomically accurate, worn and practical. No saddle, no saddle cloth, no rider, no face mask, no plumes, no spikes, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 9725,
+    "balanceSnapshotBefore": {
+      "balance": 9725,
+      "frozen": 45
+    },
+    "submission": {
+      "id": "6b84ca30-a85c-47fb-8039-a41f521857f5",
+      "state": "accepted",
+      "requestSha256": "8b05d2e88ef688dfaff250ed07bd4f927888b2d8ce1eee672180663611283f05"
+    },
+    "taskId": "8afcbf1f-595e-4a3d-9df4-ea6645f863a7",
+    "status": "success",
+    "generatedAt": "2026-11-09T09:08:52.256Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/horse-eastern-b.glb",
+    "rawBytes": 46171752,
+    "rawSha256": "ae06e64c1cabc75164ec6d949a86d14bd757c565e65b1f1ece1011e8629e31fc",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "An armoured horse of the Sasanian Persian heavy cavalry of the mid-3rd century AD, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A tall, strong horse about 1.55 metres at the withers, dark bay coat with a black mane and a short black tail. It wears a close-fitting armour trapper of small iron lamellae laced in rows on leather, covering the neck, chest, flanks and hindquarters down to the belly and lying flat and smooth along the back, where a saddle will sit on top, and a plain leather bridle; the legs below the trapper are bare. Realistic proportions, anatomically accurate, worn and practical. No saddle, no saddle cloth, no rider, no face mask, no plumes, no spikes, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611451,
+      "model_seed": 2611450,
+      "texture_seed": 2611452,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, raised seat, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T09:06:51.952878Z",
+    "tripoCompletedAt": "2026-11-09T09:08:46.987934Z",
+    "tripoRender": "art-source/models/raw/horse-eastern-b-tripo-render.webp"
+  }
+}

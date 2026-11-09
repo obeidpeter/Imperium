@@ -1543,6 +1543,254 @@ saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, ex
 ```
 
 
+## Release G1: the rest of the armies · 9 November 2026
+
+The owner approved the pilot and the rest of G1 on 9 November. This batch gives the remaining unit types that wore another unit's body bodies of their own, and each of the other ten champions his own; the Persian cavalry's horse is remade. [The plan](graphics-tripo-plan.md#the-rest-of-g1-9-november) has which of its listed types it left out and why, and [the asset pipeline](asset-pipeline.md#the-rest-of-release-g1--2026-11-09) how each body is chosen.
+
+The models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-09, from the text prompts below only: no reference image or third-party model. The bodies were rigged by Tripo's biped auto-rig (25 credits each); the horse was bound to the game's own horse skeleton without a rig. The batch cost 695 credits of its 780-credit ceiling, task by task in [the G1 ledger](../art-source/models/graphics-g1-credits.json), and the balance read 10,200 before and 9,505 after. No generation was rejected. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Worn by | Chapters | Tripo task | Rig task | Triangles | Runtime file |
+| --- | --- | --- | --- | --- | ---: | ---: |
+| char-gothic-warleader | the war leader the rules name in a band that fights alone | I, II, III | `8ccec7f0-0f69-4ef4-b653-e38f98c7f818` | `aec7fff7-dce2-4fd5-ad6a-cfa039fbf4ef` | 13,859 | 282,216 bytes |
+| char-gothic-guard | the Gothic shield guard | IV, VII | `a7eef95a-1f0e-4c77-ad77-a2a20e75491f` | `2b3e2083-b3ef-44af-84e3-47b8d7ec2c04` | 13,855 | 428,312 bytes |
+| char-persian-spearman | the Persian spearmen | V | `287d2853-2894-4f9c-b125-a05b532d0629` | `00429442-0120-4e5e-85a4-0ca0101066b7` | 13,744 | 414,900 bytes |
+| char-rival-archer | the claimant's archers | XII | `24066f0a-d58d-4f5c-91a9-024f0aff73b1` | `ae74383f-ee92-4d5d-955a-ac3dcd51c0fe` | 13,770 | 404,160 bytes |
+| char-roman-dalmatian-cavalry | Aurelian's Dalmatian horse, the Roman cavalry of the finale | XII | `9c3224a0-79ad-4ea7-b728-819bf7d01ed1` | `067ebf1e-ef0c-49df-b8a7-a69d628c9d31` | 13,705 | 435,700 bytes |
+| char-champion-wall | the war band's war leader, the wall battle's champion | IV | `17a4ef90-6e3f-4284-ba78-abaea183560a` | `ea696362-e327-450c-95c0-86e2c289c056` | 13,843 | 422,988 bytes |
+| char-champion-mine | a Persian sapper captain, the mine's champion | V | `ae2e241c-ccba-409a-b1fd-5800a6e6a540` | `e5cc08d0-1106-4a62-b750-30ef4966a62d` | 13,890 | 447,320 bytes |
+| char-champion-wells | a Persian captain of the pursuit, the wells' champion | VI | `f1bcbd23-480b-4006-8b7f-45484aaef337` | `9fe0bd38-5a42-4405-bddc-84ad5aeb205e` | 13,886 | 418,936 bytes |
+| char-champion-eagle | the raiders' standard-breaker, the eagle battle's champion | VI | `b30502a4-0127-44d5-8d95-08b7a7a320df` | `9ed90a8c-e9b3-4565-8119-55e47dece3d7` | 14,004 | 484,756 bytes |
+| char-champion-legion | a mercenary captain in the usurper's pay, the legion battle's champion | VII | `3e8a39f0-ba7c-46b3-9eda-25c917270dff` | `b7194fad-5b63-40e5-a20b-e57117818db4` | 13,787 | 430,356 bytes |
+| char-champion-crossing | the war band's champion at the crossing | VIII | `3b567ea7-f9b8-4f7c-b7c9-239d12057b87` | `8327d231-dbda-4dba-8a8c-d1409a5e26d7` | 13,769 | 436,424 bytes |
+| char-champion-wing | a Palmyrene armoured officer, the cavalry battle's champion, now mounted | IX | `3d5bb9f0-d0d7-4e25-9b24-6a01ef90d1c9` | `6a461e51-d0e3-434b-818c-4289e26dddfb` | 13,873 | 450,104 bytes |
+| char-champion-city | the city's defending captain | IX | `3199c783-ef76-41e4-8b30-c413dc4aaf4f` | `f3eccf2c-239e-4d39-87cc-a00de7d47bb1` | 13,977 | 443,396 bytes |
+| char-champion-road | the raiders' chief, the road's champion | X | `6d2783af-3a9c-46e6-a2e2-13fc19aaf66c` | `84c796b5-bed4-402c-86c4-b1c2e5e72020` | 13,994 | 448,440 bytes |
+| char-champion-guard | the claimant's guard captain | XII | `761bc946-fc7a-425b-a35c-a0ed8145d7d9` | `5de4594a-52df-4d60-bacf-f772a502da4f` | 13,787 | 464,140 bytes |
+| horse-eastern-b | the Persian cavalry's horses | V, VI | `8afcbf1f-595e-4a3d-9df4-ea6645f863a7` | — | 10,800 | 551,620 bytes |
+
+Triangles count both levels of detail; the near bodies have 11,206–11,504 and the horse 9,000. Every runtime file is quantized and compressed (meshopt geometry, ETC1S KTX2 with mipmaps) and passes `check-model` within its request's budget. The war leader stands in Chapter I's download, so his maps are 512 pixels (`--texture 512 --detail-texture 256`), as the cast's were in release 8; the other bodies have the shipped bodies' 1,024-pixel maps. The remade horse ships under the first eastern horse's file name, `horse-eastern.glb`; its first request, `horse-eastern.json`, is kept and marked replaced. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the binding and compression reports in `art-source/models/reports/`.
+
+The prompts follow [the historical notes](historical-research.md) and the kit each unit carries in the rules. Each gives its type a headgear and a main colour of its own, since those are what read at the battle camera:
+- **Gothic:** the war leader bare-headed in red, with a torc and a woven headband; the shield guard in a checked tunic like the one found at Thorsberg, under a segmented helmet; the champions in woad blue under a tall conical helmet (the wall), saffron yellow with red braids and a torc (the crossing), and undyed grey wool edged with wolf fur (the road's chief). The mercenary captain in the usurper's pay (the legion) is a Germanic officer, in dark green with a Roman military belt.
+- **Persian:** the spearman in a leather jerkin over saffron linen; the sapper captain in indigo under a ridge helmet like the one found in the siege mine at Dura-Europos; the captain of the pursuit in crimson silk under a cloth-wrapped conical helmet; the standard-breaker in iron scale over turquoise, with a mail aventail. The horse wears iron lamellae, apart from the Palmyrene horse's bronze.
+- **Palmyrene:** the armoured officer in gilded scale over purple embroidered with gold vine scrolls, as on Palmyrene funerary portraits; the city's captain in iron over white with red borders, under a white horsehair tuft.
+- **The claimant's men:** his archers in off-white padding with his purple bands; his guard captain in mail over scarlet under a white transverse crest.
+- **Aurelian's Dalmatian horse** (the *equites Dalmatae*), in mail over dark green, with a red scarf.
+
+### Reviewed before shipping
+
+Each model was compared with its Tripo render and then, bound, in the game's actor viewer at High, beside the body its type wore before, at the game's distance, full length from the front and back, and walking. What it showed, and what was kept:
+
+![Each new body beside the body its type wore before, front view in the game's actor viewer at High](images/g1-rest-bodies.jpg)
+
+- **No generation was rejected.** Where a model differs from its prompt, the difference was kept:
+  - **The city's captain's** corselet came out in larger iron plates with shoulder plates, rather than small scales.
+  - **The sapper captain** has no jerkin over his indigo tunic.
+  - **The Persian spearman's** helmet is pointed, with a nasal and cheek guards, rather than tall.
+  - **The crossing's champion's** torc came out as a small pendant.
+  - **Three wear a small knife at the belt,** though the prompts asked for no weapons: the sapper captain, the raiders' chief and the Dalmatian rider. The game adds every figure's own weapons.
+  - **The claimant's archer** has bracers on both forearms and a strap across his chest without a quiver; the game adds his bow and quiver.
+  - **The captain of the pursuit's** crimson silk reads glossy.
+- **What reads, and what reads less.** Most of the new bodies stand plainly apart from the bodies their types wore before, by a colour of their own: the war leader's red, the Persian spearman's saffron, the archer's off-white, and the champions' woad blue, crimson, turquoise, saffron, white and undyed grey. Three are closer to before:
+  - the shield guard's checked tunic reads dark brown-green under his jerkin, near the noble's body he wore;
+  - the mercenary captain's dark green reads dark, though his helmet sets him apart from the bare-headed warrior's body he wore;
+  - the Dalmatian rider is in mail like the cavalryman before him, and his dark green tunic and red scarf are what differ.
+- **The armoured officer rides.** The rules have always mounted him; he was drawn on foot in the Palmyrene spearmen's body. The viewer shows both bodies on the cataphracts' horse, since it seats him now.
+- **The Persian horse** is dark bay under its iron lamellae, where the first was grey under scales. Its rider sits on the game's saddle over the lamellae, walking and standing.
+- **The claimant's guard captain** wears the code-built cloak the game gives its armoured Romans, which covers his back; his white crest and the purple markings on his shield show from the front. The markings show in both captures, since the shields are drawn by the current code.
+
+#### In battle
+
+The bodies were then seen where a player meets them, in sixteen moments of the desktop build at High. Each was reached from New Game by the real-time bot's legal commands, restored through the Restore dialog, and kept where the unit stood nearest the soldier. Eight were captured twice, with these bodies and with the bodies the types wore before served under the same files' names; the other eight only as built.
+
+![G1's remaining bodies at the battle camera: eight fights before and after, and eight as built, crops at the game's own pixels in the desktop build at High](images/g1-rest-battles.jpg)
+
+As in the pilot, a figure stands about 70 to 100 pixels tall, so what reads is its outline and main colours:
+- **Clearest:** whole squads in a colour of their own, the Persian spearmen's saffron (V) and the claimant's archers' off-white (XII); and the armoured officer, now mounted, in gilded scale over purple (IX).
+- **A champion reads as the one figure in his own colour:** the war leader's red (I), the wall's war leader's blue (IV), the standard-breaker's turquoise (VI), the crossing's champion's saffron (VIII), the city's captain's white (IX) and the raiders' chief's grey (X).
+- **Barely:** the dark bodies read as dark figures, close to what they wore before: the shield guard (IV), the sapper captain's indigo (V) and the mercenary captain's dark green (VII). The Persian horses read darker, but their lamellae do not show.
+- **The claimant's men** carry his purple on their shields, which reads across the field more than any of the bodies.
+- **The claimant's guard captain** is hard to pick out in the finale's press at the camera's distance; the actor viewer shows him.
+
+#### Exact prompts
+
+**char-gothic-warleader**
+
+```text
+Full-body Gothic war-band leader of the mid-3rd century AD, a strong man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather over a long-sleeved bright red wool tunic to mid-thigh with a woven border, a twisted bronze torc at the neck and a bronze ring on each upper arm, a broad leather belt with a bronze buckle, grey-brown wool trousers with leg bindings and leather shoes. Bare head, long fair hair bound with a red woven headband, and a full beard. No helmet, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+helmet, mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing
+```
+
+**char-gothic-guard**
+
+```text
+Full-body Gothic shield guard of the mid-3rd century AD, a heavyset man of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of thick dark leather over a long-sleeved wool tunic to mid-thigh woven in a dark green and brown check, like the tunic found at Thorsberg, a broad leather belt, checked wool trousers with leg bindings and leather shoes, and an iron segmented helmet with bronze strips and cheek pieces, face visible. Brown hair and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing
+```
+
+**char-persian-spearman**
+
+```text
+Full-body Sasanian Persian infantry spearman of AD 256, a young man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length linen tunic dyed saffron-yellow with a red woven border, a cloth sash, baggy brown trousers gathered at the ankle, soft leather boots, and a plain tall conical iron helmet, face visible. Black beard and dark hair to the shoulders. No scale armour, no mail. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+scale armour, mail, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing
+```
+
+**char-rival-archer**
+
+```text
+Full-body Roman auxiliary archer of AD 275 serving a rival claimant to the throne, a lean man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a quilted padded jacket of off-white linen over a long-sleeved off-white wool tunic with two narrow dark purple bands, a leather belt, close-fitting dark brown wool trousers and closed leather boots, a leather bracer on the left forearm, and a plain iron helmet with cheek guards and a short neck guard, face visible. Clean-shaven. No mail. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+mail, chainmail, scale armour, segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing
+```
+
+**char-roman-dalmatian-cavalry**
+
+```text
+Full-body Roman cavalryman of the equites Dalmatae, Aurelian’s Dalmatian horse of the 270s AD, a lean man of about twenty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved dark green wool tunic, a red wool scarf knotted at the neck, a broad leather belt with a bronze ring buckle, close-fitting brown wool trousers and closed leather riding boots, and an iron cavalry helmet with a low central ridge, large cheek guards and a short neck guard, face visible. Short dark hair and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing
+```
+
+**char-champion-wall**
+
+```text
+Full-body Gothic war leader of the mid-3rd century AD, a lean, hard man of about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of dark brown leather over a long-sleeved woad-blue wool tunic to mid-thigh with a woven border, a round silver brooch at the shoulder, a leather belt with a bronze buckle, grey wool trousers with leg bindings and leather shoes, and a tall conical iron helmet with small cheek pieces, face visible. Red-blond hair to the shoulders and a short beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing
+```
+
+**char-champion-mine**
+
+```text
+Full-body Sasanian Persian sapper captain of AD 256 at the siege of Dura-Europos, a wiry man of about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length linen tunic dyed dark indigo with an ochre border, a leather belt, baggy trousers gathered at the ankle, soft leather boots, and an iron helmet of two halves joined by a raised central ridge, like the one found in the siege mine at Dura-Europos, with a mail neck guard, face visible. Black beard and dark hair. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+scale armour, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing
+```
+
+**char-champion-wells**
+
+```text
+Full-body Sasanian Persian noble captain of AD 260, a tall man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short leather jerkin over a long-sleeved knee-length crimson silk tunic with gold-patterned borders, a belt with gilded fittings, baggy crimson trousers gathered at the ankle, soft yellow leather boots, and a tall conical iron helmet wrapped at its base with a crimson cloth band, face visible. A full black beard and black hair tied at the nape. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+scale armour, lamellar, plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing
+```
+
+**char-champion-eagle**
+
+```text
+Full-body Sasanian Persian veteran warrior of AD 260, a scarred, powerful man of about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a knee-length coat of small iron scales over a long-sleeved turquoise-blue tunic with patterned borders, a broad leather belt, baggy trousers gathered at the ankle, soft leather boots, and a domed conical iron helmet with a gilded bronze brow band and a mail aventail covering the neck and shoulders, face visible. A thick black beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing
+```
+
+**char-champion-legion**
+
+```text
+Full-body Germanic mercenary captain of the 260s AD in the pay of a Roman usurper, a broad-shouldered man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather over a long-sleeved dark green wool tunic to mid-thigh, a broad Roman military belt with bronze plates and a ring buckle, a gilded bronze ring on each upper arm, close-fitting dark wool trousers and leather boots, and a conical iron helmet with cheek pieces, face visible. Dark-blond hair to the shoulders and a long moustache. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing
+```
+
+**char-champion-crossing**
+
+```text
+Full-body Gothic war-band champion of the 270s AD, a huge, heavily built man of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of black leather over a long-sleeved saffron-yellow wool tunic to mid-thigh with a dark woven border, a twisted bronze torc at the neck, a broad leather belt, brown wool trousers with leg bindings and leather boots, and an iron segmented helmet with cheek pieces, face visible. Red hair in two thick braids and a full red beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing
+```
+
+**char-champion-wing**
+
+```text
+Full-body Palmyrene armoured cavalry officer of AD 272, a noble of about thirty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of gilded bronze scales with short scale sleeves over a long-sleeved purple tunic embroidered with gold vine scrolls, as on Palmyrene funerary portraits, wide purple trousers embroidered down the front, soft riding boots, and a conical iron helmet with a gilded brow band and cheek pieces, face visible. A short trimmed dark beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing
+```
+
+**char-champion-city**
+
+```text
+Full-body Palmyrene city captain of AD 272, a stern man of about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a corselet of silver-grey iron scales over a long-sleeved white tunic with broad red embroidered borders at the hem and cuffs, wide white trousers with a red embroidered stripe down the front, soft leather boots, and a conical iron helmet with a short white horsehair tuft at the top, face visible. A full greying beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+plate armour, cloak, cape, turban, shield, weapon, spear, sword, bow, quiver, tools, fantasy armour, modern clothing
+```
+
+**char-champion-road**
+
+```text
+Full-body Gothic raiders’ chief of the 270s AD, a weathered man of about fifty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather edged with grey wolf fur over a long-sleeved undyed grey-white wool tunic to mid-thigh, a broad belt with silver studs, dark wool trousers with leg bindings and leather boots, and an iron segmented helmet darkened with age, face visible. Long grey hair and a long grey beard. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+mail, plate armour, horns, wings, cloak, cape, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing
+```
+
+**char-champion-guard**
+
+```text
+Full-body Roman guard captain of AD 275 serving a rival claimant to the throne, a hard-faced veteran of about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a loose chainmail shirt of small interlocking iron rings, short-sleeved and hanging to mid-thigh like a heavy knitted shirt, over a long-sleeved scarlet wool tunic; a broad leather belt with bronze plates and a ring buckle, close-fitting dark wool trousers and closed leather boots, and an iron helmet with a deep bowl, wide cheek guards and a tall transverse crest of white horsehair across the top, face visible. Clean-shaven, with close-cropped grey hair. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+segmented plate, lorica segmentata, banded armour, plate armour, muscle cuirass, cloak, cape, shield, weapon, sword, spear, fantasy armour, modern clothing
+```
+
+**horse-eastern-b**
+
+```text
+An armoured horse of the Sasanian Persian heavy cavalry of the mid-3rd century AD, standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, tail hanging straight down, symmetrical. A tall, strong horse about 1.55 metres at the withers, dark bay coat with a black mane and a short black tail. It wears a close-fitting armour trapper of small iron lamellae laced in rows on leather, covering the neck, chest, flanks and hindquarters down to the belly and lying flat and smooth along the back, where a saddle will sit on top, and a plain leather bridle; the legs below the trapper are bare. Realistic proportions, anatomically accurate, worn and practical. No saddle, no saddle cloth, no rider, no face mask, no plumes, no spikes, no text or inscriptions, no modern objects, no fantasy elements.
+```
+Negative prompt:
+
+```text
+saddle, rider, person, plate armour, face mask, plumes, spikes, horns, wings, extra legs, armoured legs, raised seat, fantasy, cartoon
+```
+
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.

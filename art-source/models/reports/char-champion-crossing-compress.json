@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/champion-crossing.glb",
+  "output": "assets/models/characters/champion-crossing.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 505912,
+    "gzipBytes": 360387,
+    "sha256": "7c0269c31b640d076a1f2600a6aaf169e20b2059630aa307d6dc2a0378591a76"
+  },
+  "after": {
+    "bytes": 436424,
+    "gzipBytes": 415027,
+    "sha256": "cc71ffd8f8f607251dd08dd04724cdf9e82d1ba5cfbb1ea252b172b5666400e6"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13769,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10686
+      },
+      "bytes": 21907,
+      "psnr": 40.319
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 64670
+      },
+      "bytes": 140590,
+      "psnr": 35.423
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 29238
+      },
+      "bytes": 44702,
+      "psnr": 31.04
+    }
+  ]
+}

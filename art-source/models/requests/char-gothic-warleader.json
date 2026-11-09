@@ -1,0 +1,167 @@
+{
+  "id": "char-gothic-warleader",
+  "status": "bound, quantized and compressed: G1, shipped",
+  "chapters": [
+    1,
+    2,
+    3
+  ],
+  "use": "The war leader of a Gothic band that fights alone (Chapters I–III), whom the rules choose as its hardiest man and name its war leader, in his own body; the game adds his weapon. Release G1; 512-pixel maps for Chapter I’s web download.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Gothic war-band leader of the mid-3rd century AD, a strong man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather over a long-sleeved bright red wool tunic to mid-thigh with a woven border, a twisted bronze torc at the neck and a bronze ring on each upper arm, a broad leather belt with a bronze buckle, grey-brown wool trousers with leg bindings and leather shoes. Bare head, long fair hair bound with a red woven headband, and a full beard. No helmet, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "helmet, mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611400,
+      "image_seed": 2611401,
+      "texture_seed": 2611402
+    }
+  },
+  "budget": {
+    "triangles": 12000,
+    "overviewTriangles": 2500,
+    "texture": 512,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g1",
+    "batch": "rest",
+    "creditCeiling": 780,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T08:57:55.593Z",
+    "requestBody": {
+      "negative_prompt": "helmet, mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611400,
+      "image_seed": 2611401,
+      "texture_seed": 2611402,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Gothic war-band leader of the mid-3rd century AD, a strong man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather over a long-sleeved bright red wool tunic to mid-thigh with a woven border, a twisted bronze torc at the neck and a bronze ring on each upper arm, a broad leather belt with a bronze buckle, grey-brown wool trousers with leg bindings and leather shoes. Bare head, long fair hair bound with a red woven headband, and a full beard. No helmet, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10100,
+    "balanceSnapshotBefore": {
+      "balance": 10100,
+      "frozen": 20
+    },
+    "submission": {
+      "id": "2e88eb43-f9be-4cd8-99cf-d239f4be7f6e",
+      "state": "accepted",
+      "requestSha256": "15e2bbf9445466a9a5193791f6c17be12b115cfa66732a43b001ac2b45906a0b"
+    },
+    "taskId": "8ccec7f0-0f69-4ef4-b653-e38f98c7f818",
+    "status": "success",
+    "generatedAt": "2026-11-09T08:59:43.842Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-gothic-warleader.glb",
+    "rawBytes": 45797248,
+    "rawSha256": "fd829af57d6e218061baa5b89f677931faacfa661d0e416b9bddc937660680ea",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Gothic war-band leader of the mid-3rd century AD, a strong man of about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a sleeveless jerkin of brown leather over a long-sleeved bright red wool tunic to mid-thigh with a woven border, a twisted bronze torc at the neck and a bronze ring on each upper arm, a broad leather belt with a bronze buckle, grey-brown wool trousers with leg bindings and leather shoes. Bare head, long fair hair bound with a red woven headband, and a full beard. No helmet, no armour. Realistic proportions, historically accurate, worn and practical, earthy colours. No shield, no weapons, no cloak, no backpack, no quiver, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611401,
+      "model_seed": 2611400,
+      "texture_seed": 2611402,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "helmet, mail, plate armour, horns, wings, fur cape, cloak, crown, shield, weapon, spear, axe, sword, skulls, fantasy armour, modern clothing",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T08:57:56.141101Z",
+    "tripoCompletedAt": "2026-11-09T08:59:39.025061Z",
+    "tripoRender": "art-source/models/raw/char-gothic-warleader-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-09T09:03:16.805Z",
+      "requestBody": {
+        "input": "8ccec7f0-0f69-4ef4-b653-e38f98c7f818"
+      },
+      "submission": {
+        "id": "2e5d8a75-c4d8-4dfa-b39d-7d6418a44861",
+        "state": "accepted",
+        "requestSha256": "099faecf76e4c114319b5107ecce93894e51c27322cdf84b2c1ad6271ed65bb0"
+      },
+      "taskId": "fe4acb87-34a6-453e-8bea-42bcca70668c",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-09T09:03:22.596Z",
+      "requestBody": {
+        "input": "8ccec7f0-0f69-4ef4-b653-e38f98c7f818",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 9835,
+      "balanceSnapshotBefore": {
+        "balance": 9835,
+        "frozen": 65
+      },
+      "submission": {
+        "id": "5d54dc9b-d238-4f61-97d8-c1cafc8a2f51",
+        "state": "accepted",
+        "requestSha256": "7d96f3f26f382f2ed3dbfaa9e6a4c853005424e42b714b0ff5f63855d613be10"
+      },
+      "taskId": "aec7fff7-dce2-4fd5-ad6a-cfa039fbf4ef",
+      "status": "success",
+      "generatedAt": "2026-11-09T09:06:26.017Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-gothic-warleader-rigged.glb",
+      "rawBytes": 61098184,
+      "rawSha256": "15308e9a55430e9b0a0a489b678cce02f2e30e113946961bb9b981c7e3e54d82",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "8ccec7f0-0f69-4ef4-b653-e38f98c7f818"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-09T09:03:22.870981Z",
+      "tripoCompletedAt": "2026-11-09T09:04:24.246872Z"
+    }
+  }
+}
