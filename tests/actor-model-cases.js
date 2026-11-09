@@ -6,7 +6,7 @@ export const ACTOR_CASES=freeze([
   {id:'veteran',label:'Veteran · Roman infantry',unit:{id:'veteran-naso',veteranId:'naso',name:'Naso',side:'ally',role:'infantry'},options:{chapter:3,rank:'Miles'}},
   {id:'officer',label:'Officer · Marcellus, Centurio',unit:{id:'hero',name:'Aurelius Marcellus',side:'player',role:'infantry'},options:{chapter:5,rank:'Centurio'}},
   {id:'cavalry',label:'Cavalry · Roman rider',unit:{id:'roman-cavalry',name:'Roman cavalry',side:'ally',role:'cavalry'},options:{chapter:7,rank:'Praepositus'}},
-  {id:'moorish',label:'Cavalry · Moorish rider',unit:{id:'roman-cavalry',name:'First horse',side:'ally',role:'cavalry'},options:{chapter:9,rank:'Praepositus'}},
+  {id:'moorish',label:'Cavalry · Moorish rider',unit:{id:'roman-cavalry',name:'Roman cavalry',side:'ally',role:'cavalry'},options:{chapter:9,rank:'Praepositus'}},
   {id:'goth',label:'Gothic spearman',unit:{id:'gothic-spearman',name:'Gothic spearman',side:'enemy',role:'infantry'},options:{chapter:2}},
   {id:'goth-skirmisher',label:'Gothic skirmisher',unit:{id:'raider-skirmisher',name:'Gothic skirmisher',side:'enemy',role:'raider'},options:{chapter:1}},
   {id:'champion',label:'Champion · the war band’s chieftain',unit:{id:'champion-gate',name:'The war band’s chieftain',side:'enemy',role:'champion'},options:{chapter:4}},
