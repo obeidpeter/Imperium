@@ -215,7 +215,7 @@ Eight camp models, about a seventh of G3's list, made and reviewed in the game b
   - the timber camps now read as walled and towered camps from every camera, where the black breastwork read as a low fence;
   - the gate towers frame the road out where the soldier starts in Chapters I and VII, without hiding him;
   - the palisade's stakes and earth bank read at the Overview camera, and no section's stretch shows;
-  - the furniture beyond the board is small at the Overview camera and reads at the board's edge in the Follow camera.
+  - at the Overview camera, the officers' tent, the horse lines and the granary read beside the walls of Chapters IV and VII; the training post and the stores are small there, and the struck tent's camps were not captured.
 
 ![Chapters I and VII before (the tent lines, on main) and with the pilot's models, in the desktop build at High](images/g3-pilot-camps.jpg)
 

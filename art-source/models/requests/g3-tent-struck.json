@@ -1,6 +1,6 @@
 {
   "id": "g3-tent-struck",
-  "status": "generated: awaiting review",
+  "status": "G3 pilot: processed, compressed and reviewed from Tripo's render and four views; its camps (II, VI, VIII) not yet captured in the game",
   "chapters": [
     2,
     6,
@@ -91,7 +91,7 @@
   },
   "review": {
     "date": "2026-11-09",
-    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "scope": "Tripo's own render, and four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs)",
     "notes": "A leather tent rolled and tied, with its poles and coiled rope."
   }
 }

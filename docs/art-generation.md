@@ -1832,13 +1832,13 @@ Each model was compared with Tripo's render, then rendered from four sides with 
 
 #### In the game
 
-The camps were then seen where a player meets them, in the desktop build at High (which carries every chapter's models), each restored from its earned checkpoint through the Restore dialog: Chapter I and Chapter VII at the Overview and Follow cameras, beside the same views on main with the tent lines.
+The camps were then seen where a player meets them, in the desktop build at High (which carries every chapter's models), each restored from its earned checkpoint through the Restore dialog: Chapters I and VII at the Overview and Follow cameras, beside the same views on main with the tent lines, and Chapter IV at its Overview camera.
 
 ![Chapters I and VII before (the tent lines, on main) and with the pilot's models, in the desktop build at High](images/g3-pilot-camps.jpg)
 
 - **The walls:** the timber camps read as walled and towered camps from every camera, where the black breastwork read as a low fence. The palisade's pale stakes and earth bank read at the Overview camera, and no section's stretch shows.
 - **The gates:** the gate towers frame the road out where the soldier starts in Chapters I and VII, without hiding him. A tower nearest the camera fills a good part of the frame there.
-- **The furniture** beyond the board is small at the Overview camera.
+- **The furniture:** at the Overview camera the officers' tent and the horse lines read beside Chapter VII's walls, and the officers' tent and the granary beside Chapter IV's; the training post and the stores are small there. The struck tent's camps (II, VI and VIII) were not captured.
 
 ## Steam achievement icons · 3 November 2026
 
