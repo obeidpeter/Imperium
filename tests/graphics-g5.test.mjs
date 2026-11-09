@@ -133,7 +133,7 @@ test('a cart stands only with its load while the supplies are to be recovered, s
   for(const chapter of [1,7,8])assert.equal(fieldObjectModel({kind:'stores',state:'available'},{chapter,desktop:false}),null,`Chapter ${chapter}'s web cart`);
 });
 
-test('the models stand in their cells, grounded, in an instanced draw for each mesh, and leave the code-built pieces to every other object', async () => {
+test('the models stand in their cells, grounded, as plain meshes over the cached models (the scenery\'s shader programs), and leave the code-built pieces to every other object', async () => {
   const {e,chapter}=battles().find(b=>b.id==='ch5-wall'),masters=await models(['g5-cart','g5-cart-load','g5-barricade','g5-ram']);
   // Chapter V's sortie brings the ram; set it on the field as its phase does.
   const ram=e.field.objects.find(o=>o.kind==='ram')??{id:'ram-test',kind:'ram',state:'active',x:5,y:4};
@@ -145,9 +145,12 @@ test('the models stand in their cells, grounded, in an instanced draw for each m
   assert.ok(!byKind('signal')?.model&&!byKind('brazier')?.model,'the signal and the brazier stay code-built');
   for(const k of ['stores','barricade','ram'])assert.ok(!features.group.getObjectByName(`${k} · ${field.field.objects.find(o=>o.kind===k).state}`),`no code-built ${k}`);
   assert.ok(features.group.getObjectByName(`signal · ${field.field.objects.find(o=>o.kind==='signal').state}`),'the code-built signal station');
-  const meshes=[];features.group.traverse(o=>{if(o.isInstancedMesh&&/^field model /.test(o.name))meshes.push(o);});
-  assert.ok(meshes.length>=4);for(const m of meshes){assert.ok(m.instanceColor.array.every(v=>v===1),'white instance colours');assert.ok(m.castShadow&&m.receiveShadow);}
-  assert.equal(meshes.filter(m=>/g5-barricade/.test(m.name)).reduce((n,m)=>Math.max(n,m.count),0),2,'two barricade panels');
+  const meshes=[];features.group.traverse(o=>{if(o.isMesh&&/^field model /.test(o.name))meshes.push(o);});
+  // Plain meshes over the cached models' own geometry and materials: an instanced draw would compile the instanced
+  // variant of the generated art's program, which no battle's scenery uses; the field's batching leaves them whole.
+  const owned=new Set(),disposed=[];for(const master of masters.values())master.traverse(o=>{if(!o.isMesh)return;for(const r of [o.geometry,o.material]){owned.add(r);r.addEventListener('dispose',()=>disposed.push(r));}});
+  assert.ok(meshes.length>=5);for(const m of meshes){assert.ok(!m.isInstancedMesh,`${m.name} is not instanced`);assert.ok(owned.has(m.geometry)&&owned.has(m.material),`${m.name} draws the cached model`);assert.ok(m.castShadow&&m.receiveShadow);}
+  assert.equal(meshes.filter(m=>/g5-barricade/.test(m.name)).length,2,'two barricade panels');
   // Each stands within reach of its cell and on the ground: the cart and the barricade inside it, the ram's three
   // metres a little over its ends.
   for(const k of ['stores','barricade','ram']){
@@ -160,6 +163,7 @@ test('the models stand in their cells, grounded, in an instanced draw for each m
   }
   assert.deepEqual(features.stats().fieldModels,{models:4,instances:5,drawn:meshes.length});
   features.dispose();
+  assert.deepEqual(disposed,[],'the cache keeps its geometry and materials');
   // Without the models the code-built pieces stand, as on Performance.
   const plain=createBattlefieldFeatures(new T.Scene(),{heightAt:slope});plain.sync(field);
   assert.ok(plain.group.userData.fieldObjects.every(r=>!r.model));assert.ok(plain.group.getObjectByName(`stores · ${field.field.objects.find(o=>o.kind==='stores').state}`));

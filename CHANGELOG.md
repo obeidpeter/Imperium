@@ -32,7 +32,7 @@ Six Tripo models, made for 140 credits and reviewed in the game before the rest 
   - the ledger and every shipped model's budget;
   - which model draws each field object in each state, on its cell, in every battle reached by legal commands;
   - the cart standing only with its load;
-  - the instanced pieces, grounded and within their cells, and the code-built pieces without them;
+  - the models drawn as plain meshes over the cached models, grounded and within their cells, the cache's geometry and materials never disposed, and the code-built pieces without them;
   - the set pieces beyond the west edge, clear of roads and other scenery, and never on Performance;
   - each chapter's web and desktop packs.
 

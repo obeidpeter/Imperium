@@ -14,7 +14,8 @@ import {createFieldModelPieces,fieldModelPlacements} from './field-models.js';
 // materials are the cached model's, shared between stages, so they take their
 // own finish (kitFinish) rather than this stage's (finish).
 // fieldModels: the field objects' loaded models by world catalog id (field-models.js, graphics plan G5), cached and
-// finished like the board kit; an object whose kind and state one draws stands as that model, else code-built.
+// finished like the board kit; an object whose kind and state one draws stands as that model, drawn as the scenery's
+// placed models are, else code-built.
 export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balanced',finish=null,kitFinish=null,boardKit=null,fieldModels=null}={}){
   const group=new T.Group();group.name='interactive-battlefield';scene.add(group);
   let signature='',fires=[],walkSurfaces=[],platformSurfaces=[],bounds=null,disposed=false,retired=[],chapter=1,weather=null,pieces=null,modelPieces=null;
@@ -67,7 +68,8 @@ export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balance
         geometries.add(plume.geometry);materials.add(plume.material);group.add(plume);fires.push(plume);
       }
     }
-    const batching=batchStaticEnvironment(group,{geometries,instanceThreshold:Infinity});
+    // The models' meshes stay as they are: their geometry is the cache's, shared with every other stage.
+    const batching=batchStaticEnvironment(group,{geometries,instanceThreshold:Infinity,exclude:new Set(modelPieces?.meshes??[])});
     let triangles=0,drawBatches=0;group.traverse(o=>{if(o.isMesh){drawBatches++;triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;}});
     group.userData.fieldObjects=records;group.userData.regionalPalette=kit.region.key;
     bounds={objects:records.length,drawBatches,triangles,region:kit.region.key,batching,fieldModels:modelPieces?.stats()??null};

@@ -285,7 +285,7 @@ Six battle and siege models, about a seventh of G5's list, made and reviewed in 
   - The cart stands in every state, its load only while the supplies are to be recovered. A cart never stands empty while they are: without its load the code-built cart, with its own sacks, stands instead.
   - Two barricade panels span the barricade's cell east to west, as the code-built barricade's two metres do. Dismantled, its code-built scattered timbers remain.
   - The ram's iron head points west at the gate. Burnt, its code-built charred timbers remain.
-  - Each model is one instanced draw for each of its meshes, with the scenery's shader programs.
+  - Each copy is drawn as the scenery's placed models are, with their shader programs: the barricade's two panels are two draws.
 - **Set pieces:** each stands a few metres beyond the board's west edge, on the first spot clear of the roads that leave the board, the region's buildings and the scene's other scenery. The fixed camera looks north-west, so it sees them behind the army. Like the camps' furniture, they have no code-built stand-in.
 - **Downloads:** each model downloads with its chapters in the desktop app. On the web:
   - Chapters I, VII and VIII take none (17.87 of 18 MB, 27.95 and 27.92 of 28);

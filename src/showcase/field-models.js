@@ -6,9 +6,10 @@ import {createRoadSurfaceSampler} from './environment-road-surface.js';
 // The battle's field objects drawn from generated models (graphics plan, G5): each model draws its kind in the
 // states it names (world-catalog.js), on the object's cell, in place of the code-built piece (environment-fieldwork.js),
 // which stays for every other state, on Performance and while the model is not loaded. A load rides on the model it
-// names (the supply cart's sacks, while the supplies are still to be recovered). Like the board kit's pieces
-// (board-kit.js), each mesh of each model is one instanced draw with white instance colours, so the models share the
-// scenery's shader programs. The battles' set pieces beyond the board (a carroballista, an onager) are scenery
+// names (the supply cart's sacks, while the supplies are still to be recovered). Each copy of a model is drawn as the
+// scenery's placed models are, plain meshes over the cached model's geometry and materials, so the models share the
+// scenery's shader programs: an instanced draw would compile the instanced variant of the generated art's program,
+// which no battle's scenery uses, for a model that stands at most twice. The battles' set pieces beyond the board (a carroballista, an onager) are scenery
 // placements instead, placed here and drawn with the rest of the scene's scenery (scenery-models.js). Presentation
 // only: placements are read from the stage encounter, never from the scene; no piece takes picks or changes a route.
 
@@ -92,11 +93,13 @@ export function battlePropPlacements(e,{tileSize=2.5,occupied=[]}={}){
   return out;
 }
 
-/** Each placement's model drawn instanced in the group; a carrier stands on the lowest ground under its footprint, its
- * load at its lift above the carrier. Returns each object's drawn bounds (for the field's records), its stats, and
- * dispose, which frees only the instance buffers: the masters' geometry and materials are the cache's. */
+/** Each placement's model drawn in the group as plain meshes over the master's geometry and materials, as the
+ * scenery's placed models are; a carrier stands on the lowest ground under its footprint, its load at its lift above
+ * the carrier. Returns each object's drawn bounds (for the field's records), the meshes (which the field's static
+ * batching leaves as they are: their geometry is the cache's), its stats, and dispose, which only takes the meshes out
+ * of the group: the masters' geometry and materials are the cache's. */
 export function createFieldModelPieces(group,models,placements,{heightAt=()=>0,finish=null}={}){
-  const byModel=new Map(),bounds=new Map(),sets=[];
+  const byModel=new Map(),bounds=new Map(),sets=[],meshes=[];
   for(const p of placements)if(models.get(p.model)){if(!byModel.has(p.model))byModel.set(p.model,[]);byModel.get(p.model).push(p);}
   const yawQ=new T.Quaternion(),up=new T.Vector3(0,1,0),one=new T.Vector3(1,1,1),at=new T.Vector3(),place=new T.Matrix4(),each=new T.Matrix4();
   const ground=(x,z)=>{const y=heightAt(x,z);return Number.isFinite(y)?y:0;};
@@ -106,32 +109,29 @@ export function createFieldModelPieces(group,models,placements,{heightAt=()=>0,f
   for(const id of order){
     const master=models.get(id),list=byModel.get(id);master.updateWorldMatrix(true,true);
     // Each mesh and the footprint in the master's own frame, wherever the cache holds it.
-    const inverse=master.matrixWorld.clone().invert(),box=new T.Box3().setFromObject(master,true).applyMatrix4(inverse),meshes=[];
-    master.traverse(o=>{
-      if(!o.isMesh)return;
-      const mesh=new T.InstancedMesh(o.geometry,o.material,list.length);mesh.name=`field model ${id} ${o.name}`;
-      // White instance colours: the shader programs (and shadow pass) of the scenery's other batches.
-      mesh.instanceColor=new T.InstancedBufferAttribute(new Float32Array(list.length*3).fill(1),3);
-      mesh.castShadow=true;mesh.receiveShadow=true;mesh.frustumCulled=false;mesh.raycast=()=>{};finish?.(o.material);
-      meshes.push({mesh,local:inverse.clone().multiply(o.matrixWorld)});group.add(mesh);
-    });
-    list.forEach((p,i)=>{
+    const inverse=master.matrixWorld.clone().invert(),box=new T.Box3().setFromObject(master,true).applyMatrix4(inverse),parts=[];
+    master.traverse(o=>{if(!o.isMesh)return;parts.push({source:o,local:inverse.clone().multiply(o.matrixWorld)});finish?.(o.material);});
+    let drawn=0;
+    for(const p of list){
       const c=Math.cos(p.yaw),s=Math.sin(p.yaw);
       // The footprint's corners after the yaw, on the ground: the lowest holds the model.
       const corners=[[box.min.x,box.min.z],[box.min.x,box.max.z],[box.max.x,box.min.z],[box.max.x,box.max.z]].map(([u,w])=>ground(p.x+u*c+w*s,p.z-u*s+w*c));
       const y=p.on?(base.get(p.object)??ground(p.x,p.z))+(p.lift??0):Math.min(ground(p.x,p.z),...corners)-box.min.y;
       if(!p.on)base.set(p.object,y+box.min.y);
       yawQ.setFromAxisAngle(up,p.yaw);place.compose(at.set(p.x,y,p.z),yawQ,one);
-      for(const {mesh,local}of meshes)mesh.setMatrixAt(i,each.multiplyMatrices(place,local));
-      const drawn=box.clone().applyMatrix4(place),prior=bounds.get(p.object);
-      bounds.set(p.object,prior?prior.union(drawn):drawn);
-    });
-    for(const {mesh}of meshes)mesh.instanceMatrix.needsUpdate=true;
-    sets.push({id,count:list.length,meshes});
+      for(const {source,local}of parts){
+        const mesh=new T.Mesh(source.geometry,source.material);mesh.name=`field model ${id} ${source.name}`;
+        each.multiplyMatrices(place,local).decompose(mesh.position,mesh.quaternion,mesh.scale);
+        mesh.castShadow=true;mesh.receiveShadow=true;mesh.raycast=()=>{};group.add(mesh);meshes.push(mesh);drawn++;
+      }
+      const placed=box.clone().applyMatrix4(place),prior=bounds.get(p.object);
+      bounds.set(p.object,prior?prior.union(placed):placed);
+    }
+    sets.push({id,count:list.length,drawn});
   }
   return {
-    bounds,
-    stats:()=>({models:sets.length,instances:sets.reduce((n,s)=>n+s.count,0),drawn:sets.reduce((n,s)=>n+s.meshes.length,0)}),
-    dispose(){for(const set of sets)for(const {mesh}of set.meshes){mesh.removeFromParent();mesh.dispose();}sets.length=0;}
+    bounds,meshes,
+    stats:()=>({models:sets.length,instances:sets.reduce((n,s)=>n+s.count,0),drawn:sets.reduce((n,s)=>n+s.drawn,0)}),
+    dispose(){for(const mesh of meshes)mesh.removeFromParent();meshes.length=0;sets.length=0;}
   };
 }
