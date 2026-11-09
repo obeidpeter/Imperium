@@ -31,7 +31,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | 0 | Use what's paid for, then calibrate | 250 | done: calibrated (190 credits, [results](graphics-calibration.md)), and the 3D kit made (seven weapons and helmets, no credits); the landmarks' re-texture skipped |
 | G1 | Armies | 1,005 | done: the [pilot](#g1s-pilot-8-november) (310 credits) and [the rest](#the-rest-of-g1-9-november) (695): 22 bodies and 2 horses. Its other 1,295 credits went to G3 and G5 |
 | G2 | Arms and standards | 700 | |
-| G3 | Camps | 2,400 | in progress: [the tent lines](#g3s-tent-lines-9-november), with no credits, and [the pilot](#g3s-pilot-9-november) (180 credits); the rest next, within the 2,220 left (1,300, 400 from G7 and 700 from G1) |
+| G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
 | G4 | Animals | 600 | |
 | G5 | Battle and siege | 1,845 | (900, 350 from G7 and 595 from G1) |
 | G6 | Faces and people | 1,100 | |
@@ -219,17 +219,49 @@ Eight camp models, about a seventh of G3's list, made and reviewed in the game b
 
 ![Chapters I and VII before (the tent lines, on main) and with the pilot's models, in the desktop build at High](images/g3-pilot-camps.jpg)
 
-**The rest of G3** comes next, within the 2,220 credits left, in the order the camera meets it:
+### The rest of G3 (9 November)
 
-1. the stone and mudbrick camps' walls and towers (IV, VI, IX, XII), placed like the palisade: 4 models;
-2. two more contubernium tents for the tent lines, one with its flaps open on the men's kit and one patched, mixed by cell: 2;
-3. gates between the gate towers, in timber and in stone: 2;
-4. the praetorium's pavilion and the hospital tent, by the principia and the valetudinarium: 2;
-5. the tribunal, an altar and a parley awning, for the camps' assemblies and ceremonies: 3;
-6. pavilions for the camps of the East (V, VI, IX): 2;
-7. a pilum rack, an archery butt and a field oven, where the camps lack them: 3.
+Eighteen more camp models, made after the pilot's review in the game (decision 9), in the order the camera meets them:
 
-About 18 models: 360 credits, and about 400 with the plan's 10% for rejected attempts. They ship in the desktop app wherever a chapter's web download is full (I, VII, VIII and XII). What G3 leaves unspent goes to battle and siege (G5), as G1's did, so the plan still spends at least 70% of the balance.
+| Model | Where it stands | Chapters |
+| --- | --- | --- |
+| a coursed limestone wall section | along every wall cell of the stone camps, stretched to fill each straight run | IV, IX, XII |
+| a square limestone tower under a tiled roof | on each corner of those walls, and at each end of a wall that opens on a gateway | IV, IX, XII |
+| a round-arched limestone gate with a walkway | over each gateway of those walls | IV, IX, XII |
+| a plastered mudbrick wall section | along every wall cell of the mudbrick camps | V, VI |
+| a squat mudbrick tower | on each corner of those walls, and either side of a gateway | V, VI |
+| a timber gate of two posts under a lintel | over each gateway of the timber camps | I, II, III, VII, X |
+| a goatskin tent with its door tied open | on the tent lines, mixed by cell with the leather tent | I, II, III, VII, VIII, IX |
+| a goatskin tent patched in lighter and darker hide | on the tent lines, mixed by cell with the leather tent | I, II, III, IX, XII |
+| a round commander's pavilion of red leather | beside the principia | II, VI, VII, IX |
+| a hospital tent, one wall rolled up on two camp beds | beside the valetudinarium | II, III, VI, VIII, IX |
+| a raised timber tribunal with a folding chair | beside the principia | I, IX, XII |
+| a limestone camp altar | beside the principia | I, IV, XII |
+| a linen awning over a table and two stools, for a parley | beside the principia | VIII, IX |
+| a pavilion of striped linen in the eastern style | beside the principia | VI, IX |
+| a reed-mat shade on poles over a carpeted floor | beside the canabae | VI, IX |
+| a timber rack of pila with a red oval shield | beside the drill ground | II, III, VI, VIII, X, XII |
+| a straw archery butt on a timber easel | beside the drill ground | III, VI, X, XII |
+| a domed clay field oven on a dry-stone base | beside the canabae | II, IV, VIII, X |
+
+- **Credits:** 380 of the rest's 400-credit ceiling: eighteen generations at 20, and one rejected and redone (the first pilum rack came out all grey iron, with leaf-bladed spears and no timber frame). The balance went from 9,325 to 8,945. [The ledger](../art-source/models/graphics-g3-credits.json) has every task. One generation in nineteen was rejected, under the 20% stop rule.
+- **The walls:** the stone and mudbrick camps are walled like the timber ones, along the wall cells, which were solid already.
+  - The wall model stands for the code-built parapet, which stays its fallback on Performance and until the model is ready. The parapet is now a batch of its own, so hiding it leaves the camps' terraces and kerbs.
+  - Each gateway takes a gate, as wide as the gap but stretched by at most 1.35 times its width. Chapters I–III's 12.5 m gateways keep open ground either side of theirs.
+  - Chapter XI, a portico in Rome, keeps its code-built walls. Chapter V's courtyard takes the mudbrick wall and towers too.
+- **The tent lines** mix the two new tents with the leather tent by a hash of each pitch's first cell, a quarter of the pitches each. Each model hides only its own pitches' code-built tents. Chapters IV and VI pitch one tent each, which falls to the leather tent.
+- **The furniture** stands beside its service where a court is free, otherwise in the baggage line, as the pilot's does.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web:
+  - Chapters I, VII, VIII and XII take none of the rest's models, as decided after the pilot;
+  - Chapter IX's share came to 2.33 MB against its 2.33 MB of room: it leaves out the two new tents, one pitch each, which stay leather on the web (27.51 of 28 MB);
+  - every other chapter takes all its models: IV at 27.14 MB, VI at 26.53 and X at 27.33 of 28;
+  - Chapter I's 3D download is unchanged at 17.87 of 18 MB, and the complete web game is 70.59 of 80 MB.
+
+#### What G3 leaves
+
+G3 is done at 560 of its 2,400 credits. The rest bought what its list still lacked where the camera meets the camps; the carts, barrels and amphorae on the list already stood there, as camp life (release 9) and the quartermaster's stores. Its other 1,840 credits are held for the releases after it rather than moved now, since moving them would raise another release's cap:
+- at standard prices, the lists of G5, G4, G6 and G2 come to about 3,000 credits, so the plan would end near 4,800 of its 7,900, below the owner's 70% floor (7,490);
+- G5's pilot proposes how many more of battle and siege to buy, and where the rest of the 1,840 goes, before anything beyond a cap is spent.
 
 ## Around every release, at no credit cost
 

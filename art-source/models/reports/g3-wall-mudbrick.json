@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-wall-mudbrick.glb",
+    "bytes": 45953368,
+    "sha256": "834af9699c23ff31591ac6c0c7c05ce2dca185a257df773e7eb5eef0c156a9f6",
+    "triangles": 1423704
+  },
+  "output": {
+    "path": "assets/models/world/g3-wall-mudbrick.glb",
+    "bytes": 172316,
+    "sha256": "e4f6002a62d8a37e44c0c2c6ba804cc9867aab37296428a018bfa40bc96d2242",
+    "triangles": 1470
+  },
+  "settings": {
+    "triangles": 1500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 5.97668953658186,
+  "sizeMetres": {
+    "width": 5.949,
+    "height": 2.0,
+    "depth": 1.8135
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_6c31d8b4-01ad-4e06-ad37-2c9c7c71764d",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_6c31d8b4-01ad-4e06-ad37-2c9c7c71764d",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_6c31d8b4-01ad-4e06-ad37-2c9c7c71764d",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

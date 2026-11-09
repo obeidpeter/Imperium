@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-pilum-rack-b.glb",
+    "bytes": 45006956,
+    "sha256": "ec3cbe3c353ae9221de7a5c5e22653329bdfc80a8726f704d9eaf8edc6548031",
+    "triangles": 1468464
+  },
+  "output": {
+    "path": "assets/models/world/g3-pilum-rack.glb",
+    "bytes": 148096,
+    "sha256": "f8acf60488f5cb41789f558b75629570beae2dfdccbebc50ee6713e573b51e35",
+    "triangles": 1960
+  },
+  "settings": {
+    "triangles": 2000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.1,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 270.0
+  },
+  "scale": 2.083846947337522,
+  "sizeMetres": {
+    "width": 1.781,
+    "height": 2.1,
+    "depth": 0.8052
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_417bca46-ea79-43bc-9bb3-5f39888da9be",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_417bca46-ea79-43bc-9bb3-5f39888da9be",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_417bca46-ea79-43bc-9bb3-5f39888da9be",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

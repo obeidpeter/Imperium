@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-praetorium.glb",
+  "output": "assets/models/world/g3-praetorium.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 215900,
+    "gzipBytes": 140955,
+    "sha256": "54f48e7cad84592354fcaaff68c1d35095c101d5d4ef570cc9b5e4634b84e2a6"
+  },
+  "after": {
+    "bytes": 216188,
+    "gzipBytes": 207931,
+    "sha256": "3b470b868dccf636ea2741c9db39285830644ac46b98c833e0a7c23cbc33ff84"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3430,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8514
+      },
+      "bytes": 16159,
+      "psnr": 42.573
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 30456
+      },
+      "bytes": 47673,
+      "psnr": 33.949
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 9988
+      },
+      "bytes": 26471,
+      "psnr": 39.25
+    }
+  ]
+}

@@ -2,7 +2,8 @@ import * as THREE from '../../vendor/three/three.module.js';
 import {gridToWorld,terrainAt,hash,noise,smooth,roadSegments,isTrainingGround,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
 import {isChapterFivePilot} from './environment-ch5-pilot.js';
-import {hasRegionalWorld} from './environment-regional-world.js';
+import {hasRegionalWorld,regionalChapter} from './environment-regional-world.js';
+import {CAMP_WALL_MODELS,CAMP_WALL_CHAPTERS,worldAssetShown} from '../ui/world-catalog.js';
 
 // Authored terrain reads as landform, not as tile squares. Plateaus carry rock
 // outcrops on their slopes; rivers fill a channel under one water surface whose
@@ -12,6 +13,14 @@ import {hasRegionalWorld} from './environment-regional-world.js';
 // centre stays clear, and nothing here changes movement or visibility.
 const STONE_WALLS=new Set(['fortress','rome','accession','palmyra']),MUD_WALLS=new Set(['siege','desert']);
 export function wallStyle(profile){return STONE_WALLS.has(profile.setting)?'stone':MUD_WALLS.has(profile.setting)?'mudbrick':'timber';}
+/** The code-built parapet of a stone or mudbrick camp whose wall model stands (graphics plan, G3; camp-walls.js):
+ * a batch of its own, the model's fallback, so hiding it leaves the camp's terraces and kerbs. */
+export const CAMP_PARAPET_BATCHES=Object.freeze({stone:'camp wall parapet stone',mudbrick:'camp wall parapet mudbrick'});
+/** Whether a camp's wall model stands for its code-built parapet here (on the web, only where its download carries it). */
+export function campParapetModelled(e,profile){
+  const style=wallStyle(profile),model=CAMP_WALL_MODELS[style]?.wall,chapter=regionalChapter(e);
+  return style!=='timber'&&/-camp$/.test(e?.id??'')&&!!model&&!!CAMP_WALL_CHAPTERS[model]?.includes(chapter)&&worldAssetShown(model,chapter);
+}
 // A run of wall cells shares one face: north-south runs face east (the usual
 // enemy side), anything else faces north. Isolated cells follow the old edge.
 export function wallFace(e,x,y){const wall=(a,b)=>terrainAt(e,a,b)==='wall'&&a>=0&&b>=0&&a<e.width&&b<e.height;const vertical=wall(x,y-1)||wall(x,y+1),horizontal=wall(x-1,y)||wall(x+1,y);return vertical&&!horizontal?'east':'north';}
@@ -64,6 +73,8 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
   // Squared blocks of one material share a batch: wall courses, copings,
   // merlons, terrace faces and kerbs are one draw per stone (or mudbrick).
   const masonry=material=>material===m.brick?'squared mudbrick masonry':'squared stone masonry';
+  // Where a wall model stands for it (G3), a camp's parapet is a batch of its own.
+  const parapet=campParapetModelled(e,profile)?()=>CAMP_PARAPET_BATCHES[wallStyle(profile)]:masonry;
   if(profile.setting==='wetland'){
     const w=e.width*tileSize+12,d=e.height*tileSize+12,rows=96,g=p.geo(new THREE.PlaneGeometry(w,d,rows,rows));g.rotateX(-Math.PI/2);const pos=g.attributes.position,colors=[];
     const wet=(x,y)=>terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)))==='marsh'?1:0;
@@ -127,9 +138,9 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
         for(const row of [.28,.62,.96])place(0,[row,0],[length,.17,.07],'timber breastwork planks',m.darkWood,null,p.box);
       }else{
         const course=style==='stone'?.34:.28;
-        for(let row=0;row<3;row++)for(let u=-length/2+(row%2?.3:0);u<length/2-.05;u+=.6){const w=Math.min(.58,length/2-u);if(w<.12)continue;place(u+w/2,[course*(row+.5),0],[w-.03,course-.02,.58],masonry(material),material,tint(style==='stone'?'#cfc6b3':'#b88d68',u*7+row,x*3+y));}
-        place(0,[course*3+.05,0],[length,.1,.66],masonry(material),material);
-        for(let u=-length/2+.2;u<length/2;u+=.62)place(u,[course*3+.28,.13],[.34,.36,.36],masonry(material),material,tint(style==='stone'?'#d6cdb9':'#c09470',u*5,y));
+        for(let row=0;row<3;row++)for(let u=-length/2+(row%2?.3:0);u<length/2-.05;u+=.6){const w=Math.min(.58,length/2-u);if(w<.12)continue;place(u+w/2,[course*(row+.5),0],[w-.03,course-.02,.58],parapet(material),material,tint(style==='stone'?'#cfc6b3':'#b88d68',u*7+row,x*3+y));}
+        place(0,[course*3+.05,0],[length,.1,.66],parapet(material),material);
+        for(let u=-length/2+.2;u<length/2;u+=.62)place(u,[course*3+.28,.13],[.34,.36,.36],parapet(material),material,tint(style==='stone'?'#d6cdb9':'#c09470',u*5,y));
       }
     }
     if(type==='stone'){

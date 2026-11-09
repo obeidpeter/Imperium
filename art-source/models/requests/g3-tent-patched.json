@@ -1,0 +1,95 @@
+{
+  "id": "g3-tent-patched",
+  "status": "generated: awaiting review",
+  "chapters": [
+    1,
+    2,
+    3,
+    9,
+    12
+  ],
+  "use": "A contubernium's patched tent: pitched on the camps' tent lines, mixed by cell with the leather tent and the open tent.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A weathered Roman army leather tent for eight soldiers (a contubernium tent), about three metres long, two metres wide and one point eight metres high: a ridge tent of stitched goatskin panels on two upright poles and a ridge pole, low side walls, guy ropes to wooden pegs, its door flaps closed; patched with panels of lighter and darker hide sewn over old tears, its ridge sagging a little. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, camping tent, nylon, zip, modern tent",
+      "model_seed": 2611850,
+      "image_seed": 2611851,
+      "texture_seed": 2611852
+    }
+  },
+  "budget": {
+    "triangles": 4500,
+    "texture": 512,
+    "bytes": 270000,
+    "heightMetres": 1.8,
+    "minHeight": 1.62,
+    "maxHeight": 1.98,
+    "note": "Raised from 240,000 bytes at review: the compressed model is 267,056 bytes, most of it the geometry of its patched panels."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T14:05:51.594Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, camping tent, nylon, zip, modern tent",
+      "model_seed": 2611850,
+      "image_seed": 2611851,
+      "texture_seed": 2611852,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A weathered Roman army leather tent for eight soldiers (a contubernium tent), about three metres long, two metres wide and one point eight metres high: a ridge tent of stitched goatskin panels on two upright poles and a ridge pole, low side walls, guy ropes to wooden pegs, its door flaps closed; patched with panels of lighter and darker hide sewn over old tears, its ridge sagging a little. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9225,
+    "balanceSnapshotBefore": {
+      "balance": 9225,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "5b6e8cdb-3d53-4bd9-b768-5bdab6136bdf",
+      "state": "accepted",
+      "requestSha256": "5e14678c8a34a5d0faf82ac0f95c20ee440c71d0ffaaa6ae28e7cf028f3e086f"
+    },
+    "taskId": "d029539b-00cb-48b1-86d0-585a28402c39",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:08:46.268Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-tent-patched.glb",
+    "rawBytes": 44597648,
+    "rawSha256": "5032494a3402ae73f9caf3e0c3a0dfbe6a5e0b1f84a497bad273489cd394e8d7",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A weathered Roman army leather tent for eight soldiers (a contubernium tent), about three metres long, two metres wide and one point eight metres high: a ridge tent of stitched goatskin panels on two upright poles and a ridge pole, low side walls, guy ropes to wooden pegs, its door flaps closed; patched with panels of lighter and darker hide sewn over old tears, its ridge sagging a little. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611851,
+      "model_seed": 2611850,
+      "texture_seed": 2611852,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, camping tent, nylon, zip, modern tent",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T14:05:52.148468Z",
+    "tripoCompletedAt": "2026-11-09T14:08:40.371857Z",
+    "tripoRender": "art-source/models/raw/g3-tent-patched-tripo-render.webp"
+  }
+}

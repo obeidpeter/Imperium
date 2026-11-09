@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-archery-butt.glb",
+  "output": "assets/models/world/g3-archery-butt.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 339760,
+    "gzipBytes": 220571,
+    "sha256": "a960844cd637a64ff19f33e7a6a623657c6cced79fb1792636f75f52f68bb77d"
+  },
+  "after": {
+    "bytes": 304964,
+    "gzipBytes": 294470,
+    "sha256": "39e9603d5f5210638f259c3bd4964f35cb9afa9172c4ab30d926bf91139e6492"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4410,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 31224
+      },
+      "bytes": 35967,
+      "psnr": 35.851
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 60178
+      },
+      "bytes": 59125,
+      "psnr": 29.826
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13356
+      },
+      "bytes": 29650,
+      "psnr": 38.502
+    }
+  ]
+}

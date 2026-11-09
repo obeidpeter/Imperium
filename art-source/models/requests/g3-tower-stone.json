@@ -1,0 +1,92 @@
+{
+  "id": "g3-tower-stone",
+  "status": "generated: awaiting review",
+  "chapters": [
+    4,
+    9,
+    12
+  ],
+  "use": "A tower of the camp wall: on the stone-walled camps' wall corners and either side of their gateways.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A square Roman fort tower of coursed pale limestone, about two and a half metres wide on each side and six and a half metres high, with a small round-arched window on each face near the top, topped by a low pyramid roof of red clay tiles over an open fighting platform. Weathered stone with darker mortar joints. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, curtain wall, gate, door, castle, medieval, church, bell",
+      "model_seed": 2611810,
+      "image_seed": 2611811,
+      "texture_seed": 2611812
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 240000,
+    "heightMetres": 6.5,
+    "minHeight": 5.85,
+    "maxHeight": 7.15
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T13:55:25.191Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, curtain wall, gate, door, castle, medieval, church, bell",
+      "model_seed": 2611810,
+      "image_seed": 2611811,
+      "texture_seed": 2611812,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A square Roman fort tower of coursed pale limestone, about two and a half metres wide on each side and six and a half metres high, with a small round-arched window on each face near the top, topped by a low pyramid roof of red clay tiles over an open fighting platform. Weathered stone with darker mortar joints. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9305,
+    "balanceSnapshotBefore": {
+      "balance": 9305,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "ffe1fe4e-7e09-4730-be8f-c16293221477",
+      "state": "accepted",
+      "requestSha256": "9c79cb76ee09aa7381f23160eb1b54af5061982207ebd3ca3c13f7a3e742c3d4"
+    },
+    "taskId": "910700e0-04af-45a2-9555-c821a2a40697",
+    "status": "success",
+    "generatedAt": "2026-11-09T13:57:54.232Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-tower-stone.glb",
+    "rawBytes": 46694096,
+    "rawSha256": "8b5a8222e3dda7cacdd31698182868ff3014451d2352741c32c8d1536d6a8f4a",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A square Roman fort tower of coursed pale limestone, about two and a half metres wide on each side and six and a half metres high, with a small round-arched window on each face near the top, topped by a low pyramid roof of red clay tiles over an open fighting platform. Weathered stone with darker mortar joints. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611811,
+      "model_seed": 2611810,
+      "texture_seed": 2611812,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, curtain wall, gate, door, castle, medieval, church, bell",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T13:55:25.848560Z",
+    "tripoCompletedAt": "2026-11-09T13:57:47.579921Z",
+    "tripoRender": "art-source/models/raw/g3-tower-stone-tripo-render.webp"
+  }
+}

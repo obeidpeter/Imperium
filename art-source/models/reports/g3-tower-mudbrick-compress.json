@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-tower-mudbrick.glb",
+  "output": "assets/models/world/g3-tower-mudbrick.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 188140,
+    "gzipBytes": 132642,
+    "sha256": "7edaef2c78003998ac20f9601620d3437c75a89dcd01c8c0beaf19c09ca437be"
+  },
+  "after": {
+    "bytes": 188520,
+    "gzipBytes": 181359,
+    "sha256": "9e2dc7f965ce1d7d4b57834326ab0b33e1c94d28a8e3caf659684735b963324b"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2938,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 17334
+      },
+      "bytes": 26498,
+      "psnr": 38.962
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 30002
+      },
+      "bytes": 45923,
+      "psnr": 34.728
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7256
+      },
+      "bytes": 15771,
+      "psnr": 36.315
+    }
+  ]
+}

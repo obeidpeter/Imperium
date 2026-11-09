@@ -4,10 +4,10 @@ import {campEntrance} from './environment-staging.js';
 // Camp dressing uses the same immutable placement description as the model
 // loader. These are visual service courts, never new destinations or blockers.
 export function campServiceForProp(id){
-  if(/litter|laundry/.test(id))return 'valetudinarium';
-  if(/table|cabinet|eagle|brazier|carriage|officers/.test(id))return 'principia';
-  if(/bread|cook|loom|market|pottery|amphora|beehive|household/.test(id))return 'canabae';
-  if(/grindstone|woodpile|baskets|brick|training/.test(id))return 'drill';
+  if(/litter|laundry|hospital/.test(id))return 'valetudinarium';
+  if(/table|cabinet|eagle|brazier|carriage|officers|praetorium|tribunal|altar|parley|pavilion-east/.test(id))return 'principia';
+  if(/bread|cook|loom|market|pottery|amphora|beehive|household|oven|shade/.test(id))return 'canabae';
+  if(/grindstone|woodpile|baskets|brick|training|pilum|archery/.test(id))return 'drill';
   return 'quartermaster';
 }
 const overlaps=(a,b)=>a.maxX>b.minX&&a.minX<b.maxX&&a.maxZ>b.minZ&&a.minZ<b.maxZ;

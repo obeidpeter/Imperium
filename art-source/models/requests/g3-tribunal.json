@@ -1,0 +1,92 @@
+{
+  "id": "g3-tribunal",
+  "status": "generated: awaiting review",
+  "chapters": [
+    1,
+    9,
+    12
+  ],
+  "use": "The tribunal for addressing the troops, beside the principia, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman army tribunal for addressing the troops: a square raised platform of stacked turf blocks faced with timber planks, about four metres on each side and one and a half metres high, with a short flight of timber steps at the front and a plain folding camp chair on top. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, throne, stage, modern stage, podium microphone",
+      "model_seed": 2611900,
+      "image_seed": 2611901,
+      "texture_seed": 2611902
+    }
+  },
+  "budget": {
+    "triangles": 2000,
+    "texture": 512,
+    "bytes": 200000,
+    "heightMetres": 2.3,
+    "minHeight": 2.07,
+    "maxHeight": 2.53
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T14:18:26.887Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, throne, stage, modern stage, podium microphone",
+      "model_seed": 2611900,
+      "image_seed": 2611901,
+      "texture_seed": 2611902,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman army tribunal for addressing the troops: a square raised platform of stacked turf blocks faced with timber planks, about four metres on each side and one and a half metres high, with a short flight of timber steps at the front and a plain folding camp chair on top. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9125,
+    "balanceSnapshotBefore": {
+      "balance": 9125,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "56b71c59-51bc-48dc-b280-d6ddeff72917",
+      "state": "accepted",
+      "requestSha256": "35fc634fd2c1c7d138b05493081dbda5bbd9a67fa8732f0a5d370929e2d947e7"
+    },
+    "taskId": "07accf57-028a-4c95-9b3c-5292bda4f558",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:20:55.882Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-tribunal.glb",
+    "rawBytes": 45600604,
+    "rawSha256": "bff9c766360d0e946784bc3da9f7d0f5e4bd4be293dc56261fa62fa0ff318c07",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman army tribunal for addressing the troops: a square raised platform of stacked turf blocks faced with timber planks, about four metres on each side and one and a half metres high, with a short flight of timber steps at the front and a plain folding camp chair on top. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611901,
+      "model_seed": 2611900,
+      "texture_seed": 2611902,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, throne, stage, modern stage, podium microphone",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T14:18:27.312500Z",
+    "tripoCompletedAt": "2026-11-09T14:20:51.793404Z",
+    "tripoRender": "art-source/models/raw/g3-tribunal-tripo-render.webp"
+  }
+}

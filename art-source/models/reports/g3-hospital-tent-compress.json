@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-hospital-tent.glb",
+  "output": "assets/models/world/g3-hospital-tent.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 225448,
+    "gzipBytes": 153939,
+    "sha256": "9d4fabb9f0e76263501cadad127381b19de7d1106250dd3df40984893149c4c0"
+  },
+  "after": {
+    "bytes": 231220,
+    "gzipBytes": 223060,
+    "sha256": "d857083c97d6e069c94745a7007cbf2b656a928f57e87705791c6c6e97cf1833"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3430,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8296
+      },
+      "bytes": 17184,
+      "psnr": 43.486
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 33716
+      },
+      "bytes": 54028,
+      "psnr": 34.217
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 20652
+      },
+      "bytes": 36451,
+      "psnr": 36.856
+    }
+  ]
+}

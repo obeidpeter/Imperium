@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-pilum-rack.glb",
+  "output": "assets/models/world/g3-pilum-rack.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 148096,
+    "gzipBytes": 113937,
+    "sha256": "f8acf60488f5cb41789f558b75629570beae2dfdccbebc50ee6713e573b51e35"
+  },
+  "after": {
+    "bytes": 175076,
+    "gzipBytes": 169665,
+    "sha256": "742c5ed5ed2a84ab38eccc115076d5205df863c5c0fad790db1780b132b02f0f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 1960,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7444
+      },
+      "bytes": 16160,
+      "psnr": 41.451
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 30578
+      },
+      "bytes": 51864,
+      "psnr": 34.319
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 23918
+      },
+      "bytes": 40082,
+      "psnr": 30.156
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-gate-stone.glb",
+  "output": "assets/models/world/g3-gate-stone.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 184108,
+    "gzipBytes": 145125,
+    "sha256": "10b21a4f9da2b0d8f872e9c7eb1845b8054d14898b29397774d59c4319a4d2aa"
+  },
+  "after": {
+    "bytes": 188016,
+    "gzipBytes": 182312,
+    "sha256": "259b483c034a39bfe74d745564afc232f8a478b204fe499d07c3575e55b70e79"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2450,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 33162
+      },
+      "bytes": 38304,
+      "psnr": 34.775
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 43628
+      },
+      "bytes": 54744,
+      "psnr": 32.717
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 4836
+      },
+      "bytes": 18756,
+      "psnr": 44.778
+    }
+  ]
+}

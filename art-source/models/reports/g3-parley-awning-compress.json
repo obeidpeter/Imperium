@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g3-parley-awning.glb",
+  "output": "assets/models/world/g3-parley-awning.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 167992,
+    "gzipBytes": 114386,
+    "sha256": "4c98092f6ab0d50e36c5996b64fe5f5590d0b2d6e61b9d97e5c2b6710d7d2fe0"
+  },
+  "after": {
+    "bytes": 184808,
+    "gzipBytes": 177801,
+    "sha256": "47ed3d43818f1ce58027ded50343478e9a279b4d769aa322602fccfdfd6f2c32"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2450,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 5638
+      },
+      "bytes": 11994,
+      "psnr": 44.684
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 27270
+      },
+      "bytes": 48450,
+      "psnr": 35.386
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 15264
+      },
+      "bytes": 32129,
+      "psnr": 39.686
+    }
+  ]
+}

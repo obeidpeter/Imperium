@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-hospital-tent.glb",
+    "bytes": 45392900,
+    "sha256": "45bbae873e05c39f2df312515731fe42174920636b159e43112f24ea0eec9a4d",
+    "triangles": 1466824
+  },
+  "output": {
+    "path": "assets/models/world/g3-hospital-tent.glb",
+    "bytes": 225448,
+    "sha256": "9d4fabb9f0e76263501cadad127381b19de7d1106250dd3df40984893149c4c0",
+    "triangles": 3430
+  },
+  "settings": {
+    "triangles": 3500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 270.0
+  },
+  "scale": 5.84727951717377,
+  "sizeMetres": {
+    "width": 5.7835,
+    "height": 2.4,
+    "depth": 3.4841
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_5f96d8b5-f04e-471b-96bc-6f63310ac0b4",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_5f96d8b5-f04e-471b-96bc-6f63310ac0b4",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_5f96d8b5-f04e-471b-96bc-6f63310ac0b4",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

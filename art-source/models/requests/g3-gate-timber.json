@@ -1,0 +1,94 @@
+{
+  "id": "g3-gate-timber",
+  "status": "generated: awaiting review",
+  "chapters": [
+    1,
+    2,
+    3,
+    7,
+    10
+  ],
+  "use": "A camp gateway: standing between the timber camps' gate towers, over the road out.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman army camp's timber gateway, about ten metres wide and five metres high: two massive squared oak posts, one at each side, joined at the top by a timber walkway bridge with a plank parapet, the wide passage beneath it open and clear, with no doors. Weathered grey-brown timber, pegged and bound with iron straps. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, doors, gate leaves, flanking towers, palisade fence, torii, japanese, shrine",
+      "model_seed": 2611860,
+      "image_seed": 2611861,
+      "texture_seed": 2611862
+    }
+  },
+  "budget": {
+    "triangles": 2500,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 5,
+    "minHeight": 4.5,
+    "maxHeight": 5.5
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T14:08:47.247Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, doors, gate leaves, flanking towers, palisade fence, torii, japanese, shrine",
+      "model_seed": 2611860,
+      "image_seed": 2611861,
+      "texture_seed": 2611862,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman army camp's timber gateway, about ten metres wide and five metres high: two massive squared oak posts, one at each side, joined at the top by a timber walkway bridge with a plank parapet, the wide passage beneath it open and clear, with no doors. Weathered grey-brown timber, pegged and bound with iron straps. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9205,
+    "balanceSnapshotBefore": {
+      "balance": 9205,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "19c1d1cb-0de6-4b90-b320-64c49fc32dc6",
+      "state": "accepted",
+      "requestSha256": "853f20d70b236e9afd680697f93411c2c27e9f8449dca9c76534719bf7af10f0"
+    },
+    "taskId": "5d1d07bc-ab30-4db9-a9fa-4e0e63625049",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:10:50.981Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-gate-timber.glb",
+    "rawBytes": 47350632,
+    "rawSha256": "ca37b10059b05a703a1eb3cb9d1d21b194efeefd446ec7adfe972c0e0f741d0d",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman army camp's timber gateway, about ten metres wide and five metres high: two massive squared oak posts, one at each side, joined at the top by a timber walkway bridge with a plank parapet, the wide passage beneath it open and clear, with no doors. Weathered grey-brown timber, pegged and bound with iron straps. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611861,
+      "model_seed": 2611860,
+      "texture_seed": 2611862,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, doors, gate leaves, flanking towers, palisade fence, torii, japanese, shrine",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T14:08:47.889791Z",
+    "tripoCompletedAt": "2026-11-09T14:10:42.278725Z",
+    "tripoRender": "art-source/models/raw/g3-gate-timber-tripo-render.webp"
+  }
+}

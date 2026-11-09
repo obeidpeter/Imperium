@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-pavilion-shade.glb",
+    "bytes": 45880284,
+    "sha256": "44aa7ed47339383b9585c1a9c2c15fe2f36c2b04b53ad8ae73e1aba0a964a6c4",
+    "triangles": 1430165
+  },
+  "output": {
+    "path": "assets/models/world/g3-pavilion-shade.glb",
+    "bytes": 299932,
+    "sha256": "d3f487766afde31a2c318e75ae27461721d786d7f2d17a897782813469573457",
+    "triangles": 4269
+  },
+  "settings": {
+    "triangles": 2500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 4.091765382456974,
+  "sizeMetres": {
+    "width": 3.9727,
+    "height": 2.5,
+    "depth": 3.9473
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_f1b1c516-cb2c-4b32-93eb-8f4d05d1713a",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_f1b1c516-cb2c-4b32-93eb-8f4d05d1713a",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_f1b1c516-cb2c-4b32-93eb-8f4d05d1713a",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-field-oven.glb",
+    "bytes": 44689196,
+    "sha256": "26d5fedbb0ffc908f4f4e34216764b04449d54268cd2b47ce7e0c565f3a69a5f",
+    "triangles": 1426986
+  },
+  "output": {
+    "path": "assets/models/world/g3-field-oven.glb",
+    "bytes": 181864,
+    "sha256": "0cba39788510f42a0c3a6d363f2764662a11f8def43e77d4233347b6da7b6478",
+    "triangles": 2938
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 270.0
+  },
+  "scale": 2.1920149707399754,
+  "sizeMetres": {
+    "width": 2.1906,
+    "height": 1.4,
+    "depth": 1.8272
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_2f590cf3-aa3d-4a69-923b-88bb4a170350",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_2f590cf3-aa3d-4a69-923b-88bb4a170350",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_2f590cf3-aa3d-4a69-923b-88bb4a170350",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

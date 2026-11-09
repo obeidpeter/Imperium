@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-gate-stone.glb",
+    "bytes": 45784244,
+    "sha256": "8161bb6798571b225c74a1d7fa5fe3a643c590f6073fcbff1e1306e38dcac544",
+    "triangles": 1432600
+  },
+  "output": {
+    "path": "assets/models/world/g3-gate-stone.glb",
+    "bytes": 184108,
+    "sha256": "10b21a4f9da2b0d8f872e9c7eb1845b8054d14898b29397774d59c4319a4d2aa",
+    "triangles": 2450
+  },
+  "settings": {
+    "triangles": 2500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 5.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 90.0
+  },
+  "scale": 6.183104057386369,
+  "sizeMetres": {
+    "width": 6.1442,
+    "height": 5.0,
+    "depth": 3.4665
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_1a896afe-35eb-4065-9403-e6c727b6a832",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_1a896afe-35eb-4065-9403-e6c727b6a832",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_1a896afe-35eb-4065-9403-e6c727b6a832",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

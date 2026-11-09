@@ -2,6 +2,32 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G3: the stone and mudbrick camps walled, gates, tents and the rest of the camps' furniture ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g3-9-november))
+
+The rest of G3: eighteen Tripo models, made for 380 credits after the pilot's review in the game. G3 is done at 560 of its 2,400 credits.
+
+- **The stone and mudbrick camps' walls:**
+  - a coursed limestone wall, square limestone towers under tiled roofs and a round-arched gate with a walkway (Chapters IV, IX and XII);
+  - a plastered mudbrick wall with stepped crenellations and squat mudbrick towers (Chapters V and VI);
+  - like the palisade, each wall stands along its camp's wall cells, stretched a little to fill each straight run, and the rules and every route are unchanged;
+  - the code-built parapet stays the wall's fallback, on Performance and until the model is ready. It is now drawn apart from the camps' terraces and kerbs, so hiding it hides nothing else.
+- **Gates:** a timber gate of two iron-banded posts under a braced lintel stands over each gateway of the timber camps (I, II, III, VII and X), and the stone gate over those of the stone camps. A gate spans its gateway, stretched by at most 1.35 times its width: Chapters I–III's wide gateways keep open ground either side.
+- **The tent lines** mix two more goatskin tents with Chapter V's leather tent, a quarter of the pitches each: one with its door tied open on the men's packs and blankets, and one patched in lighter and darker hide. Each tent model hides only its own pitches' code-built tents.
+- **More of the camps' furniture**, beyond the board beside the service each belongs to:
+  - by the principia: the commander's red leather pavilion, a raised tribunal with a folding chair, a limestone altar, a linen awning over a table and two stools for a parley (VIII, IX), and a striped linen pavilion in the eastern style (VI, IX);
+  - by the valetudinarium: a hospital tent with one wall rolled up on two camp beds;
+  - by the drill ground: a rack of pila with a red oval shield, and a straw archery butt;
+  - by the canabae: a domed clay field oven, and a reed-mat shade over a carpeted floor (VI, IX).
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web:
+  - Chapters I, VII, VIII and XII take none of these models;
+  - Chapter IX leaves out the two new tents and stands at 27.51 of its 28 MB;
+  - Chapter I's 3D download is unchanged at 17.87 of 18 MB, and the complete web game is 70.59 of 80 MB.
+- **Checks:** `tests/graphics-g3.test.mjs` now also covers:
+  - every camp's wall style, with a gate over each gateway, stretched within its limit;
+  - the stone camps' instanced wall, towers and gates, and the parapet's fallback;
+  - the tent lines' mix, each tent variant downloading only with the chapters whose pitches pick it, and each model over its own code-built tents;
+  - each chapter's web and desktop packs for all 26 of G3's models.
+
 ### Release G3's pilot: the timber camps walled, and the camps furnished ([the plan](docs/graphics-tripo-plan.md#g3s-pilot-9-november))
 
 Eight Tripo models, made for 180 credits and reviewed in the game before the rest of G3 is generated:

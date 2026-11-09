@@ -1,0 +1,91 @@
+{
+  "id": "g3-pavilion-east",
+  "status": "generated: awaiting review",
+  "chapters": [
+    6,
+    9
+  ],
+  "use": "An officers' pavilion of the eastern camps, beside the principia, beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A pavilion of the Roman officers' camps in Syria: a square tent of striped linen in faded madder red and cream on a timber frame, about four metres on each side and three metres high, with a gently domed roof, a fringed valance and its front curtains looped open on a shaded floor of patterned carpets and cushions, a brass lamp hanging inside. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, circus tent, carnival, modern tent, nylon",
+      "model_seed": 2611930,
+      "image_seed": 2611931,
+      "texture_seed": 2611932
+    }
+  },
+  "budget": {
+    "triangles": 3500,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 3,
+    "minHeight": 2.7,
+    "maxHeight": 3.3
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T14:25:33.302Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, circus tent, carnival, modern tent, nylon",
+      "model_seed": 2611930,
+      "image_seed": 2611931,
+      "texture_seed": 2611932,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A pavilion of the Roman officers' camps in Syria: a square tent of striped linen in faded madder red and cream on a timber frame, about four metres on each side and three metres high, with a gently domed roof, a fringed valance and its front curtains looped open on a shaded floor of patterned carpets and cushions, a brass lamp hanging inside. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 9065,
+    "balanceSnapshotBefore": {
+      "balance": 9065,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "bb4c25f4-9343-47bf-adba-28fd936c819e",
+      "state": "accepted",
+      "requestSha256": "3dd3e462b2ac4cb022e4c0f7744e59a1718346a6bba2c6947cdf53004263b1d1"
+    },
+    "taskId": "a1c42151-adc2-4d6b-a210-80a18a4c07b0",
+    "status": "success",
+    "generatedAt": "2026-11-09T14:29:15.182Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g3-pavilion-east.glb",
+    "rawBytes": 45981244,
+    "rawSha256": "075e88da3a52f3ad9bfcdaf6e9514ed53ba5d386f89c135a755610984dcb505a",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A pavilion of the Roman officers' camps in Syria: a square tent of striped linen in faded madder red and cream on a timber frame, about four metres on each side and three metres high, with a gently domed roof, a fringed valance and its front curtains looped open on a shaded floor of patterned carpets and cushions, a brass lamp hanging inside. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and strong readable silhouette, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611931,
+      "model_seed": 2611930,
+      "texture_seed": 2611932,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, circus tent, carnival, modern tent, nylon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T14:25:33.704924Z",
+    "tripoCompletedAt": "2026-11-09T14:29:08.532670Z",
+    "tripoRender": "art-source/models/raw/g3-pavilion-east-tripo-render.webp"
+  }
+}

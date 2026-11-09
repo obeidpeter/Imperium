@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-tower-mudbrick.glb",
+    "bytes": 46778044,
+    "sha256": "819193d88ef0a1f8267d8e0e333029190be24a4046811ac96953df9f791c618e",
+    "triangles": 1495942
+  },
+  "output": {
+    "path": "assets/models/world/g3-tower-mudbrick.glb",
+    "bytes": 188140,
+    "sha256": "7edaef2c78003998ac20f9601620d3437c75a89dcd01c8c0beaf19c09ca437be",
+    "triangles": 2938
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 3.75,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.735436948541985,
+  "sizeMetres": {
+    "width": 3.4971,
+    "height": 3.75,
+    "depth": 3.4912
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_c52513a3-9d03-401d-9dff-235a0e66abc2",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_c52513a3-9d03-401d-9dff-235a0e66abc2",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_c52513a3-9d03-401d-9dff-235a0e66abc2",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

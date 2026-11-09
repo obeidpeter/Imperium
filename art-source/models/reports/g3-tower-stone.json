@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-tower-stone.glb",
+    "bytes": 46694096,
+    "sha256": "8b5a8222e3dda7cacdd31698182868ff3014451d2352741c32c8d1536d6a8f4a",
+    "triangles": 1480696
+  },
+  "output": {
+    "path": "assets/models/world/g3-tower-stone.glb",
+    "bytes": 192872,
+    "sha256": "cab63524743fe8b1d783bfa197eed5d166889b5b125dd6881b9aa9056db9e82d",
+    "triangles": 2938
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 6.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 6.536934744847001,
+  "sizeMetres": {
+    "width": 3.5212,
+    "height": 6.5,
+    "depth": 3.4972
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_910700e0-04af-45a2-9555-c821a2a40697",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_910700e0-04af-45a2-9555-c821a2a40697",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_910700e0-04af-45a2-9555-c821a2a40697",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

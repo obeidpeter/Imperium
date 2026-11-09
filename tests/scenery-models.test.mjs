@@ -215,7 +215,7 @@ test('a preload stays pinned under unrelated warm-up pressure and needs no late 
     return root;
   };
   await preloadSceneryModels(e,{chapter:5,load});
-  for(let i=0;i<20;i++)await warmSceneryModel(`test-pressure-${i}`,load);
+  for(let i=0;i<SCENERY_IDLE_MASTERS;i++)await warmSceneryModel(`test-pressure-${i}`,load);
   assert.equal(sceneryResidency().idle,SCENERY_IDLE_MASTERS,'idle pressure is bounded while the ten pilot assets remain pinned');
   let prepared=0;const models=createSceneryModels(new T.Scene(),e,{chapter:5,prepare:async()=>{prepared++;}});
   assert.equal(models.group.children.length,placements.length,'all preloaded instances exist immediately behind the veil');

@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g3-tent-patched.glb",
+    "bytes": 44597648,
+    "sha256": "5032494a3402ae73f9caf3e0c3a0dfbe6a5e0b1f84a497bad273489cd394e8d7",
+    "triangles": 1415619
+  },
+  "output": {
+    "path": "assets/models/world/g3-tent-patched.glb",
+    "bytes": 269616,
+    "sha256": "cdff76b14d7acb0c3aa92f4a86dbd60af5680dea94b77c1877afc0ca83a876d4",
+    "triangles": 4410
+  },
+  "settings": {
+    "triangles": 4500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.8528850009839006,
+  "sizeMetres": {
+    "width": 2.8403,
+    "height": 1.8,
+    "depth": 2.5986
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_d029539b-00cb-48b1-86d0-585a28402c39",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_d029539b-00cb-48b1-86d0-585a28402c39",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_d029539b-00cb-48b1-86d0-585a28402c39",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}
