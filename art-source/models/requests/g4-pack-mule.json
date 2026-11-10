@@ -1,0 +1,100 @@
+{
+  "id": "g4-pack-mule",
+  "status": "G4 pilot: processed, compressed and reviewed; ships as g4-pack-mule, in Chapters II, III, IV and VI (on the web in Chapters II and III only)",
+  "chapters": [
+    2,
+    3,
+    4,
+    6
+  ],
+  "use": "A pack mule standing beside the broken baggage cart or the handcart in the quartermaster's court beyond the board (Chapters II, III, IV and VI). Release G4's pilot (docs/graphics-tripo-plan.md). Step 0's calibration mule (cal-mule), shipped from its own request with the calibration's task ID and digest, so its credits are not spent twice; a static model, not bound to the horse skeleton.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman army pack mule of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, long ears upright, tail hanging straight down, symmetrical. A sturdy mule about 1.35 metres at the withers with a dark bay-brown coat, a pale muzzle and belly and a short upright mane, a plain leather headstall with its lead rope coiled on the saddle, and a wooden pack saddle on a woollen pad carrying two evenly lashed bundles of baggage, one on each side. Realistic proportions, anatomically accurate. No rider, no cart, no shafts, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "model_seed": 2611086,
+      "image_seed": 2611087,
+      "texture_seed": 2611088
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 330000,
+    "heightMetres": 1.75,
+    "minHeight": 1.58,
+    "maxHeight": 1.93,
+    "note": "The calibration's mule, about 1.35 metres at the withers, its ears to about 1.75 metres."
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-calibration, shipped by graphics-g4",
+    "creditCeiling": 250,
+    "expectedCredits": 55,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-08T20:19:31.901Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "model_seed": 2611086,
+      "image_seed": 2611087,
+      "texture_seed": 2611088,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman army pack mule of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, long ears upright, tail hanging straight down, symmetrical. A sturdy mule about 1.35 metres at the withers with a dark bay-brown coat, a pale muzzle and belly and a short upright mane, a plain leather headstall with its lead rope coiled on the saddle, and a wooden pack saddle on a woollen pad carrying two evenly lashed bundles of baggage, one on each side. Realistic proportions, anatomically accurate. No rider, no cart, no shafts, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 10610,
+    "balanceSnapshotBefore": {
+      "balance": 10610,
+      "frozen": 90
+    },
+    "submission": {
+      "id": "79c2d4b9-22f3-4ca3-bf12-2947668d9824",
+      "state": "accepted",
+      "requestSha256": "8557ddd76162e49d7f42c874156209555104d4097a6d35d9e7662d756394c98a"
+    },
+    "taskId": "f8179353-4ce1-4cbf-a39e-1f3a51a59a67",
+    "status": "success",
+    "generatedAt": "2026-11-08T20:21:44.888Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/cal-mule.glb",
+    "rawBytes": 45513812,
+    "rawSha256": "81440102004a62b4f0be302e58f3dc29d25c01fdfd67367a6cb0b592a2acfacb",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman army pack mule of the mid-3rd century AD standing square for rigging: all four legs straight and vertical, evenly spaced, head raised and facing forward, long ears upright, tail hanging straight down, symmetrical. A sturdy mule about 1.35 metres at the withers with a dark bay-brown coat, a pale muzzle and belly and a short upright mane, a plain leather headstall with its lead rope coiled on the saddle, and a wooden pack saddle on a woollen pad carrying two evenly lashed bundles of baggage, one on each side. Realistic proportions, anatomically accurate. No rider, no cart, no shafts, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611087,
+      "model_seed": 2611086,
+      "texture_seed": 2611088,
+      "model_version": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-08T20:19:32.280320Z",
+    "tripoCompletedAt": "2026-11-08T20:21:40.201741Z",
+    "tripoRender": "art-source/models/raw/cal-mule-tripo-render.webp",
+    "reusedFrom": "cal-mule",
+    "reuse": "Paid in step 0's calibration (20 credits for the model; the free rig check refused a quadruped rig, so no rig or walk was bought), recorded in art-source/models/graphics-calibration-credits.json; release G4 spends nothing on it. The raw download is the calibration's own file, by the same task ID and SHA-256."
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "Step 0's calibration mule: a bay mule under a wooden pack saddle on a woollen pad, with two bundles lashed on each side and a headstall, 2.14 m long and 1.75 m to its ear tips. In Chapter III it stands beside the handcart, and in Chapters II and VI beside the broken cart, its pack and bundles plain."
+  }
+}

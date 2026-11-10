@@ -12,6 +12,7 @@
 import {GROUND_FILES} from './ground-layers.js';
 import {PANORAMA_REGIONS,panoramaChapters,panoramaFile} from './panoramas.js';
 import {CAMP_TENT_PITCHES} from '../data/camp-regions.js';
+import {HORSE_BODIES,horseBodyUrl} from './actor-body-catalog.js';
 import {CONFIG} from '../config.js';
 
 export const WORLD_KINDS=Object.freeze(['prop','landmark','kit','texture','panorama']);
@@ -188,6 +189,42 @@ const G5_WEB_ROOM=Object.freeze({1:Object.freeze([]),4:Object.freeze(['g5-cart',
   6:Object.freeze(['g5-cart-east','g5-cart-load','g5-barricade','g5-brazier','g5-debris-east']),7:Object.freeze([]),8:Object.freeze([]),
   9:Object.freeze(['g5-carroballista','g5-onager']),10:Object.freeze(['g5-carroballista','g5-barricade']),12:Object.freeze(['g5-barricade'])});
 const g5=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,chapters.filter(c=>!G5_WEB_ROOM[c]||G5_WEB_ROOM[c].includes(id)));
+// Animals (graphics plan, G4). Each stands with a piece of a camp's furniture or of life about it, beside that piece in
+// its court beyond the board, or by its spot in the baggage line beyond a field's southern edge, and only where the piece
+// itself stands (environment-regional-world.js): horses tethered at the horse lines, a pair of oxen by the ox cart, a pair
+// of mules by the covered carriage (the carpentum's usual team), a camel by the camel gear, a pack mule by the broken cart
+// and the handcart, and a dog by the ovens. In the piece's own frame, `shift` moves the piece aside to make room, and each
+// animal is [its model, x, z, yaw]: the middle of its footprint, and its bearing, turned from facing along the piece's +x.
+// With `across`, they stand on the side of the piece away from the board, where the camera looks in: where the piece's
+// own -z points toward the board, they are mirrored across it. The generated animals face their own +x; a horse is the
+// Roman horse's coat (actor-body-catalog.js), which those chapters already download for their cavalry, baked standing in
+// its rest pose (scenery-models.js), and faces its +z.
+export const CAMP_ANIMALS=Object.freeze(Object.fromEntries(Object.entries({
+  'g3-horse-lines':{shift:[-1,0],animals:[['horse-roman',1,-.92,Math.PI+.03],['horse-roman',.97,.02,Math.PI-.02],['horse-roman',1.02,.94,Math.PI+.01]]},
+  'life-ox-cart':{across:true,shift:[0,.65],animals:[['g4-ox',.05,-.68,.02],['g4-ox',-.05,-1.7,-.02]]},
+  'life-travel-carriage':{across:true,shift:[0,.45],animals:[['g4-mule',.15,-.85,.02],['g4-mule',-.05,-1.65,-.03]]},
+  'life-camel-gear':{across:true,shift:[0,.75],animals:[['g4-camel',0,-.9,Math.PI]]},
+  'broken-baggage-cart':{across:true,shift:[0,.45],animals:[['g4-pack-mule',.1,-1.15,.04]]},
+  'life-handcart':{across:true,shift:[0,.45],animals:[['g4-pack-mule',-.1,-1.2,Math.PI-.05]]},
+  'life-bread-oven':{across:true,animals:[['g4-dog',.9,-1.6,.35]]},
+  'g3-field-oven':{across:true,animals:[['g4-dog',.7,-1.45,.5]]}
+}).map(([id,{shift=[0,0],across=false,animals}])=>[id,Object.freeze({shift:Object.freeze(shift),across,animals:Object.freeze(animals.map(a=>Object.freeze(a)))})])));
+// The coats among them, and the turn that sets a coat (facing its +z) to face +x like the generated animals.
+export const ANIMAL_COATS=Object.freeze({'horse-roman':HORSE_BODIES['horse-roman']});
+export const ANIMAL_COAT_TURN=Math.PI/2;
+const hostChapters=id=>CAMP_PROP_CHAPTERS[id]??LIFE_PROP_CHAPTERS[id]??REGIONAL_PROP_CHAPTERS[id]??[];
+// The chapters whose scenes set out each generated animal: those of the pieces it stands with.
+export const ANIMAL_CHAPTERS=Object.freeze(Object.fromEntries([...new Set(Object.values(CAMP_ANIMALS).flatMap(h=>h.animals.map(([model])=>model)))]
+  .filter(model=>!ANIMAL_COATS[model]).map(model=>[model,Object.freeze([...new Set(Object.entries(CAMP_ANIMALS)
+    .filter(([,h])=>h.animals.some(([m])=>m===model)).flatMap(([host])=>hostChapters(host)))].sort((a,b)=>a-b))])));
+// What a chapter's web download has room for of G4's animals (presentation-budget.js): Chapters II and III take theirs,
+// and XI its mules; the others had too little room left after G3 and G5, so their pieces stand alone on the web. The
+// horses need no room: their coat is already in the download.
+const G4_WEB_ROOM=Object.freeze({2:Object.freeze(['g4-pack-mule','g4-dog']),3:Object.freeze(['g4-pack-mule','g4-dog']),11:Object.freeze(['g4-mule'])});
+const g4=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,chapters.filter(c=>G4_WEB_ROOM[c]?.includes(id)));
+/** The model an animal of a chapter's scene stands as: a generated animal's, or the coat its chapter's cavalry downloads. */
+export const animalModelUrl=(model,chapter)=>ANIMAL_COATS[model]?(ANIMAL_COATS[model].chapters.includes(chapter)?horseBodyUrl(model):null)
+  :(ANIMAL_CHAPTERS[model]?.includes(chapter)?`assets/models/world/${model}.glb`:null);
 // The generated landmarks on the chapters' horizons (release 9), with the chapters whose
 // LANDMARK_LAYOUT (world-layouts.js) names each. The Colosseum keeps its code-built outline.
 export const LANDMARK_CHAPTERS=Object.freeze(Object.fromEntries(Object.entries({
@@ -245,6 +282,7 @@ export const WORLD_CATALOG=Object.freeze({
   ...Object.fromEntries(Object.entries(FIELD_OBJECT_MODELS).map(([id,m])=>[id,g5(id,m.chapters)])),
   ...Object.fromEntries(Object.entries(BATTLE_PROP_MODELS).map(([id,m])=>[id,g5(id,encounterChapters(m.encounters))])),
   ...Object.fromEntries(Object.entries(AFTERMATH_DEBRIS_MODELS).map(([id,m])=>[id,g5(id,m.chapters)])),
+  ...Object.fromEntries(Object.entries(ANIMAL_CHAPTERS).map(([id,chapters])=>[id,g4(id,chapters)])),
   ...Object.fromEntries(Object.entries(LANDMARK_CHAPTERS).map(([id,chapters])=>[id,asset('landmark',[`assets/models/landmarks/${id}.glb`],chapters)])),
   // The ground's photographed layers (ground-layers.js), shared by every chapter.
   'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12]),

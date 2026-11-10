@@ -85,7 +85,10 @@ function campWallPlacements(e,chapter,tileSize){
 export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
   // On the web, a chapter leaves out the generated scenery its download has no room for (world-catalog.js): the
   // code-built stand-ins stay where those models would stand. `desktop` overrides the build's own platform (tests).
-  return chapterScenery(e,{chapter,tileSize,withoutGate,desktop}).filter(p=>worldAssetShown(p.id,chapter,desktop===undefined?{}:{desktop}));
+  const shown=chapterScenery(e,{chapter,tileSize,withoutGate,desktop}).filter(p=>worldAssetShown(p.id,chapter,desktop===undefined?{}:{desktop}));
+  // An animal stands only with the piece it belongs to (G4): where the piece is left out, so is the animal.
+  const hosts=new Set(shown.map(p=>p.id));
+  return shown.filter(p=>!p.host||hosts.has(p.host));
 }
 // Where the scene's other scenery stands, as {minX, maxX, minZ, maxZ}, for a battle's set pieces to keep clear of: a
 // building by its component's footprint, a placed prop by the room it is fitted within.
@@ -113,10 +116,26 @@ function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
   return withBattleProps(e,[...props,...getChapterFiveKitPlacements(e,{chapter,tileSize}).map((p,i)=>({...p,key:`${p.id}:${p.component}:${i}`,url:sceneryModelUrl(p.id)})),...campWallPlacements(e,chapter,tileSize)],tileSize,chapter);
 }
 
+/** A skinned model stood as scenery (a horse's coat at the horse lines, G4): each of its skinned surfaces becomes a
+ * plain mesh in its rest pose, which is where the skeleton stands as it loads, so the vertices need no change; the
+ * far-off overview surface is left out, as scenery has no level of detail; the bones stay as empty nodes. Plain
+ * meshes share the scenery's shader programs (model-materials.js). A model with no skin is returned as it is. */
+export function standSkinnedModel(root){
+  const skinned=[];root?.traverse(o=>{if(o.isSkinnedMesh)skinned.push(o);});
+  for(const mesh of skinned){
+    const parent=mesh.parent;if(!parent)continue;
+    if(/overview$/.test(mesh.name)){parent.remove(mesh);continue;}
+    const geometry=mesh.geometry.clone();geometry.deleteAttribute('skinIndex');geometry.deleteAttribute('skinWeight');
+    const plain=new T.Mesh(geometry,mesh.material);plain.name=mesh.name;
+    plain.position.copy(mesh.position);plain.quaternion.copy(mesh.quaternion);plain.scale.copy(mesh.scale);
+    parent.add(plain);parent.remove(mesh);
+  }
+  return root;
+}
 // Each master's materials share the imported art's programs (model-materials.js).
-const loadScene=url=>createModelLoader().loadAsync(url).then(gltf=>normaliseModelMaterials(gltf.scene));
-/** Idle masters kept between stages: enough for any one scene's working set (at most 31, Chapter IX's camp, since
- * G3 furnished and walled the camps), so a chapter's next stage finds its models still warm. */
+const loadScene=url=>createModelLoader().loadAsync(url).then(gltf=>normaliseModelMaterials(standSkinnedModel(gltf.scene)));
+/** Idle masters kept between stages: enough for any one scene's working set (at most 34: Chapter IX's camp in the desktop
+ * app, with G3's furniture and walls and G4's animals), so a chapter's next stage finds its models still warm. */
 export const SCENERY_IDLE_MASTERS=36;
 const masters=createSceneryModelCache({maxIdle:SCENERY_IDLE_MASTERS,load:loadScene});
 export const warmSceneryModel=(url,load)=>masters.warm(url,load);
@@ -195,6 +214,8 @@ export function createSceneryModels(scene,e,{chapter,quality='balanced',heightAt
     group.updateMatrixWorld(true);return group;
   };
   const place=(p,source)=>{
+    // A master that arrives skinned stands as plain meshes before it is cloned (a loader of its own may not do it).
+    standSkinnedModel(source);
     if(p.instances)return placeInstances(p,source);
     const component=p.component?source.getObjectByName(p.component):source;if(!component)return null;
     const model=component.clone(true);model.name=p.key??p.id;model.position.set(p.x,0,p.z);model.rotation.y=p.yaw??0;

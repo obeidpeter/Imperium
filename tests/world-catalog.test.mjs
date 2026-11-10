@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readdir,readFile,stat} from 'node:fs/promises';
-import {WORLD_CATALOG,WORLD_KINDS,chapterWorldFiles,worldFiles,worldModelUrl} from '../src/ui/world-catalog.js';
+import {ANIMAL_COATS,WORLD_CATALOG,WORLD_KINDS,chapterWorldFiles,worldFiles,worldModelUrl} from '../src/ui/world-catalog.js';
+import {horseBodyUrl} from '../src/ui/actor-body-catalog.js';
 import {SCENERY_MODELS,sceneryPlacements} from '../src/showcase/scenery-models.js';
 import {chapterOfflineAssets,isFlatArt} from '../src/ui/art.js';
 
@@ -33,7 +34,9 @@ test('no world model sits outside the catalog, and every placed model is catalog
     assert.ok(worldModelUrl(id),`${id} is in the world catalog`);
     assert.ok(WORLD_CATALOG[id].chapters.includes(Number(chapter)),`${id} downloads with Chapter ${chapter}, where it stands`);
   }
-  for(let chapter=1;chapter<=12;chapter++)for(const {id}of sceneryPlacements({id:`ch${chapter}-camp`,width:20,height:16},{chapter})){
+  for(let chapter=1;chapter<=12;chapter++)for(const {id,url}of sceneryPlacements({id:`ch${chapter}-camp`,width:20,height:16},{chapter})){
+    // A horse at the horse lines is the coat its chapter's cavalry ride (G4), catalogued and downloaded with them.
+    if(ANIMAL_COATS[id]){assert.equal(url,horseBodyUrl(id));assert.ok(ANIMAL_COATS[id].chapters.includes(chapter),`${id} downloads with Chapter ${chapter}'s cavalry`);continue;}
     assert.ok(worldModelUrl(id),`${id} is in the world catalog`);
     assert.ok(WORLD_CATALOG[id].chapters.includes(chapter),`${id} downloads with Chapter ${chapter}, where it stands`);
   }

@@ -8,7 +8,8 @@ import {createGroundHeight,distantRiverCentre} from '../src/showcase/environment
 import {createEnvironment} from '../src/showcase/environment.js';
 import {getSceneProfile} from '../src/showcase/campaign-scene-profile.js';
 import {createSceneryModels,sceneryPlacements} from '../src/showcase/scenery-models.js';
-import {LIFE_PROP_CHAPTERS,WORLD_CATALOG,chapterWorldFiles} from '../src/ui/world-catalog.js';
+import {ANIMAL_COATS,LIFE_PROP_CHAPTERS,WORLD_CATALOG,chapterWorldFiles} from '../src/ui/world-catalog.js';
+import {chapterOfflineAssets} from '../src/ui/art.js';
 const fixture=JSON.parse(await readFile(new URL('./fixtures/campaign-3d.json',import.meta.url),'utf8'));
 const graphics=JSON.parse(await readFile(new URL('./fixtures/graphics-scenes.json',import.meta.url),'utf8'));
 const field=(id,width=8,height=8,kind='battle')=>({id,width,height,kind,terrain:Array.from({length:height},()=>Array(width).fill('sand')),units:[]});
@@ -47,7 +48,11 @@ test('Every remaining chapter has a distinct composition on turn, expanded real-
 test('Offline packs contain each regional asset only where the renderer can use it',()=>{
   for(let chapter=1;chapter<=12;chapter++){
     const e=field(`ch${chapter}-camp`,20,16),files=chapterWorldFiles(chapter);
-    for(const placement of sceneryPlacements(e,{chapter}))assert.ok(files.includes(WORLD_CATALOG[placement.id].files[0]),`${chapter}:${placement.id}`);
+    for(const placement of sceneryPlacements(e,{chapter})){
+      // A horse at the horse lines is the coat its chapter's cavalry ride (G4), in the pack with them.
+      if(ANIMAL_COATS[placement.id]){assert.ok(chapterOfflineAssets(chapter,['./'+placement.url]).includes('./'+placement.url),`${chapter}:${placement.id}`);continue;}
+      assert.ok(files.includes(WORLD_CATALOG[placement.id].files[0]),`${chapter}:${placement.id}`);
+    }
   }
   for(const [id,chapters]of Object.entries(REGIONAL_PROP_CHAPTERS))for(let chapter=1;chapter<=12;chapter++)assert.equal(chapterWorldFiles(chapter).includes(`assets/models/world/${id}.glb`),chapters.includes(chapter));
   assert.equal(Object.keys(REGIONAL_PROP_CHAPTERS).length,16);
@@ -110,8 +115,8 @@ test('Failed and partial model downloads keep only the matching fallback owner v
   await model.ready;
   assert.equal(world.group.getObjectByName(chosen.fallbackName).visible,false,'the loaded component hides its own fallback');
   for(const p of placements.filter(p=>p.component!==chosen.component)){
-    // Life alone has no stand-in to keep (its own test above).
-    if(!p.fallbackName){assert.ok(LIFE_PROP_CHAPTERS[p.id],`${p.id} has a fallback`);continue;}
+    // Life and the animals beside the pieces (G4) alone have no stand-in to keep (their own tests).
+    if(!p.fallbackName){assert.ok(LIFE_PROP_CHAPTERS[p.id]||p.host,`${p.id} has a fallback`);continue;}
     assert.equal(world.group.getObjectByName(p.fallbackName)?.visible,true,p.fallbackName+' missing download keeps fallback');
   }
   model.dispose();assert.equal(world.group.getObjectByName(chosen.fallbackName).visible,true);world.dispose();

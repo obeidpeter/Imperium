@@ -2130,6 +2130,60 @@ Each battle was seen twice at the same moment, in the desktop build at High: onc
 
   `tests/graphics-g5.test.mjs` checks every placement in every battle.
 
+## G4's pilot: animals · 10 November 2026
+
+Release G4's pilot of the [graphics plan](graphics-tripo-plan.md#g4s-pilot-10-november): the game's first animals other than the cavalry's horses. Each stands beside the piece of the camps' furniture or life it belongs to, in that piece's court beyond a camp's board, and where the piece also stands in a battle's baggage line, there too. [The asset pipeline](asset-pipeline.md#g4s-pilot-animals-beside-the-camps-furniture--2026-11-10) has how they are placed.
+
+The four new models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-10, from the text prompts in their requests only: no reference image or third-party model. The pilot cost 80 credits of its 100-credit ceiling, task by task in [the G4 ledger](../art-source/models/graphics-g4-credits.json), and the balance read 8,285 before and 8,205 after. None was rejected.
+- **The pack mule** is step 0's calibration mule (`cal-mule`), shipped from its own request with the calibration's task and digest, so its 20 credits were not spent twice. It is processed as a static model, not bound to the horse skeleton as the calibration bound it.
+- **The horses at the horse lines** are release 6's Roman horse, the coat Chapters VII, IX and XII already download for their cavalry, stood as scenery in its rest pose. They need no file of their own.
+
+The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Where | Chapters | Tripo task | Triangles | Runtime file |
+| --- | --- | --- | --- | ---: | ---: |
+| g4-ox | two, unyoked beside the ox cart | VIII, X | `5cfeabc3-89c7-459a-8adb-f52dd82dd1da` | 4,900 | 224,444 bytes |
+| g4-mule | two, unhitched beside the covered carriage | VII, XI, XII | `b826b863-2b43-4779-a60b-c3f70af6565b` | 4,900 | 216,436 bytes |
+| g4-camel | beside the camel gear | VI, IX | `ab72a253-cbc6-41fb-b379-a896c3b273cf` | 4,900 | 243,120 bytes |
+| g4-dog | beside the bread oven or the field oven | I–IV, VI, VIII–X | `4c1b7ba5-ae04-4a4d-9574-5e35efe1e05e` | 2,940 | 178,972 bytes |
+| g4-pack-mule | beside the broken cart or the handcart | II, III, IV, VI | `f8179353-4ce1-4cbf-a39e-1f3a51a59a67` (step 0's) | 4,900 | 252,532 bytes |
+
+Every runtime file was processed in Blender to its request's budget (512-pixel maps), compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`.
+
+The prompts ask for each animal standing square, so the same models could later be bound to the game's four-legged skeleton and walk. They are evocations, not reconstructions:
+- **the ox:** a heavy grey draught ox with upward-curving horns and a rope halter;
+- **the mule:** a draught mule in a leather headstall and breast strap, since [the historical notes](historical-research.md) have the *carpentum* usually drawn by a pair of mules;
+- **the camel:** a dromedary under a woven blanket, for the Syrian caravans;
+- **the dog:** a large molossian guard dog in a leather collar.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the camps in the desktop build at High. Each camp was restored through the Restore dialog from a save reached from New Game by legal commands, the soldier walked by legal move commands to the board's edge beside each piece with animals, and the view framed with the game's own Follow camera and zoom keys. What it showed, and what was kept:
+
+![The pilot's five models from four sides with a 1.8 m figure for scale](images/g4-pilot-models.jpg)
+
+- **The ox** came as asked: a heavy pale grey ox with long upward-curving horns, a dewlap and a rope halter. It is 2.25 m long and 1.6 m to its horn tips.
+- **The mule** came paler and slighter than asked: nearly white rather than grey-dun, with a slim, horse-like body. Its long upright ears, dark mane and tail, leather headstall and breast strap say mule, so it was kept. It is 2.07 m long and 1.95 m to its ear tips.
+- **The camel** came as asked: a sandy dromedary under a red and ochre blanket with tassels, held by a girth, in a rope halter, its neck long and its head small. It came facing its +z, so it was processed a quarter turn round to face +x like the others. It is 2.8 m long and 2.2 m high.
+- **The dog** came as asked: a tawny mastiff with a black muzzle and a leather collar, 1.25 m long and 0.85 m to the top of its head.
+- **The pack mule**, step 0's, is a bay mule under a wooden pack saddle on a woollen pad, with two bundles lashed on each side and a headstall, 2.14 m long and 1.75 m to its ear tips.
+
+#### In the game
+
+![The camps before and with the pilot's animals, in the desktop build at High](images/g4-pilot-camps.jpg)
+
+- **The horses** stand three abreast at the horse lines of Chapters VII, IX and XII, by the rail and its trough: bays in their headstalls, the horses the chapter's cavalry ride. They read at once as mounts tethered at the lines, where the rail and trough had stood empty.
+- **The oxen** stand unyoked beside Chapter VIII's ox cart, on its far side from the board. Even in the camp's rain they read at once as a pair of pale grey oxen with long horns, beside the cart they draw.
+- **The mules** stand unhitched beside the covered carriage in Chapters XI and XII. From the camp camera's height they read as a pale team, but the long ears that say mule in the four views are less plain. In Chapter VII the carriage's court lies beyond what the Follow camera takes in from the board's edge; the Overview camera shows the pair there, small.
+- **The camel** stands beside the camel gear in Chapters VI and IX. Its red and ochre blanket and long neck make it the plainest thing in the court, and the gear has its animal at last.
+- **The dog** stands by the bread oven in Chapters III, VI and IX: the smallest of the animals, but a dog at once beside the oven's dome. In Chapter II it stands by the field oven, which lies at the edge of what the Follow camera takes in from the board.
+- **The pack mule** stands beside the handcart in Chapter III and the broken cart in Chapters II and VI, its pack saddle and bundles plain, even in Chapter II's rain.
+- **What they cost:** seen whole with the Overview camera, each camp drew about one more call for each animal in view:
+  - Chapter VII: 254 draw calls and 857,347 triangles, against 249 and 821,663 before;
+  - Chapter VIII: 147 and 562,836, against 144 and 551,296;
+  - Chapter IX: 237 and 733,068, against 231 and 695,468.
+- **Not seen:** the oxen in Chapter X, the mules in VII except from the Overview camera, the dog by Chapter VIII's field oven, the animals of Chapters I and IV, and every animal in the battles' baggage lines. `tests/graphics-g4.test.mjs` checks every placement in every camp and battle reached by legal commands.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.
