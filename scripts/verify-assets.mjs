@@ -7,7 +7,7 @@ import vm from 'node:vm';
 import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
 import {BUILD_ONLY,chapterAudioAssets} from '../src/ui/art.js';
-import {chapterBodies,chapterHorses} from '../src/ui/actor-body-catalog.js';
+import {chapterBodies,chapterHorses,desktopOnlyBodyFiles} from '../src/ui/actor-body-catalog.js';
 import {chapterWorldFiles,desktopOnlyWorldFiles,worldFiles} from '../src/ui/world-catalog.js';
 
 const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
@@ -86,7 +86,10 @@ for(const path of femaleAssets)assert.ok(build.showcaseAssets.includes(path)&&bu
 // files no web chapter carries (the desktop app has them all), so they are neither built nor listed there.
 const world=new Set(worldFiles().map(file=>'./'+file));
 const desktopOnly=new Set(build.target==='desktop'?[]:desktopOnlyWorldFiles().map(file=>'./'+file));
-assert.equal(build.desktopOnlyFiles,desktopOnly.size,'Desktop-only world files left out of the web build');
+// So are the bodies no chapter's web download carries (actor-body-catalog.js).
+const desktopOnlyBodies=build.target==='desktop'?[]:desktopOnlyBodyFiles().map(file=>'./'+file);
+assert.equal(build.desktopOnlyFiles,desktopOnly.size+desktopOnlyBodies.length,'Desktop-only world files and bodies left out of the web build');
+for(const path of desktopOnlyBodies)assert.ok(!existsSync('dist/'+path.slice(2))&&![...build.initialAssets,...build.deferredAssets,...Object.values(build.chapterAssets).flat()].includes(path),'Desktop-only body left out of the web build: '+path);
 // A generated character body belongs to the chapters whose figures wear it.
 const characterBody=path=>/^\.\/assets\/models\/characters\/([\w-]+)\.glb$/.exec(path)?.[1];
 // A generated horse belongs to the chapters whose riders ride it.
@@ -104,7 +107,7 @@ for(const path of world){
   for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterWorldFiles(Number(chapter),{desktop:build.target==='desktop'}).includes(path.slice(2)),'Chapter '+chapter+' and world asset '+path);
 }
 assert.deepEqual(build.deferredAssets.filter(path=>path.startsWith('./assets/models/chapters/')&&!world.has(path)),[],'Every chapter model is in the world catalog');
-for(const path of build.showcaseAssets.filter(characterBody))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterBodies(Number(chapter)).includes(characterBody(path)),'Chapter '+chapter+' and character body '+path);
+for(const path of build.showcaseAssets.filter(characterBody))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterBodies(Number(chapter),{desktop:build.target==='desktop'}).includes(characterBody(path)),'Chapter '+chapter+' and character body '+path);
 for(const path of build.showcaseAssets.filter(generatedHorse))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterHorses(Number(chapter)).includes(generatedHorse(path)),'Chapter '+chapter+' and generated horse '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets)){
   for(const path of femaleAssets)assert.ok(paths.includes(path),'Every chapter carries the woman\'s figure (Syra keeps the camp from Chapter I): '+path);
