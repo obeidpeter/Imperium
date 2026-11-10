@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-river-barge.glb",
+    "bytes": 45822068,
+    "sha256": "1c13baef1d27c5fb1bb146831d370c2474c9bcbc61419397492cc0c1c9394ae7",
+    "triangles": 1478994
+  },
+  "output": {
+    "path": "assets/models/world/g5-river-barge.glb",
+    "bytes": 270740,
+    "sha256": "164518e366717d09e6218d8d5744f91046e11f2c3c2381a35a699a8b35b1434f",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 7.79485354405851,
+  "sizeMetres": {
+    "width": 4.2055,
+    "height": 1.5,
+    "depth": 7.8007
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_ea65184d-69e0-4696-b2e2-cdb88525db55",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_ea65184d-69e0-4696-b2e2-cdb88525db55",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_ea65184d-69e0-4696-b2e2-cdb88525db55",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

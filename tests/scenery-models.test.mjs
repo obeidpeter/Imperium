@@ -168,7 +168,7 @@ test('preloaded scenery is synchronous, shared across stages, and evicted after 
   const [e]=chapterFiveStarts(),placements=sceneryPlacements(e,{chapter:5});
   const landmarks=landmarkModelUrls(e,{chapter:5}).map(([,url])=>url);assert.equal(landmarks.length,3,'Chapter V\'s three generated landmarks');
   const fieldModels=fieldModelUrls(e,{chapter:5}).map(([,url])=>url);
-  assert.equal(fieldModels.length,9,'the eastern cart, its load, the barricade, the ram, the brazier, the countermine and the siege ramp, and the walked field\'s gear and banner (G5)');
+  assert.equal(fieldModels.length,10,'the eastern cart, its load, the barricade, the ram, the brazier, the countermine, the siege ramp and the eastern signal post, and the walked field\'s gear and banner (G5)');
   assert.deepEqual(sceneryWorkingSet(e,{chapter:5}).sort(),[...new Set([...placements.map(p=>p.url),...['trees-arid','rocks-arid'].map(worldModelUrl),...landmarks,...fieldModels])].sort(),
     'the placed scenery, the region\'s tree and rock kits, the chapter\'s landmarks and the battle\'s field models');
   assert.deepEqual(sceneryWorkingSet(e,{chapter:5,quality:'performance'}),[]);

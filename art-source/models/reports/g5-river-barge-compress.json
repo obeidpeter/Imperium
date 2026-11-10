@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g5-river-barge.glb",
+  "output": "assets/models/world/g5-river-barge.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 270740,
+    "gzipBytes": 193138,
+    "sha256": "164518e366717d09e6218d8d5744f91046e11f2c3c2381a35a699a8b35b1434f"
+  },
+  "after": {
+    "bytes": 264516,
+    "gzipBytes": 255742,
+    "sha256": "7812c41682091c651b27df4be2c3db38a7c7973372510f91a018001c8a9c5b83"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11756
+      },
+      "bytes": 23939,
+      "psnr": 40.157
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 32218
+      },
+      "bytes": 52834,
+      "psnr": 34.202
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 27048
+      },
+      "bytes": 39138,
+      "psnr": 33.724
+    }
+  ]
+}

@@ -100,21 +100,26 @@ const g3=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,
 // only on a carrier. `yaw` turns a model to the code-built piece's bearing: the Roman cart's pole, along the model's -z,
 // and the eastern cart's, along its +x, point west like the code-built cart's shafts; the barricade's panel, along
 // its z, runs east and west like the code-built barricade; the ram's iron head, at the model's +x, points west at
-// the gate like the code-built ram's; the siege ramp, rising toward the model's +z, rises east like the code-built ramp.
+// the gate like the code-built ram's; the siege ramp, rising toward the model's +z, rises east like the code-built ramp;
+// the Roman signal post's banner, hanging from a crossbar along the model's z, turns square to the camera, which looks
+// north-west, with its beacon stack in front of the mast, and the eastern post's pole and pennant, at its -x and +z
+// corner, turn to the camera's side of the pillar.
 // `copies` sets a model out more than once on its cell, each at `x` and `z` in the model's own frame and turned by its
 // own `yaw`: two panels side by side span the cell as the code-built barricade's two metres do. A burning brazier keeps
 // the stage's particle plume, `flame` metres above its ground, in the top of its heap of pitch. With the chapters whose
-// battles hold the kind: the supply cart in every battle (Chapter XI has none), the barricade and the brazier from
-// Chapter III, the Persian ram, siege ramp and the countermine dug against them at Chapter V's city. The eastern battles
-// (Chapters V, VI and IX) take an eastern cart, the others the Roman cart; the timber barricade stands in all of them.
+// battles hold the kind: the supply cart and the signal station in every battle (Chapter XI has none), the barricade and
+// the brazier from Chapter III, the Persian ram, siege ramp and the countermine dug against them at Chapter V's city. The
+// eastern battles (Chapters V, VI and IX) take an eastern cart and an eastern signal post, the others the Roman ones; the
+// timber barricade stands in all of them. The cart and the signal station are the battle's two opportunities, and each
+// model stands in all four of their states: the objective's marker shows whether it was secured, forgone or missed.
 const BATTLE_CHAPTERS=Object.freeze([1,2,3,4,5,6,7,8,9,10,12]);
 const EAST_CHAPTERS=Object.freeze([5,6,9]);
 const westOf=chapters=>Object.freeze(chapters.filter(c=>!EAST_CHAPTERS.includes(c)));
-const CART_STATES=Object.freeze(['available','secured','forgone','missed']);
+const OPPORTUNITY_STATES=Object.freeze(['available','secured','forgone','missed']);
 export const FIELD_OBJECT_MODELS=Object.freeze({
-  'g5-cart':Object.freeze({kind:'stores',states:CART_STATES,chapters:westOf(BATTLE_CHAPTERS),yaw:Math.PI/2,
+  'g5-cart':Object.freeze({kind:'stores',states:OPPORTUNITY_STATES,chapters:westOf(BATTLE_CHAPTERS),yaw:Math.PI/2,
     loads:Object.freeze({'g5-cart-load':Object.freeze({lift:.62,x:.06,z:.43,yaw:0})})}),
-  'g5-cart-east':Object.freeze({kind:'stores',states:CART_STATES,chapters:EAST_CHAPTERS,yaw:Math.PI,
+  'g5-cart-east':Object.freeze({kind:'stores',states:OPPORTUNITY_STATES,chapters:EAST_CHAPTERS,yaw:Math.PI,
     loads:Object.freeze({'g5-cart-load':Object.freeze({lift:.66,x:-.68,z:0,yaw:0})})}),
   'g5-cart-load':Object.freeze({kind:'stores',states:Object.freeze(['available']),chapters:BATTLE_CHAPTERS,load:true}),
   'g5-barricade':Object.freeze({kind:'barricade',states:Object.freeze(['intact']),chapters:Object.freeze([3,4,5,6,7,8,9,10,12]),yaw:Math.PI/2,
@@ -122,7 +127,9 @@ export const FIELD_OBJECT_MODELS=Object.freeze({
   'g5-ram':Object.freeze({kind:'ram',states:Object.freeze(['active']),chapters:Object.freeze([5]),yaw:Math.PI}),
   'g5-brazier':Object.freeze({kind:'brazier',states:Object.freeze(['unlit','burning']),chapters:Object.freeze([3,4,5,6,7,8,9,10,12]),flame:.9}),
   'g5-countermine':Object.freeze({kind:'countermine',states:Object.freeze(['active']),chapters:Object.freeze([5])}),
-  'g5-siege-ramp':Object.freeze({kind:'siege-engine',states:Object.freeze(['active']),chapters:Object.freeze([5]),yaw:Math.PI/2})
+  'g5-siege-ramp':Object.freeze({kind:'siege-engine',states:Object.freeze(['active']),chapters:Object.freeze([5]),yaw:Math.PI/2}),
+  'g5-signal':Object.freeze({kind:'signal',states:OPPORTUNITY_STATES,chapters:westOf(BATTLE_CHAPTERS),yaw:3*Math.PI/4}),
+  'g5-signal-east':Object.freeze({kind:'signal',states:OPPORTUNITY_STATES,chapters:EAST_CHAPTERS,yaw:Math.PI/2})
 });
 // Set pieces beyond the board (G5): behind the Roman line, just beyond the board's west edge, where the camera's view of
 // the line takes them in, or beyond its north edge, which the camera sees behind both armies (field-models.js), with
@@ -132,13 +139,17 @@ export const FIELD_OBJECT_MODELS=Object.freeze({
 // the Persian screens, propped from behind at the model's +x, face the board. `along` is where along its edge it would stand, a share of the board's half-depth (west, north of the road the
 // army came by) or half-width (north); `beside` stands a piece by another the battle sets out (an engine's
 // ammunition), at `x` and `z` in that piece's own frame, or that offset mirrored; `fit` is the room it is fitted within
-// and keeps clear. Like the camps' furniture, they have no code-built stand-in.
+// and keeps clear. A boat (`edge: 'river'`) floats on the distant river beyond the north edge, in the battles whose
+// scene has it (Chapters I, II, IV, VIII and X, the training ground's drill by the Danube with them): the patrol boat,
+// long along its model's x, and the barge, long along its z, lie along the stream, `draft` metres of their hulls below
+// its surface, the patrol boat's oar blades at the waterline. Like the camps' furniture, they have no code-built stand-in.
 const SIEGE_BATTLES=Object.freeze(['ch4-gate','ch4-wall','ch5-mine','ch5-wall','ch9-city','ch12-confrontation']);
 const ENGINE_FIELDS=Object.freeze(['ch7-legion','ch8-ferry','ch8-crossing','ch9-wing','ch10-road']);
 // Where the Romans attack a wall: Palmyra's (Chapter IX) and the City's (Chapter XII).
 const ASSAULTS=Object.freeze(['ch9-city','ch12-confrontation']);
 const GOTHIC_BATTLES=Object.freeze(['ch1-road','ch2-marsh','ch2-rearguard','ch3-station','ch3-rolls','ch4-gate','ch4-wall','ch7-legion','ch8-ferry','ch8-crossing','ch10-road']);
 const PERSIAN_SIEGE=Object.freeze(['ch5-mine','ch5-wall']);
+const RIVER_BATTLES=Object.freeze(['ch1-training','ch1-road','ch2-marsh','ch2-rearguard','ch4-gate','ch4-wall','ch8-ferry','ch8-crossing','ch10-road']);
 const battleProp=(encounters,m)=>Object.freeze({encounters,...m,fit:Object.freeze(m.fit),...(m.beside?{beside:Object.freeze(m.beside)}:{})});
 export const BATTLE_PROP_MODELS=Object.freeze({
   'g5-carroballista':battleProp(ENGINE_FIELDS,{yaw:Math.PI,along:-.25,fit:{width:3.6,depth:1.6}}),
@@ -152,7 +163,9 @@ export const BATTLE_PROP_MODELS=Object.freeze({
   'g5-wagon-gothic':battleProp(GOTHIC_BATTLES,{edge:'north',yaw:0,along:-.3,fit:{width:3.3,depth:1.5}}),
   'g5-wagon-gothic-covered':battleProp(GOTHIC_BATTLES,{edge:'north',yaw:0,along:-.05,fit:{width:4.9,depth:2}}),
   'g5-persian-tower':battleProp(PERSIAN_SIEGE,{edge:'north',yaw:0,along:.15,fit:{width:3.6,depth:3.6}}),
-  'g5-persian-screens':battleProp(PERSIAN_SIEGE,{edge:'north',yaw:Math.PI/2,along:.4,fit:{width:3.6,depth:1.6}})
+  'g5-persian-screens':battleProp(PERSIAN_SIEGE,{edge:'north',yaw:Math.PI/2,along:.4,fit:{width:3.6,depth:1.6}}),
+  'g5-lusoria':battleProp(RIVER_BATTLES,{edge:'river',yaw:0,along:-.3,draft:.4,fit:{width:9.2,depth:5.5}}),
+  'g5-river-barge':battleProp(RIVER_BATTLES,{edge:'river',yaw:Math.PI/2,along:.25,draft:.25,fit:{width:7.9,depth:4.3}})
 });
 const encounterChapters=ids=>[...new Set(ids.map(id=>Number(/^ch(\d+)-/.exec(id)[1])))].sort((a,b)=>a-b);
 // What a battle leaves on its walked field (G5, field-models.js): beside the fallen, the gear of the side the chapter's
@@ -169,7 +182,8 @@ export const AFTERMATH_DEBRIS_MODELS=Object.freeze({
 // 0.66 to the two engines, X's 0.60 to the carroballista and the barricade and XII's 0.28 to the barricade, which
 // left those four too little room for the rest. VI had 0.60 MB: the eastern cart in place of the Roman one, the brazier
 // and the eastern debris. A cart and its load go together. Every other chapter (II, III and V) takes
-// all of its G5 models.
+// all of its G5 models, the final batch's signal posts with them, and Chapter II its boats; the chapters named here keep
+// the code-built signal, and the desktop app alone floats boats on their river.
 const G5_WEB_ROOM=Object.freeze({1:Object.freeze([]),4:Object.freeze(['g5-cart','g5-cart-load','g5-barricade']),
   6:Object.freeze(['g5-cart-east','g5-cart-load','g5-barricade','g5-brazier','g5-debris-east']),7:Object.freeze([]),8:Object.freeze([]),
   9:Object.freeze(['g5-carroballista','g5-onager']),10:Object.freeze(['g5-carroballista','g5-barricade']),12:Object.freeze(['g5-barricade'])});

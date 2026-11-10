@@ -1,0 +1,97 @@
+{
+  "id": "g5-signal-east",
+  "status": "G5 final batch: processed, compressed and reviewed; ships as g5-signal-east, in Chapters V, VI and IX (on the web in Chapter V only)",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "use": "The battle's signal station (the field object 'signal') on its cell in every state, in the eastern battles; the objective's marker shows whether it is secured.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman signal post on the eastern frontier: a stout square pillar of pale sun-dried mudbrick on a low stone plinth, about two point six metres tall and eighty centimetres square, its flat top carrying an iron fire basket, a palm-trunk pole lashed to one side flying a long red woollen signal banner, a short palm-trunk ladder leaning against it, and beside it a heap of dry brushwood and palm fronds for the beacon fire; about one and a half metres across at its foot. Pale mudbrick, grey stone, palm wood, black iron, dry brushwood and red wool. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, lighthouse, minaret, mosque, temple, emblem, eagle, castle, wheels, flames, fire, smoke, torch",
+      "model_seed": 2616310,
+      "image_seed": 2616311,
+      "texture_seed": 2616312
+    }
+  },
+  "budget": {
+    "triangles": 4500,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 2.8,
+    "minHeight": 2.52,
+    "maxHeight": 3.08
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T02:39:05.927Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, lighthouse, minaret, mosque, temple, emblem, eagle, castle, wheels, flames, fire, smoke, torch",
+      "model_seed": 2616310,
+      "image_seed": 2616311,
+      "texture_seed": 2616312,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman signal post on the eastern frontier: a stout square pillar of pale sun-dried mudbrick on a low stone plinth, about two point six metres tall and eighty centimetres square, its flat top carrying an iron fire basket, a palm-trunk pole lashed to one side flying a long red woollen signal banner, a short palm-trunk ladder leaning against it, and beside it a heap of dry brushwood and palm fronds for the beacon fire; about one and a half metres across at its foot. Pale mudbrick, grey stone, palm wood, black iron, dry brushwood and red wool. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8345,
+    "balanceSnapshotBefore": {
+      "balance": 8345,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "c951a80b-faaa-454e-a164-a2b5243ef74b",
+      "state": "accepted",
+      "requestSha256": "d1de47caed9e52f8b0c9e18143da959c31c3c1df96c1c0c9ac20085db632efc1"
+    },
+    "taskId": "8b545a56-3e81-4474-9a60-fc3ad51b27c7",
+    "status": "success",
+    "generatedAt": "2026-11-10T02:41:26.467Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-signal-east.glb",
+    "rawBytes": 47691248,
+    "rawSha256": "44e087b9204c566781d82c339e637e5edfd20a786e1660858b4b82cb770c5ddc",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman signal post on the eastern frontier: a stout square pillar of pale sun-dried mudbrick on a low stone plinth, about two point six metres tall and eighty centimetres square, its flat top carrying an iron fire basket, a palm-trunk pole lashed to one side flying a long red woollen signal banner, a short palm-trunk ladder leaning against it, and beside it a heap of dry brushwood and palm fronds for the beacon fire; about one and a half metres across at its foot. Pale mudbrick, grey stone, palm wood, black iron, dry brushwood and red wool. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616311,
+      "model_seed": 2616310,
+      "texture_seed": 2616312,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, lighthouse, minaret, mosque, temple, emblem, eagle, castle, wheels, flames, fire, smoke, torch",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T02:39:07.057154Z",
+    "tripoCompletedAt": "2026-11-10T02:41:20.210667Z",
+    "tripoRender": "art-source/models/raw/g5-signal-east-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A pillar of pale dressed stone, not the mudbrick asked for, on a paved stone plinth, with a fire basket and a bundle of brushwood on its top, a ladder, and a pole flying a small red pennant rather than a long banner. Accepted: it reads as a post of its own beside the Roman mast. Processed at 2.8 m: 1.85 by 2.21 m on the ground."
+  }
+}

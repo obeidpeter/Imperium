@@ -2073,6 +2073,63 @@ Each battle was seen twice at the same moment, in the desktop build at High: onc
 
   `tests/graphics-g5.test.mjs` checks every placement in every battle.
 
+## The rest of G5, the final batch · 10 November 2026
+
+The last batch of release G5 of the [graphics plan](graphics-tripo-plan.md#the-last-of-g5-10-november). Before it was asked for, a survey of what the battles still draw in code changed its scope:
+- every battle's surroundings are its chapter's regional kit, built in Blender;
+- the fortified gates, breaches and bridges are the board kit's;
+- the one field object every battle still draws in code is the signal station.
+
+So the batch made the signal station's two posts, a Roman one and an eastern one, in place of the code-built mast. With them came a patrol boat and a barge for the distant river beyond the north edge of the battles in Chapters I, II, IV, VIII and X, the river boats the pilot proposed. [The asset pipeline](asset-pipeline.md#the-last-of-g5-the-signal-posts-and-the-rivers-boats--2026-11-10) has how they are placed.
+
+The models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-10, from the text prompts in their requests only: no reference image or third-party model. The batch cost 80 credits of its 100-credit ceiling, task by task in [the G5 ledger](../art-source/models/graphics-g5-credits.json), and the balance read 8,365 before and 8,285 after. None was rejected. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Where | Chapters | Tripo task | Triangles | Runtime file |
+| --- | --- | --- | --- | ---: | ---: |
+| g5-signal | the signal station's cell, in every state | I–IV, VII, VIII, X, XII | `a1faa042-8b98-4dff-bcd7-9f1f9b7c35bf` | 4,410 | 270,028 bytes |
+| g5-signal-east | the signal station's cell in the eastern battles, in every state | V, VI, IX | `8b545a56-3e81-4474-9a60-fc3ad51b27c7` | 4,410 | 293,752 bytes |
+| g5-lusoria | afloat on the distant river beyond the north edge | the battles of I, II, IV, VIII and X | `58930a3c-74d7-45c0-8324-d38f6cf076e0` | 4,900 | 257,372 bytes |
+| g5-river-barge | afloat on the distant river beyond the north edge | the battles of I, II, IV, VIII and X | `ea65184d-69e0-4696-b2e2-cdb88525db55` | 4,900 | 264,516 bytes |
+
+Every runtime file was processed in Blender to its request's budget (512-pixel maps), compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. The boats' heights were set at review from their raw proportions, each noted in its request: the patrol boat came with its mast raised, so it stands 5.7 m to the masthead where 1.2 m was budgeted for a lowered mast, and the barge stands 1.5 m. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`.
+
+The prompts follow [the historical notes](historical-research.md) where the sources reach, and are evocations where they do not:
+- **The signal posts:** Trajan's Column shows the Danube's watchtowers with stacks of straw and of logs beside them, ready for fire signals. Vegetius describes signals given by fire at night and by smoke by day, and beams hung on the towers of forts and cities, raised or lowered to tell what is happening (*Epitome* 3.5). The game's posts are evocations: a mast on a cairn with its crossbar, banner, fire basket and beacon stack, and on the eastern frontier a pillar with its fire basket and brushwood.
+- **The boats** are evocations too. The patrol boat follows the light oared warships of the Roman river fleets, the boats Vegetius calls *lusoriae* on the Danube (*Epitome* 4.46), a name from after the game's period. The barge is a plain flat-bottomed river freighter.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the battles in the desktop build at High, each restored from a moment the real-time bot reached from New Game through the Restore dialog. What it showed, and what was kept:
+
+![The batch's four models from four sides with a 1.8 m figure for scale](images/g5-final-batch-models.jpg)
+
+- **The Roman signal post** came as asked: a mast on a fieldstone cairn braced by three struts, a crossbar hung with a long red banner, an iron fire basket hung from a bracket rather than set on the mast's top, and a stack of straw bundles beside it. It stands 3 m high, 1.24 by 1.63 m at its foot.
+- **The eastern signal post** came as a pillar of pale dressed stone, not the mudbrick asked for, on a paved stone plinth. On its top are a fire basket and a bundle of brushwood, and beside it a ladder and a pole with a small red pennant rather than a long banner. It stands 2.8 m high, 1.85 by 2.21 m at its foot.
+- **The patrol boat** came with its mast raised and its square sail set, where the request asked for the mast lowered along the benches. It has six oars a side rather than twelve, round red shields along its gunwale, and stem and stern posts curving up to red-capped heads. It was kept: from the battle's distance it reads as an oared river warship, and its pale sail is the brightest thing on the river. By its raw proportions it is 9.1 m long and 5.4 m across its oars.
+- **The barge** came as asked: a flat-bottomed boat with a square stern and a raised bow, loaded amidships with grain sacks, two amphorae, a barrel and a load under a lashed leather sheet. Short oars in rowlocks came in place of the punting poles. It is 7.8 m long by its raw proportions.
+
+#### In the game
+
+Each battle was seen twice at the same moment, in the desktop build at High: once with G5's files refused, which leaves the code-built mast or an empty river, and once with them. Each moment was paused and framed with the game's own controls, the camera turned to the piece as **Find objective** turns it. The boats lie beyond the board, where the camera cannot be turned, so their shots are zoomed out six steps instead.
+
+![The signal station before (the code-built mast) and with the batch's signal posts, in the desktop build at High](images/g5-final-batch-signals.jpg)
+
+- **The signal posts read at once.** The code-built mast, a thin pole with a small banner on a pale block, was the smallest piece on its field.
+  - In Chapter I's battle on the boundary road, the Roman post stands on its cairn of dark stones, its long red banner square to the camera, the fire basket on its bracket and the straw bundles at its foot.
+  - In Chapter VI's battle at the empty wells, the eastern post stands at the fork of the road, the tallest and palest piece on the field, with the fire basket and brushwood on its top. Its pole and pennant are too thin to pick out.
+
+![The distant river before (empty) and with the batch's boats, and Chapter VIII's barge before and after the fix](images/g5-final-batch-boats.jpg)
+
+- **The boats** float on the distant river beyond the board's north edge.
+  - In Chapter II's battle at the broken causeway, both lie on the river behind the bank where the Gothic wagons stand. The patrol boat's pale sail is the brightest thing on the water, and the barge's sacks and leather-covered load read at once. From the camera's height the patrol boat's high, curved stem and stern give it something of a northern longship's look.
+  - At Chapter VIII's ferry the review found the barge sunk, only its load above the water. The ferry's river leaves the board, and its water runs on at its own level, 0.8 m above the distant river's, over the distant river's near half. The barge had taken a spot under it, and the patrol boat's spot was partly under it too.
+  - The boats now keep to where the distant river's own surface shows ([the asset pipeline](asset-pipeline.md#the-last-of-g5-the-signal-posts-and-the-rivers-boats--2026-11-10)), and in Chapter VIII's two battles and Chapter X's they lie further along the river. Seen again after the fix, the barge floats whole at the east end of Chapter VIII's ferry, near the chapter's own ferry boat, and the patrol boat floats upstream of where the ferry's river comes in.
+- **Not seen:**
+  - the signal posts in their other states, the soldier beside them, and the eastern post in Chapters V and IX;
+  - the boats in Chapters I, IV and X and at Chapter VIII's crossing.
+
+  `tests/graphics-g5.test.mjs` checks every placement in every battle.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.
