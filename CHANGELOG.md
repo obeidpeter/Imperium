@@ -2,6 +2,19 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G6's pilot: Lucan's face from his portrait, and people in their own dress ([the plan](docs/graphics-tripo-plan.md#g6s-pilot-10-november))
+
+The first of the faces and people, made for 185 credits of the pilot's 200: a face modelled from a picture, and three bodies.
+
+- **Lucan's face is his portrait's.** Tripo's image-to-model made a bust from his campaign portrait, the game's own art: curly hair, a short beard and moustache. `wrap-cast-head.py --face` turns the bust to the front, scales and levels it by its eyes, keeps its own eyes and its face down to the chin, and bakes it onto the shared head, so his blinks and expressions stay. Before, he wore a clean-shaven face from his release 6 body. His beard ends in a straight line at the chin, where his own throat joins it.
+- **The elder senator** is remade with his toga falling to his feet, as a senator's did in the third century; the band across his chest still takes the bloc trims. He still wears sandals, though closed shoes were asked.
+- **Vibia the wine-seller** (Chapter VII) has a body of her own: a blue tunic, a dark apron and a brown shawl, where she was the procedural woman.
+- **Bassus the armourer** (every camp) has a body of his own, in a smith's leather apron, where he wore the escorts' body under a code-built apron; his hammer and tongs at work stay. The first attempt came in leather armour and was rejected: one of five generations (20%), at the stop rule's line.
+- **A body can ride the web in fewer chapters than the desktop app** (`web` in `src/ui/actor-body-catalog.js`), and there its figures wear what they wore before. Bassus rides on the web in Chapter XI alone, and Vibia ships in the desktop app alone. Lucan's file grows by 40 kB in every chapter. The largest chapter download is now 27.99 of 28 MB, Chapter I's 3D download 17.93 of 18, and the complete web game 78.21 of 80.
+- **Reviewed** in the figure viewer and in the desktop build at High: Chapter VII's camp before and after, and Chapter XI's chamber ([the art record](docs/art-generation.md#g6s-pilot-faces-and-people--10-november-2026)). Lucan's face is his portrait's at close range, and in the camp his beard shows; Vibia and Bassus read at once in their own dress; the elders' togas fall to their feet among the other members'. Bassus on the web and the senators of Chapters VII, VIII, X and XII were not seen; the tests check every body in every chapter.
+- **The rest of G6** is proposed in [the plan](docs/graphics-tripo-plan.md#what-the-pilot-proposes-for-the-rest-of-g6): faces from portraits for Varro, Sabinus, Crispus, Severianus and Paullus, the other two senators in full-length togas, and bodies for the people the camera meets closest. At those counts the plan would fall about 950 credits short of its 70% floor after G2, so the next batch looks for more of the work the game needs, and the owner is told before G6 or G2 ends if it cannot be found.
+- **Records:** the manifest names the face's picture and task, and the Steam AI disclosure names the face apart from the text-made models. `tests/graphics-g6.test.mjs` checks the ledger, the shipped bodies and the face against their tasks and pictures; `tests/actor-bodies.test.mjs` checks every body worn in exactly its chapters, in the desktop app and on the web.
+
 ### G4 closes: oxen by the Gothic wagons and mules by the engines ([the plan](docs/graphics-tripo-plan.md#the-battles-animals-10-november))
 
 The pilot's oxen and mules, with the dark ox, beside four of the battles' set pieces, at no credit cost. G4 ends at 240 of its 600 credits.

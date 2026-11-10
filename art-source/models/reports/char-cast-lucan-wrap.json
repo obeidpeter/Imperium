@@ -9,27 +9,126 @@
     "path": "intermediate: char-roman-recruit bound by bind-character.py, unquantized (not kept)",
     "sha256": "d4464a916814762b72535d7aebaf461150dc339f2d194b950c815b0c1f52accc"
   },
-  "paint": {
-    "path": "intermediate: char-cast-lucan bound again by bind-character.py with larger maps, as his head's paint (not kept)",
-    "sha256": "31ba76ed5cde0d8d28d471da47e1544862fb16c14b0a6ccd399dd7a4cea85bcb",
-    "bind": {
-      "input": "art-source/models/raw/char-cast-lucan-rigged.glb",
-      "settings": {
-        "triangles": 12000,
-        "overviewTriangles": 2500,
-        "texture": 2048,
-        "detailTexture": 1024,
-        "webpQuality": 80,
-        "clavicleDegrees": 10,
-        "sharpAngle": 60
-      },
-      "sameGeometry": true
-    }
+  "paint": null,
+  "face": {
+    "path": "art-source/models/raw/g6-face-lucan.glb",
+    "sha256": "92f31e3ebd5eeadfef9b303d7d913365b22e52a07ef58e3a2c048f5fbc0a089f",
+    "turn": -88,
+    "turnFrom": "finder",
+    "turnFinder": {
+      "coarse": 88,
+      "seen": 88,
+      "prominence": 0.2366,
+      "asymmetry": 0.092,
+      "coarseScores": {
+        "58": [
+          0.3132,
+          0.3413
+        ],
+        "68": [
+          0.2657,
+          0.3122
+        ],
+        "78": [
+          0.2425,
+          0.2009
+        ],
+        "88": [
+          0.2366,
+          0.092
+        ],
+        "98": [
+          0.2432,
+          0.2624
+        ],
+        "108": [
+          0.2187,
+          0.2605
+        ],
+        "118": [
+          0.1169,
+          0.1351
+        ],
+        "128": [
+          0.1188,
+          0.0866
+        ],
+        "138": [
+          0.1374,
+          0.1406
+        ],
+        "238": [
+          0.0654,
+          0.0522
+        ],
+        "248": [
+          0.0812,
+          0.0405
+        ],
+        "258": [
+          0.0918,
+          0.0658
+        ],
+        "268": [
+          0.1115,
+          0.0419
+        ],
+        "278": [
+          0.1006,
+          0.0609
+        ],
+        "288": [
+          0.0933,
+          0.0407
+        ],
+        "298": [
+          0.0813,
+          0.0394
+        ],
+        "308": [
+          0.0779,
+          0.0477
+        ],
+        "318": [
+          0.1182,
+          0.1365
+        ]
+      }
+    },
+    "head": {
+      "crown": 0.4389,
+      "neck": -0.0878,
+      "middle": [
+        0.07809214762417138,
+        -0.008325421608385529
+      ],
+      "radius": 0.2233,
+      "facing": [
+        278,
+        98
+      ]
+    },
+    "tries": [
+      {
+        "firstScale": 0.4478,
+        "tilt": 0.87,
+        "eyeScale": 0.9091,
+        "contrast": [
+          0.2338,
+          0.1903
+        ]
+      }
+    ],
+    "firstScale": 0.4478,
+    "tilt": 0.87,
+    "eyeScale": 0.9091,
+    "chin": 1.5226,
+    "request": "art-source/models/requests/g6-face-lucan.json"
   },
   "output": {
-    "path": "intermediate: cast-lucan with the wrapped head, before quantizing (not kept)",
-    "bytes": 895016,
-    "sha256": "638f3bf66816883d9e7bdd410d242a1cfeb0154bf6f0666c09677f898866990f",
+    "path": "intermediate: cast-lucan with his face from the bust wrapped onto the shared head, before quantizing (not kept)",
+    "bytes": 976192,
+    "sha256": "4c614f485d6f86de1225287ca734e45173c1061af1abb93459d56b81fc77bce6",
     "triangles": {
       "body": 9148,
       "body-overview": 2043,
@@ -46,9 +145,9 @@
     "scalpIn": 0.006,
     "maxScale": 0.15,
     "samples": 4,
-    "bakeCage": 0.05,
-    "bakeReach": 0.12,
-    "eyes": "shared",
+    "bakeCage": 0.07,
+    "bakeReach": 0.16,
+    "eyes": "his",
     "eyeHalf": [
       0.015,
       0.0075
@@ -89,47 +188,6 @@
     "scalp": 1.69
   },
   "landmarks": {
-    "his": {
-      "lips": 1.5466,
-      "centreX": -0.028,
-      "crown": 1.7659,
-      "nose": [
-        1.5799,
-        0.1309
-      ],
-      "eyes": {
-        "right": {
-          "x": -0.059,
-          "height": 1.6259,
-          "depth": 0.095,
-          "contrast": 0.2374
-        },
-        "left": {
-          "x": 0,
-          "height": 1.6229,
-          "depth": 0.0962,
-          "contrast": 0.2046
-        }
-      },
-      "eyeLine": 1.6244,
-      "eyeDepth": 0.0956,
-      "brows": {
-        "right": {
-          "x": -0.061,
-          "height": 1.6409
-        },
-        "left": {
-          "x": 0.009,
-          "height": 1.6389
-        }
-      },
-      "browLine": 1.6399,
-      "mouth": {
-        "x": -0.028,
-        "height": 1.5539
-      },
-      "eyeLevelGap": 0.003
-    },
     "shared": {
       "lips": 1.5651,
       "centreX": -0.019,
@@ -169,113 +227,146 @@
         "x": -0.019,
         "height": 1.5676
       },
-      "eyeLevelGap": 0
+      "eyeLevelGap": 0.0
+    },
+    "his": {
+      "lips": 1.5781,
+      "centreX": -0.019,
+      "crown": 1.7463,
+      "nose": [
+        1.6083,
+        0.1111
+      ],
+      "eyes": {
+        "right": {
+          "x": -0.048,
+          "height": 1.6463,
+          "depth": 0.0748,
+          "contrast": 0.2294
+        },
+        "left": {
+          "x": 0.013,
+          "height": 1.6463,
+          "depth": 0.0905,
+          "contrast": 0.1937
+        }
+      },
+      "eyeLine": 1.6463,
+      "eyeDepth": 0.0827,
+      "brows": {
+        "right": {
+          "x": -0.038,
+          "height": 1.6563
+        },
+        "left": {
+          "x": 0.03,
+          "height": 1.6773
+        }
+      },
+      "browLine": 1.6668,
+      "mouth": {
+        "x": -0.019,
+        "height": 1.5823
+      },
+      "eyeLevelGap": 0.0
     },
     "hisAligned": {
-      "lips": 1.558,
-      "centreX": -0.013,
-      "crown": 1.7755,
+      "lips": 1.5619,
+      "centreX": -0.022,
+      "crown": 1.7299,
       "nose": [
-        1.5925,
-        0.1508
+        1.5949,
+        0.1428
       ],
       "eyes": {
         "right": {
           "x": -0.051,
-          "height": 1.6335,
-          "depth": 0.1145,
-          "contrast": 0.2343
+          "height": 1.6319,
+          "depth": 0.1072,
+          "contrast": 0.2255
         },
         "left": {
           "x": 0.01,
-          "height": 1.6315,
-          "depth": 0.1161,
-          "contrast": 0.212
+          "height": 1.6319,
+          "depth": 0.1234,
+          "contrast": 0.1852
         }
       },
-      "eyeLine": 1.6325,
+      "eyeLine": 1.6319,
       "eyeDepth": 0.1153,
       "brows": {
         "right": {
-          "x": -0.053,
-          "height": 1.6485
+          "x": -0.041,
+          "height": 1.6409
         },
         "left": {
-          "x": 0.017,
-          "height": 1.6465
+          "x": 0.027,
+          "height": 1.6619
         }
       },
-      "browLine": 1.6475,
+      "browLine": 1.6514,
       "mouth": {
-        "x": -0.013,
-        "height": 1.5675
+        "x": -0.022,
+        "height": 1.5679
       },
-      "eyeLevelGap": 0.002
+      "eyeLevelGap": 0.0
     },
     "wrapped": {
-      "lips": 1.567,
-      "centreX": -0.019,
-      "crown": 1.763,
+      "lips": 1.5639,
+      "centreX": -0.022,
+      "crown": 1.7524,
       "nose": [
-        1.598,
-        0.1485
+        1.5994,
+        0.145
       ],
       "eyes": {
         "right": {
-          "x": -0.049,
-          "height": 1.633,
-          "depth": 0.1146,
-          "contrast": 0.1853
+          "x": -0.052,
+          "height": 1.6304,
+          "depth": 0.111,
+          "contrast": 0.2348
         },
         "left": {
-          "x": 0.009,
-          "height": 1.631,
-          "depth": 0.1162,
-          "contrast": 0.1386
+          "x": 0.008,
+          "height": 1.6334,
+          "depth": 0.1202,
+          "contrast": 0.1891
         }
       },
-      "eyeLine": 1.632,
-      "eyeDepth": 0.1154,
+      "eyeLine": 1.6319,
+      "eyeDepth": 0.1156,
       "brows": {
         "right": {
-          "x": -0.053,
-          "height": 1.649
+          "x": -0.041,
+          "height": 1.6404
         },
         "left": {
-          "x": 0.026,
-          "height": 1.646
+          "x": 0.027,
+          "height": 1.6604
         }
       },
-      "browLine": 1.6475,
+      "browLine": 1.6504,
       "mouth": {
-        "x": -0.019,
-        "height": 1.568
+        "x": -0.022,
+        "height": 1.5684
       },
-      "eyeLevelGap": 0.002
+      "eyeLevelGap": 0.003
     }
   },
   "fit": {
-    "scale": 1.0169,
-    "mouthFit": 0.8927,
+    "scale": 0.9836,
+    "mouthFit": 1.0167,
     "cast-head": {
-      "scalpHeld": 147,
-      "missed": 1,
-      "largestMove": 0.0233
+      "scalpHeld": 129,
+      "missed": 56,
+      "largestMove": 0.0243
     },
     "cast-head-overview": {
-      "scalpHeld": 33,
-      "missed": 0,
-      "largestMove": 0.0197
+      "scalpHeld": 30,
+      "missed": 18,
+      "largestMove": 0.0201
     },
-    "unpainted": 0,
-    "sharedEyes": {
-      "changed": 0.0102,
-      "toneGain": [
-        1.069,
-        1.062,
-        0.948
-      ]
-    }
+    "unpainted": 2e-05
   },
   "review": null,
   "pictures": [

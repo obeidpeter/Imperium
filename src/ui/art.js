@@ -92,7 +92,7 @@ export function chapterOfflineAssets(chapter,availableFiles=[],{desktop}={}) {
   // A world asset belongs to the chapters the world catalog names, and a
   // generated character body to the chapters whose figures wear it, a generated horse to those
   // whose riders ride it.
-  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),bodies=chapterBodies(n).map(id=>'./'+actorBodyUrl(id)),horses=chapterHorses(n).map(id=>'./'+horseBodyUrl(id));
+  const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),bodies=chapterBodies(n,desktop===undefined?{}:{desktop}).map(id=>'./'+actorBodyUrl(id)),horses=chapterHorses(n).map(id=>'./'+horseBodyUrl(id));
   // On the web a chapter's pack carries only the world files its download has room for (world-catalog.js).
   const world=new Set(worldFiles().map(file=>'./'+file)),own=new Set(chapterWorldFiles(n,desktop===undefined?{}:{desktop}).map(file=>'./'+file));
   const shared3D=availableFiles.filter(path=>own.has(path)||!world.has(path)&&path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/characters/')&&!bodies.includes(path))&&!(path.startsWith('./assets/models/horses/')&&!horses.includes(path))&&![...BUILD_ONLY,'./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));

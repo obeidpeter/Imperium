@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/senator-elder.glb",
+  "output": "assets/models/characters/senator-elder.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 474268,
+    "gzipBytes": 327594,
+    "sha256": "3784ef010122930d584505905ba3df26e74c6d09adee2b702afa5b02a216ff92"
+  },
+  "after": {
+    "bytes": 415160,
+    "gzipBytes": 389740,
+    "sha256": "79fb118db542e7989c721864ebca6b5ecbf15444679aec1441a1f086e4348cd6"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13981,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7140
+      },
+      "bytes": 15223,
+      "psnr": 42.134
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 46628
+      },
+      "bytes": 129275,
+      "psnr": 38.108
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10330
+      },
+      "bytes": 28888,
+      "psnr": 42.469
+    }
+  ]
+}

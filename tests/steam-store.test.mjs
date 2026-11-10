@@ -68,6 +68,16 @@ test('the faces restored with OpenAI image generation are counted from the manif
   assert.ok(!storeText({...inv,faceRestorations:0}).includes('character face texture'),'no restored faces, no sentence');
 });
 
+test('a face modelled from the game’s own portrait is named apart from the text-prompted models',()=>{
+  const portraits=manifest.assets.filter(a=>a.source?.face?.operation==='image_to_model'),inv=aiInventory(manifest);
+  assert.ok(portraits.length>0&&portraits.every(a=>a.path.startsWith('assets/models/characters/')&&/^art-source\/models\/inputs\//.test(a.source.face.input)),'the manifest records the portrait each face was made from');
+  assert.equal(inv.portraitFaces,portraits.length);
+  const word=['no','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'][portraits.length]??String(portraits.length);
+  assert.ok(storeText(inv).includes(`${word[0].toUpperCase()+word.slice(1)} named character`)&&storeText(inv).includes('modelled with Tripo from the game’s own portrait'),'the store text says so');
+  assert.ok(steamAiDisclosureSheet(manifest).includes(`Tripo image-to-model made ${word} face`),'and the inventory');
+  assert.ok(!storeText({...inv,portraitFaces:0}).includes('from the game’s own portrait'),'no such face, no sentence');
+});
+
 test('the store page’s short description fits Steam’s limit, as plain text',()=>{
   const short=block('Short description');
   assert.ok(short.length<=300,`${short.length} characters`);

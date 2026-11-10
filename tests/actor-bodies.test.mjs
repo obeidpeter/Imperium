@@ -44,10 +44,12 @@ const sided=bone=>/^(elbow|hand|knee|ankle)$/.test(bone.name)?`${/^left-/.test(b
 
 test('every generated body and horse is worn or ridden in its listed chapters, through both ceremonies, Chapter II choices and the patron-backed court, in turns and real time', () => {
   let patronCourt=false;
-  const used=new Map(),seen=new Set(),add=(id,chapter)=>{if(id){if(!used.has(id))used.set(id,new Set());used.get(id).add(chapter);}};
+  // The desktop app carries every body in all of its chapters; the web each chapter's that its download has room for (G6).
+  const used=new Map(),usedWeb=new Map(),seen=new Set(),add=(id,chapter,map=used)=>{if(id){if(!map.has(id))map.set(id,new Set());map.get(id).add(chapter);}};
+  const wear=(kit,key,chapter)=>{add(actorBodyId(kit,key,{desktop:true}),chapter);add(actorBodyId(kit,key,{desktop:false}),chapter,usedWeb);for(const map of [used,usedWeb])add(horseBodyId(kit),chapter,map);};
   const collect=s=>{
     const e=G.getChapter(s).encounters[s.encounterIndex],key=`${s.chapter}:${e?.id??'end'}`;if(seen.has(key))return;seen.add(key);
-    const look=(unit,state=s)=>{const kit=actorKit(unit,{chapter:state.chapter,rank:state.rank});add(actorBodyId(kit,actorIdentity(unit,kit).key),state.chapter);add(horseBodyId(kit),state.chapter);};
+    const look=(unit,state=s)=>{const kit=actorKit(unit,{chapter:state.chapter,rank:state.rank});wear(kit,actorIdentity(unit,kit).key,state.chapter);};
     // The real-time camp and field draw the soldier and his company in their own kit.
     const world=w=>{if(!w)return;for(const a of w.actors)look(stageUnit(a,{appearance:s.soldier.appearance}));for(const q of w.squads??[])look(squadUnit(w,q));
       // Reinforcements march on later, a single man before Chapter IV and a squad after, each drawn as one of its kind.
@@ -75,8 +77,12 @@ test('every generated body and horse is worn or ridden in its listed chapters, t
     if(choice&&!s.decisions[G.getChapter(s).decision.id])assert.ok(G.choose(s,choice).ok);
   }});
   assert.ok(patronCourt,'The legal campaign covers Severianus’s conditional Chapter XII appearance');
-  for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});add(actorBodyId(kit,actorIdentity(u,kit).key),scene.chapter);add(horseBodyId(kit),scene.chapter);}}
-  for(const [id,body]of Object.entries({...ACTOR_BODIES,...HORSE_BODIES}))assert.deepEqual([...(used.get(id)??[])].sort((a,b)=>a-b),[...body.chapters],id);
+  for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});wear(kit,actorIdentity(u,kit).key,scene.chapter);}}
+  const chapters=map=>id=>[...(map.get(id)??[])].sort((a,b)=>a-b);
+  for(const [id,body]of Object.entries({...ACTOR_BODIES,...HORSE_BODIES})){
+    assert.deepEqual(chapters(used)(id),[...body.chapters],id);
+    assert.deepEqual(chapters(usedWeb)(id),[...(body.web??body.chapters)],`${id} on the web`);
+  }
   // The chamber's members wear the senators' togas; the protagonist and the named keep the procedural toga.
   assert.ok(SENATOR_BODIES.includes(actorBodyId({civic:true,faction:'Roman',role:'speaker',identity:7},'figure-7')));
   assert.equal(actorBodyId({civic:true,hero:true,faction:'Roman',role:'speaker'},'marcellus'),null);

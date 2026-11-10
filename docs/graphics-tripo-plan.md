@@ -34,7 +34,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
 | G4 | Animals | 600 | done: [the pilot](#g4s-pilot-10-november) (80 credits), [seven more animals](#the-rest-of-g4-seven-more-animals-10-november) (160) and [the battles' animals](#the-battles-animals-10-november) (no credits): 12 models and the horse lines' horses, beside 20 pieces. [Walking animals wait](#g4-closes); the 1,180 credits it leaves, its own and those held for it, follow to G6 and G2 |
 | G5 | Battle and siege | 1,845 | done: [the pilot](#g5s-pilot-9-november) (140 credits), [the first batch](#the-rest-of-g5-the-first-batch-9-november) (440) and [the last](#the-last-of-g5-10-november) (80): 28 models. Its other 1,185 credits [join G3's held 1,840](#what-g5-leaves) for G4, G6 and G2 |
-| G6 | Faces and people | 1,100 | |
+| G6 | Faces and people | 1,100 | in progress, at 3,340 with its held credits: [the pilot](#g6s-pilot-10-november) (185 credits), Lucan's face from his portrait and three people's bodies. [The rest is proposed](#what-the-pilot-proposes-for-the-rest-of-g6) |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
 | | **Total** | **7,900** | |
 
@@ -554,6 +554,45 @@ G4 ends at 240 of its 600 credits: 12 models and the horse lines' horses, beside
 - **Credits:** G4 leaves 360 of its 600 and the 820 held for it: 1,180 in all. The plan has spent 2,655 credits, and its 70% floor (7,490) needs 4,835 more. G6 and G2 can spend 4,005 with their held credits, so the floor needs G4's 1,180 too. They follow in proportion to the two caps: G6 +760 and G2 +420, for caps of 3,340 and 1,845. If all of it is spent, the plan ends near 7,840 of its 7,900 credits, 73.3% of the balance.
 
 The order stays: the faces and people (G6) next, then the arms and standards (G2).
+
+### G6's pilot (10 November)
+
+The faces and people's first models: a named man's face from his campaign portrait, the elder senator in a toga to his feet, and bodies of their own for two of the camps' people.
+
+| Who | What changes | Chapters | Credits |
+| --- | --- | --- | --- |
+| Lucan | his face, modelled by image-to-model from his campaign portrait and baked onto the shared head | I–XII | 30 |
+| the elder senator | remade, his toga falling to his feet | VII, VIII, X–XII | 45 |
+| Vibia the wine-seller | a body of her own: a blue tunic, a dark apron and a brown shawl | VII | 45 |
+| Bassus the armourer | a body of his own, in a smith's leather apron | I–XII | 65, with the rejected first |
+
+- **Credits:** 185 of the pilot's 200-credit ceiling: four text-to-model generations at 20, three rigs at 25, and one image-to-model at 30, not the 20 planned. [The ledger](../art-source/models/graphics-g6-credits.json) has every task. The balance went from 8,045 to 7,860.
+- **Rejected:** one of five generations (20%), at the stop rule's line. The first armourer came in leather armour; the second, asked for one smooth sheet of leather, ships.
+- **Kept, with notes:** the senator and Vibia wear open sandals, though closed shoes were asked; Bassus's hair and beard came black, not grizzled; and Lucan's beard ends in a straight line at the chin, where his own throat joins the face. [The art record](art-generation.md#g6s-pilot-faces-and-people--10-november-2026) has each.
+- **A face from a picture**, as the calibration recommended. Tripo's bust from his portrait has its likeness, which a text-made head lacked: curly hair and a short beard, where the 3D Lucan had been clean-shaven. `wrap-cast-head.py --face` turns the bust to face the front, scales it to the shared head, keeps its own eyes and its face down to the chin, and bakes it onto the shared head as before, so his blinks and expressions stay ([the pipeline](asset-pipeline.md#g6s-pilot-a-face-from-a-portrait-and-bodies-of-their-own--2026-11-10)).
+- **Downloads:** each model downloads with its chapters in the desktop app. A body can now ride the web in fewer chapters than the desktop app, and there its figures wear what they wore before:
+  - Lucan's face rides in every chapter, his file 40 kB larger;
+  - Bassus rides on the web in Chapter XI alone, the one camp whose download has room, and elsewhere there he wears the escorts' body with the code-built apron;
+  - Vibia ships in the desktop app alone, and on the web keeps the procedural woman's figure;
+  - the largest chapter download is now 27.99 of 28 MB, Chapter I's 3D download 17.93 of 18, and the complete web game 78.21 of 80.
+- **The review** was in the desktop build at High: Chapter VII's camp before and after, and Chapter XI's chamber after, each restored through the Restore dialog from a save reached from New Game by legal commands, and the figure viewer for Lucan's face, the senator and Bassus.
+  - Lucan's face is his portrait's in the viewer. In the camp it is small, but his beard shows.
+  - Vibia and Bassus read at once in their own dress.
+  - In the chamber the elders' togas fall to their feet among the other members' knee-length ones.
+  - Not seen: Bassus on the web in Chapter XI, and the senators in the chambers of Chapters VII, VIII, X and XII. The tests check every body in every chapter, in the desktop app and on the web.
+
+![Lucan's portrait, Tripo's bust from it, and his face in the figure viewer before and after](images/g6-pilot-face.jpg)
+
+#### What the pilot proposes for the rest of G6
+
+- **Faces from portraits for the five other named men who have one:** Varro, Sabinus, Crispus, Severianus and Paullus, 150 credits. Felix, Naso, Brennus, Quintus and Theon have no campaign portrait, and Aelia keeps her own head.
+- **The other two senators** remade with togas to their feet, 90.
+- **Bodies of their own** for the people the camera meets closest who still wear a shared body or the procedural figure, near 1,600 credits:
+  - in the camps, about 22: the sentries, the veteran instructor, the eagle-bearer and the cornicen, the engineer and the evacuation officer, the water steward, Aper the quartermaster, more orderlies and clerks, the traders Barnaios, Abgar, Malku and Atticus, Dida, Caecilia and Licinia, and the two envoys;
+  - the chamber's speakers and more of its members;
+  - the civilians in the battles.
+- **Downloads:** the desktop app carries every one. The web downloads are full, and a face adds about 40 kB to its man's file in every chapter he stands in, so on the web each rides only where its chapter has room, as Bassus does in XI.
+- **Credits:** G6 would end near 2,000 of its 3,340, and the plan near 4,700. The 70% floor (7,490) would then need about 2,800 more, beyond G2's 1,845. The next batch's survey looks for the rest among the figures the camera meets closest: the protagonist's face from his own portraits, the people of the story's set scenes and the finale's crowd. If G6 and G2 cannot reach the floor with work the game needs, the owner is told before either ends.
 
 ## Around every release, at no credit cost
 

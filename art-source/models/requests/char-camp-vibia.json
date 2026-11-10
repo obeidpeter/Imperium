@@ -1,0 +1,164 @@
+{
+  "id": "char-camp-vibia",
+  "status": "bound, quantized and compressed: G6 pilot; ships as camp-vibia, in Chapter VII in the desktop app only (the chapter's web download has no room)",
+  "chapters": [
+    7
+  ],
+  "use": "Vibia the wine-seller, who keeps a stall in the canabae of Chapter VII's camp (data/camps.js): a body of her own, where she has been drawn as the game's procedural woman. A woman's body, with her own head.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman provincial woman of the mid-3rd century AD, a wine-seller who keeps a stall outside a Roman army camp in northern Italy, about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool tunic in faded woad blue, a broad dark leather apron over its front from the waist to the shins, a woven belt at the waist with a small leather purse, a shawl of undyed brown wool around her shoulders with both arms free, and closed leather shoes. Her greying dark hair is pinned up in a knot under a folded linen kerchief tied at the nape; a broad, shrewd, humorous face with dark eyes, laugh lines and a weathered olive complexion. Realistic proportions, historically accurate, muted colours. Nothing held in her hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, jug, cup, modern dress, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611310,
+      "image_seed": 2611311,
+      "texture_seed": 2611312
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g6",
+    "creditCeiling": 200,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T13:46:24.608Z",
+    "requestBody": {
+      "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, jug, cup, modern dress, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611310,
+      "image_seed": 2611311,
+      "texture_seed": 2611312,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Roman provincial woman of the mid-3rd century AD, a wine-seller who keeps a stall outside a Roman army camp in northern Italy, about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool tunic in faded woad blue, a broad dark leather apron over its front from the waist to the shins, a woven belt at the waist with a small leather purse, a shawl of undyed brown wool around her shoulders with both arms free, and closed leather shoes. Her greying dark hair is pinned up in a knot under a folded linen kerchief tied at the nape; a broad, shrewd, humorous face with dark eyes, laugh lines and a weathered olive complexion. Realistic proportions, historically accurate, muted colours. Nothing held in her hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 7995,
+    "balanceSnapshotBefore": {
+      "balance": 7995,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "6eab399c-da88-407d-bb01-6078e4fb47cf",
+      "state": "accepted",
+      "requestSha256": "1c199218076ae0b786a9199bb367a98510edd3bc1c8f8c42573aea277ee45464"
+    },
+    "taskId": "20909fb6-cd54-4e69-ae88-fcd7a69adb69",
+    "status": "success",
+    "generatedAt": "2026-11-10T13:49:31.134Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-camp-vibia.glb",
+    "rawBytes": 45407816,
+    "rawSha256": "152c1cb79d7d15c3f0d33a194326ff03c2aa5442d5d1b7810462fa743004fddf",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Roman provincial woman of the mid-3rd century AD, a wine-seller who keeps a stall outside a Roman army camp in northern Italy, about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool tunic in faded woad blue, a broad dark leather apron over its front from the waist to the shins, a woven belt at the waist with a small leather purse, a shawl of undyed brown wool around her shoulders with both arms free, and closed leather shoes. Her greying dark hair is pinned up in a knot under a folded linen kerchief tied at the nape; a broad, shrewd, humorous face with dark eyes, laugh lines and a weathered olive complexion. Realistic proportions, historically accurate, muted colours. Nothing held in her hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611311,
+      "model_seed": 2611310,
+      "texture_seed": 2611312,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, jug, cup, modern dress, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T13:46:25.352090Z",
+    "tripoCompletedAt": "2026-11-10T13:48:06.306724Z",
+    "tripoRender": "art-source/models/raw/char-camp-vibia-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-10T13:54:50.170Z",
+      "requestBody": {
+        "input": "20909fb6-cd54-4e69-ae88-fcd7a69adb69"
+      },
+      "submission": {
+        "id": "cd8e3963-a5de-4c88-ba28-bef1f4d28102",
+        "state": "accepted",
+        "requestSha256": "11f3ddea32647d3e4dd476f6c0d0aaf3af604b7ed41d10b793a31ea96cfb912d"
+      },
+      "taskId": "73e2baaa-7383-46bd-aa84-2d704f106738",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-10T13:57:15.616Z",
+      "requestBody": {
+        "input": "20909fb6-cd54-4e69-ae88-fcd7a69adb69",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 7910,
+      "balanceSnapshotBefore": {
+        "balance": 7910,
+        "frozen": 0
+      },
+      "submission": {
+        "id": "aaa4b067-36f6-43c5-b6b9-0d35f4fda21c",
+        "state": "accepted",
+        "requestSha256": "b62586a00ce8af50072165f4ef1ecbb55b0b57f5031e8d220caaeaf059012daa"
+      },
+      "taskId": "65c7cd7b-dd2d-4bff-9dc6-4b9d5504adff",
+      "status": "success",
+      "generatedAt": "2026-11-10T13:58:52.738Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-camp-vibia-rigged.glb",
+      "rawBytes": 60635044,
+      "rawSha256": "4f291a55938024b3c72d96a0e2c782c937ce533bb2d1677a12fde5814ed16b8e",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "20909fb6-cd54-4e69-ae88-fcd7a69adb69"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-10T13:57:15.879872Z",
+      "tripoCompletedAt": "2026-11-10T13:58:48.489092Z"
+    }
+  }
+}

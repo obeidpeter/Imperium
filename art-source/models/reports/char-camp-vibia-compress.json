@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/camp-vibia.glb",
+  "output": "assets/models/characters/camp-vibia.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 519904,
+    "gzipBytes": 357907,
+    "sha256": "b57d5a749caff28e2b58cb21884d789985767010f13bad3b38777b0e521ad163"
+  },
+  "after": {
+    "bytes": 456436,
+    "gzipBytes": 432523,
+    "sha256": "dbb08e0a995b24347be3022e0c002158bc726a2f13cd1d5e55da2335fd36bf4a"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13947,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7596
+      },
+      "bytes": 15966,
+      "psnr": 41.632
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 60672
+      },
+      "bytes": 145225,
+      "psnr": 37.432
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 21150
+      },
+      "bytes": 39347,
+      "psnr": 38.033
+    }
+  ]
+}

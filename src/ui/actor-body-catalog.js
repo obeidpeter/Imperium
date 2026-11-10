@@ -11,6 +11,7 @@
 // look, and a civic figure its procedural toga and trims.
 // A bare-headed body keeps the figure's own helmet or cap, moved and scaled
 // from the procedural head (head-joint metres) to cover its head and hair.
+import {CONFIG} from '../config.js';
 const fit=({position,scale})=>Object.freeze({position:Object.freeze(position),scale:Object.freeze(scale)});
 // The chapters each named person appears in, in 3D (tests/actor-bodies.test.mjs checks them).
 // Since the living camps (release 8) Varro, Crispus and Brennus also stand in later camps.
@@ -24,7 +25,11 @@ const CAST_CHAPTERS=Object.freeze({lucan:[1,2,3,4,5,6,7,8,9,10,11,12],varro:[1,2
 const SENATOR_CHAPTERS=[7,8,10,11,12];
 // A woman's body (woman) is worn only by the camp's women (actor-kit.js), and a man's never by them.
 // A named man in civilian dress (civilian) wears no soldier's neckcloth over his head's seam (actors.js).
-const body=(fits,chapters,{headwear=null,cast=null,senator=false,woman=false,civilian=false}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),chapters:Object.freeze(chapters),headwear:headwear&&fit(headwear),cast,senator,woman,civilian});
+// A body rides in the web download of its chapters that have room for it (web, all of its chapters unless named): a
+// body made after the downloads filled (graphics plan, G6) names fewer, and on the web there its figures wear what
+// they wore before (bodyShown). The desktop app carries every body in all of its chapters.
+const body=(fits,chapters,{headwear=null,cast=null,senator=false,woman=false,civilian=false,web=chapters}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),
+  chapters:Object.freeze(chapters),web:Object.freeze(web.filter(c=>chapters.includes(c))),headwear:headwear&&fit(headwear),cast,senator,woman,civilian});
 // The recruit's head is the one every named man's face is made from, so a named man's
 // own body wears the game's helmet or cap as the recruit does.
 const SHARED_HEAD={position:[-.018,.04,.048],scale:[.85,.9,1.04]};
@@ -84,6 +89,13 @@ export const ACTOR_BODIES=Object.freeze({
   'camp-capsarius':body([{faction:'Civilian',role:'escort',staff:'capsarius'},{faction:'Civilian',role:'escort',staff:'orderly'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   // Syra the sutler follows the legion from Novae to the Danube fort, and to the final march.
   'camp-sutler':body([{faction:'Civilian',role:'escort',staff:'trader'}],[1,2,3,4,12],{woman:true}),
+  // Vibia the wine-seller of Chapter VII's canabae, in a body of her own (graphics plan, G6), in the desktop app
+  // alone: the chapter's web download has no room for her, and there she keeps the procedural woman's figure.
+  'camp-vibia':body([{faction:'Civilian',role:'escort',staff:'merchant',chapter:7}],[7],{woman:true,web:[]}),
+  // Bassus the armourer at the quartermaster's of every camp, in a body of his own with its own leather apron (G6):
+  // on the web only in Chapter XI, the one camp whose download has room; elsewhere there he wears the escorts'
+  // body below with the code-built apron (actors.js).
+  'camp-smith':body([{faction:'Civilian',role:'escort',staff:'smith'}],[1,2,3,4,5,6,7,8,9,10,11,12],{web:[11]}),
   'civilian-escort':body([{faction:'Civilian',role:'escort'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   // The chamber's members in plain togas, each with the band its bloc's trims are drawn on
   // (bind-character.py --bloc-band). Chosen by the member's identity, never by kit.
@@ -111,15 +123,23 @@ export const ACTOR_BODIES=Object.freeze({
 export const CAST_BODIES=Object.freeze(Object.fromEntries(Object.entries(ACTOR_BODIES).filter(([,b])=>b.cast).map(([id,b])=>[b.cast,id])));
 export const SENATOR_BODIES=Object.freeze(Object.keys(ACTOR_BODIES).filter(id=>ACTOR_BODIES[id].senator));
 export const actorBodyUrl=id=>`assets/models/characters/${id}.glb`;
+const desktopApp=()=>CONFIG.platform==='desktop';
+/** Whether a figure of a chapter may wear a body: on the web only where the chapter's download carries it. A chapter
+ * the body does not name is the caller's own business, as before. `desktop` overrides the build's platform (tests). */
+export const bodyShown=(id,chapter,{desktop=desktopApp()}={})=>{const b=ACTOR_BODIES[id];return !!b&&(desktop||!b.chapters.includes(chapter)||b.web.includes(chapter));};
+/** The body files no chapter's web download carries, which the web build leaves out (scripts/build.mjs). */
+export const desktopOnlyBodyFiles=()=>Object.keys(ACTOR_BODIES).filter(id=>!ACTOR_BODIES[id].web.length).map(actorBodyUrl);
 
 /** The generated body for a kit (actor-kit.js) and the person drawn (his identity key),
  * or null to keep the procedural figure. A named man with a body of his own wears it in
  * every kit but the civic. A member of the chamber nobody names wears one of the
  * senators' togas, by who he is; the protagonist and the named keep the procedural
  * toga, their own faces above it. */
-export function actorBodyId(kit={},cast=null){
+export function actorBodyId(kit={},cast=null,options={}){
+  const shown=id=>bodyShown(id,kit.chapter,options);
   if(kit.civic)return kit.hero||cast&&!String(cast).startsWith('figure-')?null:SENATOR_BODIES[(kit.identity>>>0)%SENATOR_BODIES.length];
-  if(cast&&Object.hasOwn(CAST_BODIES,cast))return CAST_BODIES[cast];
+  // A named person's own body, where the chapter's download carries it; elsewhere they keep what they wore before.
+  if(cast&&Object.hasOwn(CAST_BODIES,cast)&&shown(CAST_BODIES[cast]))return CAST_BODIES[cast];
   // A named person in camp dress with no body of their own keeps the procedural figure and
   // their own face, never a stranger's body.
   if(kit.escort&&cast&&!String(cast).startsWith('figure-'))return null;
@@ -141,11 +161,11 @@ export function actorBodyId(kit={},cast=null){
   // A body fits a figure of its own sex only: a woman of the camp with no woman's body to fit
   // her (the traders and the witness) keeps the procedural woman's figure.
   const traits={...kit,armored:!!kit.armored,command:!!kit.officer&&kit.chapter>=7};
-  for(const [id,{fits,woman}]of Object.entries(ACTOR_BODIES))if(woman===!!kit.female&&fits.some(fit=>Object.entries(fit).every(([key,value])=>traits[key]===value)))return id;
+  for(const [id,{fits,woman}]of Object.entries(ACTOR_BODIES))if(woman===!!kit.female&&shown(id)&&fits.some(fit=>Object.entries(fit).every(([key,value])=>traits[key]===value)))return id;
   return null;
 }
-/** The bodies a chapter's figures can wear, for its offline download group. */
-export const chapterBodies=chapter=>Object.keys(ACTOR_BODIES).filter(id=>ACTOR_BODIES[id].chapters.includes(chapter));
+/** The bodies a chapter's figures can wear, for its offline download group: on the web those its download carries. */
+export const chapterBodies=(chapter,{desktop=desktopApp()}={})=>Object.keys(ACTOR_BODIES).filter(id=>(desktop?ACTOR_BODIES[id].chapters:ACTOR_BODIES[id].web).includes(chapter));
 
 // Generated horses (scripts/assets/bind-horse.py): Tripo horses skinned to the game's horse
 // skeleton on their own legs' rest pose. A mounted figure's horse wears the coat of its

@@ -1,0 +1,168 @@
+{
+  "id": "char-senator-elder-b",
+  "status": "bound with its bloc band, quantized and compressed: G6 pilot; ships as senator-elder in place of char-senator-elder, in Chapters VII, VIII, X, XI and XII",
+  "chapters": [
+    7,
+    8,
+    10,
+    11,
+    12
+  ],
+  "use": "A senator of the chamber, an elder of the house, remade in a toga that falls to his feet and closed shoes (the first, char-senator-elder, came knee-length over sandals): the game draws his bloc's colour and trim along the band of his toga. Ships under the first's name, senator-elder.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman senator of the mid-3rd century AD, a thin elderly man about sixty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds down to his ankles all round, so that only the toes of his shoes show beneath it. A long-sleeved white tunic shows on both arms. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with thin white hair receding high, clean-shaven, a long lined face with an aquiline nose and a dry, judging expression, a pale olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "knee-length, short tunic, bare legs, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611300,
+      "image_seed": 2611301,
+      "texture_seed": 2611302
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g6",
+    "creditCeiling": 200,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T13:44:47.228Z",
+    "requestBody": {
+      "negative_prompt": "knee-length, short tunic, bare legs, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611300,
+      "image_seed": 2611301,
+      "texture_seed": 2611302,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Roman senator of the mid-3rd century AD, a thin elderly man about sixty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds down to his ankles all round, so that only the toes of his shoes show beneath it. A long-sleeved white tunic shows on both arms. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with thin white hair receding high, clean-shaven, a long lined face with an aquiline nose and a dry, judging expression, a pale olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 8015,
+    "balanceSnapshotBefore": {
+      "balance": 8015,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "a26e5d07-9cdd-454d-83c9-f6089e31933a",
+      "state": "accepted",
+      "requestSha256": "8f5196ff69aced4ed55982d7bdae9cbc953992cc957c1c01094b62e3ad1ada44"
+    },
+    "taskId": "e0aa698a-f228-492c-9009-f6b76027e271",
+    "status": "success",
+    "generatedAt": "2026-11-10T13:46:23.908Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-senator-elder-b.glb",
+    "rawBytes": 42800276,
+    "rawSha256": "01c39dc0d449ac02e5a33083b6019a937151f0afb128d689fb5a4d9b8e8710a3",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Roman senator of the mid-3rd century AD, a thin elderly man about sixty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds down to his ankles all round, so that only the toes of his shoes show beneath it. A long-sleeved white tunic shows on both arms. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with thin white hair receding high, clean-shaven, a long lined face with an aquiline nose and a dry, judging expression, a pale olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611301,
+      "model_seed": 2611300,
+      "texture_seed": 2611302,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "knee-length, short tunic, bare legs, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T13:44:47.627631Z",
+    "tripoCompletedAt": "2026-11-10T13:46:19.565121Z",
+    "tripoRender": "art-source/models/raw/char-senator-elder-b-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-10T13:54:44.426Z",
+      "requestBody": {
+        "input": "e0aa698a-f228-492c-9009-f6b76027e271"
+      },
+      "submission": {
+        "id": "dbe8b182-4087-49da-bff6-e62e302afa51",
+        "state": "accepted",
+        "requestSha256": "ea2de9d7348a9d053c10b352c7f28f5fc130311909bc6533d6dd0d94736757e6"
+      },
+      "taskId": "54a35cc4-1bbd-4c44-906b-221a98a291b8",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-10T13:55:12.305Z",
+      "requestBody": {
+        "input": "e0aa698a-f228-492c-9009-f6b76027e271",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 7935,
+      "balanceSnapshotBefore": {
+        "balance": 7935,
+        "frozen": 20
+      },
+      "submission": {
+        "id": "20dbce7a-dd2f-4a59-a370-8cbc93147bde",
+        "state": "accepted",
+        "requestSha256": "b14d654da376f00ed19b3531b7565770a7d863c4224f455928361a4947bf5154"
+      },
+      "taskId": "21bae52a-c9e4-4666-8423-6c513966001d",
+      "status": "success",
+      "generatedAt": "2026-11-10T13:57:15.312Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-senator-elder-b-rigged.glb",
+      "rawBytes": 57355020,
+      "rawSha256": "2e0c978bd88c23aff5cb7e273779461365a0911d6bd7e8112c21403bb609ea2b",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "e0aa698a-f228-492c-9009-f6b76027e271"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-10T13:55:12.608158Z",
+      "tripoCompletedAt": "2026-11-10T13:57:11.464221Z"
+    }
+  }
+}

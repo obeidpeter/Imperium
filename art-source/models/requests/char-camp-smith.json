@@ -1,0 +1,107 @@
+{
+  "id": "char-camp-smith",
+  "status": "G6 pilot: rejected at review (it came in leather armour, with shoulder guards, a studded leather cuirass with hanging strips and armoured bracers, despite \"no armour\" in the prompt and armour in its negative prompt: a soldier, not the armourer at his forge); the second attempt, char-camp-smith-b, wears a plain smith's apron",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "use": "Bassus the armourer, who stands at the quartermaster's in every camp (data/camps.js): a body of his own, where he has worn the escorts' civilian body with a code-built apron. The game's hammer and tongs stay in his hands at work.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman army armourer of the mid-3rd century AD, a broad-shouldered, thickset man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved knee-length tunic of undyed wool belted at the waist, a heavy dark brown leather apron from the chest to the knees tied at the neck and the waist, thick leather bracers on both forearms, wool leg wrappings to the knee and closed leather boots. Bare head with short grizzled dark hair and a short full beard, a weathered, soot-smudged face with heavy brows and a broken nose, strong bare upper arms. Realistic proportions, historically accurate, muted colours. Nothing held in his hands. No armour, no helmet, no weapons, no hammer, no tools, no cloak, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, sword, axe, hammer, tongs, tools, shield, cloak, cape, fur, horns, jewellery, modern clothing, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611320,
+      "image_seed": 2611321,
+      "texture_seed": 2611322
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g6",
+    "creditCeiling": 200,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T13:48:12.108Z",
+    "requestBody": {
+      "negative_prompt": "armour, chainmail, helmet, sword, axe, hammer, tongs, tools, shield, cloak, cape, fur, horns, jewellery, modern clothing, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611320,
+      "image_seed": 2611321,
+      "texture_seed": 2611322,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Roman army armourer of the mid-3rd century AD, a broad-shouldered, thickset man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved knee-length tunic of undyed wool belted at the waist, a heavy dark brown leather apron from the chest to the knees tied at the neck and the waist, thick leather bracers on both forearms, wool leg wrappings to the knee and closed leather boots. Bare head with short grizzled dark hair and a short full beard, a weathered, soot-smudged face with heavy brows and a broken nose, strong bare upper arms. Realistic proportions, historically accurate, muted colours. Nothing held in his hands. No armour, no helmet, no weapons, no hammer, no tools, no cloak, no jewellery, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 7975,
+    "balanceSnapshotBefore": {
+      "balance": 7975,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "dbf4ab16-b159-4187-be5f-93769e79c995",
+      "state": "accepted",
+      "requestSha256": "79b70ea8d181b0c804192a38dc60b42d58f4620513f4ca1c204fb529b3ed8016"
+    },
+    "taskId": "783349c1-c780-4aec-81f4-d4446bbaf885",
+    "status": "success",
+    "generatedAt": "2026-11-10T13:53:26.458Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-camp-smith.glb",
+    "rawBytes": 44837144,
+    "rawSha256": "04d5988c7f86ce3722412169ea5b9f54ee69ae86ed1361b36338e0caf7aa020e",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Roman army armourer of the mid-3rd century AD, a broad-shouldered, thickset man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a short-sleeved knee-length tunic of undyed wool belted at the waist, a heavy dark brown leather apron from the chest to the knees tied at the neck and the waist, thick leather bracers on both forearms, wool leg wrappings to the knee and closed leather boots. Bare head with short grizzled dark hair and a short full beard, a weathered, soot-smudged face with heavy brows and a broken nose, strong bare upper arms. Realistic proportions, historically accurate, muted colours. Nothing held in his hands. No armour, no helmet, no weapons, no hammer, no tools, no cloak, no jewellery, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611321,
+      "model_seed": 2611320,
+      "texture_seed": 2611322,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, chainmail, helmet, sword, axe, hammer, tongs, tools, shield, cloak, cape, fur, horns, jewellery, modern clothing, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T13:48:12.524054Z",
+    "tripoCompletedAt": "2026-11-10T13:49:42.125218Z",
+    "tripoRender": "art-source/models/raw/char-camp-smith-tripo-render.webp"
+  }
+}

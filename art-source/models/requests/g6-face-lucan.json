@@ -1,0 +1,89 @@
+{
+  "id": "g6-face-lucan",
+  "status": "G6 pilot: his face, wrapped onto the shared head by scripts/assets/wrap-cast-head.py --face with his own eye paint, refined and repaired as his first head was; ships in assets/models/characters/cast-lucan.glb in place of the face wrapped from his generated head",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "use": "G6's pilot of a face that starts from a picture (docs/graphics-calibration.md): a head-and-shoulders model made by image-to-model from Lucan's campaign portrait (assets/portraits/lucan.webp, as a PNG at twice its size), whose face is baked onto the shared animated head and compared at close range with the face he wears now (char-cast-lucan, painted from his full-body model).",
+  "generator": {
+    "service": "Tripo",
+    "task": "image_to_model",
+    "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/5170a821d94b8e9e3e2762607a7749f4a4bbd72a/art-source/models/inputs/g6-lucan-portrait.png",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "texture_alignment": "original_image",
+      "model_seed": 2611330,
+      "texture_seed": 2611331
+    }
+  },
+  "budget": {
+    "texture": 1024,
+    "detailTexture": 512,
+    "heightMetres": 0.62
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g6",
+    "creditCeiling": 200,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/image-to-model",
+    "requestedAt": "2026-11-10T13:42:27.539Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "texture_alignment": "original_image",
+      "model_seed": 2611330,
+      "texture_seed": 2611331,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/5170a821d94b8e9e3e2762607a7749f4a4bbd72a/art-source/models/inputs/g6-lucan-portrait.png"
+    },
+    "balanceBefore": 8045,
+    "balanceSnapshotBefore": {
+      "balance": 8045,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "3c814b3f-4375-4696-ad6c-791fc15d1e64",
+      "state": "accepted",
+      "requestSha256": "2e618685e6d5e67659965ed4c39ba1ff4a1f97bbb0e0b8ee2a73fea701e929e8"
+    },
+    "taskId": "18d06202-bbbd-453a-95fa-0bed9ef36e9e",
+    "status": "success",
+    "generatedAt": "2026-11-10T13:44:46.525Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g6-face-lucan.glb",
+    "rawBytes": 44865796,
+    "rawSha256": "92f31e3ebd5eeadfef9b303d7d913365b22e52a07ef58e3a2c048f5fbc0a089f",
+    "tripoInput": {
+      "resource_url": "https://raw.githubusercontent.com/obeidpeter/Imperium/5170a821d94b8e9e3e2762607a7749f4a4bbd72a/art-source/models/inputs/g6-lucan-portrait.png"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "submitted request",
+    "creditsSpent": 30,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T13:42:28.247328Z",
+    "tripoCompletedAt": "2026-11-10T13:44:40.814423Z",
+    "tripoRender": "art-source/models/raw/g6-face-lucan-tripo-render.webp"
+  }
+}

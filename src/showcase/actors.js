@@ -241,7 +241,8 @@ function createActorRig(unit={},options={},reuseGroup=null){
     mesh(bucket,new T.CylinderGeometry(.087,.087,.006,10),black,0,-.118,0);
   }
   // The armourer (release 11): a leather apron from chest to knee, and at work his hammer and tongs.
-  if(kit.staff==='smith'){
+  // His own body (graphics plan, G6) brings its own apron; this one dresses the escorts' body he wears without it.
+  if(kit.staff==='smith'&&body?.id!=='camp-smith'){
     const apron=part(torso,'smith-apron',0,0,.155);
     mesh(apron,new T.BoxGeometry(.36,.78,.016),leather,0,-.12,0);
     for(const x of [-.13,.13])mesh(apron,new T.BoxGeometry(.018,.3,.01),leather,x,.38,-.02).rotation.x=-.25;
