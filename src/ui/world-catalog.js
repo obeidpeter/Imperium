@@ -191,24 +191,38 @@ const G5_WEB_ROOM=Object.freeze({1:Object.freeze([]),4:Object.freeze(['g5-cart',
 const g5=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,chapters.filter(c=>!G5_WEB_ROOM[c]||G5_WEB_ROOM[c].includes(id)));
 // Animals (graphics plan, G4). Each stands with a piece of a camp's furniture or of life about it, beside that piece in
 // its court beyond the board, or by its spot in the baggage line beyond a field's southern edge, and only where the piece
-// itself stands (environment-regional-world.js): horses tethered at the horse lines, a pair of oxen by the ox cart, a pair
-// of mules by the covered carriage (the carpentum's usual team), a camel by the camel gear, a pack mule by the broken cart
-// and the handcart, and a dog by the ovens. In the piece's own frame, `shift` moves the piece aside to make room, and each
+// itself stands (environment-regional-world.js): horses tethered at the horse lines, a grey and a dark ox by the ox cart, a
+// pair of mules by the covered carriage (the carpentum's usual team), a camel by the camel gear and another by the caravan's
+// trough, one couched by its baggage, a pack mule by the broken cart and the handcart, a dog by the ovens and the cooks'
+// fire, sheep by the loom, goats by the woodpile and the market stall, a pack donkey by the pottery stall and a courier's
+// horse by the courier table. In the piece's own frame, `shift` moves the piece aside to make room, and each
 // animal is [its model, x, z, yaw]: the middle of its footprint, and its bearing, turned from facing along the piece's +x.
 // With `across`, they stand on the side of the piece away from the board, where the camera looks in: where the piece's
-// own -z points toward the board, they are mirrored across it. The generated animals face their own +x; a horse is the
+// own -z points toward the board, they are mirrored across it. Where a piece names `chapters`, its animals stand and
+// download only in those of its chapters. The generated animals face their own +x; a horse is the
 // Roman horse's coat (actor-body-catalog.js), which those chapters already download for their cavalry, baked standing in
 // its rest pose (scenery-models.js), and faces its +z.
 export const CAMP_ANIMALS=Object.freeze(Object.fromEntries(Object.entries({
   'g3-horse-lines':{shift:[-1,0],animals:[['horse-roman',1,-.92,Math.PI+.03],['horse-roman',.97,.02,Math.PI-.02],['horse-roman',1.02,.94,Math.PI+.01]]},
-  'life-ox-cart':{across:true,shift:[0,.65],animals:[['g4-ox',.05,-.68,.02],['g4-ox',-.05,-1.7,-.02]]},
+  'life-ox-cart':{across:true,shift:[0,.65],animals:[['g4-ox',.05,-.68,.02],['g4-ox-dark',-.05,-1.7,-.02]]},
   'life-travel-carriage':{across:true,shift:[0,.45],animals:[['g4-mule',.15,-.85,.02],['g4-mule',-.05,-1.65,-.03]]},
   'life-camel-gear':{across:true,shift:[0,.75],animals:[['g4-camel',0,-.9,Math.PI]]},
   'broken-baggage-cart':{across:true,shift:[0,.45],animals:[['g4-pack-mule',.1,-1.15,.04]]},
   'life-handcart':{across:true,shift:[0,.45],animals:[['g4-pack-mule',-.1,-1.2,Math.PI-.05]]},
   'life-bread-oven':{across:true,animals:[['g4-dog',.9,-1.6,.35]]},
-  'g3-field-oven':{across:true,animals:[['g4-dog',.7,-1.45,.5]]}
-}).map(([id,{shift=[0,0],across=false,animals}])=>[id,Object.freeze({shift:Object.freeze(shift),across,animals:Object.freeze(animals.map(a=>Object.freeze(a)))})])));
+  'g3-field-oven':{across:true,animals:[['g4-dog',.7,-1.45,.5]]},
+  'legionary-cookstation':{across:true,animals:[['g4-dog',.8,-1.3,.4]]},
+  'life-loom':{across:true,shift:[0,.4],animals:[['g4-sheep',-1.2,-1.2,.15],['g4-sheep-grazing',.25,-1.85,Math.PI+.2],['g4-sheep',1.35,-1.15,-.1]]},
+  'life-woodpile':{across:true,shift:[0,.6],animals:[['g4-goat',-.9,-.95,.3],['g4-goat',.95,-1.6,Math.PI-.25]]},
+  'life-market-stall':{across:true,shift:[0,.5],animals:[['g4-goat',-.8,-.85,.2],['g4-goat',.9,-1.5,Math.PI-.15]]},
+  'life-pottery-stall':{across:true,shift:[0,.5],animals:[['g4-donkey',.1,-.7,.05]]},
+  'caravan-trough':{across:true,shift:[0,.75],animals:[['g4-camel',0,-1.1,0]]},
+  'caravan-baggage':{across:true,shift:[0,.7],animals:[['g4-camel-couched',0,-.8,Math.PI]]},
+  // Chapter XI's courier table stands on its service pad in the camp, where no animal stands, and XI has no battle: its
+  // horse rides in III and VII alone.
+  'courier-table':{across:true,shift:[0,.45],chapters:[3,7],animals:[['g4-courier-horse',.1,-.65,.05]]}
+}).map(([id,{shift=[0,0],across=false,chapters,animals}])=>[id,Object.freeze({shift:Object.freeze(shift),across,...(chapters?{chapters:Object.freeze(chapters)}:{}),
+  animals:Object.freeze(animals.map(a=>Object.freeze(a)))})])));
 // The coats among them, and the turn that sets a coat (facing its +z) to face +x like the generated animals.
 export const ANIMAL_COATS=Object.freeze({'horse-roman':HORSE_BODIES['horse-roman']});
 export const ANIMAL_COAT_TURN=Math.PI/2;
@@ -216,11 +230,13 @@ const hostChapters=id=>CAMP_PROP_CHAPTERS[id]??LIFE_PROP_CHAPTERS[id]??REGIONAL_
 // The chapters whose scenes set out each generated animal: those of the pieces it stands with.
 export const ANIMAL_CHAPTERS=Object.freeze(Object.fromEntries([...new Set(Object.values(CAMP_ANIMALS).flatMap(h=>h.animals.map(([model])=>model)))]
   .filter(model=>!ANIMAL_COATS[model]).map(model=>[model,Object.freeze([...new Set(Object.entries(CAMP_ANIMALS)
-    .filter(([,h])=>h.animals.some(([m])=>m===model)).flatMap(([host])=>hostChapters(host)))].sort((a,b)=>a-b))])));
-// What a chapter's web download has room for of G4's animals (presentation-budget.js): Chapters II and III take theirs,
-// and XI its mules; the others had too little room left after G3 and G5, so their pieces stand alone on the web. The
-// horses need no room: their coat is already in the download.
-const G4_WEB_ROOM=Object.freeze({2:Object.freeze(['g4-pack-mule','g4-dog']),3:Object.freeze(['g4-pack-mule','g4-dog']),11:Object.freeze(['g4-mule'])});
+    .filter(([,h])=>h.animals.some(([m])=>m===model)).flatMap(([host,h])=>h.chapters??hostChapters(host)))].sort((a,b)=>a-b))])));
+// What a chapter's web download has room for of G4's animals (presentation-budget.js): Chapter II takes its pack mule, dog
+// and goats, III its pack mule, dog and courier's horse, and XI its mules, goats and donkey; the others had too little room
+// left after G3 and G5, so their pieces stand alone on the web. The horses at the horse lines need no room: their coat is
+// already in the download.
+const G4_WEB_ROOM=Object.freeze({2:Object.freeze(['g4-pack-mule','g4-dog','g4-goat']),3:Object.freeze(['g4-pack-mule','g4-dog','g4-courier-horse']),
+  11:Object.freeze(['g4-mule','g4-goat','g4-donkey'])});
 const g4=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,chapters.filter(c=>G4_WEB_ROOM[c]?.includes(id)));
 /** The model an animal of a chapter's scene stands as: a generated animal's, or the coat its chapter's cavalry downloads. */
 export const animalModelUrl=(model,chapter)=>ANIMAL_COATS[model]?(ANIMAL_COATS[model].chapters.includes(chapter)?horseBodyUrl(model):null)

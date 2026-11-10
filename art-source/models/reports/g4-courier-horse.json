@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g4-courier-horse-b.glb",
+    "bytes": 45807016,
+    "sha256": "8e6bf4fd86a18e68e5343f8950ede44e8c615d417d8de9ec259caca9d1d34ef2",
+    "triangles": 1497604
+  },
+  "output": {
+    "path": "assets/models/world/g4-courier-horse.glb",
+    "bytes": 232816,
+    "sha256": "4b30cc1714492753ff4ff30157cec8c512420a32046da5f643f0105bfca7c88a",
+    "triangles": 4899
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 90.0
+  },
+  "scale": 2.029540398547876,
+  "sizeMetres": {
+    "width": 2.029,
+    "height": 1.8,
+    "depth": 0.6899
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_330e35eb-66dd-4a01-981c-142251b9e0af",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_330e35eb-66dd-4a01-981c-142251b9e0af",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_330e35eb-66dd-4a01-981c-142251b9e0af",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "id": "g4-camel-couched",
+  "status": "G4 rest: processed, compressed and reviewed; ships as g4-camel-couched, in Chapter IX (the desktop app only)",
+  "chapters": [
+    9
+  ],
+  "use": "A dromedary couched at rest beside the caravan baggage in a court beyond the board (Chapter IX).",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A dromedary camel of the Syrian desert caravans, mid-3rd century AD, couched at rest: lying on the ground with all four legs folded neatly beneath its body, the long neck curving up with the head raised level and facing forward, symmetrical. A single-humped camel with a sandy-tan coat, darker shaggy hair on the hump, neck and upper legs, a woven red and ochre saddle blanket over the hump held by a girth, and a plain rope halter. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "standing, saddle frame, packs, bags, bundles, rider, person, people, two humps, bactrian camel, llama, alpaca, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617100,
+      "image_seed": 2617101,
+      "texture_seed": 2617102
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 330000,
+    "heightMetres": 1.6,
+    "minHeight": 1.44,
+    "maxHeight": 1.76,
+    "note": "An animal: its height, to the top of its head, horns, ears or hump, is set from its raw proportions at review."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T09:21:30.310Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "standing, saddle frame, packs, bags, bundles, rider, person, people, two humps, bactrian camel, llama, alpaca, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617100,
+      "image_seed": 2617101,
+      "texture_seed": 2617102,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A dromedary camel of the Syrian desert caravans, mid-3rd century AD, couched at rest: lying on the ground with all four legs folded neatly beneath its body, the long neck curving up with the head raised level and facing forward, symmetrical. A single-humped camel with a sandy-tan coat, darker shaggy hair on the hump, neck and upper legs, a woven red and ochre saddle blanket over the hump held by a girth, and a plain rope halter. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 8105,
+    "balanceSnapshotBefore": {
+      "balance": 8105,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "d88b2f47-0ead-42c7-a298-f6dc9198cafb",
+      "state": "accepted",
+      "requestSha256": "0d8e2aa903467fb4c6d2ba784bfb260e3617fb6af081e87dd6e8ac25af8c5e01"
+    },
+    "taskId": "092c39ed-b69e-48e9-977c-94105ef1c8e7",
+    "status": "success",
+    "generatedAt": "2026-11-10T09:23:24.347Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g4-camel-couched.glb",
+    "rawBytes": 45041868,
+    "rawSha256": "d8a977c18ce4018747231abbcc14ef1e9ea6836301689acbb20c0ff5e0c91df4",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A dromedary camel of the Syrian desert caravans, mid-3rd century AD, couched at rest: lying on the ground with all four legs folded neatly beneath its body, the long neck curving up with the head raised level and facing forward, symmetrical. A single-humped camel with a sandy-tan coat, darker shaggy hair on the hump, neck and upper legs, a woven red and ochre saddle blanket over the hump held by a girth, and a plain rope halter. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2617101,
+      "model_seed": 2617100,
+      "texture_seed": 2617102,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "standing, saddle frame, packs, bags, bundles, rider, person, people, two humps, bactrian camel, llama, alpaca, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T09:21:31.158347Z",
+    "tripoCompletedAt": "2026-11-10T09:23:19.501763Z",
+    "tripoRender": "art-source/models/raw/g4-camel-couched-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "As asked: a sandy dromedary resting on its folded legs, its long neck curving up, under a patterned red and ochre blanket held by a girth. Two short wooden posts stand at the blanket's front and back, as a saddle's frame would, which the negative prompt named; they are small, and it was kept. It came facing nearly its +z and was turned 85 degrees to face +x: 2.50 m long and 1.6 m high. It stands only in the baggage line of Chapter IX's battles, which this review did not see in the game."
+  }
+}

@@ -15,14 +15,18 @@ import {HORSE_BODIES,horseBodyUrl} from '../src/ui/actor-body-catalog.js';
 import {CAMP_ANIMALS,ANIMAL_CHAPTERS,ANIMAL_COATS,ANIMAL_COAT_TURN,CAMP_PROP_CHAPTERS,LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,WORLD_CATALOG,
   animalModelUrl,chapterWorldFiles,desktopOnlyWorldFiles,worldModelUrl} from '../src/ui/world-catalog.js';
 
-// Release G4 of the graphics plan (docs/graphics-tripo-plan.md): animals. Its pilot stands them in the camps' courts beyond
-// the board and in the battles' baggage line, each beside the piece of furniture or life it belongs to: the Roman horse's
-// coat, baked standing, at the horse lines; generated oxen by the ox cart, mules by the covered carriage, a camel by the
-// camel gear and a dog by the ovens; and the calibration's pack mule by the broken cart and the handcart. Presentation
-// only: these tests prove where they stand, in camps and battles reached by legal commands, not anything a player does.
+// Release G4 of the graphics plan (docs/graphics-tripo-plan.md): animals. They stand in the camps' courts beyond the board
+// and in the battles' baggage line, each beside the piece of furniture or life it belongs to: the Roman horse's coat, baked
+// standing, at the horse lines; generated oxen by the ox cart, mules by the covered carriage, camels by the camel gear and
+// the caravan's trough and baggage, a dog by the ovens and the cooks' fire, sheep by the loom, goats by the woodpile and
+// the market stall, a pack donkey by the pottery stall and a courier's horse by the courier table; and the calibration's
+// pack mule by the broken cart and the handcart. Presentation only: these tests prove where they stand, in camps and
+// battles reached by legal commands, not anything a player does.
 const root=new URL('../',import.meta.url),read=async path=>JSON.parse(await readFile(new URL(path,root),'utf8'));
 const fixtures=await read('tests/fixtures/graphics-scenes.json');
-const PAID=['g4-ox','g4-mule','g4-camel','g4-dog'],SHIPPED=[...PAID,'g4-pack-mule'];
+// The animals paid for in each batch, and those G4 ships: the courier's horse ships from its second attempt.
+const PAID={pilot:['g4-ox','g4-mule','g4-camel','g4-dog'],rest:['g4-sheep','g4-sheep-grazing','g4-goat','g4-donkey','g4-ox-dark','g4-camel-couched','g4-courier-horse','g4-courier-horse-b']};
+const SHIPPED=[...PAID.pilot,...PAID.rest.filter(id=>!id.endsWith('-b')),'g4-pack-mule'];
 const hostChapters=id=>CAMP_PROP_CHAPTERS[id]??LIFE_PROP_CHAPTERS[id]??REGIONAL_PROP_CHAPTERS[id];
 const campOf=chapter=>{const world=G.createCampWorld(G.deserialize(JSON.stringify(fixtures.scenes.find(s=>s.id===`camp-${chapter}`).state)));
   return {...world.map,id:world.map.id,campPresentation:world.campPresentation};};
@@ -68,7 +72,7 @@ function overlaps(a,b){
   return true;
 }
 
-test('release G4 spends within its authorisation and its pilot\'s ceiling, and the balance moved by what the ledger records', async () => {
+test('release G4 spends within its authorisation and each batch\'s ceiling, and the balance moved by what the ledger records', async () => {
   const ledger=await read('art-source/models/graphics-g4-credits.json'),tasks=ledger.batches.flatMap(b=>b.tasks);
   const spent=tasks.reduce((sum,t)=>sum+t.accountedCredits,0);
   assert.equal(ledger.authorization.credits,600);assert.equal(ledger.spentCredits,spent);assert.equal(ledger.remainingAuthorization,600-spent);
@@ -81,7 +85,7 @@ test('release G4 spends within its authorisation and its pilot\'s ceiling, and t
       assert.equal((await read(`art-source/models/requests/${t.id}.json`)).provenance.taskId,t.taskId,`${t.id}: its request records the task`);
     }
   }
-  assert.deepEqual(tasks.map(t=>t.id).sort(),[...PAID].sort(),'The pilot paid for four animals; the pack mule was the calibration\'s');
+  for(const batch of ledger.batches)assert.deepEqual(batch.tasks.map(t=>t.id).sort(),[...PAID[batch.batch]].sort(),`${batch.batch}: its paid tasks; the pack mule was the calibration's`);
   const generations=tasks.filter(t=>t.operation==='text_to_model');
   assert.ok(generations.filter(t=>t.rejectedAtReview).length<=generations.length*.2,'Rejections within the stop rule');
 });
@@ -99,8 +103,12 @@ test('every animal G4 ships has its task, its manifest entry and its budget, and
       const calibration=await read('art-source/models/requests/cal-mule.json');
       assert.equal(p.reusedFrom,'cal-mule');assert.equal(p.taskId,calibration.provenance.taskId);assert.equal(p.rawSha256,calibration.provenance.rawSha256);
       assert.equal(entry.source.credits,0);assert.ok(!tasks.some(t=>t.id===entry.id));
-    }else{assert.equal(tasks.find(t=>t.id===entry.id)?.taskId,p.taskId,`${entry.id}: its generation is in the ledger`);assert.equal(entry.source.credits,20);}
-    assert.match(request.status,/^G4 pilot: processed, compressed and reviewed/,`${entry.id} is reviewed`);
+    }else{
+      // A second attempt ships under the first's name: its own task, never the rejected one.
+      const task=tasks.find(t=>t.taskId===p.taskId);
+      assert.ok(task&&!task.rejectedAtReview&&(task.id===entry.id||task.id===`${entry.id}-b`),`${entry.id}: its generation is in the ledger`);assert.equal(entry.source.credits,20);
+    }
+    assert.match(request.status,/^G4 (pilot|rest): processed, compressed and reviewed/,`${entry.id} is reviewed`);
     const info=await inspectModel(await readFile(new URL(entry.path,root))),b=request.budget;
     assert.deepEqual(budgetProblems(info,{bytes:b.bytes,triangles:b.triangles,texture:b.texture,minHeight:b.minHeight,maxHeight:b.maxHeight}),[],entry.id);
     assert.equal(info.bytes,entry.export.bytes);
@@ -112,18 +120,23 @@ test('each animal is in the chapters of the pieces it stands with, the web carri
   assert.deepEqual([...models].filter(m=>!ANIMAL_COATS[m]).sort(),[...SHIPPED].sort());
   for(const model of SHIPPED){
     const hosts=Object.entries(CAMP_ANIMALS).filter(([,h])=>h.animals.some(([m])=>m===model)).map(([host])=>host);
-    assert.deepEqual(WORLD_CATALOG[model].chapters,[...new Set(hosts.flatMap(hostChapters))].sort((a,b)=>a-b),`${model} stands where its pieces stand`);
+    assert.deepEqual(WORLD_CATALOG[model].chapters,[...new Set(hosts.flatMap(host=>CAMP_ANIMALS[host].chapters??hostChapters(host)))].sort((a,b)=>a-b),
+      `${model} stands where its pieces stand`);
     assert.deepEqual(ANIMAL_CHAPTERS[model],WORLD_CATALOG[model].chapters);
   }
-  // On the web, Chapters II and III carry the pack mule and the dog, and XI its mules; every other web chapter leaves its
-  // animals out, and the desktop app has them all.
+  // A piece that names its animals' chapters names some of its own: Chapter XI's courier table stands on a service pad.
+  for(const [host,h]of Object.entries(CAMP_ANIMALS))if(h.chapters)assert.ok(h.chapters.every(c=>hostChapters(host).includes(c)),host);
+  assert.deepEqual(CAMP_ANIMALS['courier-table'].chapters,[3,7]);
+  // On the web, Chapter II carries its pack mule, dog and goats, III its pack mule, dog and courier's horse, and XI its
+  // mules, goats and donkey; every other web chapter leaves its animals out, and the desktop app has them all.
   const web=Object.fromEntries(SHIPPED.map(model=>[model,WORLD_CATALOG[model].web]));
-  assert.deepEqual(web,{'g4-ox':[],'g4-mule':[11],'g4-camel':[],'g4-dog':[2,3],'g4-pack-mule':[2,3]});
+  assert.deepEqual(web,{'g4-ox':[],'g4-mule':[11],'g4-camel':[],'g4-dog':[2,3],'g4-pack-mule':[2,3],'g4-sheep':[],'g4-sheep-grazing':[],'g4-goat':[2,11],
+    'g4-donkey':[11],'g4-ox-dark':[],'g4-camel-couched':[],'g4-courier-horse':[3]});
   for(const model of SHIPPED)for(const chapter of WORLD_CATALOG[model].chapters){
     assert.equal(chapterWorldFiles(chapter,{desktop:true}).includes(worldModelUrl(model)),true);
     assert.equal(chapterWorldFiles(chapter,{desktop:false}).includes(worldModelUrl(model)),web[model].includes(chapter));
   }
-  assert.deepEqual(desktopOnlyWorldFiles().filter(f=>/\/g4-/.test(f)).sort(),['g4-camel','g4-ox'].map(worldModelUrl).sort());
+  assert.deepEqual(desktopOnlyWorldFiles().filter(f=>/\/g4-/.test(f)).sort(),['g4-camel','g4-ox','g4-sheep','g4-sheep-grazing','g4-ox-dark','g4-camel-couched'].map(worldModelUrl).sort());
   // The horse lines' horses are the coat those chapters' cavalry already download: no file of their own.
   assert.deepEqual(Object.keys(ANIMAL_COATS),['horse-roman']);
   for(const chapter of CAMP_PROP_CHAPTERS['g3-horse-lines'])assert.ok(HORSE_BODIES['horse-roman'].chapters.includes(chapter),`Chapter ${chapter} downloads the Roman horse`);
@@ -131,8 +144,8 @@ test('each animal is in the chapters of the pieces it stands with, the web carri
   assert.equal(animalModelUrl('g4-ox',8),worldModelUrl('g4-ox'));assert.equal(animalModelUrl('g4-ox',7),null);
 });
 
-test('in every camp and battle, each animal stands with its piece, within the piece\'s court or line spot, clear of it and of the others, on its far side from the board', async () => {
-  let checked=0;
+test('in every camp and battle, each animal stands with its piece, within the piece\'s court or line spot, clear of it and of the others, on its far side from the board, and in every chapter that downloads it', async () => {
+  let checked=0;const shown={};
   for(const {id,chapter,e}of [...CAMPS,...battles()]){
     const before=JSON.stringify(e),placements=regionalPropPlacements(e,{chapter}),hx=e.width*1.25,hz=e.height*1.25;
     const out=(x,z)=>Math.max(Math.abs(x)-hx,Math.abs(z)-hz);
@@ -153,7 +166,7 @@ test('in every camp and battle, each animal stands with its piece, within the pi
       assert.ok(hostQuad.every(([x,z])=>Math.abs(x-cx)<=half&&Math.abs(z-cz)<=half),`${id}/${host.id} stays within its own court`);
       const quads=[];
       for(const a of animals){
-        const [w,d]=await footprint(a.id);quads.push(corners(a.x,a.z,[w,d],a.yaw));
+        const [w,d]=await footprint(a.id);quads.push(corners(a.x,a.z,[w,d],a.yaw));(shown[a.id]??=new Set()).add(chapter);
         assert.ok(Number.isFinite(a.x)&&Number.isFinite(a.z)&&a.url===animalModelUrl(a.id,chapter),`${id}/${a.key}`);
         // A generated animal faces its +x and a coat its +z, turned from the piece's x by its own yaw, mirrored with its spot.
         const turn=herd.animals[Number(a.key.split(':').at(-1))][3],facing=a.yaw-(ANIMAL_COATS[a.id]?ANIMAL_COAT_TURN:0)-yaw;
@@ -170,6 +183,8 @@ test('in every camp and battle, each animal stands with its piece, within the pi
     assert.equal(JSON.stringify(e),before,`${id}: placement reads the scene and changes nothing`);
   }
   assert.ok(checked>=60,`${checked} animals checked`);
+  // No chapter downloads an animal that none of its camps or battles stands: a piece on a service pad has none.
+  for(const model of SHIPPED)assert.deepEqual([...shown[model]??[]].sort((a,b)=>a-b),WORLD_CATALOG[model].chapters,`${model} stands in every chapter that downloads it`);
 });
 
 test('an animal shows only with its piece and only where its download carries it, and a camp\'s models still fit the idle cache', () => {

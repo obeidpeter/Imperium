@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g4-donkey.glb",
+    "bytes": 44843284,
+    "sha256": "1932a715e83191d4aad6f57f03143b6df279ef28f0d6b0f3420e798ecfdc1233",
+    "triangles": 1432456
+  },
+  "output": {
+    "path": "assets/models/world/g4-donkey.glb",
+    "bytes": 264104,
+    "sha256": "94b7b746328e787e2b0a68a66829d89d810a4fb5ff32b2cfbafa76b91d6c09fa",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.4,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.6032154814461448,
+  "sizeMetres": {
+    "width": 1.6043,
+    "height": 1.4,
+    "depth": 0.9168
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_d5330dd0-0156-4e5f-a0ee-d7f4fedd19c4",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_d5330dd0-0156-4e5f-a0ee-d7f4fedd19c4",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_d5330dd0-0156-4e5f-a0ee-d7f4fedd19c4",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

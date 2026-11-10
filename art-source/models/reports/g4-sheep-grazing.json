@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g4-sheep-grazing.glb",
+    "bytes": 47686000,
+    "sha256": "9352b6535ca62814c2233d89d0d1ce08dde76aa8a840f0fe5a9b9cdcb024a6c6",
+    "triangles": 1470912
+  },
+  "output": {
+    "path": "assets/models/world/g4-sheep-grazing.glb",
+    "bytes": 236852,
+    "sha256": "d98bd47140ec6c9f934fd2a2724e600a3cdf67dd9af7693eb9047371fe414d39",
+    "triangles": 2939
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 90.0
+  },
+  "scale": 1.1417063226779363,
+  "sizeMetres": {
+    "width": 1.1391,
+    "height": 0.8,
+    "depth": 0.4576
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_3525b735-a10e-481d-9443-569cc6166941",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_3525b735-a10e-481d-9443-569cc6166941",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_3525b735-a10e-481d-9443-569cc6166941",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}
