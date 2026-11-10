@@ -11,7 +11,7 @@ const vertex=(g,i)=>JSON.stringify(['position','normal','uv','skinIndex','skinWe
 
 test('repaired distant heads retain the near source UV seams, geometry and exact skin weights',async()=>{
   const assets=manifest.assets.filter(a=>a.source?.surfaceRepair);
-  assert.equal(assets.length,13);
+  assert.equal(assets.length,17);
   let painted=0,rebuilt=0;
   for(const asset of assets){
     const report=JSON.parse(await file(asset.source.surfaceRepair.report)),old=JSON.parse(await file(asset.source.refinement.report)),bytes=await file(asset.path);
@@ -27,7 +27,7 @@ test('repaired distant heads retain the near source UV seams, geometry and exact
     }
     parsed.scene.traverse(o=>{if(o.isMesh){o.geometry.dispose();for(const m of [o.material].flat())m.dispose();}});
   }
-  assert.equal(painted,5);assert.equal(rebuilt,11);
+  assert.equal(painted,5);assert.equal(rebuilt,15);
 });
 
 test('civilian neck joins stay below the face, retain normalized skinning and leave source masters unchanged',async()=>{

@@ -1,0 +1,96 @@
+{
+ "id": "char-camp-atticus",
+ "status": "G6 batch A: rejected at review (it came holding a thin white stick, a pen, at the corner of its mouth, which reads as a cigarette, and wore sandals where closed shoes were asked); it was never rigged, and the second attempt, char-camp-atticus-b, names no pen and nothing in the mouth",
+ "chapters": [
+  11
+ ],
+ "use": "Atticus the bookseller, who keeps a stall in Chapter XI's portico at Rome (data/camps.js): a body of his own, where he has worn the escorts' civilian body.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Roman bookseller of the city of Rome in the mid-3rd century AD, a thin, stooped scholar about sixty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved off-white wool tunic to the calf with narrow dark brown bands at the cuffs, a hooded brown wool travelling cape (paenula) closed down the front with the hood down and both arms free, a plain leather belt with a small leather case for pens at his hip, and closed leather shoes. Bald on top with wispy white hair at the sides, clean-shaven, a long, thin, intelligent face with a beaky nose, ink-stained fingers and a pale complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no scroll in hand, no book, no glasses, no jewellery, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, toga, scroll, book, codex, glasses, hat, crown, jewellery, gold, modern clothing, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611520,
+   "image_seed": 2611521,
+   "texture_seed": 2611522
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:39:27.390Z",
+  "requestBody": {
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, toga, scroll, book, codex, glasses, hat, crown, jewellery, gold, modern clothing, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611520,
+   "image_seed": 2611521,
+   "texture_seed": 2611522,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Roman bookseller of the city of Rome in the mid-3rd century AD, a thin, stooped scholar about sixty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved off-white wool tunic to the calf with narrow dark brown bands at the cuffs, a hooded brown wool travelling cape (paenula) closed down the front with the hood down and both arms free, a plain leather belt with a small leather case for pens at his hip, and closed leather shoes. Bald on top with wispy white hair at the sides, clean-shaven, a long, thin, intelligent face with a beaky nose, ink-stained fingers and a pale complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no scroll in hand, no book, no glasses, no jewellery, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7470,
+  "balanceSnapshotBefore": {
+   "balance": 7470,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "f567ccd0-f17f-44ce-b27e-b9fd1f91bf5e",
+   "state": "accepted",
+   "requestSha256": "0b3b7990ec65c1171a488b64d359acbe5232dd7a69d481508aac454282090cd8"
+  },
+  "taskId": "a0f5b21a-4ac9-46fe-b06c-a4381a5f7714",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:41:40.633Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-atticus.glb",
+  "rawBytes": 42661120,
+  "rawSha256": "c2ac0f706dd4f1c33423ee4b1d2ae7cf66cc8ebb393672e78a803995798be552",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Roman bookseller of the city of Rome in the mid-3rd century AD, a thin, stooped scholar about sixty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved off-white wool tunic to the calf with narrow dark brown bands at the cuffs, a hooded brown wool travelling cape (paenula) closed down the front with the hood down and both arms free, a plain leather belt with a small leather case for pens at his hip, and closed leather shoes. Bald on top with wispy white hair at the sides, clean-shaven, a long, thin, intelligent face with a beaky nose, ink-stained fingers and a pale complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no scroll in hand, no book, no glasses, no jewellery, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611521,
+   "model_seed": 2611520,
+   "texture_seed": 2611522,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, toga, scroll, book, codex, glasses, hat, crown, jewellery, gold, modern clothing, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:39:27.937538Z",
+  "tripoCompletedAt": "2026-11-10T16:41:32.238059Z",
+  "tripoRender": "art-source/models/raw/char-camp-atticus-tripo-render.webp"
+ }
+}

@@ -1,0 +1,88 @@
+{
+ "id": "g6-face-sabinus",
+ "status": "G6 batch A: his face, wrapped onto the shared head by scripts/assets/wrap-cast-head.py --face with his own eye paint, refined and repaired as his first head was; ships in assets/models/characters/cast-sabinus-portrait.glb, Sabinus's body in the desktop app, beside his first body and face, which the web keeps",
+ "chapters": [
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12
+ ],
+ "use": "G6 batch A: a face that starts from a picture, as Lucan's in G6's pilot: a head-and-shoulders model made by image-to-model from Sabinus, the file-leader who stands in Lucan's place's campaign portrait (assets/portraits/sabinus.webp, as a PNG at twice its size), whose face is baked onto the shared animated head.",
+ "generator": {
+  "service": "Tripo",
+  "task": "image_to_model",
+  "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-sabinus-portrait.png",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611540,
+   "texture_seed": 2611541
+  }
+ },
+ "budget": {
+  "texture": 1024,
+  "detailTexture": 512,
+  "heightMetres": 0.62
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 30,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/image-to-model",
+  "requestedAt": "2026-11-10T16:09:00.947Z",
+  "requestBody": {
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611540,
+   "texture_seed": 2611541,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-sabinus-portrait.png"
+  },
+  "balanceBefore": 7830,
+  "balanceSnapshotBefore": {
+   "balance": 7830,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "45cdaf40-d327-4c81-975c-73fd1441c6d2",
+   "state": "accepted",
+   "requestSha256": "70d24287cdb6d9b7a4998881a5fc5c418b27f5dd4373d62f594ede5421ce87db"
+  },
+  "taskId": "c0d04657-2bc4-4c2a-be35-5a2abc136fbb",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:11:33.875Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/g6-face-sabinus.glb",
+  "rawBytes": 46308200,
+  "rawSha256": "2410a841e76b1a011846de2eb7843e0f3c6d306137bd5a8002314cc89a3d4ffa",
+  "tripoInput": {
+   "resource_url": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-sabinus-portrait.png"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "submitted request",
+  "creditsSpent": 30,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:09:01.743494Z",
+  "tripoCompletedAt": "2026-11-10T16:11:26.580435Z",
+  "tripoRender": "art-source/models/raw/g6-face-sabinus-tripo-render.webp"
+ }
+}

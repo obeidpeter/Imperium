@@ -1,0 +1,164 @@
+{
+ "id": "char-camp-abgar-b",
+ "status": "bound, quantized and compressed: G6 batch A, accepted at review (as asked, without the waterskin, in sandals where closed shoes were asked); ships as camp-abgar in Chapter VI in the desktop app only (the chapter's web download has no room)",
+ "chapters": [
+  6
+ ],
+ "use": "Abgar the water-seller, who sells water in Chapter VI's camp on the eastern sands (data/camps.js): a body of his own, where he has worn the escorts' civilian body. His waterskin is left out, as the first attempt's came as a dark ball at its hip.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Syrian man of the eastern desert frontier in the mid-3rd century AD, a lean, sun-dried man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved belted tunic to the knee of coarse undyed wool, loose dark brown trousers to the ankle, and soft closed leather shoes. A cloth of undyed linen wrapped loosely around his head, its end falling over one shoulder; a short black beard, a narrow, lined face with dark eyes and a deeply tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no jewellery, no bags, no waterskin, no straps across the body, no fur, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "waterskin, bag, sack, ball, sphere, pot, jar, basket, strap, fur, fleece, sheepskin, sandals, bare feet, armour, helmet, weapon, sword, crown, jewellery, gold, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611600,
+   "image_seed": 2611601,
+   "texture_seed": 2611602
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:48:49.830Z",
+  "requestBody": {
+   "negative_prompt": "waterskin, bag, sack, ball, sphere, pot, jar, basket, strap, fur, fleece, sheepskin, sandals, bare feet, armour, helmet, weapon, sword, crown, jewellery, gold, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611600,
+   "image_seed": 2611601,
+   "texture_seed": 2611602,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Syrian man of the eastern desert frontier in the mid-3rd century AD, a lean, sun-dried man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved belted tunic to the knee of coarse undyed wool, loose dark brown trousers to the ankle, and soft closed leather shoes. A cloth of undyed linen wrapped loosely around his head, its end falling over one shoulder; a short black beard, a narrow, lined face with dark eyes and a deeply tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no jewellery, no bags, no waterskin, no straps across the body, no fur, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7410,
+  "balanceSnapshotBefore": {
+   "balance": 7410,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "48ea2e0d-4677-464c-ba19-de2fd750e3f3",
+   "state": "accepted",
+   "requestSha256": "380b55b49d05d7f9961532d1f292ad4896460b7425df3298566603ddfc861a8b"
+  },
+  "taskId": "60ed7c60-2c9d-4290-a38e-e9321368f2bb",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:50:23.980Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-abgar-b.glb",
+  "rawBytes": 43644920,
+  "rawSha256": "9600b9385c10961102606774abc04d2959de8ca46d4619b34e0cf8670592ab8d",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Syrian man of the eastern desert frontier in the mid-3rd century AD, a lean, sun-dried man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved belted tunic to the knee of coarse undyed wool, loose dark brown trousers to the ankle, and soft closed leather shoes. A cloth of undyed linen wrapped loosely around his head, its end falling over one shoulder; a short black beard, a narrow, lined face with dark eyes and a deeply tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no jewellery, no bags, no waterskin, no straps across the body, no fur, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611601,
+   "model_seed": 2611600,
+   "texture_seed": 2611602,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "waterskin, bag, sack, ball, sphere, pot, jar, basket, strap, fur, fleece, sheepskin, sandals, bare feet, armour, helmet, weapon, sword, crown, jewellery, gold, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:48:50.836550Z",
+  "tripoCompletedAt": "2026-11-10T16:50:13.924125Z",
+  "tripoRender": "art-source/models/raw/char-camp-abgar-b-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T16:52:51.534Z",
+   "requestBody": {
+    "input": "60ed7c60-2c9d-4290-a38e-e9321368f2bb"
+   },
+   "submission": {
+    "id": "d799b5dd-f95f-465d-a808-01cdabe0c651",
+    "state": "accepted",
+    "requestSha256": "c6be4b8c60d1d46e39e9caaa141a35dbfd400433e61f86031064ff3120f66e02"
+   },
+   "taskId": "cc9c05e8-ccdb-4f8c-a554-89198e2a188e",
+   "status": "success",
+   "output": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  },
+  "rig": {
+   "check": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig",
+   "requestedAt": "2026-11-10T16:52:57.349Z",
+   "requestBody": {
+    "input": "60ed7c60-2c9d-4290-a38e-e9321368f2bb",
+    "model": "v1.0-20240301",
+    "rig_type": "biped",
+    "spec": "tripo",
+    "out_format": "glb"
+   },
+   "balanceBefore": 7295,
+   "balanceSnapshotBefore": {
+    "balance": 7295,
+    "frozen": 25
+   },
+   "submission": {
+    "id": "e1240ba6-4265-435f-b345-e01adc1fd986",
+    "state": "accepted",
+    "requestSha256": "e01b2027cb1aa245086b3db956c3e6d1eb9ca81ba57ee06c3f6350edaab01e94"
+   },
+   "taskId": "64ffd61c-a735-4a42-be6f-bac82f530b74",
+   "status": "success",
+   "generatedAt": "2026-11-10T16:54:56.083Z",
+   "output": "model_url",
+   "raw": "art-source/models/raw/char-camp-abgar-b-rigged.glb",
+   "rawBytes": 58342240,
+   "rawSha256": "32e6b23815403fb8d6b59db73e0fdba363f56c8d52ad0dedee3c24e882040043",
+   "tripoInput": {
+    "spec": "tripo",
+    "topology": "biped",
+    "out_format": "glb",
+    "original_model_id": "60ed7c60-2c9d-4290-a38e-e9321368f2bb"
+   },
+   "modelVersion": "v1.0-20240301",
+   "modelVersionSource": "submitted request",
+   "creditsSpent": 25,
+   "creditSource": "task.credits_consumed",
+   "tripoCreatedAt": "2026-11-10T16:52:57.612739Z",
+   "tripoCompletedAt": "2026-11-10T16:54:50.797030Z"
+  }
+ }
+}

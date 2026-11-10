@@ -34,7 +34,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
 | G4 | Animals | 600 | done: [the pilot](#g4s-pilot-10-november) (80 credits), [seven more animals](#the-rest-of-g4-seven-more-animals-10-november) (160) and [the battles' animals](#the-battles-animals-10-november) (no credits): 12 models and the horse lines' horses, beside 20 pieces. [Walking animals wait](#g4-closes); the 1,180 credits it leaves, its own and those held for it, follow to G6 and G2 |
 | G5 | Battle and siege | 1,845 | done: [the pilot](#g5s-pilot-9-november) (140 credits), [the first batch](#the-rest-of-g5-the-first-batch-9-november) (440) and [the last](#the-last-of-g5-10-november) (80): 28 models. Its other 1,185 credits [join G3's held 1,840](#what-g5-leaves) for G4, G6 and G2 |
-| G6 | Faces and people | 1,100 | in progress, at 3,340 with its held credits: [the pilot](#g6s-pilot-10-november) (185 credits), Lucan's face from his portrait and three people's bodies. [The rest is proposed](#what-the-pilot-proposes-for-the-rest-of-g6) |
+| G6 | Faces and people | 1,100 | paused at its stop rule, at 3,340 with its held credits: [the pilot](#g6s-pilot-10-november) (185 credits) and [the first batch](#the-rest-of-g6-the-first-batch-10-november) (790): five faces from portraits, three senators and twelve of the camps' people. [The owner decides whether it goes on](#after-g6s-first-batch-10-november) |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
 | | **Total** | **7,900** | |
 
@@ -594,6 +594,64 @@ The faces and people's first models: a named man's face from his campaign portra
 - **Downloads:** the desktop app carries every one. The web downloads are full, and a face adds about 40 kB to its man's file in every chapter he stands in, so on the web each rides only where its chapter has room, as Bassus does in XI.
 - **Credits:** G6 would end near 2,000 of its 3,340, and the plan near 4,700. The 70% floor (7,490) would then need about 2,800 more, beyond G2's 1,845. The next batch's survey looks for the rest among the figures the camera meets closest: the protagonist's face from his own portraits, the people of the story's set scenes and the finale's crowd. If G6 and G2 cannot reach the floor with work the game needs, the owner is told before either ends.
 
+### The rest of G6: the first batch (10 November)
+
+Faces from four more named men's portraits, the other two senators in togas to their feet, and bodies of their own for ten of the camps' people.
+
+| Who | What changes | Chapters | Credits |
+| --- | --- | --- | --- |
+| Varro, Sabinus, Crispus and Paullus | their faces, modelled by image-to-model from their campaign portraits | Varro I–VI, Sabinus II–XII, Crispus III, IV, VII and XI, Paullus XI and XII | 30 each |
+| Severianus | his face, made but not shipped | — | 30 |
+| the younger and the bearded senators | remade, their togas falling to their feet | VII, VIII, X–XII | 45, and 65 with the bearded's rejected second |
+| the gate sentry and Quartermaster Aper | bodies of their own | I–XII | 45 each |
+| the veteran instructor | a body of his own, in a studded leather jerkin | VI–XII | 45 |
+| the supply orderly | a body of his own, with fleeces over his shoulders | IV, VI–XII | 65, with a rejected second |
+| Caecilia the grain-seller and Licinia the witness | bodies of their own | X | 45 each |
+| the traders Barnaios, Abgar, Malku and Atticus | bodies of their own | V, VI, IX and XI | 45, 65, 45 and 65 |
+| Dida the honey-seller | made, but refused by the rig check | — | 20 |
+
+- **Credits:** 790 of the batch's 820-credit ceiling: five image-to-model generations at 30, seventeen text-to-model generations at 20 and twelve rigs at 25. [The ledger](../art-source/models/graphics-g6-credits.json) has every task. The balance went from 7,860 to 7,070.
+- **Rejected at review:** four of the batch's 22 generations, each before its rig, and each redone once:
+  - the bearded senator's second: its toga ended at mid-shin, the length the remake was for;
+  - Abgar's first: its waterskin came as a dark ball at its hip;
+  - Atticus's first: a pen held in its mouth read as a cigarette;
+  - the orderly's second: it came holding bundles, where the game puts his load in his hands. His first, set aside at first, ships.
+- **Two more did not ship:**
+  - **Dida.** Her body passed review, but Tripo's free rig check refused it: her wide skirt hides her legs. She keeps the procedural woman's figure.
+  - **Severianus's face.** The bust is kept, but no wrap of it passed review: at every turn and nod tried, his crown came bald and smudged where the bust's high forehead and curls met the shared head's scalp, and his throat took his toga's white. He keeps his own generated head.
+- **The stop rule:** with the pilot's one, 5 of G6's 27 generations were rejected at review (18.5%), under the line. Counting Dida and Severianus's face, 7 of the 27 have not shipped (26%), over it. So G6 pauses here, and [the owner is asked](#after-g6s-first-batch-10-november) whether it goes on.
+- **Kept, with notes:** the younger and the bearded senators, Abgar and Atticus wear open sandals, though closed shoes were asked; Atticus's cape hangs open, where it was asked closed; Malku's mantle is a brighter blue than asked; the orderly came with fleeces over his shoulders, a studded belt and sandals, where a sheepskin vest, a cord and closed shoes were asked. [The art record](art-generation.md#the-rest-of-g6-the-first-batch--10-november-2026) has each.
+- **Faces from portraits,** as Lucan's was. Two new settings of the wrap: `--face-nod` lifts a bust that looks down, as Paullus's does (12°), and `--max-mouth-fit` lets a long face be fitted to the shared head's lip line by more than a fifth (Paullus's by 23%). Texels the bake does not reach are now filled from their painted neighbours. Each face ships as a body of its own beside the man's first, which the web keeps ([the pipeline](asset-pipeline.md#the-rest-of-g6-the-first-batch-faces-from-portraits-beside-the-first-and-bodies-for-the-desktop-app--2026-11-10)).
+  - Each has his portrait's likeness: Varro's grey hair and short grey beard, Sabinus's black beard and moustache, Crispus's black curls and Paullus's long, lined face.
+  - Their eyes glance aside, as in the portraits.
+  - The portraits' red cloaks streak the sides of Varro's and Crispus's necks, seen above the neckcloth when they turn.
+  - Crispus's hair reads as a patchy dark cap, and a fold shows under his chin.
+  - Paullus's face is shortened by 23% to fit, and his crown is bald where his portrait's hair is curly; a dark smudge marks his hairline.
+- **Downloads:** each model downloads with its chapters in the desktop app. The web downloads had little room left:
+  - the senators' new togas ride in all their chapters, 24 kB smaller between them than the old, and Atticus in Chapter XI;
+  - the four faces, Aper, the sentry, the instructor, the orderly, the other traders and the two women ship in the desktop app alone, and on the web each wears what he or she wore before. The four staff bodies rode the web in Chapter XI at first, but the complete web game then came to 80.26 MB, over its 80, so they ship in the desktop app alone; the bearded senator was bound again with 256-pixel detail maps, from 442 to 405 kB, for Chapter XII's room;
+  - the largest chapter download is 27.98 of 28 MB, Chapter I's 3D download 17.93 of 18, and the complete web game 78.57 of 80. Chapter XI's download rises by 0.36 MB; the senators' chapters other than XI fall by 25 kB.
+- **The review** was in the figure viewer, for the faces and the senators, and in the desktop build at High, in the camps of Chapters II, V, VI, IX, X and XI, before (main's build) and after. Each camp was restored through the Restore dialog from a save reached from New Game by legal commands.
+  - Each face has its portrait's likeness at close range. In the camps the faces are small.
+  - The staff, the traders and the two women read at once in their own dress, where most had worn the escorts' blue body or been the procedural woman.
+  - Not seen: the senators' new togas in a chamber, and the web build. The tests check every body worn in exactly its chapters, in the desktop app and on the web.
+
+![Four portraits, Tripo's busts from them, and each man's face in the figure viewer before and after](images/g6-batch-a-faces.jpg)
+
+![The bearded and the younger senators in the figure viewer, each before and after](images/g6-batch-a-senators.jpg)
+
+![Ten of the camps' people before and after, in the desktop build at High](images/g6-batch-a-camps.jpg)
+
+#### What the first batch leaves
+
+- **Credits:** G6 has spent 975 of its 3,340, and 2,365 remain. The plan has spent 3,630 credits since 8 November, so its 70% floor (7,490) needs 3,860 more. G2 can spend 1,845, so the floor needs about 2,015 more from G6.
+- **What more G6 could make,** all of it for the desktop app, as the web downloads are full:
+  - bodies for the camps' other people the camera meets: the eagle-bearer and the cornicen, the engineer and the evacuation officer, the water steward, the other orderlies and clerks, the two envoys, and Dida again, in a narrower skirt the rig check can read;
+  - the chamber's speakers and more of its members, and the civilians in the battles;
+  - the protagonist's face from his own portraits, the people of the story's set scenes and the finale's crowd;
+  - Severianus's face again from the bust already made, at no credit cost.
+- **Next:** the arms and standards (G2), a release of its own, which the stop rule does not pause. G6 waits for the owner's word.
+
 ## Around every release, at no credit cost
 
 - **Pipeline:**
@@ -637,6 +695,12 @@ After the calibration (8 November):
 9. **The rest of the plan** is left to my judgement, within each release's cap and the rules below. Each pilot is reviewed in the game before the rest of its release is generated, and its review images go with its PR, rather than to the owner first.
 10. **Order:** the camps (G3), then battle and siege (G5), animals (G4), faces and people (G6), and arms and standards (G2), the standards first. The camps and the siege works are large enough to read at any distance; most of G2's kit is too small to read in battle, where step 0 found the crowds read better with the code-built pieces.
 11. **G1's remaining 1,295 credits** go to G3 (700) and G5 (595); the second crowd bodies are not made. The plan keeps its 7,900-credit cap.
+
+### After G6's first batch (10 November)
+
+12. **G6 pauses at its stop rule.** 7 of its 27 generations have not shipped: five rejected at review, Dida's body refused by the rig check and Severianus's face not passing review. The owner decides whether it goes on, with my recommendation first:
+    - **go on after G2** with a second batch for the desktop app, prompts that leave the hands empty and the feet showing, and each body's rig checked before the next is generated (recommended): the 70% floor needs about 2,015 of G6's remaining 2,365 credits;
+    - or **end G6 here**, and the plan ends near 5,475 credits, 51% of the balance, under its 70% floor.
 
 ## Rules for the spend
 

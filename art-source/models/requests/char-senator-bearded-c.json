@@ -1,0 +1,168 @@
+{
+ "id": "char-senator-bearded-c",
+ "status": "bound with its bloc band, quantized and compressed: G6 batch A, accepted at review (its toga falls to the ankles over a long tunic, where the second attempt's ended at mid-shin; it wears sandals where closed shoes were asked); ships as senator-bearded in place of char-senator-bearded, in Chapters VII, VIII, X, XI and XII",
+ "chapters": [
+  7,
+  8,
+  10,
+  11,
+  12
+ ],
+ "use": "A senator of the chamber, a heavy-set man about fifty with a short grey beard, remade in a toga that falls to his feet and closed shoes (the first, char-senator-bearded, came knee-length over sandals): the game draws his bloc's colour and trim along the band of his toga. Ships under the first's name, senator-bearded. The third attempt: the second, char-senator-bearded-b, came with its toga ending at mid-shin.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Roman senator of the mid-3rd century AD, a heavy-set man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds all the way to the ground, its hem brushing the tops of his feet all round, over a long-sleeved white tunic that also reaches his ankles. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with short curly grey-brown hair and a short full grey beard, a broad round face with a heavy brow and a shrewd expression, a warm olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "knee-length, mid-calf, short toga, short tunic, bare legs, bare shins, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611580,
+   "image_seed": 2611581,
+   "texture_seed": 2611582
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:41:41.408Z",
+  "requestBody": {
+   "negative_prompt": "knee-length, mid-calf, short toga, short tunic, bare legs, bare shins, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611580,
+   "image_seed": 2611581,
+   "texture_seed": 2611582,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Roman senator of the mid-3rd century AD, a heavy-set man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds all the way to the ground, its hem brushing the tops of his feet all round, over a long-sleeved white tunic that also reaches his ankles. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with short curly grey-brown hair and a short full grey beard, a broad round face with a heavy brow and a shrewd expression, a warm olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7450,
+  "balanceSnapshotBefore": {
+   "balance": 7450,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "57c46005-d9eb-42ff-a949-081c3c136cd4",
+   "state": "accepted",
+   "requestSha256": "7dcd86f3d919da5a6ec86f770367db223a00ef871293268736c75e1fa92ea82e"
+  },
+  "taskId": "14495de5-d007-467c-b914-15d6bf8be485",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:43:44.042Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-senator-bearded-c.glb",
+  "rawBytes": 43427752,
+  "rawSha256": "c2da2216b412c5374b2a531c8a5a1908f2950a778c35fb7738d72ab2c260abf3",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Roman senator of the mid-3rd century AD, a heavy-set man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds all the way to the ground, its hem brushing the tops of his feet all round, over a long-sleeved white tunic that also reaches his ankles. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with short curly grey-brown hair and a short full grey beard, a broad round face with a heavy brow and a shrewd expression, a warm olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611581,
+   "model_seed": 2611580,
+   "texture_seed": 2611582,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "knee-length, mid-calf, short toga, short tunic, bare legs, bare shins, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:41:41.813122Z",
+  "tripoCompletedAt": "2026-11-10T16:43:39.704852Z",
+  "tripoRender": "art-source/models/raw/char-senator-bearded-c-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T16:51:29.941Z",
+   "requestBody": {
+    "input": "14495de5-d007-467c-b914-15d6bf8be485"
+   },
+   "submission": {
+    "id": "18646847-9643-44f6-ac9d-7bc99ff1f22d",
+    "state": "accepted",
+    "requestSha256": "f2f90240e453f97d2dc5da6248459b2f3ce0e092b595bca226992e4ba77a8e51"
+   },
+   "taskId": "2448d0d6-20b7-431e-8f29-b54ef6c1d29e",
+   "status": "success",
+   "output": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  },
+  "rig": {
+   "check": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig",
+   "requestedAt": "2026-11-10T16:51:35.745Z",
+   "requestBody": {
+    "input": "14495de5-d007-467c-b914-15d6bf8be485",
+    "model": "v1.0-20240301",
+    "rig_type": "biped",
+    "spec": "tripo",
+    "out_format": "glb"
+   },
+   "balanceBefore": 7345,
+   "balanceSnapshotBefore": {
+    "balance": 7345,
+    "frozen": 20
+   },
+   "submission": {
+    "id": "1695af77-2c08-479a-8744-1f2cefd5a865",
+    "state": "accepted",
+    "requestSha256": "3516ab89480c3e6500ea696e4e8513eb855060ab49f7f0491fbdc8e0f76ba2d0"
+   },
+   "taskId": "e0192c7c-45b1-4c74-a24c-56d7231dea06",
+   "status": "success",
+   "generatedAt": "2026-11-10T16:52:31.552Z",
+   "output": "model_url",
+   "raw": "art-source/models/raw/char-senator-bearded-c-rigged.glb",
+   "rawBytes": 58061636,
+   "rawSha256": "4fa512ce111cf3a05b45e1df48f79390cfdf007e591d3f4025b098d957b9d87e",
+   "tripoInput": {
+    "spec": "tripo",
+    "topology": "biped",
+    "out_format": "glb",
+    "original_model_id": "14495de5-d007-467c-b914-15d6bf8be485"
+   },
+   "modelVersion": "v1.0-20240301",
+   "modelVersionSource": "submitted request",
+   "creditsSpent": 25,
+   "creditSource": "task.credits_consumed",
+   "tripoCreatedAt": "2026-11-10T16:51:36.011302Z",
+   "tripoCompletedAt": "2026-11-10T16:52:27.124011Z"
+  }
+ }
+}

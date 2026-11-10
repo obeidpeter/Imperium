@@ -1,0 +1,170 @@
+{
+ "id": "char-camp-instructor",
+ "status": "bound, quantized and compressed: G6 batch A, accepted at review (as asked, the thick leather jerkin with studded shoulder doublings like a cuirass's); ships as camp-instructor in the camps of Chapters VI–XII in the desktop app only (the complete web game has no room)",
+ "chapters": [
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12
+ ],
+ "use": "The veteran instructor who drills recruits in the camps of Chapters VI–XII (data/camps.js): a body of his own, where he has worn the escorts' civilian body.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Roman army drill instructor (campidoctor) of the mid-3rd century AD, a hard, scarred veteran about fifty, broad-shouldered and still strong, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length red wool tunic, a broad leather belt with a bronze ring buckle and bronze plates, dark wool trousers, closed leather boots, and a sleeveless thick leather jerkin over the tunic. Bare head with grey hair cropped very short, clean-shaven, a weathered square face with a scar across one cheek, a stern mouth and a deeply tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour of metal, no helmet, no shield, no weapons, no staff, no cloak, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "chainmail, plate armour, breastplate, cuirass, helmet, shield, weapon, sword, staff, stick, cloak, cape, toga, gold, beard, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611440,
+   "image_seed": 2611441,
+   "texture_seed": 2611442
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:25:43.569Z",
+  "requestBody": {
+   "negative_prompt": "chainmail, plate armour, breastplate, cuirass, helmet, shield, weapon, sword, staff, stick, cloak, cape, toga, gold, beard, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611440,
+   "image_seed": 2611441,
+   "texture_seed": 2611442,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Roman army drill instructor (campidoctor) of the mid-3rd century AD, a hard, scarred veteran about fifty, broad-shouldered and still strong, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length red wool tunic, a broad leather belt with a bronze ring buckle and bronze plates, dark wool trousers, closed leather boots, and a sleeveless thick leather jerkin over the tunic. Bare head with grey hair cropped very short, clean-shaven, a weathered square face with a scar across one cheek, a stern mouth and a deeply tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour of metal, no helmet, no shield, no weapons, no staff, no cloak, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7630,
+  "balanceSnapshotBefore": {
+   "balance": 7630,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "4e962bf6-bce2-489e-ab89-9cdfb121b63c",
+   "state": "accepted",
+   "requestSha256": "88258f5ed2e5b178883893887a02a9bde6590f224305f7a10245925a1554d01f"
+  },
+  "taskId": "c0eddd35-f5e9-483d-b757-cfe60bc4cc17",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:27:31.277Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-instructor.glb",
+  "rawBytes": 43551336,
+  "rawSha256": "b00eee452ba9c7aeebee3ded36653ad985c5d5843e70b9f4b5743306f33ea372",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Roman army drill instructor (campidoctor) of the mid-3rd century AD, a hard, scarred veteran about fifty, broad-shouldered and still strong, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length red wool tunic, a broad leather belt with a bronze ring buckle and bronze plates, dark wool trousers, closed leather boots, and a sleeveless thick leather jerkin over the tunic. Bare head with grey hair cropped very short, clean-shaven, a weathered square face with a scar across one cheek, a stern mouth and a deeply tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour of metal, no helmet, no shield, no weapons, no staff, no cloak, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611441,
+   "model_seed": 2611440,
+   "texture_seed": 2611442,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "chainmail, plate armour, breastplate, cuirass, helmet, shield, weapon, sword, staff, stick, cloak, cape, toga, gold, beard, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:25:44.418635Z",
+  "tripoCompletedAt": "2026-11-10T16:27:26.605509Z",
+  "tripoRender": "art-source/models/raw/char-camp-instructor-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T16:55:34.271Z",
+   "requestBody": {
+    "input": "c0eddd35-f5e9-483d-b757-cfe60bc4cc17"
+   },
+   "submission": {
+    "id": "5780e977-b4ed-4dfd-b4c4-f21c2cc78039",
+    "state": "accepted",
+    "requestSha256": "a46135f04afa2179705d6ed7005e5a2a4d938e7832229bddadde9d09f5a6237a"
+   },
+   "taskId": "b64648c1-0d96-415d-b163-0622feb50dc5",
+   "status": "success",
+   "output": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  },
+  "rig": {
+   "check": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig",
+   "requestedAt": "2026-11-10T16:55:40.769Z",
+   "requestBody": {
+    "input": "c0eddd35-f5e9-483d-b757-cfe60bc4cc17",
+    "model": "v1.0-20240301",
+    "rig_type": "biped",
+    "spec": "tripo",
+    "out_format": "glb"
+   },
+   "balanceBefore": 7220,
+   "balanceSnapshotBefore": {
+    "balance": 7220,
+    "frozen": 25
+   },
+   "submission": {
+    "id": "e9b64ac8-b90c-4630-949b-169e00f727b1",
+    "state": "accepted",
+    "requestSha256": "e778f89a2044d06bd868e7613e507636bf1185970ba3c085e64c1674453e71a7"
+   },
+   "taskId": "4b9575ee-f8fe-456f-9e19-e3779d2364d0",
+   "status": "success",
+   "generatedAt": "2026-11-10T16:56:37.235Z",
+   "output": "model_url",
+   "raw": "art-source/models/raw/char-camp-instructor-rigged.glb",
+   "rawBytes": 58118684,
+   "rawSha256": "972d2b34640e51e6d97fda8250cb01031c8d1aba9121e8009de1b4879d26555c",
+   "tripoInput": {
+    "spec": "tripo",
+    "topology": "biped",
+    "out_format": "glb",
+    "original_model_id": "c0eddd35-f5e9-483d-b757-cfe60bc4cc17"
+   },
+   "modelVersion": "v1.0-20240301",
+   "modelVersionSource": "submitted request",
+   "creditsSpent": 25,
+   "creditSource": "task.credits_consumed",
+   "tripoCreatedAt": "2026-11-10T16:55:41.084010Z",
+   "tripoCompletedAt": "2026-11-10T16:56:31.616558Z"
+  }
+ }
+}

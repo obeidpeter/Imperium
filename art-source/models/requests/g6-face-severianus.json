@@ -1,0 +1,84 @@
+{
+ "id": "g6-face-severianus",
+ "status": "generated: the bust is accepted, but its face on the shared head did not ship in G6's first batch: wrapped at turns and nods from review, its crown came bald and smudged where the bust's high forehead and curls met the shared head's scalp, and its throat took his toga's white; the bust is kept for a later wrap, and Severianus keeps his own generated head",
+ "chapters": [
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12
+ ],
+ "use": "G6 batch A: a face that starts from a picture, as Lucan's in G6's pilot: a head-and-shoulders model made by image-to-model from Severianus, the tribune and patron's campaign portrait (assets/portraits/severianus.webp, as a PNG at twice its size), whose face is baked onto the shared animated head.",
+ "generator": {
+  "service": "Tripo",
+  "task": "image_to_model",
+  "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-severianus-portrait.png",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611560,
+   "texture_seed": 2611561
+  }
+ },
+ "budget": {
+  "texture": 1024,
+  "detailTexture": 512,
+  "heightMetres": 0.62
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 30,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/image-to-model",
+  "requestedAt": "2026-11-10T16:14:05.046Z",
+  "requestBody": {
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611560,
+   "texture_seed": 2611561,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-severianus-portrait.png"
+  },
+  "balanceBefore": 7770,
+  "balanceSnapshotBefore": {
+   "balance": 7770,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "1bfdd28a-f78e-4377-a1eb-89c13998f509",
+   "state": "accepted",
+   "requestSha256": "48a58bec315bdcf449f5eb9396dd3bc4bea892b8695cfdb8150d118735b2768c"
+  },
+  "taskId": "1629eb7a-45df-4e72-8c8a-584e4583e691",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:16:12.701Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/g6-face-severianus.glb",
+  "rawBytes": 45322400,
+  "rawSha256": "71708bc6d3159f778348acbd1c72eb8d77af3f67a9cf546dcb1982b8b4470402",
+  "tripoInput": {
+   "resource_url": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-severianus-portrait.png"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "submitted request",
+  "creditsSpent": 30,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:14:05.371241Z",
+  "tripoCompletedAt": "2026-11-10T16:16:07.008981Z",
+  "tripoRender": "art-source/models/raw/g6-face-severianus-tripo-render.webp"
+ }
+}

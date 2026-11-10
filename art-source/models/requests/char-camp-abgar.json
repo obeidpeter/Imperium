@@ -1,0 +1,96 @@
+{
+ "id": "char-camp-abgar",
+ "status": "G6 batch A: rejected at review (its waterskin came as a dark ball hanging at its hip, its sheepskin vest as a pelt down one side, and it wore short sleeves and sandals); it was never rigged, and the second attempt, char-camp-abgar-b, leaves the waterskin out",
+ "chapters": [
+  6
+ ],
+ "use": "Abgar the water-seller, who sells water in Chapter VI's camp on the eastern sands (data/camps.js): a body of his own, with his waterskin on his back, where he has worn the escorts' civilian body.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Syrian water-seller of the eastern desert frontier in the mid-3rd century AD, a lean, sun-dried man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved belted tunic to the knee of coarse undyed wool, a sleeveless sheepskin vest, loose dark trousers, and soft leather shoes; a large dark goatskin waterskin hangs on his back from a broad strap across his chest, both arms free. A cloth of undyed linen wrapped loosely around his head, a short black beard, a narrow, lined face with dark eyes and a deeply tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no jewellery, no cup, no jar, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, crown, jewellery, gold, cup, jar, bottle, backpack, modern clothing, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611500,
+   "image_seed": 2611501,
+   "texture_seed": 2611502
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:36:24.788Z",
+  "requestBody": {
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, crown, jewellery, gold, cup, jar, bottle, backpack, modern clothing, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611500,
+   "image_seed": 2611501,
+   "texture_seed": 2611502,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Syrian water-seller of the eastern desert frontier in the mid-3rd century AD, a lean, sun-dried man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved belted tunic to the knee of coarse undyed wool, a sleeveless sheepskin vest, loose dark trousers, and soft leather shoes; a large dark goatskin waterskin hangs on his back from a broad strap across his chest, both arms free. A cloth of undyed linen wrapped loosely around his head, a short black beard, a narrow, lined face with dark eyes and a deeply tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no jewellery, no cup, no jar, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7510,
+  "balanceSnapshotBefore": {
+   "balance": 7510,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "df0665f6-e468-4e91-ba0f-7ea0e6ac346f",
+   "state": "accepted",
+   "requestSha256": "fa6b0d024117b8811a4b6c3c84b5f8c6cc3f82bb24157720d454eec27664ce63"
+  },
+  "taskId": "8f82b862-13a0-4432-a395-e88b4962971f",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:45:01.721Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-abgar.glb",
+  "rawBytes": 46043168,
+  "rawSha256": "e0824096caf3a34db1254bccdd6646851cccf275d8ad87c279809d440b56dda4",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Syrian water-seller of the eastern desert frontier in the mid-3rd century AD, a lean, sun-dried man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved belted tunic to the knee of coarse undyed wool, a sleeveless sheepskin vest, loose dark trousers, and soft leather shoes; a large dark goatskin waterskin hangs on his back from a broad strap across his chest, both arms free. A cloth of undyed linen wrapped loosely around his head, a short black beard, a narrow, lined face with dark eyes and a deeply tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no jewellery, no cup, no jar, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611501,
+   "model_seed": 2611500,
+   "texture_seed": 2611502,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, crown, jewellery, gold, cup, jar, bottle, backpack, modern clothing, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:36:25.183377Z",
+  "tripoCompletedAt": "2026-11-10T16:38:49.847979Z",
+  "tripoRender": "art-source/models/raw/char-camp-abgar-tripo-render.webp"
+ }
+}

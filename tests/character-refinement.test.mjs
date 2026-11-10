@@ -23,8 +23,8 @@ test('local face edge splits preserve winding and conform on both sides of a sha
   assert.throws(()=>splitFaceTriangles(indices,4,[[1,2],[2,1]]),/unique/);
 });
 
-test('sixteen refined bodies preserve paint, identity coordinates, contact weights and bounded geometry on disk',async()=>{
-  assert.equal(assets.length,16);
+test('twenty refined bodies, four with faces from portraits, preserve paint, identity coordinates, contact weights and bounded geometry on disk',async()=>{
+  assert.equal(assets.length,20);
   let growth=0,addedTriangles=0;
   for(const asset of assets){
     const bytes=await file(asset.path),report=JSON.parse(await file(asset.source.refinement.report)),surface=asset.source.surfaceRepair?JSON.parse(await file(asset.source.surfaceRepair.report)):null,gltf=await parseCharacter(bytes);
@@ -52,7 +52,7 @@ test('sixteen refined bodies preserve paint, identity coordinates, contact weigh
     assert.equal(report.poseVerification.baseline.contactSha256,report.poseVerification.refined.contactSha256);
     gltf.scene.traverse(o=>{if(o.isMesh){o.geometry.dispose();for(const m of [o.material].flat())m.dispose();}});
   }
-  assert.equal(growth,36432);assert.equal(addedTriangles,1257);
+  assert.equal(growth,41884);assert.equal(addedTriangles,1257);
 });
 
 test('hero and Aelia production-rig pose strain still matches the measured refined geometry',async()=>{

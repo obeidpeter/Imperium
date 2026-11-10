@@ -30,7 +30,7 @@ The following were generated with **Tripo**'s text-to-model service, from text p
 - the finale's distant crowd;
 - the models behind the inventory's item pictures, seven of which the figures also wear as their weapons and helmets.
 
-One face was generated with Tripo's image-to-model service on the same account, from a picture rather than a prompt: Lucan's, from his campaign portrait, the game's own art ([the art record](art-generation.md#g6s-pilot-faces-and-people--10-november-2026)).
+Five faces were generated with Tripo's image-to-model service on the same account, from a picture rather than a prompt, each from its man's campaign portrait, the game's own art: Lucan's ([the art record](art-generation.md#g6s-pilot-faces-and-people--10-november-2026)), and Varro's, Sabinus's, Crispus's and Paullus's ([the art record](art-generation.md#the-rest-of-g6-the-first-batch--10-november-2026)).
 
 The figures were rigged by Tripo's auto-rig. Each shipped file made from a Tripo model carries a licence line in the manifest, except the finale crowd's data, which is reduced from one of them. That line records Tripo's terms for paid users as the owner confirmed them on 20 October 2026:
 - the owner may use, modify, distribute and commercially exploit the models;

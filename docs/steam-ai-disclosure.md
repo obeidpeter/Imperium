@@ -6,7 +6,7 @@ Steam’s own wording in Steamworks decides what is asked. This draft could not 
 
 ## The answers
 
-- **Made with AI before release (pre-generated): yes.** 290 of the 325 files the game ships were made with AI tools ([below](#what-it-rests-on-the-files-made-with-ai)), and so were its writing and code ([beyond the shipped files](#beyond-the-shipped-files)).
+- **Made with AI before release (pre-generated): yes.** 304 of the 339 files the game ships were made with AI tools ([below](#what-it-rests-on-the-files-made-with-ai)), and so were its writing and code ([beyond the shipped files](#beyond-the-shipped-files)).
 - **Generated while the game runs (live-generated): no.** The manifest’s runtime policy: “All shipped artwork, models, textures and audio are local files. No runtime AI generation, signed media URL or third-party media CDN is required. Procedural fallback materials and sound effects remain available.” The game connects to no AI service.
 
 ## The text for the store page
@@ -17,7 +17,7 @@ Steam shows it under “AI Generated Content Disclosure”. Edit it freely, but 
 This game was made with the help of generative AI tools. Everything described here was made before release: nothing is generated while you play, and the game connects to no AI service.
 
 - Art: the story paintings, character portraits, 2D figures and some surface textures were generated with OpenAI’s image generation from original prompts written for this game, then cropped, packed and compressed for it. An AI depth-estimation model made depth maps of the paintings, which give them their slight movement.
-- 3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures, which the figures also wear as their weapons and helmets, were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed. Five character face textures were restored with OpenAI image generation from the game’s own model renders and baked in Blender. One named character’s face was modelled with Tripo from the game’s own portrait.
+- 3D models: the characters’ bodies and the horses, the camp and town props, the landmarks and rocks, and the models behind the inventory’s item pictures, which the figures also wear as their weapons and helmets, were generated with Tripo from original text prompts, then fitted to the game’s own skeleton and motions, reduced and compressed. Five character face textures were restored with OpenAI image generation from the game’s own model renders and baked in Blender. Five named characters’ faces were modelled with Tripo from the game’s own portraits.
 - Music: the music tracks were generated with Google’s Lyria, through Runway.
 - Sound: the ambience and the combat and footstep sounds were generated with Runway; the interface’s short cues are made by the game’s code.
 - Voices: the voiced briefings are AI voices from ElevenLabs’ catalogue (through Runway), reading lines written for the game; no voice was cloned from a recording.
@@ -26,7 +26,7 @@ This game was made with the help of generative AI tools. Everything described he
 No third-party art, photographs or voice recordings were given to any generator. The building and fortification kits and the horizon panoramas were built in Blender by the game’s own scripts, the photographed ground textures and the skin textures come from CC0 libraries (Poly Haven and MakeHuman), and the interface is drawn by the game’s code: none of these was made with generative AI.
 ```
 
-2,026 characters.
+2,030 characters.
 
 ## What it rests on: the files made with AI
 
@@ -38,7 +38,7 @@ No third-party art, photographs or voice recordings were given to any generator.
 | 2D figures in action | 5 | OpenAI image generation (the built-in tool in the Codex app) | Cut out, packed into atlases and compressed |
 | 2D camp, ground and nature pictures | 3 | OpenAI image generation (the built-in tool in the Codex app) | Cut out, packed and compressed |
 | Surface textures | 10 | OpenAI image generation (the built-in tool in the Codex app) | Resized and compressed; some recompressed again |
-| Characters’ bodies | 59 | Tripo text-to-model (v3.0, v3.1) and Tripo’s auto-rig; Tripo image-to-model made one face from the game’s own portrait; OpenAI image generation restored five face textures from the project’s own renders | Rigged by Tripo’s auto-rig, bound to the game’s own skeleton and motions, reduced and compressed |
+| Characters’ bodies | 73 | Tripo text-to-model (v3.0, v3.1) and Tripo’s auto-rig; Tripo image-to-model made five faces from the game’s own portraits; OpenAI image generation restored five face textures from the project’s own renders | Rigged by Tripo’s auto-rig, bound to the game’s own skeleton and motions, reduced and compressed |
 | Horses | 4 | Tripo text-to-model (v3.1) | Bound to the game’s own horse rig and gaits, reduced and compressed |
 | Landmarks | 32 | Tripo text-to-model (H3.1) | Processed in Blender by the project’s scripts, then compressed |
 | Camp, town and battlefield props | 96 | Tripo text-to-model (H3.1) | Processed in Blender by the project’s scripts, then compressed |
@@ -54,7 +54,7 @@ No third-party art, photographs or voice recordings were given to any generator.
 | Voiced briefings | 4 | ElevenLabs v3 (`eleven_v3`), through Runway, with the provider’s voices Elias, Kirk, Clint and Marlene | Used as generated, without edits; the words are the game’s own lines |
 | Depth maps of the story paintings | 8 | MiDaS v2.1 small (MIT), a depth-estimation model run offline | Estimated from the paintings, to move their layers |
 
-The manifest records that no third-party image, model or recording was given to a generator. Some generations were shown the project’s own art: a supplementary cast sheet was shown its first generated atlas ([the art record](art-generation.md)), and each of the five face restorations was given a render of the game’s own model ([the art record](art-generation.md#character-face-restorations--4-november-2026)). Tripo’s image-to-model was given the game’s own campaign portrait of one named character to model the face from ([the art record](art-generation.md#g6s-pilot-faces-and-people--10-november-2026)).
+The manifest records that no third-party image, model or recording was given to a generator. Some generations were shown the project’s own art: a supplementary cast sheet was shown its first generated atlas ([the art record](art-generation.md)), and each of the five face restorations was given a render of the game’s own model ([the art record](art-generation.md#character-face-restorations--4-november-2026)). Tripo’s image-to-model was given the game’s own campaign portraits of five named characters to model their faces from ([the art record](art-generation.md#g6s-pilot-faces-and-people--10-november-2026)).
 
 ## Made without AI
 

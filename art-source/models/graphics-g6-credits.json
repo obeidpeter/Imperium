@@ -12,8 +12,14 @@
   "rigCheck": 0,
   "source": "the calibration's measured prices (docs/graphics-calibration.md), and image-to-model at standard textures as G6's pilot measured it (30 credits, not the 20 the pilot planned); each task's reported credits_consumed is recorded below"
  },
- "spentCredits": 185,
- "remainingAuthorization": 3155,
+ "spentCredits": 975,
+ "remainingAuthorization": 2365,
+ "paused": {
+  "since": "2026-11-10",
+  "after": "batch-a",
+  "reason": "The plan's stop rule: 7 of the release's 27 generations have not shipped (5 rejected at review, char-camp-dida refused by the rig check, g6-face-severianus not passing review once wrapped), over its 20%",
+  "until": "the owner decides whether G6 goes on (docs/graphics-tripo-plan.md, decision 12)"
+ },
  "batches": [
   {
    "batch": "pilot",
@@ -166,6 +172,588 @@
      "char-camp-smith"
     ],
     "note": "Its leather apron and bracers came as leather armour; the second attempt, char-camp-smith-b, ships. One of five generations (20%), within the plan's 20% stop rule."
+   }
+  },
+  {
+   "batch": "batch-a",
+   "date": "2026-11-10",
+   "ceilingCredits": 820,
+   "plannedCredits": 735,
+   "spentCredits": 790,
+   "items": [
+    "g6-face-varro",
+    "g6-face-sabinus",
+    "g6-face-crispus",
+    "g6-face-severianus",
+    "g6-face-paullus",
+    "char-senator-bearded-b",
+    "char-senator-younger-b",
+    "char-camp-sentry",
+    "char-camp-quartermaster",
+    "char-camp-instructor",
+    "char-camp-porter",
+    "char-camp-dida",
+    "char-camp-caecilia",
+    "char-camp-licinia",
+    "char-camp-barnaios",
+    "char-camp-abgar",
+    "char-camp-malku",
+    "char-camp-atticus",
+    "char-senator-bearded-c",
+    "char-camp-porter-b",
+    "char-camp-abgar-b",
+    "char-camp-atticus-b"
+   ],
+   "note": "The rest of G6, its first batch (docs/graphics-tripo-plan.md, the rest of G6): busts by image-to-model from the campaign portraits of Varro, Sabinus, Crispus, Severianus and Paullus (30 each), whose faces ship in the desktop app but for Severianus's; the other two senators remade in togas to their feet; and bodies of their own for the gate sentry, Quartermaster Aper, the veteran instructor, the supply orderly, Caecilia and Licinia, and the traders Barnaios, Abgar, Malku and Atticus, each generated at standard texture and geometry and rigged (20 and 25 credits). Dida's body, refused by the free rig check, was not rigged. 790 credits of an 820-credit ceiling, with four redos.",
+   "tasks": [
+    {
+     "id": "g6-face-varro",
+     "operation": "image_to_model",
+     "expectedCredits": 30,
+     "status": "success",
+     "taskId": "5df507c4-6596-4598-919f-c365aa81416a",
+     "creditsReported": 30,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 30
+    },
+    {
+     "id": "g6-face-sabinus",
+     "operation": "image_to_model",
+     "expectedCredits": 30,
+     "status": "success",
+     "taskId": "c0d04657-2bc4-4c2a-be35-5a2abc136fbb",
+     "creditsReported": 30,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 30
+    },
+    {
+     "id": "g6-face-crispus",
+     "operation": "image_to_model",
+     "expectedCredits": 30,
+     "status": "success",
+     "taskId": "443bf2a9-3238-42fa-a696-f6280131c472",
+     "creditsReported": 30,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 30
+    },
+    {
+     "id": "g6-face-severianus",
+     "operation": "image_to_model",
+     "expectedCredits": 30,
+     "status": "success",
+     "taskId": "1629eb7a-45df-4e72-8c8a-584e4583e691",
+     "creditsReported": 30,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 30
+    },
+    {
+     "id": "g6-face-paullus",
+     "operation": "image_to_model",
+     "expectedCredits": 30,
+     "status": "success",
+     "taskId": "c0b11014-54bc-4c16-a4c1-a441f1264f56",
+     "creditsReported": 30,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 30
+    },
+    {
+     "id": "char-senator-bearded-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "558fcfe2-b8e8-48ad-88c0-3eb840ec7739",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20,
+     "rejectedAtReview": "its toga came ending at mid-shin over bare legs and sandals, where a toga falling to the feet was asked: the fault the remake was for"
+    },
+    {
+     "id": "char-senator-younger-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "ede29ac3-a84c-4d42-914c-8c492d3ada11",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-senator-younger-b",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "d8eb30fb-7d2f-46fc-8d36-812e3e17724f",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-senator-younger-b",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "efd24fa1-008b-4472-94ad-4e0e7c65b3d3",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-sentry",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "83f33152-9935-4193-87ac-354bfc80511b",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-sentry",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "f83764e5-0a4a-4d2a-99e2-3030171895b1",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-sentry",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "567b7e4a-0795-4a7a-a263-9341c5131b10",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-quartermaster",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "1d7aadfa-3648-473e-b9aa-5670b49b4d5b",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-quartermaster",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "85dca454-f8ca-4a8c-b6ce-1baeeeb5ba4d",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-quartermaster",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "3e84f3a0-0e1b-4736-abe7-a8dc489b5533",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-instructor",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "c0eddd35-f5e9-483d-b757-cfe60bc4cc17",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-instructor",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "b64648c1-0d96-415d-b163-0622feb50dc5",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-instructor",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "4b9575ee-f8fe-456f-9e19-e3779d2364d0",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-porter",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "6ceb64ae-687c-42df-82eb-3d0735f4920d",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-porter",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "56000e87-67a0-4ffe-b526-add9a1b56794",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-porter",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "1c1eb9d0-498c-4f3c-9e49-7002f4bbfeec",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-dida",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "b24931cf-66a3-4e67-ae6f-3c370e4010fc",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-dida",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "e29a8205-ad8e-45b2-8979-5b895db010ff",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": false,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-caecilia",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "5becd4b4-0c06-4169-bae9-1760960cc7f8",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-caecilia",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "7a80c879-617a-4799-8b5d-54aa2e4d72a8",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-caecilia",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "085ce4bc-5c47-4c11-9b3a-e92b2af15816",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-licinia",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "c93ab59e-5b39-4269-a3bd-c821e206a518",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-licinia",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "539ee98b-fba7-4c30-831d-befe35d77b7d",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-licinia",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "93042748-f925-4d92-85db-0a1c3a84a733",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-barnaios",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "d2f5d081-2508-4adb-a7f8-b69e615b0bc4",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-barnaios",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "a0d27b17-d1c8-4733-9b9e-edc9d4f3dd04",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-barnaios",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "eab405d5-63fc-4034-b2c4-e55699e6f18d",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-abgar",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "8f82b862-13a0-4432-a395-e88b4962971f",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20,
+     "rejectedAtReview": "its waterskin came as a dark ball hanging at its hip, its sheepskin vest as a pelt down one side, with short sleeves and sandals"
+    },
+    {
+     "id": "char-camp-malku",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "7ecde7f5-1d47-41a2-b5f6-85a6d273365c",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-malku",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "d6a3e5e6-f671-4ca9-b13d-d9445051d57a",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-malku",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "a14596c5-d114-462c-b120-787e81331903",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-atticus",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "a0f5b21a-4ac9-46fe-b06c-a4381a5f7714",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20,
+     "rejectedAtReview": "it came holding a thin white stick, a pen, at the corner of its mouth, which reads as a cigarette"
+    },
+    {
+     "id": "char-senator-bearded-c",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "14495de5-d007-467c-b914-15d6bf8be485",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-senator-bearded-c",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "2448d0d6-20b7-431e-8f29-b54ef6c1d29e",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-senator-bearded-c",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "e0192c7c-45b1-4c74-a24c-56d7231dea06",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-porter-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "ef3e3254-d495-4d48-a24a-d780f123176b",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20,
+     "rejectedAtReview": "it came holding two wrapped bundles on its palms, though nothing in its hands was asked, where the game puts the porter's load in his hands; the first attempt, char-camp-porter, ships instead"
+    },
+    {
+     "id": "char-camp-abgar-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "60ed7c60-2c9d-4290-a38e-e9321368f2bb",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-abgar-b",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "cc9c05e8-ccdb-4f8c-a554-89198e2a188e",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-abgar-b",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "64ffd61c-a735-4a42-be6f-bac82f530b74",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-atticus-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "f8d7e2de-b53c-440c-9e34-714d1aaeb26f",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-atticus-b",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "39c0ddf2-d015-4994-984c-3955374a046b",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-atticus-b",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "99a1d665-d470-4296-be01-f49547ac30de",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    }
+   ],
+   "balance": {
+    "before": 7860,
+    "after": 7070,
+    "source": "the account balance read before the batch's first task and after its last (frozen 0)"
+   },
+   "rejected": {
+    "count": 4,
+    "of": 22,
+    "items": [
+     "char-senator-bearded-b",
+     "char-camp-abgar",
+     "char-camp-atticus",
+     "char-camp-porter-b"
+    ],
+    "note": "Four of the batch's 22 generations were rejected at review, each before any rig: with the pilot's one, 5 of G6's 27 (18.5%), under the plan's 20% stop rule. The bearded senator, the porter, Abgar and Atticus were each redone once; the porter's first attempt ships, as its second came holding bundles."
+   },
+   "notRiggable": {
+    "items": [
+     "char-camp-dida"
+    ],
+    "note": "Accepted at review but refused by Tripo's free rig check, so never rigged: char-camp-dida does not ship, and Dida keeps the procedural woman's figure. Counted as a failed attempt too, G6 stands at 6 of 27 (22.2%), over the stop rule's line, so G6 generates nothing more until the owner has been told."
    }
   }
  ]

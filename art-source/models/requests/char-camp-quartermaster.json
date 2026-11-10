@@ -1,0 +1,175 @@
+{
+ "id": "char-camp-quartermaster",
+ "status": "bound, quantized and compressed: G6 batch A, accepted at review (as asked, with darker sleeves where dark bands at the cuffs were asked and a satchel on a strap across the chest); ships as camp-quartermaster in every camp in the desktop app only (the complete web game has no room)",
+ "chapters": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12
+ ],
+ "use": "Quartermaster Aper, who keeps the stores and pay in every camp (data/camps.js): a body of his own, where he has worn the camp clerks' body.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Roman army quartermaster of the mid-3rd century AD, a stocky, broad-bellied veteran about fifty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length wool tunic in faded brown with narrow dark bands at the cuffs, a broad leather belt with a bronze ring buckle from which hang a small leather purse and a bunch of iron keys on a ring, dark wool trousers and closed leather boots. Bald on top with a fringe of close-cropped grey hair, a short grey beard, a heavy, shrewd face with a broken nose, thick eyebrows and a ruddy, weathered complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no shield, no weapons, no cloak, no tablets or scrolls, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "chainmail, plate armour, breastplate, cuirass, helmet, shield, weapon, sword, cloak, toga, apron, hat, glasses, backpack, scroll, book, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611430,
+   "image_seed": 2611431,
+   "texture_seed": 2611432
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:24:09.943Z",
+  "requestBody": {
+   "negative_prompt": "chainmail, plate armour, breastplate, cuirass, helmet, shield, weapon, sword, cloak, toga, apron, hat, glasses, backpack, scroll, book, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611430,
+   "image_seed": 2611431,
+   "texture_seed": 2611432,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Roman army quartermaster of the mid-3rd century AD, a stocky, broad-bellied veteran about fifty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length wool tunic in faded brown with narrow dark bands at the cuffs, a broad leather belt with a bronze ring buckle from which hang a small leather purse and a bunch of iron keys on a ring, dark wool trousers and closed leather boots. Bald on top with a fringe of close-cropped grey hair, a short grey beard, a heavy, shrewd face with a broken nose, thick eyebrows and a ruddy, weathered complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no shield, no weapons, no cloak, no tablets or scrolls, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7650,
+  "balanceSnapshotBefore": {
+   "balance": 7650,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "59857bea-d06c-4d86-98fd-fd4ffabc8dd6",
+   "state": "accepted",
+   "requestSha256": "e6d9c6b4adb39b2a3b149f717fcf597dff7cd051fae18981449cf54a2883754a"
+  },
+  "taskId": "1d7aadfa-3648-473e-b9aa-5670b49b4d5b",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:25:42.867Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-quartermaster.glb",
+  "rawBytes": 45132472,
+  "rawSha256": "f985b57785b3abc447c960aa871532abb3183ed4adadd8a7e29eb5ee87fc3528",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Roman army quartermaster of the mid-3rd century AD, a stocky, broad-bellied veteran about fifty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved knee-length wool tunic in faded brown with narrow dark bands at the cuffs, a broad leather belt with a bronze ring buckle from which hang a small leather purse and a bunch of iron keys on a ring, dark wool trousers and closed leather boots. Bald on top with a fringe of close-cropped grey hair, a short grey beard, a heavy, shrewd face with a broken nose, thick eyebrows and a ruddy, weathered complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no shield, no weapons, no cloak, no tablets or scrolls, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611431,
+   "model_seed": 2611430,
+   "texture_seed": 2611432,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "chainmail, plate armour, breastplate, cuirass, helmet, shield, weapon, sword, cloak, toga, apron, hat, glasses, backpack, scroll, book, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:24:10.384960Z",
+  "tripoCompletedAt": "2026-11-10T16:25:34.835638Z",
+  "tripoRender": "art-source/models/raw/char-camp-quartermaster-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T16:53:34.150Z",
+   "requestBody": {
+    "input": "1d7aadfa-3648-473e-b9aa-5670b49b4d5b"
+   },
+   "submission": {
+    "id": "d08feabd-5b2a-47b8-a31a-f2575d03cb99",
+    "state": "accepted",
+    "requestSha256": "800bd82203056963caf2a94712edc0007a2438d407685b0304c04d473576c234"
+   },
+   "taskId": "85dca454-f8ca-4a8c-b6ce-1baeeeb5ba4d",
+   "status": "success",
+   "output": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  },
+  "rig": {
+   "check": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig",
+   "requestedAt": "2026-11-10T16:53:40.425Z",
+   "requestBody": {
+    "input": "1d7aadfa-3648-473e-b9aa-5670b49b4d5b",
+    "model": "v1.0-20240301",
+    "rig_type": "biped",
+    "spec": "tripo",
+    "out_format": "glb"
+   },
+   "balanceBefore": 7270,
+   "balanceSnapshotBefore": {
+    "balance": 7270,
+    "frozen": 25
+   },
+   "submission": {
+    "id": "4679aa11-730a-4e89-91e0-ca72d6304ed2",
+    "state": "accepted",
+    "requestSha256": "51161ce3dd80b9186fc8ef340850652a5e6b79b89cd31f442d343cd862d640fa"
+   },
+   "taskId": "3e84f3a0-0e1b-4736-abe7-a8dc489b5533",
+   "status": "success",
+   "generatedAt": "2026-11-10T16:55:34.083Z",
+   "output": "model_url",
+   "raw": "art-source/models/raw/char-camp-quartermaster-rigged.glb",
+   "rawBytes": 60373384,
+   "rawSha256": "345e1324277169538fdae8bd81cbb54c15c941b86a9803645856c4ce7e9856ec",
+   "tripoInput": {
+    "spec": "tripo",
+    "topology": "biped",
+    "out_format": "glb",
+    "original_model_id": "1d7aadfa-3648-473e-b9aa-5670b49b4d5b"
+   },
+   "modelVersion": "v1.0-20240301",
+   "modelVersionSource": "submitted request",
+   "creditsSpent": 25,
+   "creditSource": "task.credits_consumed",
+   "tripoCreatedAt": "2026-11-10T16:53:40.716606Z",
+   "tripoCompletedAt": "2026-11-10T16:55:29.080954Z"
+  }
+ }
+}

@@ -1,0 +1,79 @@
+{
+ "id": "g6-face-paullus",
+ "status": "G6 batch A: his face, wrapped onto the shared head by scripts/assets/wrap-cast-head.py --face with his own eye paint, refined and repaired as his first head was; ships in assets/models/characters/cast-paullus-portrait.glb, Paullus's body in the desktop app, beside his first body and face, which the web keeps",
+ "chapters": [
+  11,
+  12
+ ],
+ "use": "G6 batch A: a face that starts from a picture, as Lucan's in G6's pilot: a head-and-shoulders model made by image-to-model from Paullus, the senator's campaign portrait (assets/portraits/paullus.webp, as a PNG at twice its size), whose face is baked onto the shared animated head.",
+ "generator": {
+  "service": "Tripo",
+  "task": "image_to_model",
+  "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-paullus-portrait.png",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611570,
+   "texture_seed": 2611571
+  }
+ },
+ "budget": {
+  "texture": 1024,
+  "detailTexture": 512,
+  "heightMetres": 0.62
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 30,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/image-to-model",
+  "requestedAt": "2026-11-10T16:16:13.408Z",
+  "requestBody": {
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611570,
+   "texture_seed": 2611571,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-paullus-portrait.png"
+  },
+  "balanceBefore": 7740,
+  "balanceSnapshotBefore": {
+   "balance": 7740,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "8544e5ec-fe10-4f74-9031-53efebbb9979",
+   "state": "accepted",
+   "requestSha256": "f84ebf032b979bf565fa67dd894e6b6ec51f0d940c112e9030be904a807a9608"
+  },
+  "taskId": "c0b11014-54bc-4c16-a4c1-a441f1264f56",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:18:47.547Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/g6-face-paullus.glb",
+  "rawBytes": 45066972,
+  "rawSha256": "740d9082ae1821387e5fe21ff13730b730fab5dca353358292dccf59ccf3083f",
+  "tripoInput": {
+   "resource_url": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-paullus-portrait.png"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "submitted request",
+  "creditsSpent": 30,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:16:13.699640Z",
+  "tripoCompletedAt": "2026-11-10T16:18:40.843271Z",
+  "tripoRender": "art-source/models/raw/g6-face-paullus-tripo-render.webp"
+ }
+}

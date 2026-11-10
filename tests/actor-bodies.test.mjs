@@ -80,7 +80,8 @@ test('every generated body and horse is worn or ridden in its listed chapters, t
   for(const kind of ['oath','accession']){const scene=ceremonyScene(kind,{rank:kind==='oath'?'Tiro':'Augustus'});for(const u of scene.encounter.units){const kit=actorKit(u,{chapter:scene.chapter,rank:scene.rank});wear(kit,actorIdentity(u,kit).key,scene.chapter);}}
   const chapters=map=>id=>[...(map.get(id)??[])].sort((a,b)=>a-b);
   for(const [id,body]of Object.entries({...ACTOR_BODIES,...HORSE_BODIES})){
-    assert.deepEqual(chapters(used)(id),[...body.chapters],id);
+    // A horse rides in all of its chapters on both; a body only where each platform's download carries it.
+    assert.deepEqual(chapters(used)(id),[...(body.desktop??body.chapters)],`${id} in the desktop app`);
     assert.deepEqual(chapters(usedWeb)(id),[...(body.web??body.chapters)],`${id} on the web`);
   }
   // The chamber's members wear the senators' togas; the protagonist and the named keep the procedural toga.
@@ -95,7 +96,8 @@ test('every body has its Tripo task, rig, licence, manifest entry and budget, an
   for(const id of shipped){
     const entry=manifest.assets.find(a=>a.path===actorBodyUrl(id));assert.ok(entry,`${id} has provenance in the asset manifest`);
     // A body shipped from a later attempt names that attempt's request (char-<id>-b); the rejected first one stays beside it.
-    assert.match(entry.source.prompt,new RegExp(`^art-source/models/requests/char-${id}(-[b-z])?\\.json$`),`${id} names its request`);
+    // A man's face from his portrait (cast-<who>-portrait) rides on his own body, so it names his body's request.
+    assert.match(entry.source.prompt,new RegExp(`^art-source/models/requests/char-${id.replace(/-portrait$/,'')}(-[b-z])?\\.json$`),`${id} names its request`);
     const request=JSON.parse(await file(entry.source.prompt)),p=request.provenance;
     assert.ok(p.taskId&&p.rawSha256&&p.rig?.taskId&&p.rig?.rawSha256,`${id} records its Tripo generation and rig`);
     assert.match(p.licence,/full rights to use, modify, distribute and commercially exploit/);

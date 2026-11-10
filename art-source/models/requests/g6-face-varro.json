@@ -1,0 +1,83 @@
+{
+ "id": "g6-face-varro",
+ "status": "G6 batch A: his face, wrapped onto the shared head by scripts/assets/wrap-cast-head.py --face with his own eye paint, refined and repaired as his first head was; ships in assets/models/characters/cast-varro-portrait.glb, Varro's body in the desktop app, beside his first body and face, which the web keeps",
+ "chapters": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6
+ ],
+ "use": "G6 batch A: a face that starts from a picture, as Lucan's in G6's pilot: a head-and-shoulders model made by image-to-model from Varro, the drill instructor's campaign portrait (assets/portraits/varro.webp, as a PNG at twice its size), whose face is baked onto the shared animated head.",
+ "generator": {
+  "service": "Tripo",
+  "task": "image_to_model",
+  "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-varro-portrait.png",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611530,
+   "texture_seed": 2611531
+  }
+ },
+ "budget": {
+  "texture": 1024,
+  "detailTexture": 512,
+  "heightMetres": 0.62
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 30,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/image-to-model",
+  "requestedAt": "2026-11-10T16:06:51.313Z",
+  "requestBody": {
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611530,
+   "texture_seed": 2611531,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-varro-portrait.png"
+  },
+  "balanceBefore": 7860,
+  "balanceSnapshotBefore": {
+   "balance": 7860,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "f98ab680-c0f5-412f-bb2a-dbdef1ace3e2",
+   "state": "accepted",
+   "requestSha256": "84e36ee20dde11d53baafce58ec9ddd08e4257bcc2484156336de2695f1789e3"
+  },
+  "taskId": "5df507c4-6596-4598-919f-c365aa81416a",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:09:00.147Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/g6-face-varro.glb",
+  "rawBytes": 46337140,
+  "rawSha256": "4b32007444c73845bd050ce980adcea73f04eca6b9a707f7f5642da5046dcb46",
+  "tripoInput": {
+   "resource_url": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-varro-portrait.png"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "submitted request",
+  "creditsSpent": 30,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:06:51.772210Z",
+  "tripoCompletedAt": "2026-11-10T16:08:55.563450Z",
+  "tripoRender": "art-source/models/raw/g6-face-varro-tripo-render.webp"
+ }
+}

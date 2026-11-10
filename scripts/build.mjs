@@ -8,7 +8,7 @@ import {CONFIG} from '../src/config.js';
 import {moduleClosure,staticImportClosure,studyAssets,initialAssets} from './module-closure.mjs';
 import {CAMPAIGN_CHAPTERS,DEMO_LAST_CHAPTER,laterChapterOnly} from './edition.mjs';
 import {desktopOnlyWorldFiles} from '../src/ui/world-catalog.js';
-import {desktopOnlyBodyFiles} from '../src/ui/actor-body-catalog.js';
+import {desktopOnlyBodyFiles,webOnlyBodyFiles} from '../src/ui/actor-body-catalog.js';
 
 // The target (the Steam plan, docs/steam-plan.md): `web` (the default) is the static site with its service worker and
 // install manifest; `desktop` is the same game for the Electron app in desktop/, which serves it from its own files:
@@ -72,6 +72,13 @@ if(!desktop)for(const file of [...desktopOnlyWorldFiles(),...desktopOnlyBodyFile
   const path=join(dist,file);let data;try{data=await readFile(path);}catch(error){if(error.code==='ENOENT')continue;throw error;}
   desktopOnly.push({url:'./'+file,bytes:data.length,gzipBytes:gzipSync(data).length});await rm(path);
 }
+// The desktop app leaves out the bodies it shows in no chapter: a named man's first body, which his face from his
+// portrait replaces there, rides the web alone (actor-body-catalog.js).
+const webOnly=[];
+if(desktop)for(const file of webOnlyBodyFiles()){
+  const path=join(dist,file);let data;try{data=await readFile(path);}catch(error){if(error.code==='ENOENT')continue;throw error;}
+  webOnly.push({url:'./'+file,bytes:data.length,gzipBytes:gzipSync(data).length});await rm(path);
+}
 const list=await files(dist),hash=createHash('sha256'),records=[];
 const workerTemplate=(await readFile(join(root,'scripts/service-worker.template.js'),'utf8')).replaceAll('\r\n','\n');
 hash.update(workerTemplate);
@@ -127,6 +134,6 @@ const largestChapterGzipBytes=Math.max(...Object.values(chapterDownloadGzipBytes
 // Keep the initial shell small; authored animation and environments arrive by chapter.
 // The download limits are the web's: the desktop app installs every file at once.
 if(!desktop&&(initialGzipBytes>budget.initialGzipBytes||chapterOneGzipBytes>budget.chapterOneGzipBytes||largestChapterGzipBytes>budget.chapterGroupGzipBytes||completeGzipBytes>budget.completeGzipBytes))throw new Error('Compressed initial '+initialGzipBytes+' / chapter 1 '+chapterOneGzipBytes+' / largest chapter '+largestChapterGzipBytes+' / complete '+completeGzipBytes+' exceed the declared presentation budgets.');
-const report={version:packageInfo.version,target,edition,lastChapter,desktopOnlyFiles:desktopOnly.length,desktopOnlyGzipBytes:sum(desktopOnly,'gzipBytes'),...(demo?{omittedFiles:omitted.length,omittedBytes:sum(omitted,'bytes'),omittedGzipBytes:sum(omitted,'gzipBytes'),storeUrl:storeUrl||'none yet'}:{}),revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,chapterOneFlatGzipBytes,completeBytes,completeGzipBytes,chapterDownloadGzipBytes,largestChapterGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,chapterGroupBudget:budget.chapterGroupGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/chapter download/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),showcaseAssets,showcaseGzipBytes:sum(records.filter(r=>showcaseSet.has(r.url)),'gzipBytes'),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
+const report={version:packageInfo.version,target,edition,lastChapter,desktopOnlyFiles:desktopOnly.length,desktopOnlyGzipBytes:sum(desktopOnly,'gzipBytes'),webOnlyFiles:webOnly.length,webOnlyGzipBytes:sum(webOnly,'gzipBytes'),...(demo?{omittedFiles:omitted.length,omittedBytes:sum(omitted,'bytes'),omittedGzipBytes:sum(omitted,'gzipBytes'),storeUrl:storeUrl||'none yet'}:{}),revision,files:assets.length,bytes,gzipBytes,initialFiles:initial.length,initialBytes,initialGzipBytes,chapterOneFiles:chapterOneFiles.length,chapterOneBytes,chapterOneGzipBytes,chapterOneFlatGzipBytes,completeBytes,completeGzipBytes,chapterDownloadGzipBytes,largestChapterGzipBytes,deferredFiles:assets.length-initial.length,firstLoadBudget:budget.initialGzipBytes,chapterOneBudget:budget.chapterOneGzipBytes,chapterGroupBudget:budget.chapterGroupGzipBytes,completeBudget:budget.completeGzipBytes,measurement:'sum of gzip files, including service worker in initial/chapter1/chapter download/complete figures; not a browser network trace',initialAssets:initial,chapterAssets:chapterGroups,chapterGzipBytes:Object.fromEntries(Object.entries(chapterGroups).map(([chapter,paths])=>[chapter,sum(records.filter(r=>paths.includes(r.url)),'gzipBytes')])),showcaseAssets,showcaseGzipBytes:sum(records.filter(r=>showcaseSet.has(r.url)),'gzipBytes'),deferredAssets:assets.filter(url=>!initial.includes(url)),siteUrl:siteUrl||'relative to host',builtAt:new Date().toISOString()};
 await writeFile(join(dist,'build-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 

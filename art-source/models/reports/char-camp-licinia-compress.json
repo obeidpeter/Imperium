@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/camp-licinia.glb",
+  "output": "assets/models/characters/camp-licinia.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 485156,
+    "gzipBytes": 343115,
+    "sha256": "e403341fb45b8da96e8959173cac55db9d1555055a13f8d981c6433d8098bd60"
+  },
+  "after": {
+    "bytes": 437504,
+    "gzipBytes": 415305,
+    "sha256": "94e9e2fbdc53eb3242ccc2162ee621e33cdf475109ee012758d34eac3b30ba18"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13873,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 6754
+      },
+      "bytes": 16534,
+      "psnr": 43.325
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 62734
+      },
+      "bytes": 152505,
+      "psnr": 37.895
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14780
+      },
+      "bytes": 38348,
+      "psnr": 41.284
+    }
+  ]
+}

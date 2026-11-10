@@ -27,9 +27,11 @@ const SENATOR_CHAPTERS=[7,8,10,11,12];
 // A named man in civilian dress (civilian) wears no soldier's neckcloth over his head's seam (actors.js).
 // A body rides in the web download of its chapters that have room for it (web, all of its chapters unless named): a
 // body made after the downloads filled (graphics plan, G6) names fewer, and on the web there its figures wear what
-// they wore before (bodyShown). The desktop app carries every body in all of its chapters.
-const body=(fits,chapters,{headwear=null,cast=null,senator=false,woman=false,civilian=false,web=chapters}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),
-  chapters:Object.freeze(chapters),web:Object.freeze(web.filter(c=>chapters.includes(c))),headwear:headwear&&fit(headwear),cast,senator,woman,civilian});
+// they wore before (bodyShown). The desktop app carries a body in the chapters it names (desktop, all unless named):
+// a named man's first body, which his face from his portrait replaces there, names none and rides the web alone.
+const body=(fits,chapters,{headwear=null,cast=null,senator=false,woman=false,civilian=false,web=chapters,desktop=chapters}={})=>Object.freeze({fits:Object.freeze(fits.map(Object.freeze)),
+  chapters:Object.freeze(chapters),web:Object.freeze(web.filter(c=>chapters.includes(c))),desktop:Object.freeze(desktop.filter(c=>chapters.includes(c))),
+  headwear:headwear&&fit(headwear),cast,senator,woman,civilian});
 // The recruit's head is the one every named man's face is made from, so a named man's
 // own body wears the game's helmet or cap as the recruit does.
 const SHARED_HEAD={position:[-.018,.04,.048],scale:[.85,.9,1.04]};
@@ -84,8 +86,22 @@ export const ACTOR_BODIES=Object.freeze({
   'palmyrene-archer':body([{faction:'Palmyrene',role:'archer'}],[9]),
   'palmyrene-cavalry':body([{faction:'Palmyrene',role:'cavalry'}],[9]),
   'roman-cavalry':body([{faction:'Roman',role:'cavalry'}],[7]),
+  // The camps' people in bodies of their own (G6's first batch), each ahead of the shared bodies they wore (the first body that fits is worn), in the
+  // desktop app: the complete web game has no room for them, and there they wear what they wore before, but Atticus, who stands in Chapter XI alone.
+  'camp-sentry':body([{faction:'Civilian',role:'escort',staff:'sentry'}],[1,2,3,4,5,6,7,8,9,10,11,12],{web:[]}),
+  'camp-quartermaster':body([{faction:'Civilian',role:'escort',staff:'quartermaster'}],[1,2,3,4,5,6,7,8,9,10,11,12],{web:[]}),
+  'camp-instructor':body([{faction:'Civilian',role:'escort',staff:'campidoctor',chapter:[6,7,8,9,10,11,12]}],[6,7,8,9,10,11,12],{web:[]}),
+  // The supply orderly; the camps' other orderlies (Mamertus in I, the water steward in V) keep the orderlies' body.
+  'camp-porter':body([{faction:'Civilian',role:'escort',staff:'orderly',chapter:[4,6,7,8,9,10,11,12]}],[4,6,7,8,9,10,11,12],{web:[]}),
+  'camp-barnaios':body([{faction:'Civilian',role:'escort',staff:'merchant',chapter:5}],[5],{web:[]}),
+  'camp-abgar':body([{faction:'Civilian',role:'escort',staff:'merchant',chapter:6}],[6],{web:[]}),
+  'camp-malku':body([{faction:'Civilian',role:'escort',staff:'merchant',chapter:9}],[9],{web:[]}),
+  'camp-caecilia':body([{faction:'Civilian',role:'escort',staff:'merchant',chapter:10}],[10],{woman:true,web:[]}),
+  'camp-licinia':body([{faction:'Civilian',role:'escort',staff:'settler',chapter:10}],[10],{woman:true,web:[]}),
+  'camp-atticus':body([{faction:'Civilian',role:'escort',staff:'merchant',chapter:11}],[11]),
   // The camp's staff by their camp role (actor-kit.js), ahead of the escorts' civilian dress.
-  'camp-clerk':body([{faction:'Civilian',role:'escort',staff:'clerk'},{faction:'Civilian',role:'escort',staff:'quartermaster'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
+  // Aper wears it on the web, and in the desktop app his own body above: there the clerks wear it from III.
+  'camp-clerk':body([{faction:'Civilian',role:'escort',staff:'clerk'},{faction:'Civilian',role:'escort',staff:'quartermaster'}],[1,2,3,4,5,6,7,8,9,10,11,12],{desktop:[3,4,5,6,7,8,9,10,11,12]}),
   'camp-capsarius':body([{faction:'Civilian',role:'escort',staff:'capsarius'},{faction:'Civilian',role:'escort',staff:'orderly'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
   // Syra the sutler follows the legion from Novae to the Danube fort, and to the final march.
   'camp-sutler':body([{faction:'Civilian',role:'escort',staff:'trader'}],[1,2,3,4,12],{woman:true}),
@@ -96,7 +112,9 @@ export const ACTOR_BODIES=Object.freeze({
   // on the web only in Chapter XI, the one camp whose download has room; elsewhere there he wears the escorts'
   // body below with the code-built apron (actors.js).
   'camp-smith':body([{faction:'Civilian',role:'escort',staff:'smith'}],[1,2,3,4,5,6,7,8,9,10,11,12],{web:[11]}),
-  'civilian-escort':body([{faction:'Civilian',role:'escort'}],[1,2,3,4,5,6,7,8,9,10,11,12]),
+  // The camps' people above wear their own bodies in the desktop app, so there it is worn only where the escorts,
+  // envoys, signallers and standard-bearers who have none stand.
+  'civilian-escort':body([{faction:'Civilian',role:'escort'}],[1,2,3,4,5,6,7,8,9,10,11,12],{desktop:[2,3,4,6,8,9,12]}),
   // The chamber's members in plain togas, each with the band its bloc's trims are drawn on
   // (bind-character.py --bloc-band). Chosen by the member's identity, never by kit.
   'senator-elder':body([],SENATOR_CHAPTERS,{senator:true}),
@@ -105,30 +123,41 @@ export const ACTOR_BODIES=Object.freeze({
   // Named men in their own generated bodies, the shared head wrapped onto each man's own
   // generated head (scripts/assets/wrap-cast-head.py). Chosen by who he is, never by kit.
   'cast-lucan':body([],CAST_CHAPTERS.lucan,{headwear:SHARED_HEAD,cast:'lucan'}),
-  'cast-varro':body([],CAST_CHAPTERS.varro,{headwear:SHARED_HEAD,cast:'varro'}),
-  'cast-sabinus':body([],CAST_CHAPTERS.sabinus,{headwear:SHARED_HEAD,cast:'sabinus'}),
+  // Faces from the men's campaign portraits (graphics plan, G6), on their own bodies, in the desktop app. The web's
+  // downloads have no room for them, so there each man keeps his first body and face, below, in all his chapters.
+  'cast-varro-portrait':body([],CAST_CHAPTERS.varro,{headwear:SHARED_HEAD,cast:'varro',web:[]}),
+  'cast-sabinus-portrait':body([],CAST_CHAPTERS.sabinus,{headwear:SHARED_HEAD,cast:'sabinus',web:[]}),
+  'cast-crispus-portrait':body([],CAST_CHAPTERS.crispus,{headwear:SHARED_HEAD,cast:'crispus',web:[]}),
+  'cast-paullus-portrait':body([],CAST_CHAPTERS.paullus,{headwear:SHARED_HEAD,cast:'paullus',civilian:true,web:[]}),
+  'cast-varro':body([],CAST_CHAPTERS.varro,{headwear:SHARED_HEAD,cast:'varro',desktop:[]}),
+  'cast-sabinus':body([],CAST_CHAPTERS.sabinus,{headwear:SHARED_HEAD,cast:'sabinus',desktop:[]}),
   'cast-naso':body([],CAST_CHAPTERS.naso,{headwear:SHARED_HEAD,cast:'naso'}),
   'cast-felix':body([],CAST_CHAPTERS.felix,{headwear:SHARED_HEAD,cast:'felix'}),
   'cast-brennus':body([],CAST_CHAPTERS.brennus,{headwear:SHARED_HEAD,cast:'brennus'}),
-  'cast-crispus':body([],CAST_CHAPTERS.crispus,{headwear:SHARED_HEAD,cast:'crispus'}),
+  'cast-crispus':body([],CAST_CHAPTERS.crispus,{headwear:SHARED_HEAD,cast:'crispus',desktop:[]}),
   'cast-quintus':body([],CAST_CHAPTERS.quintus,{headwear:SHARED_HEAD,cast:'quintus'}),
   // The patron, the senator and the rhetor in their own civilian dress.
   'cast-severianus':body([],CAST_CHAPTERS.severianus,{headwear:SHARED_HEAD,cast:'severianus',civilian:true}),
-  'cast-paullus':body([],CAST_CHAPTERS.paullus,{headwear:SHARED_HEAD,cast:'paullus',civilian:true}),
+  'cast-paullus':body([],CAST_CHAPTERS.paullus,{headwear:SHARED_HEAD,cast:'paullus',civilian:true,desktop:[]}),
   'cast-theon':body([],CAST_CHAPTERS.theon,{headwear:SHARED_HEAD,cast:'theon',civilian:true}),
   // Aelia's own body is a woman's, and keeps her own head as the camp's other women do.
   'cast-aelia':body([],CAST_CHAPTERS.aelia,{cast:'aelia',woman:true})
 });
-/** A named man's own body by his identity key (actor-identity.js). */
-export const CAST_BODIES=Object.freeze(Object.fromEntries(Object.entries(ACTOR_BODIES).filter(([,b])=>b.cast).map(([id,b])=>[b.cast,id])));
+/** A named person's own bodies by their identity key (actor-identity.js), in the catalog's order: the first a chapter's
+ * download carries is the one worn there. */
+export const CAST_BODIES=Object.freeze(Object.entries(ACTOR_BODIES).filter(([,b])=>b.cast).reduce((all,[id,b])=>({...all,[b.cast]:Object.freeze([...(all[b.cast]??[]),id])}),{}));
 export const SENATOR_BODIES=Object.freeze(Object.keys(ACTOR_BODIES).filter(id=>ACTOR_BODIES[id].senator));
 export const actorBodyUrl=id=>`assets/models/characters/${id}.glb`;
 const desktopApp=()=>CONFIG.platform==='desktop';
-/** Whether a figure of a chapter may wear a body: on the web only where the chapter's download carries it. A chapter
- * the body does not name is the caller's own business, as before. `desktop` overrides the build's platform (tests). */
-export const bodyShown=(id,chapter,{desktop=desktopApp()}={})=>{const b=ACTOR_BODIES[id];return !!b&&(desktop||!b.chapters.includes(chapter)||b.web.includes(chapter));};
+/** Whether a figure of a chapter may wear a body: only where the chapter's download carries it, on the web and in the
+ * desktop app. A figure of a chapter the body does not name, or of none (a preview), may wear a body its platform
+ * carries in some chapter. `desktop` overrides the build's platform (tests). */
+export const bodyShown=(id,chapter,{desktop=desktopApp()}={})=>{const b=ACTOR_BODIES[id];if(!b)return false;const carried=desktop?b.desktop:b.web;
+  return b.chapters.includes(chapter)?carried.includes(chapter):carried.length>0;};
 /** The body files no chapter's web download carries, which the web build leaves out (scripts/build.mjs). */
 export const desktopOnlyBodyFiles=()=>Object.keys(ACTOR_BODIES).filter(id=>!ACTOR_BODIES[id].web.length).map(actorBodyUrl);
+/** The body files the desktop app shows in no chapter, which its build leaves out (scripts/build.mjs). */
+export const webOnlyBodyFiles=()=>Object.keys(ACTOR_BODIES).filter(id=>!ACTOR_BODIES[id].desktop.length).map(actorBodyUrl);
 
 /** The generated body for a kit (actor-kit.js) and the person drawn (his identity key),
  * or null to keep the procedural figure. A named man with a body of his own wears it in
@@ -139,7 +168,8 @@ export function actorBodyId(kit={},cast=null,options={}){
   const shown=id=>bodyShown(id,kit.chapter,options);
   if(kit.civic)return kit.hero||cast&&!String(cast).startsWith('figure-')?null:SENATOR_BODIES[(kit.identity>>>0)%SENATOR_BODIES.length];
   // A named person's own body, where the chapter's download carries it; elsewhere they keep what they wore before.
-  if(cast&&Object.hasOwn(CAST_BODIES,cast)&&shown(CAST_BODIES[cast]))return CAST_BODIES[cast];
+  const own=cast&&Object.hasOwn(CAST_BODIES,cast)?CAST_BODIES[cast].find(shown):null;
+  if(own)return own;
   // A named person in camp dress with no body of their own keeps the procedural figure and
   // their own face, never a stranger's body.
   if(kit.escort&&cast&&!String(cast).startsWith('figure-'))return null;
@@ -161,11 +191,13 @@ export function actorBodyId(kit={},cast=null,options={}){
   // A body fits a figure of its own sex only: a woman of the camp with no woman's body to fit
   // her (the traders and the witness) keeps the procedural woman's figure.
   const traits={...kit,armored:!!kit.armored,command:!!kit.officer&&kit.chapter>=7};
-  for(const [id,{fits,woman}]of Object.entries(ACTOR_BODIES))if(woman===!!kit.female&&shown(id)&&fits.some(fit=>Object.entries(fit).every(([key,value])=>traits[key]===value)))return id;
+  // A fit names each trait's value, or a list of them (a staff body worn in some of its role's chapters).
+  const matches=(value,trait)=>Array.isArray(value)?value.includes(trait):trait===value;
+  for(const [id,{fits,woman}]of Object.entries(ACTOR_BODIES))if(woman===!!kit.female&&shown(id)&&fits.some(fit=>Object.entries(fit).every(([key,value])=>matches(value,traits[key]))))return id;
   return null;
 }
 /** The bodies a chapter's figures can wear, for its offline download group: on the web those its download carries. */
-export const chapterBodies=(chapter,{desktop=desktopApp()}={})=>Object.keys(ACTOR_BODIES).filter(id=>(desktop?ACTOR_BODIES[id].chapters:ACTOR_BODIES[id].web).includes(chapter));
+export const chapterBodies=(chapter,{desktop=desktopApp()}={})=>Object.keys(ACTOR_BODIES).filter(id=>(desktop?ACTOR_BODIES[id].desktop:ACTOR_BODIES[id].web).includes(chapter));
 
 // Generated horses (scripts/assets/bind-horse.py): Tripo horses skinned to the game's horse
 // skeleton on their own legs' rest pose. A mounted figure's horse wears the coat of its

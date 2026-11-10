@@ -1,0 +1,380 @@
+{
+ "tool": "scripts/assets/wrap-cast-head.py",
+ "blender": "5.2.2 LTS",
+ "body": {
+  "path": "intermediate: char-cast-crispus bound by bind-character.py (not kept)",
+  "sha256": "bad4c671ce7eebb524679bcb3e2e8635213f6441c087129cb0463cc190435259"
+ },
+ "donor": {
+  "path": "intermediate: char-roman-recruit bound by bind-character.py, unquantized (not kept)",
+  "sha256": "d4464a916814762b72535d7aebaf461150dc339f2d194b950c815b0c1f52accc"
+ },
+ "paint": null,
+ "face": {
+  "path": "art-source/models/raw/g6-face-crispus.glb",
+  "sha256": "e2fecd6c9e8a5b1385659b2073b9934d486b0684fb32cdeca2a8be28441f8b90",
+  "turn": -85,
+  "turnFrom": "finder",
+  "nod": 0,
+  "turnFinder": {
+   "coarse": 85,
+   "seen": 85,
+   "prominence": 0.2839,
+   "asymmetry": 0.0854,
+   "coarseScores": {
+    "45": [
+     0.0704,
+     0.1059
+    ],
+    "55": [
+     0.3858,
+     0.2532
+    ],
+    "65": [
+     0.3315,
+     0.2421
+    ],
+    "75": [
+     0.2952,
+     0.2002
+    ],
+    "85": [
+     0.2839,
+     0.0854
+    ],
+    "95": [
+     0.2929,
+     0.254
+    ],
+    "105": [
+     0.3186,
+     0.2737
+    ],
+    "115": [
+     0.0871,
+     0.0614
+    ],
+    "125": [
+     0.086,
+     0.1291
+    ],
+    "225": [
+     0.064,
+     0.0486
+    ],
+    "235": [
+     0.0633,
+     0.1935
+    ],
+    "245": [
+     0.0542,
+     0.0316
+    ],
+    "255": [
+     0.0575,
+     0.0263
+    ],
+    "265": [
+     0.0582,
+     0.125
+    ],
+    "275": [
+     0.0562,
+     0.0655
+    ],
+    "285": [
+     0.0558,
+     0.0247
+    ],
+    "295": [
+     0.0502,
+     0.0501
+    ],
+    "305": [
+     0.062,
+     0.1569
+    ]
+   }
+  },
+  "head": {
+   "crown": 0.4271,
+   "neck": -0.0854,
+   "middle": [
+    0.0784417497846355,
+    0.000590625628931394
+   ],
+   "radius": 0.2151,
+   "facing": [
+    265,
+    85
+   ]
+  },
+  "tries": [
+   {
+    "firstScale": 0.465,
+    "tilt": 1.51,
+    "eyeScale": 0.7895,
+    "contrast": [
+     0.2132,
+     0.1917
+    ]
+   }
+  ],
+  "firstScale": 0.465,
+  "tilt": 1.51,
+  "eyeScale": 0.7895,
+  "chin": 1.5226
+ },
+ "output": {
+  "path": "intermediate: cast-crispus with his face from the bust wrapped onto the shared head, before quantizing (not kept)",
+  "bytes": 980844,
+  "sha256": "9478b231d3d524d2f8e3ebb5f0e6216cbfadc690d1b84972da7c11f3249ed7d7",
+  "triangles": {
+   "body": 10629,
+   "body-overview": 2371,
+   "cast-head": 1607,
+   "cast-head-overview": 399
+  }
+ },
+ "settings": {
+  "texture": 1024,
+  "detailTexture": 512,
+  "webpQuality": 80,
+  "reach": 0.03,
+  "scalpOut": 0.008,
+  "scalpIn": 0.006,
+  "maxScale": 0.15,
+  "maxMouthFit": 0.2,
+  "samples": 4,
+  "bakeCage": 0.07,
+  "bakeReach": 0.16,
+  "eyes": "his",
+  "eyeHalf": [
+   0.015,
+   0.0075
+  ],
+  "eyeFeather": 1.6,
+  "eyeFinder": {
+   "spot": [
+    2,
+    3
+   ],
+   "spotSurround": [
+    6,
+    9
+   ],
+   "opening": [
+    2,
+    7
+   ],
+   "openingSurround": [
+    7,
+    15
+   ],
+   "rows": 0.003
+  },
+  "mouthFinder": {
+   "fromNose": 0.018,
+   "belowNose": 0.045,
+   "lipShare": 0.35,
+   "lipContrast": 0.04,
+   "lipMargin": 0.003,
+   "valley": 0.0025
+  },
+  "neck": 1.5,
+  "headFrom": 1.45,
+  "bodyTo": 1.55,
+  "wrapFrom": 1.52,
+  "wrapFull": 1.57,
+  "scalp": 1.69
+ },
+ "landmarks": {
+  "shared": {
+   "lips": 1.5651,
+   "centreX": -0.019,
+   "crown": 1.7566,
+   "nose": [
+    1.5946,
+    0.1472
+   ],
+   "eyes": {
+    "right": {
+     "x": -0.051,
+     "height": 1.6316,
+     "depth": 0.1145,
+     "contrast": 0.1777
+    },
+    "left": {
+     "x": 0.009,
+     "height": 1.6316,
+     "depth": 0.1152,
+     "contrast": 0.1332
+    }
+   },
+   "eyeLine": 1.6316,
+   "eyeDepth": 0.1149,
+   "brows": {
+    "right": {
+     "x": -0.044,
+     "height": 1.6416
+    },
+    "left": {
+     "x": 0.004,
+     "height": 1.6406
+    }
+   },
+   "browLine": 1.6411,
+   "mouth": {
+    "x": -0.019,
+    "height": 1.5676
+   },
+   "eyeLevelGap": 0
+  },
+  "his": {
+   "lips": 1.5854,
+   "centreX": -0.019,
+   "crown": 1.7331,
+   "nose": [
+    1.6101,
+    0.1056
+   ],
+   "eyes": {
+    "right": {
+     "x": -0.043,
+     "height": 1.6441,
+     "depth": 0.0737,
+     "contrast": 0.1902
+    },
+    "left": {
+     "x": 0.017,
+     "height": 1.6441,
+     "depth": 0.0882,
+     "contrast": 0.2138
+    }
+   },
+   "eyeLine": 1.6441,
+   "eyeDepth": 0.0809,
+   "brows": {
+    "right": {
+     "x": -0.068,
+     "height": 1.6781
+    },
+    "left": {
+     "x": 0.03,
+     "height": 1.6781
+    }
+   },
+   "browLine": 1.6781,
+   "mouth": {
+    "x": -0.019,
+    "height": 1.5861
+   },
+   "eyeLevelGap": 0
+  },
+  "hisAligned": {
+   "lips": 1.5676,
+   "centreX": -0.028,
+   "crown": 1.7206,
+   "nose": [
+    1.5946,
+    0.1396
+   ],
+   "eyes": {
+    "right": {
+     "x": -0.051,
+     "height": 1.6316,
+     "depth": 0.1077,
+     "contrast": 0.1914
+    },
+    "left": {
+     "x": 0.009,
+     "height": 1.6316,
+     "depth": 0.1222,
+     "contrast": 0.2136
+    }
+   },
+   "eyeLine": 1.6316,
+   "eyeDepth": 0.1149,
+   "brows": {
+    "right": {
+     "x": -0.076,
+     "height": 1.6656
+    },
+    "left": {
+     "x": 0.021,
+     "height": 1.6656
+    }
+   },
+   "browLine": 1.6656,
+   "mouth": {
+    "x": -0.028,
+    "height": 1.5676
+   },
+   "eyeLevelGap": 0
+  },
+  "wrapped": {
+   "lips": 1.5694,
+   "centreX": -0.022,
+   "crown": 1.7564,
+   "nose": [
+    1.6004,
+    0.1417
+   ],
+   "eyes": {
+    "right": {
+     "x": -0.053,
+     "height": 1.6304,
+     "depth": 0.1093,
+     "contrast": 0.1934
+    },
+    "left": {
+     "x": 0.006,
+     "height": 1.6344,
+     "depth": 0.1166,
+     "contrast": 0.1825
+    }
+   },
+   "eyeLine": 1.6324,
+   "eyeDepth": 0.1129,
+   "brows": {
+    "right": {
+     "x": -0.072,
+     "height": 1.6664
+    },
+    "left": {
+     "x": 0.027,
+     "height": 1.6664
+    }
+   },
+   "browLine": 1.6664,
+   "mouth": {
+    "x": -0.022,
+    "height": 1.5664
+   },
+   "eyeLevelGap": 0.004
+  }
+ },
+ "fit": {
+  "scale": 1,
+  "mouthFit": 1.1034,
+  "cast-head": {
+   "scalpHeld": 60,
+   "missed": 209,
+   "largestMove": 0.0237
+  },
+  "cast-head-overview": {
+   "scalpHeld": 15,
+   "missed": 49,
+   "largestMove": 0.0179
+  },
+  "unpainted": 0.00054,
+  "filled": 131
+ },
+ "review": null,
+ "pictures": [
+  "art-source/models/reports/char-cast-crispus-portrait-faces/cast-crispus-portrait-his-face.png",
+  "art-source/models/reports/char-cast-crispus-portrait-faces/cast-crispus-portrait-shared-face.png",
+  "art-source/models/reports/char-cast-crispus-portrait-faces/cast-crispus-portrait-his-aligned-face.png",
+  "art-source/models/reports/char-cast-crispus-portrait-faces/cast-crispus-portrait-wrapped-face.png"
+ ]
+}

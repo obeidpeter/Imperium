@@ -1,0 +1,164 @@
+{
+ "id": "char-camp-licinia",
+ "status": "bound, quantized and compressed: G6 batch A, accepted at review (as asked); ships as camp-licinia in Chapter X in the desktop app only (the chapter's web download has no room)",
+ "chapters": [
+  10
+ ],
+ "use": "Licinia of the river farms, the settler who bears witness in Chapter X's courtyard (data/camps.js): a body of her own, where she has been drawn as the game's procedural woman. A woman's body, with her own head.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Roman provincial farm woman of the mid-3rd century AD, a settler from the river farms of Dacia, about twenty-five, slender and travel-worn, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool tunic in faded green, its hem muddied, a short hooded travelling cape of undyed brown wool fastened at the throat with the hood down and both arms free, a plain belt of cord, and sturdy closed leather shoes. Her dark brown hair is in a single thick plait over one shoulder, bare-headed; a thin, serious face with dark, tired eyes and a wind-burnt complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no bundle, no basket, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, bundle, basket, child, modern dress, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611480,
+   "image_seed": 2611481,
+   "texture_seed": 2611482
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:32:47.030Z",
+  "requestBody": {
+   "negative_prompt": "armour, chainmail, helmet, weapon, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, bundle, basket, child, modern dress, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611480,
+   "image_seed": 2611481,
+   "texture_seed": 2611482,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Roman provincial farm woman of the mid-3rd century AD, a settler from the river farms of Dacia, about twenty-five, slender and travel-worn, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool tunic in faded green, its hem muddied, a short hooded travelling cape of undyed brown wool fastened at the throat with the hood down and both arms free, a plain belt of cord, and sturdy closed leather shoes. Her dark brown hair is in a single thick plait over one shoulder, bare-headed; a thin, serious face with dark, tired eyes and a wind-burnt complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no bundle, no basket, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7550,
+  "balanceSnapshotBefore": {
+   "balance": 7550,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "1a7a9464-d30c-47c6-ab4b-7334d4b450de",
+   "state": "accepted",
+   "requestSha256": "e3fe4da801e8e8f12152fcf8e7d6287312a0f335c9fc1432be20199c9e7623a8"
+  },
+  "taskId": "c93ab59e-5b39-4269-a3bd-c821e206a518",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:34:34.613Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-licinia.glb",
+  "rawBytes": 45280048,
+  "rawSha256": "a9c1fc2cec76a0ea84fecd32e6459ae311e72e3878149a82343443116c8c3c69",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Roman provincial farm woman of the mid-3rd century AD, a settler from the river farms of Dacia, about twenty-five, slender and travel-worn, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool tunic in faded green, its hem muddied, a short hooded travelling cape of undyed brown wool fastened at the throat with the hood down and both arms free, a plain belt of cord, and sturdy closed leather shoes. Her dark brown hair is in a single thick plait over one shoulder, bare-headed; a thin, serious face with dark, tired eyes and a wind-burnt complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no bundle, no basket, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611481,
+   "model_seed": 2611480,
+   "texture_seed": 2611482,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, bundle, basket, child, modern dress, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:32:47.426053Z",
+  "tripoCompletedAt": "2026-11-10T16:34:27.066995Z",
+  "tripoRender": "art-source/models/raw/char-camp-licinia-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T16:58:53.966Z",
+   "requestBody": {
+    "input": "c93ab59e-5b39-4269-a3bd-c821e206a518"
+   },
+   "submission": {
+    "id": "19ee8206-3392-4262-9697-8bba5a4c4420",
+    "state": "accepted",
+    "requestSha256": "db09df2606bb902fdc5c0b0419df4872a7968189ed83b7cb65721d9ab9a38f4d"
+   },
+   "taskId": "539ee98b-fba7-4c30-831d-befe35d77b7d",
+   "status": "success",
+   "output": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  },
+  "rig": {
+   "check": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig",
+   "requestedAt": "2026-11-10T16:59:00.182Z",
+   "requestBody": {
+    "input": "c93ab59e-5b39-4269-a3bd-c821e206a518",
+    "model": "v1.0-20240301",
+    "rig_type": "biped",
+    "spec": "tripo",
+    "out_format": "glb"
+   },
+   "balanceBefore": 7145,
+   "balanceSnapshotBefore": {
+    "balance": 7145,
+    "frozen": 0
+   },
+   "submission": {
+    "id": "d006227d-63a7-4cf7-8123-48ae6e80bcf5",
+    "state": "accepted",
+    "requestSha256": "68e652f0a432f5d2178dfb5d821e02eda584c23987ebc06f4b9f29e970af09d7"
+   },
+   "taskId": "93042748-f925-4d92-85db-0a1c3a84a733",
+   "status": "success",
+   "generatedAt": "2026-11-10T17:00:05.188Z",
+   "output": "model_url",
+   "raw": "art-source/models/raw/char-camp-licinia-rigged.glb",
+   "rawBytes": 60450420,
+   "rawSha256": "d3583f3f64f56931ea541823286323adee00f6ec7d22450efe818cdaa39e36a0",
+   "tripoInput": {
+    "spec": "tripo",
+    "topology": "biped",
+    "out_format": "glb",
+    "original_model_id": "c93ab59e-5b39-4269-a3bd-c821e206a518"
+   },
+   "modelVersion": "v1.0-20240301",
+   "modelVersionSource": "submitted request",
+   "creditsSpent": 25,
+   "creditSource": "task.credits_consumed",
+   "tripoCreatedAt": "2026-11-10T16:59:00.601983Z",
+   "tripoCompletedAt": "2026-11-10T16:59:47.469608Z"
+  }
+ }
+}

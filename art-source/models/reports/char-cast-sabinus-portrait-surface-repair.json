@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "inputSha256": "96fee7f5bc7cdc6b84beebd8736788aa55c71e16fca053e962bf99de1160e6e1",
+  "bytesBefore": 722936,
+  "paint": null,
+  "uv": null,
+  "protectedGeometry": [
+    {
+      "name": "body",
+      "primitives": [
+        {
+          "indices": "a042c3f949c6facde5300047423ab852f7df2cd1bc24b5d0248c7f006101ba71",
+          "attributes": {
+            "POSITION": "b95ef1f2153c91377b330d236a98959b682893ab0ce0f385322c7d4a507e43d2",
+            "NORMAL": "119664147cb657a8da5026bf857720a3435e29295c30be7c709050a07dd655be",
+            "JOINTS_0": "81f8197beb48bd59270231eb31c10a14ef3e2d324e7e2dd6f6a46203214c024d",
+            "WEIGHTS_0": "306d1cea8a6e47427bfc2bb74a2a39213edfa92ecdf9822d23a8e1d1cf6e108b"
+          }
+        }
+      ]
+    },
+    {
+      "name": "body-overview",
+      "primitives": [
+        {
+          "indices": "a7e68412fa3acc6fddb7d7b65ad72194ac790c285a15ecc0b6fbfde1e9b636cb",
+          "attributes": {
+            "POSITION": "a76f6a588f4e188d68f13af607cb8c342dafdce1465527de475272ec117a1084",
+            "NORMAL": "1168dc2785d4c3eae6ffde1a174c56e78cf6d32d4e2e59567586d344c992c772",
+            "COLOR_0": "309abe963331f8049929ee4e1e53e9d66a954c115da12355fd9098b2dda4f945",
+            "JOINTS_0": "5fa4ddbfe390dbfa186f3a5d2c1a0922d645520b77853d1796d665716b5c5924",
+            "WEIGHTS_0": "a4c9a931f27c9a119f8995dab535938ea520376cb2a6afb530781ee4728aef33"
+          }
+        }
+      ]
+    },
+    {
+      "name": "cast-head",
+      "primitives": [
+        {
+          "indices": "92ccc31112bef6f255bef7b6371d102b0c8c9e513868ca4d8e10ff268af7ef73",
+          "attributes": {
+            "POSITION": "e887f7e841bc099510ca3ae516a9abd92c03947b819de9175f05e79401992015",
+            "NORMAL": "08f4212f5317e8c75e35a3ec226d52983ca014a68ab6c01f10b96eb76142398d",
+            "JOINTS_0": "b925cadff8f61c38ef6c397cd8d04ee6781a54b97bc360aec5480e40ae1a2305",
+            "WEIGHTS_0": "e682c77fcc33e77ac77e4b825d26a1b41f7a15a370e63643c54f776fd7ae760c"
+          }
+        }
+      ]
+    },
+    {
+      "name": "cast-head-overview",
+      "primitives": [
+        {
+          "indices": "17462a340d0a094599d546d4823f736794d7303d78ad061bb2336f1d287ffcf6",
+          "attributes": {
+            "POSITION": "cd6d2cccadedc05aca4324d482a2793bb52806513b98153632649836db8e89d5",
+            "NORMAL": "c7b73c6a3c075e447f7ddacbbfac565006b672ffa682686930c0dcd9a6b80014",
+            "COLOR_0": "35b1fb2bd4d35a8b83e7f889201389ea311deea7d933153995159f9072e0bb90",
+            "COLOR_1": "857a2c45f67def316594b93fecb9f17ddbbb7ca6cd5acb40e5204f9cf251cc9c",
+            "JOINTS_0": "bff8bcfba555b56583b9516c3c6eb6086cb2539206a02386ec3ad1e4dfb976d9",
+            "WEIGHTS_0": "979795533f09f52233b9acc0fe93d144c199d9c4b496d4058cb96b3f4fb5954d"
+          }
+        }
+      ]
+    }
+  ],
+  "texturesBefore": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 29774,
+      "sha256": "5c555d489b3402c3f9ae3f67bfa9b6f02969aa5b7504a372a5e18c3d8d6041fe"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 142163,
+      "sha256": "0aedeec6ae254afd3b4a644cc541a7c9d4a7c1b2a48a72bcb6c711d0d257f6ff"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 46741,
+      "sha256": "1b948bd0821477004f0433ba6a292f8d9a3a1f7cda898d74aeef77c443993076"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 64781,
+      "sha256": "29b792ae94732435572ff71d155b439443389fe7d3797fa44f47e901c92b8e78"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 147813,
+      "sha256": "61b108ad2058458136870b778cbc3ac90d024cdfbe90c3432fd0a8ec361ca580"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 43832,
+      "sha256": "6bb73bc0f8f6525cceea5c8cdac1b85d878c172e46b5758da3d179b03b8de014"
+    }
+  ],
+  "overview": {
+    "method": "Meshopt reduction of the intact near head, locking UV island borders",
+    "sourceMesh": "cast-head",
+    "mesh": "cast-head-overview",
+    "triangles": 839,
+    "vertices": 945,
+    "sourceTriangles": 1607
+  },
+  "outputGeometry": [
+    {
+      "name": "body",
+      "primitives": [
+        {
+          "indices": "a042c3f949c6facde5300047423ab852f7df2cd1bc24b5d0248c7f006101ba71",
+          "attributes": {
+            "POSITION": "b95ef1f2153c91377b330d236a98959b682893ab0ce0f385322c7d4a507e43d2",
+            "NORMAL": "119664147cb657a8da5026bf857720a3435e29295c30be7c709050a07dd655be",
+            "JOINTS_0": "81f8197beb48bd59270231eb31c10a14ef3e2d324e7e2dd6f6a46203214c024d",
+            "WEIGHTS_0": "306d1cea8a6e47427bfc2bb74a2a39213edfa92ecdf9822d23a8e1d1cf6e108b"
+          }
+        }
+      ]
+    },
+    {
+      "name": "body-overview",
+      "primitives": [
+        {
+          "indices": "a7e68412fa3acc6fddb7d7b65ad72194ac790c285a15ecc0b6fbfde1e9b636cb",
+          "attributes": {
+            "POSITION": "a76f6a588f4e188d68f13af607cb8c342dafdce1465527de475272ec117a1084",
+            "NORMAL": "1168dc2785d4c3eae6ffde1a174c56e78cf6d32d4e2e59567586d344c992c772",
+            "COLOR_0": "309abe963331f8049929ee4e1e53e9d66a954c115da12355fd9098b2dda4f945",
+            "JOINTS_0": "5fa4ddbfe390dbfa186f3a5d2c1a0922d645520b77853d1796d665716b5c5924",
+            "WEIGHTS_0": "a4c9a931f27c9a119f8995dab535938ea520376cb2a6afb530781ee4728aef33"
+          }
+        }
+      ]
+    },
+    {
+      "name": "cast-head",
+      "primitives": [
+        {
+          "indices": "92ccc31112bef6f255bef7b6371d102b0c8c9e513868ca4d8e10ff268af7ef73",
+          "attributes": {
+            "POSITION": "e887f7e841bc099510ca3ae516a9abd92c03947b819de9175f05e79401992015",
+            "NORMAL": "08f4212f5317e8c75e35a3ec226d52983ca014a68ab6c01f10b96eb76142398d",
+            "JOINTS_0": "b925cadff8f61c38ef6c397cd8d04ee6781a54b97bc360aec5480e40ae1a2305",
+            "WEIGHTS_0": "e682c77fcc33e77ac77e4b825d26a1b41f7a15a370e63643c54f776fd7ae760c"
+          }
+        }
+      ]
+    },
+    {
+      "name": "cast-head-overview",
+      "primitives": [
+        {
+          "indices": "024976b9b044375ab4bd5ed6fa7d9de681082a8e2a3a7efcb5895b3e461cc0c8",
+          "attributes": {
+            "POSITION": "b8ab4993b6a260f1910c3851c6aa52e7f5d47a883da4abb1c5b17452651c0b03",
+            "NORMAL": "be73e731ce5c0fe4a41164d41d4257535dfaa0d4d6d4b218006adcbd13190c02",
+            "JOINTS_0": "1dcc59477109e810042597effcf50201e51df4556ba156ec5158f577126680fa",
+            "WEIGHTS_0": "514fb95541952e1dceae6c5d5534cf575463078840fd9b4b04ccfa25585269ee",
+            "COLOR_0": "6d498ae7a72e2e8e4794f7d262bb0e08acf6c6832d173495971ca7d1dc0128a0",
+            "COLOR_1": "3e8cb6e423fdb38da838e0a6dfccfe3431c385315cc740dbfe3ea29552773a51"
+          }
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 29774,
+      "sha256": "5c555d489b3402c3f9ae3f67bfa9b6f02969aa5b7504a372a5e18c3d8d6041fe"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 142163,
+      "sha256": "0aedeec6ae254afd3b4a644cc541a7c9d4a7c1b2a48a72bcb6c711d0d257f6ff"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 46741,
+      "sha256": "1b948bd0821477004f0433ba6a292f8d9a3a1f7cda898d74aeef77c443993076"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 64781,
+      "sha256": "29b792ae94732435572ff71d155b439443389fe7d3797fa44f47e901c92b8e78"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 147813,
+      "sha256": "61b108ad2058458136870b778cbc3ac90d024cdfbe90c3432fd0a8ec361ca580"
+    },
+    {
+      "mimeType": "image/ktx2",
+      "bytes": 43832,
+      "sha256": "6bb73bc0f8f6525cceea5c8cdac1b85d878c172e46b5758da3d179b03b8de014"
+    }
+  ],
+  "sha256": "60deb00c0bf52583331f7d0416bf0b63a65907366b217f4bf3f3cb8272de5bb7",
+  "bytes": 752324
+}

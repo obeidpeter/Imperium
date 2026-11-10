@@ -1,0 +1,81 @@
+{
+ "id": "g6-face-crispus",
+ "status": "G6 batch A: his face, wrapped onto the shared head by scripts/assets/wrap-cast-head.py --face with his own eye paint, refined and repaired as his first head was; ships in assets/models/characters/cast-crispus-portrait.glb, Crispus's body in the desktop app, beside his first body and face, which the web keeps",
+ "chapters": [
+  3,
+  4,
+  7,
+  11
+ ],
+ "use": "G6 batch A: a face that starts from a picture, as Lucan's in G6's pilot: a head-and-shoulders model made by image-to-model from Crispus, the young tribune who becomes a senator's campaign portrait (assets/portraits/crispus.webp, as a PNG at twice its size), whose face is baked onto the shared animated head.",
+ "generator": {
+  "service": "Tripo",
+  "task": "image_to_model",
+  "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-crispus-portrait.png",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611550,
+   "texture_seed": 2611551
+  }
+ },
+ "budget": {
+  "texture": 1024,
+  "detailTexture": 512,
+  "heightMetres": 0.62
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 30,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/image-to-model",
+  "requestedAt": "2026-11-10T16:11:34.587Z",
+  "requestBody": {
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "texture_alignment": "original_image",
+   "model_seed": 2611550,
+   "texture_seed": 2611551,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "input": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-crispus-portrait.png"
+  },
+  "balanceBefore": 7800,
+  "balanceSnapshotBefore": {
+   "balance": 7800,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "b1ff124a-c5d6-4c68-b01d-3e144f1a1bf9",
+   "state": "accepted",
+   "requestSha256": "267923cefe178d7c4d965ab38b6d054aad3396ed4cd4601fbcc15c19bb17ca81"
+  },
+  "taskId": "443bf2a9-3238-42fa-a696-f6280131c472",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:14:04.353Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/g6-face-crispus.glb",
+  "rawBytes": 45503168,
+  "rawSha256": "e2fecd6c9e8a5b1385659b2073b9934d486b0684fb32cdeca2a8be28441f8b90",
+  "tripoInput": {
+   "resource_url": "https://raw.githubusercontent.com/obeidpeter/Imperium/693d95319f954aebef488ddd41452ce7cfa1f8d1/art-source/models/inputs/g6-crispus-portrait.png"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "submitted request",
+  "creditsSpent": 30,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:11:35.061626Z",
+  "tripoCompletedAt": "2026-11-10T16:13:57.246166Z",
+  "tripoRender": "art-source/models/raw/g6-face-crispus-tripo-render.webp"
+ }
+}
