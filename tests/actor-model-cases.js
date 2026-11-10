@@ -40,6 +40,10 @@ export const ACTOR_CASES=freeze([
   {id:'severianus',label:'Severianus · named patron',unit:{id:'severianus',name:'Severianus',side:'ally',role:'speaker'},options:{chapter:10}},
   {id:'paullus',label:'Paullus · named elder',unit:{id:'paullus',name:'Lucius Cassius Paullus',side:'ally',role:'voter',bloc:'Landholders'},options:{chapter:11}},
   {id:'sabinus',label:'Sabinus · named soldier',unit:{id:'sabinus',name:'Sabinus',side:'ally',role:'infantry'},options:{chapter:4}},
+  // A member of the chamber nobody names, who wears the elder senator's toga (actor-body-catalog.js chooses by who he is),
+  // and the camps' armourer at the quartermaster's, in the bodies graphics release G6 made for them.
+  {id:'chamber-member',label:'Senator · a member of the chamber',unit:{id:'member0',name:'Veterans delegate 1',side:'neutral',role:'voter'},options:{chapter:11}},
+  {id:'smith',label:'Bassus · the camps’ armourer',unit:{id:'smith',name:'Bassus the armourer',side:'neutral',role:'smith'},options:{chapter:11}},
   ...Array.from({length:12},(_,i)=>({id:`hero-ch${i+1}`,label:`Chapter ${i+1} · Marcellus`,unit:{id:'hero',name:'Aurelius Marcellus',side:'player',role:i>=9?'speaker':'infantry',...(i>=9?{bloc:'Civic'}:{})},options:{chapter:i+1}}))
 ]);
 export const ACTOR_MOTIONS=Object.freeze(['idle','start','walk','run','stop','turn','retreat','attack','throw','brace','block','hit','rally','order','speak','conversation','assent','dissent','yield','withdrawn']);

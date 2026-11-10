@@ -1,0 +1,172 @@
+{
+ "scope": "Release G6 of the graphics plan (docs/graphics-tripo-plan.md): faces and people",
+ "authorization": {
+  "credits": 3340,
+  "approvedBy": "Owner",
+  "source": "docs/graphics-tripo-plan.md: release G6, capped at 1,100 credits on 8 November 2026, with 900 of G3's held credits, 580 of G5's and 760 of G4's (#103) proposed for it, 3,340 in all; decision 9 (9 November 2026) leaves the rest of the plan to my judgement within each release's cap, each pilot reviewed in the game before the rest of its release is generated"
+ },
+ "pricing": {
+  "textWithStandardTextures": 20,
+  "imageWithStandardTextures": 30,
+  "bipedRig": 25,
+  "rigCheck": 0,
+  "source": "the calibration's measured prices (docs/graphics-calibration.md), and image-to-model at standard textures as G6's pilot measured it (30 credits, not the 20 the pilot planned); each task's reported credits_consumed is recorded below"
+ },
+ "spentCredits": 185,
+ "remainingAuthorization": 3155,
+ "batches": [
+  {
+   "batch": "pilot",
+   "date": "2026-11-10",
+   "ceilingCredits": 200,
+   "plannedCredits": 155,
+   "spentCredits": 185,
+   "items": [
+    "g6-face-lucan",
+    "char-senator-elder-b",
+    "char-camp-vibia",
+    "char-camp-smith",
+    "char-camp-smith-b"
+   ],
+   "note": "G6's pilot: the elder senator remade in a toga that reaches his feet (the first came knee-length over sandals), Vibia the wine-seller of Chapter VII and Bassus the armourer of every camp in bodies of their own, each generated at standard texture and geometry and rigged (20 and 25 credits), and Lucan's face from his campaign portrait by image-to-model (30, not the 20 planned), within a 200-credit ceiling (one redo): 185 credits.",
+   "balance": {
+    "before": 8045,
+    "after": 7860,
+    "source": "the account balance read before the first task and after the last (frozen 0)"
+   },
+   "tasks": [
+    {
+     "id": "g6-face-lucan",
+     "operation": "image_to_model",
+     "expectedCredits": 30,
+     "status": "success",
+     "taskId": "18d06202-bbbd-453a-95fa-0bed9ef36e9e",
+     "creditsReported": 30,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 30
+    },
+    {
+     "id": "char-senator-elder-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "e0aa698a-f228-492c-9009-f6b76027e271",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-senator-elder-b",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "54a35cc4-1bbd-4c44-906b-221a98a291b8",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-senator-elder-b",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "21bae52a-c9e4-4666-8423-6c513966001d",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-vibia",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "20909fb6-cd54-4e69-ae88-fcd7a69adb69",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-vibia",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "73e2baaa-7383-46bd-aa84-2d704f106738",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-vibia",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "65c7cd7b-dd2d-4bff-9dc6-4b9d5504adff",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    },
+    {
+     "id": "char-camp-smith",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "783349c1-c780-4aec-81f4-d4446bbaf885",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20,
+     "rejectedAtReview": "it came in leather armour, with shoulder guards, a studded leather cuirass with hanging strips and armoured bracers, despite \"no armour\" in the prompt and armour in its negative prompt: a soldier, not the armourer at his forge"
+    },
+    {
+     "id": "char-camp-smith-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "78118aa8-9b11-4603-9b2b-f7717686c543",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "char-camp-smith-b",
+     "operation": "animate_prerigcheck",
+     "expectedCredits": 0,
+     "status": "success",
+     "taskId": "0cd7b162-a7bf-4664-a71e-a6839103d9d5",
+     "creditsReported": 0,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 0,
+     "output": {
+      "riggable": true,
+      "rig_type": "biped"
+     }
+    },
+    {
+     "id": "char-camp-smith-b",
+     "operation": "animate_rig",
+     "expectedCredits": 25,
+     "status": "success",
+     "taskId": "943f3396-f06d-4259-94d6-99eb3de29eeb",
+     "creditsReported": 25,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 25
+    }
+   ],
+   "rejected": {
+    "count": 1,
+    "of": 5,
+    "items": [
+     "char-camp-smith"
+    ],
+    "note": "Its leather apron and bracers came as leather armour; the second attempt, char-camp-smith-b, ships. One of five generations (20%), within the plan's 20% stop rule."
+   }
+  }
+ ]
+}

@@ -510,9 +510,9 @@ Triangles count both levels of detail and, for the named men, both of their head
 Each model was compared with its Tripo render and then, bound, with the game's own figure in software-rendered close-ups and full views (see the [release report](cast-release6-report.md)). What it showed, and what was kept:
 
 - **Lucan's first two attempts** came back in segmented plate, the first with shoulder plates and a studded belt apron, the second a cuirass of iron hoops with laminated shoulder guards despite a prompt that ruled them out. Both were rejected (65 credits from the retry allowance); the second had been rigged, bound and wrapped for the spending gate before it was replaced. The third, with a negative prompt and the mail described as a chainmail shirt of small interlocking rings, wears mail over his red-brown tunic, as his portrait does.
-- **The named men's faces** are their own generated heads' shape and paint on the shared head, which keeps the game's blinks and expressions; every one was checked to blink and to differ from the others. Inside the eyes they all keep the shared head's own paint, which its lids were made for. Each head was scaled to the shared head's eye spacing, by 0.88 (Sabinus and Felix) to 1.02 (Lucan and Crispus). Brennus's long hair needed a longer bake, his beard is trimmed to his jaw, and his light eyes under heavy brows were set from his report picture, as the finder read his brows as eyes.
+- **The named men's faces** are their own generated heads' shape and paint on the shared head, which keeps the game's blinks and expressions; every one was checked to blink and to differ from the others. Inside the eyes they all keep the shared head's own paint, which its lids were made for. Each head was scaled to the shared head's eye spacing, by 0.88 (Sabinus and Felix) to 1.02 (Lucan and Crispus). Brennus's long hair needed a longer bake, his beard is trimmed to his jaw, and his light eyes under heavy brows were set from his report picture, as the finder read his brows as eyes. Lucan's was remade from his campaign portrait in [G6's pilot](#g6s-pilot-faces-and-people--10-november-2026).
 - **Sleeves.** Crispus's and the clerk's tunics came out short-sleeved, though tunics of the 250s and 260s were long-sleeved; they were kept.
-- **Senators** wear sandals and knee-length togas. In the third century a senator's toga reached his feet and he wore closed shoes (calcei); and the trims that name a bloc are the game's own convention, not a senator's marks of rank, which the prompts kept off the togas (no purple stripe).
+- **Senators** wear sandals and knee-length togas. In the third century a senator's toga reached his feet and he wore closed shoes (calcei); and the trims that name a bloc are the game's own convention, not a senator's marks of rank, which the prompts kept off the togas (no purple stripe). The elder was remade with his toga to his feet in [G6's pilot](#g6s-pilot-faces-and-people--10-november-2026).
 - **Syra** wears a long dress and headscarf, and her own head, as do the staff and the senators: only the named men wear the shared head.
 - **The eastern horse's** trapper of iron scales leaves a raised seat on its back, under the game's saddle, and its ground-length tail was cut at 0.55 m in binding: whole, it swept the ground and the legs as it swung. Sasanian reliefs show war horses' tails tied up short.
 - **The northern horse** came out larger than the prompt's stocky breed: the binder scales every horse to the game's horse skeleton.
@@ -2264,6 +2264,56 @@ Each battle was seen twice at the same moment, in the desktop build at High: onc
   - By Chapter V's onager they stand clear of the pile of its stone shot, which lies at the engine's side.
   - By Chapter VII's carroballista they mark the engine's place more plainly than its own thin frame and dark timber, which G5's review found hard to tell from the scrub.
 - **Not seen:** the battles of Chapters I, IV, VIII, IX, X and XII, and the web build, where Chapter III's wagons each have the grey ox alone. `tests/graphics-g4.test.mjs` checks every pair in every battle reached by legal commands.
+
+## G6's pilot: faces and people · 10 November 2026
+
+Release G6's pilot of the [graphics plan](graphics-tripo-plan.md#g6s-pilot-10-november): Lucan's face modelled from his campaign portrait, the elder senator remade in a toga that reaches his feet, and bodies of their own for Vibia the wine-seller and Bassus the armourer. [The asset pipeline](asset-pipeline.md#g6s-pilot-a-face-from-a-portrait-and-bodies-of-their-own--2026-11-10) has how the face is made and where the bodies ride.
+
+Lucan's face was generated with Tripo's image-to-model API (`v3.1-20260211`, standard textures and geometry, 30 credits) on 2026-11-10 from one picture, the game's own art: his campaign portrait (`assets/portraits/lucan.webp`), enlarged twice (Lanczos) to 672 pixels and committed as [`g6-lucan-portrait.png`](../art-source/models/inputs/g6-lucan-portrait.png), which Tripo fetched from the repository at its commit. The three bodies were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) from the text prompts in their requests only, with no reference image or third-party model, and rigged by Tripo's biped auto-rig (25 credits each). The pilot cost 185 credits of its 200-credit ceiling, task by task in [the G6 ledger](../art-source/models/graphics-g6-credits.json), and the balance read 8,045 before and 7,860 after. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Who | Chapters | Tripo task | Rig task | Triangles | Runtime file |
+| --- | --- | --- | --- | --- | ---: | ---: |
+| g6-face-lucan (ships in cast-lucan) | Lucan's face, from his portrait | I–XII | `18d06202-bbbd-453a-95fa-0bed9ef36e9e` | — (his body's) | 13,669 | 723,944 bytes |
+| char-senator-elder-b (ships as senator-elder) | a senator, about sixty-five | VII, VIII, X–XII | `e0aa698a-f228-492c-9009-f6b76027e271` | `21bae52a-c9e4-4666-8423-6c513966001d` | 13,981 | 415,160 bytes |
+| char-camp-vibia (ships as camp-vibia) | Vibia the wine-seller | VII | `20909fb6-cd54-4e69-ae88-fcd7a69adb69` | `65c7cd7b-dd2d-4bff-9dc6-4b9d5504adff` | 13,947 | 456,436 bytes |
+| char-camp-smith-b (ships as camp-smith) | Bassus the armourer | I–XII | `78118aa8-9b11-4603-9b2b-f7717686c543` | `943f3396-f06d-4259-94d6-99eb3de29eeb` | 13,714 | 407,232 bytes |
+
+Lucan's triangles are his whole figure's, his release 6 body with the new face on the shared head, both levels of detail. Every runtime file is quantized and compressed (meshopt geometry, ETC1S KTX2 with mipmaps) and passes `check-model` within 900,000 bytes, its request's triangles and 1,024-pixel textures. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the binding, head-wrap and compression reports in `art-source/models/reports/`, with Lucan's face as the wrap's finders saw it (`char-cast-lucan-faces/`). One generation was rejected at review and is not shipped, 20 credits: the first armourer (`char-camp-smith`, task `783349c1-c780-4aec-81f4-d4446bbaf885`). One of five generations (20%) is at the plan's stop rule's line, which pauses a release only above it.
+
+The prompts follow [the historical notes](historical-research.md): in the third century a senator's toga reached his feet. They are evocations, not reconstructions:
+- **the senator:** the first's thin elder in a plain white toga, its folds gathered into a band across his chest, now falling in heavy folds to his ankles all round over closed shoes laced over the ankles; the negative prompt names a knee-length toga, bare legs and sandals;
+- **Vibia:** a provincial woman of about forty-five who keeps a wine stall outside the camp, in a faded woad-blue ankle-length tunic under a dark leather apron, a woven belt with a purse, an undyed brown shawl and a linen kerchief over greying hair, with nothing in her hands;
+- **Bassus:** a thickset blacksmith of about fifty in a plain short-sleeved tunic of undyed wool under a flat leather smith's apron, with bare forearms and closed shoes. The first prompt also asked for thick leather bracers and leg wrappings; the second asked for one smooth sheet of leather with no plates, studs or straps on it, and named armour, shoulder guards, leather strips and bracers in its negative prompt.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render, then bound and seen in the game's figure viewer (`tests/actor-model-browser.html`) beside the figure it replaces, and finally in the desktop build at High. What it showed, and what was kept:
+
+![Lucan's portrait, Tripo's bust from it, and his face in the figure viewer before and after](images/g6-pilot-face.jpg)
+
+- **Lucan's face** is his portrait's. Tripo's bust came as the portrait shows him: curly brown hair, a short beard and moustache, a mustard scarf pinned with a round brooch over mail and a red cloak, his head turned about a quarter to his right. Before, he wore the face wrapped from his release 6 body, clean-shaven and smiling, as its prompt asked; his campaign portrait shows him bearded.
+  - **How it was made.** The wrap turned the bust 88° to face the front, scaled it by its skull, levelled it by its eyes and scaled it again to the shared head's eye spacing, then wrapped and baked it onto the shared head as his own head was, which keeps the game's blinks and expressions.
+  - **His own eyes.** The shared head's eyes, which the other named men keep, stared out of the portrait's face, so his face keeps its own paint inside the sockets.
+  - **The throat.** The bust's scarf rises to the jaw and painted itself onto the throat, so the face stops 4.5 cm below the mouth and his own body's throat is joined beneath it. His beard ends in a straight line there. Kept, with a note.
+  - **The fallback.** Until the model loads, or if it fails, he keeps the shared head's sculpted face, as before.
+
+![Tripo's renders of the senator, Vibia and both armourers; below, the senator and Bassus in the figure viewer before and after](images/g6-pilot-models.jpg)
+
+- **The senator** came as asked but for his feet: his toga falls in heavy folds to his ankles all round, over a long-sleeved white tunic, and the band across his chest takes the game's bloc trims as the first's did. He still wears open sandals, though the prompt asked for closed shoes and the negative prompt named sandals. Kept, with a note: the toga's length was the fault being mended.
+- **Vibia** came as asked in the main: a faded blue ankle-length tunic, a long dark apron from the waist, a tan woven belt with a leather purse, and a coarse brown shawl with frayed edges. Her greying hair is in a knot above a linen band rather than under a kerchief, and she wears open sandals rather than closed shoes. Kept, with notes.
+- **The first armourer was rejected.** He came in leather armour, with shoulder guards, a studded leather cuirass with hanging strips and armoured bracers, though the prompt said "no armour" and the negative prompt named it: a soldier, not the armourer at his forge.
+- **Bassus** came as the second request asked: a plain undyed short-sleeved tunic, a smooth dark-brown leather apron from a strap round his neck to above his knees, tied at the waist, bare forearms and closed shoes. His short hair and full beard came black rather than grizzled. Kept, with a note.
+
+#### In the game
+
+![Chapter VII's camp before and after, in the desktop build at High: Vibia, Bassus and Lucan](images/g6-pilot-camp.jpg)
+
+Chapter VII's camp was seen twice at the same moments, in main's desktop build and in the pilot's, at High. The camp was restored through the Restore dialog from a save reached from New Game by legal commands, the soldier walked by legal move commands to stand beside each person, and the view paused and framed with the game's own Follow camera and zoom keys:
+- **Vibia** stands in the canabae in her own dress, the blue tunic, the dark apron and the brown shawl, where the game's procedural woman had stood in pale grey-green. The change reads at once from the camp camera.
+- **Bassus** stands at the quartermaster's in his own leather apron, a broad bearded smith, where he had worn the escorts' blue civilian body under the game's code-built apron.
+- **Lucan** has a beard and moustache darkening his jaw under his cap, where his old face had been a clean-shaven smile. At the camp camera's distance his face is small. His capture with the pilot came out wider than the one before it, so its crop is enlarged to match.
+- **The chamber.** In Chapter XI's Contest, restored the same way and seen in the pilot's desktop build, the members who wear the elder's body stand in togas to their feet among the other members' knee-length ones. At the chamber camera's distance the bloc trims on the band are small.
+- **Not seen:** Bassus in the other camps and in Chapter XI on the web, where his body rides; Vibia's absence on the web, where she keeps the procedural woman; and the senators in the chambers of Chapters VII, VIII, X and XII. `tests/actor-bodies.test.mjs` checks that every body is worn in exactly its chapters, in the desktop app and on the web.
 
 ## Steam achievement icons · 3 November 2026
 

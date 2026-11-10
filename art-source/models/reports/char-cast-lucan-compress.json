@@ -1,6 +1,6 @@
 {
-  "input": "assets/models/characters/cast-lucan.glb",
-  "output": "assets/models/characters/cast-lucan.glb",
+  "input": "intermediate: cast-lucan with the wrapped head, quantized (not kept): later refined and repaired (char-cast-lucan-refinement.json, char-cast-lucan-surface-repair.json) into assets/models/characters/cast-lucan.glb",
+  "output": "intermediate: cast-lucan with the wrapped head, quantized (not kept): later refined and repaired (char-cast-lucan-refinement.json, char-cast-lucan-surface-repair.json) into assets/models/characters/cast-lucan.glb",
   "encoder": {
     "basisu": "v1.16.4",
     "mode": "ETC1S",
@@ -9,14 +9,14 @@
     "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
   },
   "before": {
-    "bytes": 661796,
-    "gzipBytes": 524183,
-    "sha256": "9d7e0e90d3d2cf7de0898b136ef07d7e16fd2d7e8510e61f73e51b8f899e9ffd"
+    "bytes": 740116,
+    "gzipBytes": 599860,
+    "sha256": "c7e9d15b7f8b8109e06c517b58e14e45a54f316e47dc3fa466c6b29b63c29d81"
   },
   "after": {
-    "bytes": 653468,
-    "gzipBytes": 627036,
-    "sha256": "667ad458d59de710f2352584c1dd9678d66cb19d5837d7a11a9f3ab2e1d0859d"
+    "bytes": 691640,
+    "gzipBytes": 664783,
+    "sha256": "528bb6ba145a333e87f05ab7ce84a4efc29d4b36852590f1deee3778dd621939"
   },
   "geometryUnchanged": true,
   "triangles": 13197,
@@ -72,10 +72,10 @@
       "height": 512,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 28766
+        "bytes": 50290
       },
-      "bytes": 58568,
-      "psnr": 33.152
+      "bytes": 63648,
+      "psnr": 28.726
     },
     {
       "slots": [
@@ -86,10 +86,10 @@
       "height": 1024,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 61550
+        "bytes": 96386
       },
-      "bytes": 126985,
-      "psnr": 37.611
+      "bytes": 148637,
+      "psnr": 35.81
     },
     {
       "slots": [
@@ -100,10 +100,10 @@
       "height": 512,
       "from": {
         "mimeType": "image/webp",
-        "bytes": 25744
+        "bytes": 44370
       },
-      "bytes": 37216,
-      "psnr": 35.193
+      "bytes": 46552,
+      "psnr": 33.634
     }
   ]
 }

@@ -24,6 +24,15 @@ cut above the neck) and cast-head and cast-head-overview (the shared head in his
 and paint; named apart from the skeleton's head joint, as a glTF loader renames a node
 that repeats another's name). A JSON report records the landmarks, the fit and the
 counts, with a picture of each face as the eye finder saw it.
+
+With --face, his face comes from a bust instead of his generated head: a raw image-to-model
+.glb made from his portrait, with a likeness a text-made head lacks. The bust is turned to
+face the front (the turn whose view shows a nose, its most forward point with the face
+falling away evenly to either side, refined to the most nearly mirror-symmetric face;
+--face-turn takes a turn from review), scaled from its skull's half-width (again at other
+scales while its eyes disagree), levelled by its eyes and scaled again so they stand as far
+apart as the shared head's.
+Then it is wrapped and baked as his own head would be; his body stays his own.
 """
 import argparse
 import importlib.util
@@ -34,7 +43,7 @@ import sys
 
 import bpy  # Blender's Python module provides mathutils once bpy is loaded.
 import bmesh
-from mathutils import Vector
+from mathutils import Matrix, Vector
 from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 
@@ -78,6 +87,19 @@ MOUTH_FROM_NOSE, MOUTH_BELOW_NOSE, MOUTH_LIP_SHARE, MOUTH_LIP_CONTRAST, MOUTH_LI
 # head may lie well inside the scalp held near the shared head's; and the share of the
 # head's map they may leave unpainted.
 CAGE, REACH, UNPAINTED = 0.05, 0.12, 0.002
+# A bust's face (--face): its head is the top FACE_HEAD of the bust's height and its skull the
+# top half of that, whose half-width (hair and all) is taken as FACE_SKULL metres for the
+# first scale, tried again at the FACE_RETRY shares of it while its eyes disagree; the turn
+# finder sees the head in square cells, FACE_CELLS across the skull's half-width, from within
+# FACE_SWING degrees of the way the shoulders face in FACE_STEP steps (then single degrees
+# either side), and looks for the nose within FACE_NOSE_BAND of the head's height above its
+# foot; and a tilt (degrees) or a second scale beyond these limits means its eyes disagree.
+FACE_HEAD, FACE_SKULL, FACE_RETRY = 0.6, 0.10, (1, 0.9, 1.1, 0.8, 1.2)
+FACE_CELLS, FACE_SWING, FACE_STEP, FACE_NOSE_BAND = 40, 40, 10, (0.25, 0.8)
+FACE_MAX_TILT, FACE_MAX_SCALE = 20, 0.25
+# A bust's collar or scarf would paint the shared head's throat: below this far under the
+# shared head's lip line (metres) his head takes its shape and paint from his own body instead.
+FACE_CHIN = 0.045
 
 
 def parse_args():
@@ -103,7 +125,11 @@ def parse_args():
     p.add_argument('--max-unpainted', type=float, default=UNPAINTED, help='largest share of the head\'s map the bake may leave unpainted')
     p.add_argument('--eyes', choices=('shared', 'his'), default='shared',
                    help='paint inside the eyes: the shared head\'s own (made for its lids and blinks) or his')
+    p.add_argument('--face', help='a bust from his portrait (raw image-to-model .glb) to take his face\'s shape and paint from, in place of his generated head')
+    p.add_argument('--face-turn', type=float, help='degrees about the vertical axis that bring the bust\'s face to the front, from review, in place of the finder\'s')
     a = p.parse_args(argv)
+    if a.face_turn is not None and not a.face:
+        p.error('--face-turn needs --face')
     if not 64 <= a.texture <= 2048 or not 64 <= a.detail_texture <= 2048 or not 1 <= a.quality <= 100 or not 0 < a.reach <= 0.1:
         p.error('settings out of range')
     return a
@@ -361,6 +387,192 @@ def review(found, surface, eyes, mouth):
     return replaced
 
 
+def import_bust(path):
+    """Import a bust (a raw image-to-model .glb): its meshes joined into one, every transform
+    applied, named face:bust."""
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.gltf(filepath=path, import_pack_images=True)
+    new = [o for o in bpy.data.objects if o not in before]
+    meshes = [o for o in new if o.type == 'MESH']
+    if not meshes:
+        sys.exit(f'{path} has no mesh')
+    for o in meshes:
+        world = o.matrix_world.copy()
+        o.parent = None
+        o.matrix_world = world
+    for o in new:
+        if o.type != 'MESH':
+            bpy.data.objects.remove(o, do_unlink=True)
+    bpy.ops.object.select_all(action='DESELECT')
+    for o in meshes:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = meshes[0]
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    if len(meshes) > 1:
+        bpy.ops.object.join()
+    bust = bpy.context.view_layer.objects.active
+    bust.name = bust.data.name = 'face:bust'
+    return bust
+
+
+def bust_head(o):
+    """The bust's head (its top FACE_HEAD by height), the middle and half-width of its skull
+    (the head's upper half, hair and all), and the two turns (degrees) from which its
+    shoulders are seen square on: from in front or from behind, along the shortest spread of
+    its lowest quarter."""
+    import numpy as np
+    co = np.empty(len(o.data.vertices) * 3)
+    o.data.vertices.foreach_get('co', co)
+    co = co.reshape(-1, 3)
+    crown, foot = float(co[:, 2].max()), float(co[:, 2].min())
+    height = crown - foot
+    skull = co[co[:, 2] >= crown - FACE_HEAD * height / 2, :2]
+    middle = skull.mean(axis=0)
+    radius = float(np.percentile(np.hypot(*(skull - middle).T), 90))
+    chest = co[co[:, 2] <= foot + height / 4, :2]
+    values, vectors = np.linalg.eigh(np.cov((chest - chest.mean(axis=0)).T))
+    x, y = vectors[:, int(np.argmin(values))]
+    # A view from turn t looks from (sin t, -cos t): square on to the shoulders from either side.
+    facing = [round(math.degrees(math.atan2(dx, -dy))) % 360 for dx, dy in ((x, y), (-x, -y))]
+    return {'crown': crown, 'neck': crown - FACE_HEAD * height, 'middle': (float(middle[0]), float(middle[1])), 'radius': radius, 'facing': facing}
+
+
+def head_view(bvh, head, degrees):
+    """The head seen from in front of a turn of degrees about the vertical (0: from Blender
+    -Y, as the game's faces look): each square cell's depth to the first surface met, or NaN,
+    in rows from the narrowest section up, and the point met in each cell."""
+    import numpy as np
+    t = math.radians(degrees)
+    viewer, across = Vector((math.sin(t), -math.cos(t), 0)), Vector((math.cos(t), math.sin(t), 0))
+    cell = head['radius'] / FACE_CELLS
+    rows, cols = int((head['crown'] - head['neck']) / cell), 2 * int(1.2 * FACE_CELLS)
+    middle = Vector((*head['middle'], 0))
+    depth, points = np.full((rows, cols), np.nan), {}
+    for i in range(rows):
+        for j in range(cols):
+            start = middle + viewer * 3 * head['radius'] + across * ((j + 0.5 - cols / 2) * cell) + Vector((0, 0, head['neck'] + (i + 0.5) * cell))
+            loc, _, _, dist = bvh.ray_cast(start, -viewer, 6 * head['radius'])
+            if loc is not None:
+                depth[i, j], points[i, j] = dist, loc
+    return depth, points
+
+
+def face_scores(depth, radius):
+    """Where the nose is in a view of the head (its most forward cell within the band that
+    holds it), how far the face falls away evenly to either side of it there (its
+    prominence) and how unevenly it falls away to either side above and below (its
+    asymmetry), both as shares of the head's half-width."""
+    import numpy as np
+    rows, cols = depth.shape
+    band = np.zeros(rows, dtype=bool)
+    band[int(FACE_NOSE_BAND[0] * rows):int(FACE_NOSE_BAND[1] * rows)] = True
+    masked = np.where(band[:, None] & np.isfinite(depth), depth, np.inf)
+    if not np.isfinite(masked).any():
+        return None
+    r, c = np.unravel_index(int(np.argmin(masked)), masked.shape)
+    def mean(values):
+        values = [v for v in values if np.isfinite(v)]
+        return float(np.mean(values)) if values else None
+    rise = mean(((depth[r, c - k] + depth[r, c + k]) / 2 - depth[r, c]) for k in range(round(0.12 * FACE_CELLS), round(0.25 * FACE_CELLS) + 1) if 0 <= c - k and c + k < cols)
+    reach = round(0.5 * FACE_CELLS)
+    uneven = mean(abs(depth[i, c - k] - depth[i, c + k]) for i in range(max(0, r - reach), min(rows, r + reach + 1))
+                  for k in range(1, round(0.6 * FACE_CELLS) + 1) if 0 <= c - k and c + k < cols)
+    if rise is None or uneven is None:
+        return None
+    return {'row': int(r), 'column': int(c), 'prominence': rise / radius, 'asymmetry': uneven / radius}
+
+
+def face_turn(o, head):
+    """The turn about the vertical (degrees, the way to apply it) that brings the bust's face
+    to the front: of the views within FACE_SWING degrees of either way its shoulders face, in
+    FACE_STEP steps, the one that best shows a nose (most prominent less most uneven),
+    refined in single degrees to the most nearly symmetric."""
+    bvh = BVHTree.FromObject(o, bpy.context.evaluated_depsgraph_get())
+    scored = {}
+    for facing in head['facing']:
+        for degrees in range(facing - FACE_SWING, facing + FACE_SWING + 1, FACE_STEP):
+            s = face_scores(head_view(bvh, head, degrees)[0], head['radius'])
+            if s:
+                scored[degrees % 360] = s
+    if not scored:
+        sys.exit('No view of the bust shows a face')
+    coarse = max(scored, key=lambda d: scored[d]['prominence'] - scored[d]['asymmetry'])
+    fine = {}
+    for degrees in range(coarse - FACE_STEP + 1, coarse + FACE_STEP):
+        s = face_scores(head_view(bvh, head, degrees)[0], head['radius'])
+        if s:
+            fine[degrees] = s
+    best = min(fine, key=lambda d: fine[d]['asymmetry'])
+    # A face seen from turn t looks toward the viewer at t; turning the bust by -t brings it
+    # to the front.
+    return -best, {'coarse': coarse, 'seen': best, 'prominence': round(fine[best]['prominence'], 4), 'asymmetry': round(fine[best]['asymmetry'], 4),
+                   'coarseScores': {d: [round(s['prominence'], 4), round(s['asymmetry'], 4)] for d, s in sorted(scored.items())}}
+
+
+def transform(o, matrix):
+    o.data.transform(matrix)
+    o.data.update()
+
+
+def face_source(path, shared, turn, pictures):
+    """His head from a bust (--face): turned to the front; scaled from its skull's half-width,
+    its face's centre line on the shared head's and its crown at the shared head's height,
+    until its eyes agree (FACE_RETRY); levelled by its eyes; and scaled again so they stand as
+    far apart as the shared head's. Returns the bust, its landmarks and what was done, for
+    the report."""
+    import numpy as np
+    bust = import_bust(path)
+    head = bust_head(bust)
+    found_turn = None
+    if turn is None:
+        turn, found_turn = face_turn(bust, head)
+    # The turn is about the skull's middle, which keeps the head's measures.
+    pivot = Vector((*head['middle'], 0))
+    transform(bust, Matrix.Translation(pivot) @ Matrix.Rotation(math.radians(turn), 4, 'Z') @ Matrix.Translation(-pivot))
+    depth, points = head_view(BVHTree.FromObject(bust, bpy.context.evaluated_depsgraph_get()), head, 0)
+    seen = face_scores(depth, head['radius'])
+    if seen is None:
+        sys.exit('The bust shows no face from the front after its turn (see --face-turn)')
+    # The most forward point of the face (its nose, or a fringe as far forward) lies on its
+    # centre line. The chest below the head is no use to it.
+    line = points[seen['row'], seen['column']].x
+    cut(bust, head['neck'] - 0.25 * (head['crown'] - head['neck']), keep_above=True)
+    resting = np.empty(len(bust.data.vertices) * 3)
+    bust.data.vertices.foreach_get('co', resting)
+    spacing = lambda f: abs(f['eyes']['left']['x'] - f['eyes']['right']['x'])
+    middle = lambda f: Vector(((f['eyes']['left']['x'] + f['eyes']['right']['x']) / 2, -f['eyeDepth'], f['eyeLine']))
+    tries = []
+    for share in FACE_RETRY:
+        bust.data.vertices.foreach_set('co', resting)
+        bust.data.update()
+        first = FACE_SKULL / head['radius'] * share
+        transform(bust, Matrix.Translation(Vector((shared['centreX'], 0, shared['crown']))) @ Matrix.Scale(first, 4)
+                  @ Matrix.Translation(-Vector((line, head['middle'][1], head['crown']))))
+        try:
+            found = landmarks(Surface(bust))
+        except (AttributeError, ValueError):
+            tries.append({'firstScale': round(first, 4), 'found': None})
+            continue
+        tilt = math.degrees(math.atan2(found['eyes']['left']['height'] - found['eyes']['right']['height'], found['eyes']['left']['x'] - found['eyes']['right']['x']))
+        second = spacing(shared) / spacing(found)
+        tries.append({'firstScale': round(first, 4), 'tilt': round(tilt, 2), 'eyeScale': round(second, 4),
+                      'contrast': [found['eyes'][side]['contrast'] for side in ('right', 'left')]})
+        if abs(tilt) <= FACE_MAX_TILT and abs(second - 1) <= FACE_MAX_SCALE:
+            break
+    else:
+        sys.exit(f'The bust\'s eyes disagree at every first scale: {tries} (see --face-turn)')
+    eyes = middle(found)
+    transform(bust, Matrix.Translation(eyes) @ Matrix.Rotation(math.radians(tilt), 4, 'Y') @ Matrix.Translation(-eyes))
+    found = landmarks(Surface(bust))
+    second = spacing(shared) / spacing(found)
+    eyes = middle(found)
+    transform(bust, Matrix.Translation(eyes) @ Matrix.Scale(second, 4) @ Matrix.Translation(-eyes))
+    found = landmarks(Surface(bust), pictures + '-his-face.png')
+    return bust, found, {'path': character.shown(path), 'sha256': character.digest(path), 'turn': round(turn, 2), 'turnFrom': 'finder' if found_turn else 'review',
+                         'turnFinder': found_turn, 'head': {k: (round(v, 4) if isinstance(v, float) else v) for k, v in head.items()},
+                         'tries': tries, 'firstScale': round(first, 4), 'tilt': round(tilt, 2), 'eyeScale': round(second, 4)}
+
+
 def align(o, his, shared, max_scale):
     """Scale his head uniformly so his eyes stand as far apart as the shared head's (the
     steadiest of a face's measures: a long nose or chin stays his own), then move it so his
@@ -596,18 +808,37 @@ def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     his = import_glb(body_path, 'his')
     shared = import_glb(donor_path, 'shared')
-    # His generated head, above the neck: what the shared head takes its shape and paint from.
-    paint = import_glb(paint_path, 'paint') if a.paint else his
-    source = copy_of(paint['body'], 'his:head')
-    cut(source, HEAD_FROM, keep_above=True)
-    found = {'his': landmarks(Surface(source), pictures + '-his-face.png'),
-             'shared': landmarks(Surface(shared['body']), pictures + '-shared-face.png')}
+    found = {'shared': landmarks(Surface(shared['body']), pictures + '-shared-face.png')}
+    face = None
+    if a.face:
+        # A bust from his portrait, turned, levelled and scaled to the shared head's eyes.
+        source, found['his'], face = face_source(os.path.abspath(a.face), found['shared'], a.face_turn, pictures)
+    else:
+        # His generated head, above the neck: what the shared head takes its shape and paint from.
+        paint = import_glb(paint_path, 'paint') if a.paint else his
+        source = copy_of(paint['body'], 'his:head')
+        cut(source, HEAD_FROM, keep_above=True)
+        found['his'] = landmarks(Surface(source), pictures + '-his-face.png')
     reviewed = review(found['his'], Surface(source), a.his_eyes, a.his_mouth)
     scale = align(source, found['his'], found['shared'], a.max_scale)
     # The alignment put his eyes on the shared head's line; his mouth, as found or reviewed
     # on his own head, is carried there like the rest of it.
     line = found['shared']['eyeLine']
     mouth = fit_mouth(source, line, line + (found['his']['mouth']['height'] - found['his']['eyeLine']) * scale, found['shared']['mouth']['height'])
+    if face:
+        # The bust stops a little under the chin, where a portrait's collar or scarf begins; his
+        # throat below comes from his own generated body, which stands on the same skeleton.
+        chin = found['shared']['mouth']['height'] - FACE_CHIN
+        cut(source, chin, keep_above=True)
+        throat = copy_of(his['body'], 'his:throat')
+        cut(throat, HEAD_FROM, keep_above=True)
+        cut(throat, chin, keep_above=False)
+        bpy.ops.object.select_all(action='DESELECT')
+        throat.select_set(True)
+        source.select_set(True)
+        bpy.context.view_layer.objects.active = source
+        bpy.ops.object.join()
+        face['chin'] = round(chin, 4)
     found['hisAligned'] = landmarks(Surface(source), pictures + '-his-aligned-face.png')
     heads, fits = {}, {}
     for level, mesh_name in (('cast-head', 'body'), ('cast-head-overview', 'body-overview')):
@@ -654,7 +885,8 @@ def main():
         'blender': bpy.app.version_string,
         'body': {'path': character.shown(body_path), 'sha256': character.digest(body_path)},
         'donor': {'path': character.shown(donor_path), 'sha256': character.digest(donor_path)},
-        'paint': {'path': character.shown(paint_path), 'sha256': character.digest(paint_path)},
+        'paint': {'path': character.shown(paint_path), 'sha256': character.digest(paint_path)} if not face else None,
+        'face': face,
         'output': {'path': character.shown(output), 'bytes': os.path.getsize(output), 'sha256': character.digest(output),
                    'triangles': {o.name: character.triangles([o]) for o in (his['body'], his['body-overview'], heads['cast-head'], heads['cast-head-overview'])}},
         'settings': {'texture': a.texture, 'detailTexture': a.detail_texture, 'webpQuality': a.quality, 'reach': a.reach, 'scalpOut': a.scalp_out, 'scalpIn': a.scalp_in,

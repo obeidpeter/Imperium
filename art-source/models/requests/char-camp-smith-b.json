@@ -1,0 +1,175 @@
+{
+  "id": "char-camp-smith-b",
+  "status": "bound, quantized and compressed: G6 pilot; ships as camp-smith, in every camp in the desktop app and in Chapter XI's on the web",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "use": "Bassus the armourer, who stands at the quartermaster's in every camp (data/camps.js): a body of his own, where he has worn the escorts' civilian body with a code-built apron. The game's hammer and tongs stay in his hands at work. The second attempt: the first, char-camp-smith, came in leather armour.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Full-body Roman blacksmith of the mid-3rd century AD, a broad-shouldered, thickset man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a plain short-sleeved knee-length tunic of undyed wool belted with a cord, and over its front a plain flat smith's apron of dark brown leather: one smooth sheet hanging from a strap round his neck to just above his knees, with no plates, studs or straps on it. Bare forearms, bare lower legs and closed leather shoes. Bare head with short grizzled dark hair and a short full beard, a weathered, soot-smudged face with heavy brows and a broken nose. Realistic proportions, historically accurate, muted colours. Nothing held in his hands. No armour, no shoulder guards, no leather strips, no bracers, no helmet, no weapons, no tools, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, leather armour, cuirass, shoulder guards, pauldrons, pteruges, studs, bracers, chainmail, helmet, sword, axe, hammer, tongs, tools, shield, cloak, cape, fur, jewellery, gladiator, soldier, modern clothing, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611340,
+      "image_seed": 2611341,
+      "texture_seed": 2611342
+    }
+  },
+  "budget": {
+    "triangles": 12500,
+    "overviewTriangles": 2900,
+    "texture": 1024,
+    "bytes": 900000,
+    "heightMetres": 1.8,
+    "minHeight": 1.6,
+    "maxHeight": 2
+  },
+  "provenance": {
+    "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+    "program": "graphics-g6",
+    "creditCeiling": 200,
+    "expectedCredits": 20,
+    "creditAccounting": "batch",
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T13:54:39.443Z",
+    "requestBody": {
+      "negative_prompt": "armour, leather armour, cuirass, shoulder guards, pauldrons, pteruges, studs, bracers, chainmail, helmet, sword, axe, hammer, tongs, tools, shield, cloak, cape, fur, jewellery, gladiator, soldier, modern clothing, fantasy, cartoon",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "model_seed": 2611340,
+      "image_seed": 2611341,
+      "texture_seed": 2611342,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Full-body Roman blacksmith of the mid-3rd century AD, a broad-shouldered, thickset man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a plain short-sleeved knee-length tunic of undyed wool belted with a cord, and over its front a plain flat smith's apron of dark brown leather: one smooth sheet hanging from a strap round his neck to just above his knees, with no plates, studs or straps on it. Bare forearms, bare lower legs and closed leather shoes. Bare head with short grizzled dark hair and a short full beard, a weathered, soot-smudged face with heavy brows and a broken nose. Realistic proportions, historically accurate, muted colours. Nothing held in his hands. No armour, no shoulder guards, no leather strips, no bracers, no helmet, no weapons, no tools, no cloak, no jewellery, no text, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 7955,
+    "balanceSnapshotBefore": {
+      "balance": 7955,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "58d78140-c000-411b-a17e-192235e6c55d",
+      "state": "accepted",
+      "requestSha256": "84717b27d8574b6eebc004704478f27d4905ac03769d56830ebc4279538250af"
+    },
+    "taskId": "78118aa8-9b11-4603-9b2b-f7717686c543",
+    "status": "success",
+    "generatedAt": "2026-11-10T13:56:31.988Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/char-camp-smith-b.glb",
+    "rawBytes": 45156348,
+    "rawSha256": "8bdb16e4e97f2faa85689d8175f9cb4f701349748e036fffca10eae90e8495d9",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Full-body Roman blacksmith of the mid-3rd century AD, a broad-shouldered, thickset man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a plain short-sleeved knee-length tunic of undyed wool belted with a cord, and over its front a plain flat smith's apron of dark brown leather: one smooth sheet hanging from a strap round his neck to just above his knees, with no plates, studs or straps on it. Bare forearms, bare lower legs and closed leather shoes. Bare head with short grizzled dark hair and a short full beard, a weathered, soot-smudged face with heavy brows and a broken nose. Realistic proportions, historically accurate, muted colours. Nothing held in his hands. No armour, no shoulder guards, no leather strips, no bracers, no helmet, no weapons, no tools, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2611341,
+      "model_seed": 2611340,
+      "texture_seed": 2611342,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "armour, leather armour, cuirass, shoulder guards, pauldrons, pteruges, studs, bracers, chainmail, helmet, sword, axe, hammer, tongs, tools, shield, cloak, cape, fur, jewellery, gladiator, soldier, modern clothing, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T13:54:39.850302Z",
+    "tripoCompletedAt": "2026-11-10T13:56:26.803173Z",
+    "tripoRender": "art-source/models/raw/char-camp-smith-b-tripo-render.webp",
+    "rigCheck": {
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig-check",
+      "requestedAt": "2026-11-10T13:57:11.190Z",
+      "requestBody": {
+        "input": "78118aa8-9b11-4603-9b2b-f7717686c543"
+      },
+      "submission": {
+        "id": "c7ca3c0b-c2d5-4151-9fc6-a2c60a4dc070",
+        "state": "accepted",
+        "requestSha256": "6915197532c6e02fca97c08312f0022bea7f98a5b69b6a7567a3b17c576ee2a6"
+      },
+      "taskId": "0cd7b162-a7bf-4664-a71e-a6839103d9d5",
+      "status": "success",
+      "output": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "creditsSpent": 0,
+      "creditSource": "task.credits_consumed"
+    },
+    "rig": {
+      "check": {
+        "riggable": true,
+        "rig_type": "biped"
+      },
+      "apiVersion": 3,
+      "apiBase": "https://openapi.tripo3d.ai/v3",
+      "endpoint": "/animations/rig",
+      "requestedAt": "2026-11-10T14:01:24.238Z",
+      "requestBody": {
+        "input": "78118aa8-9b11-4603-9b2b-f7717686c543",
+        "model": "v1.0-20240301",
+        "rig_type": "biped",
+        "spec": "tripo",
+        "out_format": "glb"
+      },
+      "balanceBefore": 7885,
+      "balanceSnapshotBefore": {
+        "balance": 7885,
+        "frozen": 0
+      },
+      "submission": {
+        "id": "48f165a9-081f-4b48-bf51-289df0b3c3dc",
+        "state": "accepted",
+        "requestSha256": "6905ca179002f3e0d9febec7ea6fdf8ff762cf6ffc7bb9dde602cf61c413b468"
+      },
+      "taskId": "943f3396-f06d-4259-94d6-99eb3de29eeb",
+      "status": "success",
+      "generatedAt": "2026-11-10T14:03:13.545Z",
+      "output": "model_url",
+      "raw": "art-source/models/raw/char-camp-smith-b-rigged.glb",
+      "rawBytes": 60361908,
+      "rawSha256": "a20cd479af0a3618b40572f805d58a5d6696fcdcd7e6faedb30abe9e2c6995ac",
+      "tripoInput": {
+        "spec": "tripo",
+        "topology": "biped",
+        "out_format": "glb",
+        "original_model_id": "78118aa8-9b11-4603-9b2b-f7717686c543"
+      },
+      "modelVersion": "v1.0-20240301",
+      "modelVersionSource": "submitted request",
+      "creditsSpent": 25,
+      "creditSource": "task.credits_consumed",
+      "tripoCreatedAt": "2026-11-10T14:01:24.521697Z",
+      "tripoCompletedAt": "2026-11-10T14:03:08.095080Z"
+    }
+  }
+}

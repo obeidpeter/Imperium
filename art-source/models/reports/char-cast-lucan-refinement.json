@@ -5,12 +5,12 @@
   "tool": "scripts/assets/refine-character.mjs",
   "blenderTool": "scripts/assets/refine-character.py",
   "blenderVersion": "5.2.2 LTS",
-  "inputSha256": "667ad458d59de710f2352584c1dd9678d66cb19d5837d7a11a9f3ab2e1d0859d",
-  "sha256": "4c5164ad11b9347d29cc354ef8e8a377f1296f68333322cdb8c9d9e9f9c14090",
-  "bytesBefore": 653468,
-  "bytes": 654544,
-  "gzipBytesBefore": 627133,
-  "gzipBytes": 627933,
+  "inputSha256": "528bb6ba145a333e87f05ab7ce84a4efc29d4b36852590f1deee3778dd621939",
+  "sha256": "bea19bb7e9db1b44bde600e346acdf3f8b14d876eeddae1187e7bb50ec5ca42e",
+  "bytesBefore": 691640,
+  "bytes": 692716,
+  "gzipBytesBefore": 664857,
+  "gzipBytes": 665572,
   "textures": [
     {
       "mimeType": "image/ktx2",
@@ -29,18 +29,18 @@
     },
     {
       "mimeType": "image/ktx2",
-      "bytes": 58568,
-      "sha256": "d81ae62458a6c97417e99d49bb195ee2bcae2dbe4f15e245f639c4715c1a4310"
+      "bytes": 63648,
+      "sha256": "9a60e69833f39372433733261451cf3ecefa4c0bc0eebd5641d62efbf454dd75"
     },
     {
       "mimeType": "image/ktx2",
-      "bytes": 126985,
-      "sha256": "283bb1f3f41f8e257a13a94310899d0c59b051bbc0983466d7908aa176cedda5"
+      "bytes": 148637,
+      "sha256": "5e230438dd47b0d18f4a08aae654de82850cc93e633b72498aa832e11c241765"
     },
     {
       "mimeType": "image/ktx2",
-      "bytes": 37216,
-      "sha256": "0314048eba26f096a3211be79f2c5f309a6125ea6e5a0ef6f670fe7491d84d92"
+      "bytes": 46552,
+      "sha256": "cae264302ce9ff55b8fbcc1499bb5104d2061d6f04006364f747db999b220758"
     }
   ],
   "protectedGeometry": [
@@ -74,11 +74,11 @@
     {
       "mesh": "cast-head",
       "primitive": 0,
-      "vertices": 1466,
-      "indices": "b8b3ba88c5a4fe165d676f6f6a694f456aa183400520754ce8cc875d33c42e3d",
-      "uv": "0f2e83779574e080702f1828372e119725a06c98441b61afe3498444e700aab9",
-      "identityPlane": "7c3e4e558493a3f807e1c47849205a8ba7c617213ca9981de018a0140bd8cd98",
-      "nonFacePositions": "06184a34c54e34477dba0f71039f58be5b43d9a18a073bc286d912525712bac4",
+      "vertices": 1585,
+      "indices": "252be1ac462953f95b8a08815537dbf25d3145c2b8eee48c4ba112c774bdfa3d",
+      "uv": "5ea18a1471fc2c2812759c278cde1364905ce5664135a0706342ef24e24ca327",
+      "identityPlane": "8f88444c021d77f1a033fcd157059c8a7cfe5b0f9aa3e678a70b76973208acf1",
+      "nonFacePositions": "04ac40af751d48dafbf30ad60b0538dc5068b53e12d4d2f1d36c6b9d0120515c",
       "colours": [],
       "contacts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -87,9 +87,9 @@
       "primitive": 0,
       "vertices": 224,
       "indices": "68b1a685f386afb542b8489592296dba83fd8ca8766343af99eed4f672e30acd",
-      "uv": "1f7fed8f22344d69796e9ce5844456e9752bfa40d2bcd98898f8f00c5984ea3c",
-      "identityPlane": "7f63ada2704375ab9139c2e2a4d1fa9f1337fbf467721f5fb44666e16fd6b3a8",
-      "nonFacePositions": "ba0d581bc648a94e55004141c852b34e967e4dcaa0fe5e645d0e2d9efecf70f4",
+      "uv": "071b610b41fbd371fdc8dfbf4f48449e9a9f95719ee90785a8b2bccda0cc2302",
+      "identityPlane": "2dbe86f4d97d01f4655a40bd3ecfdbc4ec7968ee00ca06aad0f7d6b4c6c54d85",
+      "nonFacePositions": "c340ea8f42039c8eb4782c550dd9fa3b5c714e18d49a42717ef1aa52c8b28a17",
       "colours": [
         [
           "COLOR_0",
@@ -97,7 +97,7 @@
         ],
         [
           "COLOR_1",
-          "0fc7e33bb48a2ede5d3d613878e0053afc69409f0a97108d5984803de4008cf2"
+          "1c80ac7c51ab1dda8dd8ecac74ad18f12ce655167b15c0079158532f4961dc35"
         ]
       ],
       "contacts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
@@ -150,8 +150,8 @@
     {
       "mesh": "cast-head",
       "primitive": 0,
-      "sourceVertices": 1466,
-      "vertices": 1466,
+      "sourceVertices": 1585,
+      "vertices": 1585,
       "sourceTriangles": 1607,
       "triangles": 1607,
       "addedVertices": 0,
