@@ -1,0 +1,96 @@
+{
+  "id": "g5-mantlets-b",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-mantlets, in Chapters IX and XII (the desktop app only)",
+  "chapters": [
+    9,
+    12
+  ],
+  "use": "Roman siege works behind the line: a mantlet beyond the board's west edge, where the Romans attack a wall (Chapters IX and XII). The redo of g5-mantlets.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A single broad Roman siege mantlet: one wide curved screen of thick woven wicker covered with overlapping brown raw hides nailed along heavy timber edges, about three metres wide and two metres high, mounted on three solid wooden wheels along its foot and held upright from behind by two stout slanting props. Seen from above it is a long low arc. Weathered wicker, brown hides and dark timber. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, narrow panels, three screens, separate racks, fence, brick wall, shields, castle, umbrella",
+      "model_seed": 2616320,
+      "image_seed": 2616321,
+      "texture_seed": 2616322
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 2,
+    "minHeight": 1.8,
+    "maxHeight": 2.2
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:33:01.083Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, narrow panels, three screens, separate racks, fence, brick wall, shields, castle, umbrella",
+      "model_seed": 2616320,
+      "image_seed": 2616321,
+      "texture_seed": 2616322,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A single broad Roman siege mantlet: one wide curved screen of thick woven wicker covered with overlapping brown raw hides nailed along heavy timber edges, about three metres wide and two metres high, mounted on three solid wooden wheels along its foot and held upright from behind by two stout slanting props. Seen from above it is a long low arc. Weathered wicker, brown hides and dark timber. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8385,
+    "balanceSnapshotBefore": {
+      "balance": 8385,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "d2f3f4fd-efae-4365-bdf8-e2b43e028ccd",
+      "state": "accepted",
+      "requestSha256": "61b7b65b7ea8469d8ac1d4ed97f8bbde9d59dd4381734e5a3dc56f8b1ea7cbd2"
+    },
+    "taskId": "1b165c32-1b53-4414-95c9-267f1d5fb551",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:35:20.240Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-mantlets-b.glb",
+    "rawBytes": 46767796,
+    "rawSha256": "e21a4be8eb083e8c7b5ec8cf0908d62d7fe8ac40f50e2a7c01b6072507e49f2a",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A single broad Roman siege mantlet: one wide curved screen of thick woven wicker covered with overlapping brown raw hides nailed along heavy timber edges, about three metres wide and two metres high, mounted on three solid wooden wheels along its foot and held upright from behind by two stout slanting props. Seen from above it is a long low arc. Weathered wicker, brown hides and dark timber. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616321,
+      "model_seed": 2616320,
+      "texture_seed": 2616322,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, narrow panels, three screens, separate racks, fence, brick wall, shields, castle, umbrella",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:33:02.299697Z",
+    "tripoCompletedAt": "2026-11-09T22:35:16.359451Z",
+    "tripoRender": "art-source/models/raw/g5-mantlets-b-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "One broad arched screen of wicker faced with hides on heavy timber edges, on wheels along its foot and propped from behind, as asked: from above a long low arc. Processed at 2.0 m: 3.11 m wide and 0.82 m deep. Ships as g5-mantlets."
+  }
+}

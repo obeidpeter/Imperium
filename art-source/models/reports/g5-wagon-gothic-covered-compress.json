@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g5-wagon-gothic-covered.glb",
+  "output": "assets/models/world/g5-wagon-gothic-covered.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 308972,
+    "gzipBytes": 211320,
+    "sha256": "331ddb3df1904b1bc5fd6b2b3a98a5d80b51686ef429f04c818440154b4cf6df"
+  },
+  "after": {
+    "bytes": 286396,
+    "gzipBytes": 276837,
+    "sha256": "a4feec535f213816819e1e8b9b60bddfe51bc64decabfa65abc16d2198ca150b"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4410,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8396
+      },
+      "bytes": 18162,
+      "psnr": 43.838
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 36338
+      },
+      "bytes": 55358,
+      "psnr": 34.173
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 46644
+      },
+      "bytes": 46072,
+      "psnr": 28.398
+    }
+  ]
+}

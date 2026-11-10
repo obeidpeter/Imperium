@@ -1,0 +1,95 @@
+{
+  "id": "g5-persian-tower",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-persian-tower, in Chapter V",
+  "chapters": [
+    5
+  ],
+  "use": "The Persian siege lines behind the battle: a siege tower beyond the board's north edge, in Chapter V.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Sasanian Persian siege tower of the third century: a tall timber tower of three storeys on solid wheels, about six metres high and three metres square, faced with wet raw hides and woven reed mats against fire, with an open platform at the top behind a screen of reed mats. Weathered timber, dark hides and pale reed. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, castle, stone tower, medieval belfry, minaret, windmill, house, flags",
+      "model_seed": 2616230,
+      "image_seed": 2616231,
+      "texture_seed": 2616232
+    }
+  },
+  "budget": {
+    "triangles": 4500,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 6,
+    "minHeight": 5.4,
+    "maxHeight": 6.6
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:14:09.310Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, castle, stone tower, medieval belfry, minaret, windmill, house, flags",
+      "model_seed": 2616230,
+      "image_seed": 2616231,
+      "texture_seed": 2616232,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Sasanian Persian siege tower of the third century: a tall timber tower of three storeys on solid wheels, about six metres high and three metres square, faced with wet raw hides and woven reed mats against fire, with an open platform at the top behind a screen of reed mats. Weathered timber, dark hides and pale reed. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8545,
+    "balanceSnapshotBefore": {
+      "balance": 8545,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "0dfc36af-92af-4011-897e-00571e633eee",
+      "state": "accepted",
+      "requestSha256": "bc1ae0de36041b9963874c1ccf26857709c18554d17a29c79b257847b383070d"
+    },
+    "taskId": "fe8827b4-27f1-4594-9dd3-ee978a36f7d5",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:16:58.774Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-persian-tower.glb",
+    "rawBytes": 45213712,
+    "rawSha256": "cc4fbeb1f08c60d16d8fbffa7034bb8a7f736ac0c49b53e200fc4b7293a4aa3e",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Sasanian Persian siege tower of the third century: a tall timber tower of three storeys on solid wheels, about six metres high and three metres square, faced with wet raw hides and woven reed mats against fire, with an open platform at the top behind a screen of reed mats. Weathered timber, dark hides and pale reed. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616231,
+      "model_seed": 2616230,
+      "texture_seed": 2616232,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, castle, stone tower, medieval belfry, minaret, windmill, house, flags",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:14:09.857092Z",
+    "tripoCompletedAt": "2026-11-09T22:16:53.094812Z",
+    "tripoRender": "art-source/models/raw/g5-persian-tower-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A tall open timber tower faced with reed mats on four spoked wheels, a railed platform and a reed-mat screen at the top: lighter than the Roman tower and reads as the enemy's. Processed at 6.0 m."
+  }
+}

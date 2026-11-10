@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-mantlets-b.glb",
+    "bytes": 46767796,
+    "sha256": "e21a4be8eb083e8c7b5ec8cf0908d62d7fe8ac40f50e2a7c01b6072507e49f2a",
+    "triangles": 1453588
+  },
+  "output": {
+    "path": "assets/models/world/g5-mantlets.glb",
+    "bytes": 266060,
+    "sha256": "7848d58e2a5f9685cf064685210916104657ba721e408deab2b908bcdfe64208",
+    "triangles": 3920
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.122134953043663,
+  "sizeMetres": {
+    "width": 3.1084,
+    "height": 2.0,
+    "depth": 0.8212
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_1b165c32-1b53-4414-95c9-267f1d5fb551",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_1b165c32-1b53-4414-95c9-267f1d5fb551",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_1b165c32-1b53-4414-95c9-267f1d5fb551",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g5-siege-ramp.glb",
+  "output": "assets/models/world/g5-siege-ramp.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 324668,
+    "gzipBytes": 214830,
+    "sha256": "85b70ee2b642108f4f1aadb3920fdbda33a398912ecd3eac4a5a0a85de1ec543"
+  },
+  "after": {
+    "bytes": 279820,
+    "gzipBytes": 270318,
+    "sha256": "29443cf294aba874c5a23e59b32f549247557a33f2168295f1b9970689503dd1"
+  },
+  "geometryUnchanged": true,
+  "triangles": 3430,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 51292
+      },
+      "bytes": 49689,
+      "psnr": 31.697
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 66586
+      },
+      "bytes": 58022,
+      "psnr": 29.079
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 4772
+      },
+      "bytes": 13117,
+      "psnr": 45.861
+    }
+  ]
+}

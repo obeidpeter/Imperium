@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g5-brazier.glb",
+  "output": "assets/models/world/g5-brazier.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 198676,
+    "gzipBytes": 132173,
+    "sha256": "6764201f57b4f6b60bbc875eecf40d99bd8639757854e4ebbd05d345f62f6582"
+  },
+  "after": {
+    "bytes": 211532,
+    "gzipBytes": 203999,
+    "sha256": "f7d4decb954b3b62ca6fc6bfe99d6bb40ebb9d075a599fa8410fe9cf9001a0b5"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2940,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 12512
+      },
+      "bytes": 24826,
+      "psnr": 41.638
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 33718
+      },
+      "bytes": 52899,
+      "psnr": 34.911
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 6278
+      },
+      "bytes": 22070,
+      "psnr": 45.303
+    }
+  ]
+}

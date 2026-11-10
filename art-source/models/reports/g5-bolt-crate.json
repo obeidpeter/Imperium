@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-bolt-crate.glb",
+    "bytes": 46814580,
+    "sha256": "024ab2b4f7688f8138dc051656519b53bf215c380a94e52a6b4d16376914cb24",
+    "triangles": 1460624
+  },
+  "output": {
+    "path": "assets/models/world/g5-bolt-crate.glb",
+    "bytes": 245124,
+    "sha256": "e4bc387909e25098f04a4dd9b63f060d3618cb445f234629ec57941f443dd6bd",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.75,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.0935287811348933,
+  "sizeMetres": {
+    "width": 0.9113,
+    "height": 0.75,
+    "depth": 1.0937
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_de00f092-b53e-4d23-bb4c-0872c253f9c1",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_de00f092-b53e-4d23-bb4c-0872c253f9c1",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_de00f092-b53e-4d23-bb4c-0872c253f9c1",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "id": "g5-debris-roman",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-debris-roman, in Chapter XII (the desktop app only)",
+  "chapters": [
+    12
+  ],
+  "use": "The field after a victory: what beaten Roman troops leave beside their fallen, on the walked field (the rival Romans of Chapter XII, and the Romans who fell in Chapter VI's retreat).",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Battlefield debris of beaten Roman soldiers lying flat on the ground: two curved oval red shields with bronze bosses, one split, a broken pilum, a short sword in its scabbard and a dropped iron helmet with cheek guards, scattered over about two metres; nothing stands more than twenty-five centimetres high. Faded red paint, bronze, dark iron and leather. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, bodies, skeletons, blood, standing shields, weapon rack, table",
+      "model_seed": 2616270,
+      "image_seed": 2616271,
+      "texture_seed": 2616272
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 220000,
+    "heightMetres": 0.34,
+    "minHeight": 0.31,
+    "maxHeight": 0.37,
+    "note": "Height set at review from 0.25 m: its helmet stands highest, so 0.34 m keeps the shields about half a metre across and its spread about 1.35 m."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:23:42.945Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, bodies, skeletons, blood, standing shields, weapon rack, table",
+      "model_seed": 2616270,
+      "image_seed": 2616271,
+      "texture_seed": 2616272,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Battlefield debris of beaten Roman soldiers lying flat on the ground: two curved oval red shields with bronze bosses, one split, a broken pilum, a short sword in its scabbard and a dropped iron helmet with cheek guards, scattered over about two metres; nothing stands more than twenty-five centimetres high. Faded red paint, bronze, dark iron and leather. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8465,
+    "balanceSnapshotBefore": {
+      "balance": 8465,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "d79ee602-a6c5-44c2-a2da-1adb835ff358",
+      "state": "accepted",
+      "requestSha256": "822169c3254f3503cf193bee7bcc6c20059db23db86424cc153ad2fe2432d720"
+    },
+    "taskId": "10e3678a-5b4d-475d-9861-706b14233f91",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:25:30.236Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-debris-roman.glb",
+    "rawBytes": 43973268,
+    "rawSha256": "ea1737f238cb0663fc8199d7fab9bca43708723eabb8d6ca5019ef859ee69544",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Battlefield debris of beaten Roman soldiers lying flat on the ground: two curved oval red shields with bronze bosses, one split, a broken pilum, a short sword in its scabbard and a dropped iron helmet with cheek guards, scattered over about two metres; nothing stands more than twenty-five centimetres high. Faded red paint, bronze, dark iron and leather. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616271,
+      "model_seed": 2616270,
+      "texture_seed": 2616272,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, bodies, skeletons, blood, standing shields, weapon rack, table",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:23:43.699111Z",
+    "tripoCompletedAt": "2026-11-09T22:25:24.752291Z",
+    "tripoRender": "art-source/models/raw/g5-debris-roman-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "Red shields with bronze bosses and rims lying flat, one split, swords, a broken pilum and an iron helmet. Its shields came round rather than oval, which suits the third century's Roman shields; its helmet is a closed cavalry-style helmet. Processed at 0.34 m high (the helmet stands highest) for a spread of 1.36 by 1.12 m. The request's chapters were corrected to Chapter XII alone, the only battle against Romans."
+  }
+}

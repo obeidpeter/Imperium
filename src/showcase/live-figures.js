@@ -110,7 +110,13 @@ export function stageEncounter(encounter,world,{appearance,wayOut=null}={}){
   const squads=(world.squads??[]).filter(q=>q.members.some(id=>{const m=actorById(world,id);return m&&(!m.hidden||m.side!=='enemy');})).map(q=>squadUnit(world,q));
   return {...encounter,...fine,units:[...world.actors.filter(a=>!a.squadId&&(!a.hidden||a.side!=='enemy')).map(a=>stageUnit(a,{appearance,campActivity:campActivityFor(world,a.id)})),...squads],...stageMission(world),
     field:stageField(world),containers:stageContainers(world),fortifications:world.fortifications??null,elevations:world.map.elevations??[],operation:null,reinforcements:[],status:'active',turn:1,log:[],
-    ...stageWayOut(world,wayOut)};
+    ...stageWayOut(world,wayOut),...stageAftermath(world)};
+}
+// The walked field after a win (aftermath.js): where the beaten side's fallen lie, in metres from the board's corner,
+// for the gear the stage lays beside them (field-models.js). No other field carries it.
+function stageAftermath(world){
+  if(!world.aftermath)return {};
+  return {aftermath:{fallen:(world.actors??[]).filter(a=>a.side==='enemy'&&!a.alive&&Number.isFinite(a.x)&&Number.isFinite(a.z)).map(a=>({id:a.id,x:+a.x.toFixed(2),z:+a.z.toFixed(2)}))}};
 }
 // A camp's way out, marked once the page says the column can march (app.js campWayOut): on the stage's tiles.
 function stageWayOut(world,wayOut){

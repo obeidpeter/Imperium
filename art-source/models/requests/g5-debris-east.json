@@ -1,0 +1,98 @@
+{
+  "id": "g5-debris-east",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-debris-east, in Chapters V, VI and IX (on the web in Chapters V and VI only)",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "use": "The field after a victory: what a beaten eastern force leaves beside its fallen, on the walked field.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Battlefield debris of a beaten Persian or Palmyrene force lying flat on the ground: two large oval shields of woven wicker covered with painted hide, a broken lance, a dropped quiver of arrows and a curved composite bow, scattered over about two metres; nothing stands more than twenty centimetres high. Painted hide, wicker, wood and leather. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, bodies, skeletons, blood, standing shields, weapon rack, table",
+      "model_seed": 2616260,
+      "image_seed": 2616261,
+      "texture_seed": 2616262
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 250000,
+    "heightMetres": 0.36,
+    "minHeight": 0.32,
+    "maxHeight": 0.4,
+    "note": "Height set at review from 0.22 m: its weapons lie across its shields, so 0.36 m keeps the shields about a metre long and its spread about 1.9 m. Bytes raised at review from 220,000 for its texture."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:21:22.778Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, bodies, skeletons, blood, standing shields, weapon rack, table",
+      "model_seed": 2616260,
+      "image_seed": 2616261,
+      "texture_seed": 2616262,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Battlefield debris of a beaten Persian or Palmyrene force lying flat on the ground: two large oval shields of woven wicker covered with painted hide, a broken lance, a dropped quiver of arrows and a curved composite bow, scattered over about two metres; nothing stands more than twenty centimetres high. Painted hide, wicker, wood and leather. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8485,
+    "balanceSnapshotBefore": {
+      "balance": 8485,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "01a64d09-1834-4ef4-86d1-d225d9ba5c8f",
+      "state": "accepted",
+      "requestSha256": "662320cc8d4b96b4be25da757cc5fdc66359a8153a00df8590ee19b9b370bd9a"
+    },
+    "taskId": "e039e74c-43ed-4a7a-aff4-f3314139cde7",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:23:41.995Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-debris-east.glb",
+    "rawBytes": 47273960,
+    "rawSha256": "8cd32d0d05f7f1ab0fa09d346ec32ca1c3bdd127dd20f3709e83489b0053c664",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Battlefield debris of a beaten Persian or Palmyrene force lying flat on the ground: two large oval shields of woven wicker covered with painted hide, a broken lance, a dropped quiver of arrows and a curved composite bow, scattered over about two metres; nothing stands more than twenty centimetres high. Painted hide, wicker, wood and leather. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616261,
+      "model_seed": 2616260,
+      "texture_seed": 2616262,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, bodies, skeletons, blood, standing shields, weapon rack, table",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:21:23.172860Z",
+    "tripoCompletedAt": "2026-11-09T22:23:33.472519Z",
+    "tripoRender": "art-source/models/raw/g5-debris-east-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "Two oval wicker shields faced with painted hide lying flat, a broken lance and other weapons across them, as asked. Its weapons lie across its shields, so it was processed at 0.36 m high (not 0.22) to keep the shields about a metre long and its spread about 1.9 m."
+  }
+}

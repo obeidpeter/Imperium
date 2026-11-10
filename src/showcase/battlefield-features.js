@@ -5,7 +5,8 @@ import {batchStaticEnvironment} from './environment-batching.js';
 import {createFlamePlume,sampleFlamePlume} from './stage-particles.js';
 import {BOARD_KIT_KINDS,boardKitFamily,boardKitPieces} from './structure-registry.js';
 import {createBoardKitPieces} from './board-kit.js';
-import {createFieldModelPieces,fieldModelPlacements} from './field-models.js';
+import {aftermathDebrisPlacements,createFieldModelPieces,fieldModelPlacements} from './field-models.js';
+import {FIELD_OBJECT_MODELS} from '../ui/world-catalog.js';
 
 // Only committed field state drives these presentation meshes. Decorative
 // detail merges by material and never becomes a picking or rule obstacle.
@@ -32,7 +33,7 @@ export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balance
   const ground=(x,z)=>{const y=heightAt(x,z);return Number.isFinite(y)?y:0;};
   function sync(e){
     if(disposed)return false;
-    const next=JSON.stringify([e?.id,e?.width,e?.height,e?.featureEdition,e?.kind,e?.type,e?.field,e?.fortifications]);
+    const next=JSON.stringify([e?.id,e?.width,e?.height,e?.featureEdition,e?.kind,e?.type,e?.field,e?.fortifications,e?.aftermath]);
     if(next===signature)return false;signature=next;clear();
     if(e?.featureEdition!==31||e.kind!=='battle'||e.type==='training'||!Array.isArray(e.field?.objects))return true;
     chapter=Number(/^ch(\d+)/.exec(e.id??'')?.[1]??1);weather=e.weather??null;
@@ -47,14 +48,22 @@ export function createBattlefieldFeatures(scene,{heightAt=()=>0,quality='balance
       const placements=boardKitPieces(e,{height:ground});pieces=createBoardKitPieces(group,boardKit,placements,{finish:kitFinish});
       for(const p of placements)if(p.walk)walkSurfaces.push({x:p.x,z:p.z,left:p.deck-.13,right:p.deck-.13,halfLength:p.yaw?.72:1.35,halfWidth:p.yaw?1.35:.72});
     }
-    // Generated models draw the objects they have a model for (field-models.js); the code-built pieces the rest.
-    const modelled=fieldModels?.size?fieldModelPlacements(e,{chapter,available:new Set(fieldModels.keys())}):[];
+    // Generated models draw the objects they have a model for (field-models.js); the code-built pieces the rest. On the
+    // walked field the beaten side's gear lies beside its fallen.
+    const available=fieldModels?.size?new Set(fieldModels.keys()):null;
+    const modelled=available?[...fieldModelPlacements(e,{chapter,available}),...aftermathDebrisPlacements(e,{chapter,available})]:[];
     if(modelled.length)modelPieces=createFieldModelPieces(group,fieldModels,modelled,{heightAt:ground,finish:kitFinish});
     const drawn=new Set(modelled.filter(p=>!p.on).map(p=>p.object));
     for(const o of e.field.objects){
       if(useKit&&(BOARD_KIT_KINDS.includes(o.kind)||o.gatePanel))continue;
       if(drawn.has(o.id)){
         const b=modelPieces.bounds.get(o.id);if(b&&!b.isEmpty())records.push({id:o.id,kind:o.kind,state:o.state,min:b.min.toArray(),max:b.max.toArray(),model:true});
+        // A burning brazier drawn by its model keeps the stage's flame, at its model's height above the ground.
+        const flame=FIELD_OBJECT_MODELS[modelled.find(p=>p.object===o.id&&!p.on)?.model]?.flame;
+        if(o.kind==='brazier'&&o.state==='burning'&&b&&!b.isEmpty()&&Number.isFinite(flame)){
+          const plume=createFlamePlume();plume.position.set((b.min.x+b.max.x)/2,b.min.y+flame,(b.min.z+b.max.z)/2);plume.name='pitch flame and rising smoke';
+          geometries.add(plume.geometry);materials.add(plume.material);group.add(plume);fires.push(plume);
+        }
         continue;
       }
       if(!Number.isInteger(o.x)||!Number.isInteger(o.y)||o.x<0||o.y<0||o.x>=e.width||o.y>=e.height)continue;

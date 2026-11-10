@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-fascines.glb",
+    "bytes": 46155992,
+    "sha256": "4c34221ea24244958d720c309669503049a90a18a7d355b0c40a4fb761561013",
+    "triangles": 1415762
+  },
+  "output": {
+    "path": "assets/models/world/g5-fascines.glb",
+    "bytes": 426380,
+    "sha256": "a61b63d0b339ea1b32fbd4eed9e10821b8d47a9ad974855ad39009d01f5c20ee",
+    "triangles": 5878
+  },
+  "settings": {
+    "triangles": 6000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.6982816507978713,
+  "sizeMetres": {
+    "width": 2.1642,
+    "height": 1.2,
+    "depth": 2.6915
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_0bb00c9d-586e-4d4a-9d8d-bf9afd78eea6",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_0bb00c9d-586e-4d4a-9d8d-bf9afd78eea6",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_0bb00c9d-586e-4d4a-9d8d-bf9afd78eea6",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

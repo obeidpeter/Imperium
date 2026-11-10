@@ -1,5 +1,5 @@
 import * as THREE from '../../vendor/three/three.module.js';
-import {gridToWorld,terrainAt,hash,noise,smooth,roadSegments,isTrainingGround,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL} from './environment-layout.js';
+import {gridToWorld,terrainAt,hash,smooth,roadSegments,isTrainingGround,RIVER_WATER_LEVEL,MARSH_WATER_LEVEL,MARSH_SHEET_MARGIN,marshSheetAlpha} from './environment-layout.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
 import {isChapterFivePilot} from './environment-ch5-pilot.js';
 import {hasRegionalWorld,regionalChapter} from './environment-regional-world.js';
@@ -76,11 +76,8 @@ export function addCampaignTerrain({root,e,p,m,profile,height,tileSize,instance,
   // Where a wall model stands for it (G3), a camp's parapet is a batch of its own.
   const parapet=campParapetModelled(e,profile)?()=>CAMP_PARAPET_BATCHES[wallStyle(profile)]:masonry;
   if(profile.setting==='wetland'){
-    const w=e.width*tileSize+12,d=e.height*tileSize+12,rows=96,g=p.geo(new THREE.PlaneGeometry(w,d,rows,rows));g.rotateX(-Math.PI/2);const pos=g.attributes.position,colors=[];
-    const wet=(x,y)=>terrainAt(e,Math.max(0,Math.min(e.width-1,x)),Math.max(0,Math.min(e.height-1,y)))==='marsh'?1:0;
-    for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),gx=x/tileSize+(e.width-1)/2,gy=z/tileSize+(e.height-1)/2,ix=Math.floor(gx),iy=Math.floor(gy),u=smooth(gx-ix),v=smooth(gy-iy),weight=(wet(ix,iy)*(1-u)+wet(ix+1,iy)*u)*(1-v)+(wet(ix,iy+1)*(1-u)+wet(ix+1,iy+1)*u)*v;
-      const contour=noise(x*.31,z*.31,37)*.48+noise(x*.94,z*.94,43)*.12,alpha=smooth((weight-.30-contour)*3.4);pos.setY(i,MARSH_WATER_LEVEL);colors.push(.91,.95,.88,alpha);
-    }g.setAttribute('color',new THREE.Float32BufferAttribute(colors,4));const flood=p.mesh(root,g,m.marshWater);flood.name='continuous irregular marsh water';flood.castShadow=false;
+    const w=e.width*tileSize+MARSH_SHEET_MARGIN*2,d=e.height*tileSize+MARSH_SHEET_MARGIN*2,rows=96,g=p.geo(new THREE.PlaneGeometry(w,d,rows,rows));g.rotateX(-Math.PI/2);const pos=g.attributes.position,colors=[];
+    for(let i=0;i<pos.count;i++){pos.setY(i,MARSH_WATER_LEVEL);colors.push(.91,.95,.88,marshSheetAlpha(e,pos.getX(i),pos.getZ(i),tileSize));}g.setAttribute('color',new THREE.Float32BufferAttribute(colors,4));const flood=p.mesh(root,g,m.marshWater);flood.name='continuous irregular marsh water';flood.castShadow=false;
   }
 
   // One water surface for every river and ford cell, extended where a river

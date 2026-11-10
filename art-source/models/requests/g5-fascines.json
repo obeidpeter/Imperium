@@ -1,0 +1,97 @@
+{
+  "id": "g5-fascines",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-fascines, in Chapters IX and XII (the desktop app only)",
+  "chapters": [
+    9,
+    12
+  ],
+  "use": "Roman siege works behind the line: fascines and gabions beyond the board's west edge, where the Romans attack a wall (Chapters IX and XII).",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "Roman siege stores: a low pile of fascines, long tight bundles of brushwood bound with withies, and beside it three gabions, tall cylindrical baskets of woven wicker filled with earth; about three metres long, one point five metres deep and one point two metres high. Dry brushwood, wicker and earth. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, logs cut by saw, firewood stack of planks, barrels, flower pots, bins",
+      "model_seed": 2616200,
+      "image_seed": 2616201,
+      "texture_seed": 2616202
+    }
+  },
+  "budget": {
+    "triangles": 6000,
+    "texture": 512,
+    "bytes": 380000,
+    "heightMetres": 1.2,
+    "minHeight": 1.08,
+    "maxHeight": 1.32,
+    "note": "Raised at review from 3,500 triangles and 260,000 bytes: its separate sticks stop collapsing at about 3,590 triangles, and only at 6,000 do its gabions keep their round baskets (at 3,590 they crumple into lumps)."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:06:49.410Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, logs cut by saw, firewood stack of planks, barrels, flower pots, bins",
+      "model_seed": 2616200,
+      "image_seed": 2616201,
+      "texture_seed": 2616202,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "Roman siege stores: a low pile of fascines, long tight bundles of brushwood bound with withies, and beside it three gabions, tall cylindrical baskets of woven wicker filled with earth; about three metres long, one point five metres deep and one point two metres high. Dry brushwood, wicker and earth. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8605,
+    "balanceSnapshotBefore": {
+      "balance": 8605,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "3cd5cff2-a39f-4c95-8c47-9aa6874c7fe7",
+      "state": "accepted",
+      "requestSha256": "83afbe8ef46fb63798a025a449d1917146c3d346c7d4b997d328eedcd010ffdc"
+    },
+    "taskId": "0bb00c9d-586e-4d4a-9d8d-bf9afd78eea6",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:09:50.123Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-fascines.glb",
+    "rawBytes": 46155992,
+    "rawSha256": "4c34221ea24244958d720c309669503049a90a18a7d355b0c40a4fb761561013",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "Roman siege stores: a low pile of fascines, long tight bundles of brushwood bound with withies, and beside it three gabions, tall cylindrical baskets of woven wicker filled with earth; about three metres long, one point five metres deep and one point two metres high. Dry brushwood, wicker and earth. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616201,
+      "model_seed": 2616200,
+      "texture_seed": 2616202,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, logs cut by saw, firewood stack of planks, barrels, flower pots, bins",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:06:49.921732Z",
+    "tripoCompletedAt": "2026-11-09T22:09:41.341022Z",
+    "tripoRender": "art-source/models/raw/g5-fascines-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A pile of brushwood fascines bound with withies beside four wicker gabions packed with earth, as asked, on a low timber pallet the request did not ask for (it reads as a stores platform). At 3,500 triangles its gabions crumpled into lumps (its separate sticks stop collapsing near 3,590), so its budget was raised to 6,000 triangles and 380,000 bytes."
+  }
+}

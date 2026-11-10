@@ -1,0 +1,102 @@
+{
+  "id": "g5-wagon-gothic",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-wagon-gothic, in Chapters I, II, III, IV, VII, VIII and X (on the web in Chapters II and III only)",
+  "chapters": [
+    1,
+    2,
+    3,
+    4,
+    7,
+    8,
+    10
+  ],
+  "use": "The Goths' wagon laager behind the battle: an open ox wagon beyond the board's north edge, in the battles against Gothic bands.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Gothic ox wagon of the third century: a heavy four-wheeled wooden wagon with solid wheels made of planks, high woven wicker sides, its bed piled with bundles, sacks and a rolled hide, and a long draught pole with a yoke resting on the ground; about four metres long including the pole, one point eight metres wide and one point six metres high. Rough dark wood, wicker and hides. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, spoked wheels, carriage, stagecoach, covered wagon, canopy, chariot, cannon",
+      "model_seed": 2616210,
+      "image_seed": 2616211,
+      "texture_seed": 2616212
+    }
+  },
+  "budget": {
+    "triangles": 4500,
+    "texture": 512,
+    "bytes": 300000,
+    "heightMetres": 1.6,
+    "minHeight": 1.44,
+    "maxHeight": 1.76,
+    "note": "Bytes raised at review from 280,000 for its texture."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T22:09:51.109Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, spoked wheels, carriage, stagecoach, covered wagon, canopy, chariot, cannon",
+      "model_seed": 2616210,
+      "image_seed": 2616211,
+      "texture_seed": 2616212,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Gothic ox wagon of the third century: a heavy four-wheeled wooden wagon with solid wheels made of planks, high woven wicker sides, its bed piled with bundles, sacks and a rolled hide, and a long draught pole with a yoke resting on the ground; about four metres long including the pole, one point eight metres wide and one point six metres high. Rough dark wood, wicker and hides. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8585,
+    "balanceSnapshotBefore": {
+      "balance": 8585,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "60ae19af-9ef4-4f40-b88a-6317d12f6018",
+      "state": "accepted",
+      "requestSha256": "1a8025f34df5057d6b202d7ab8bb2da5fa716be51160dd7a162a9a79966e3fb7"
+    },
+    "taskId": "58814c1f-562d-45cb-bf0e-d421911da877",
+    "status": "success",
+    "generatedAt": "2026-11-09T22:11:54.278Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-wagon-gothic.glb",
+    "rawBytes": 46404944,
+    "rawSha256": "3fe91881b36207cfbf14dd4f3353cbd227a101ccb76851cdf065b53e45473c79",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Gothic ox wagon of the third century: a heavy four-wheeled wooden wagon with solid wheels made of planks, high woven wicker sides, its bed piled with bundles, sacks and a rolled hide, and a long draught pole with a yoke resting on the ground; about four metres long including the pole, one point eight metres wide and one point six metres high. Rough dark wood, wicker and hides. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616211,
+      "model_seed": 2616210,
+      "texture_seed": 2616212,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, spoked wheels, carriage, stagecoach, covered wagon, canopy, chariot, cannon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T22:09:52.004520Z",
+    "tripoCompletedAt": "2026-11-09T22:11:49.353568Z",
+    "tripoRender": "art-source/models/raw/g5-wagon-gothic-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "An open four-wheeled wagon with high wicker sides, its bed heaped with sacks and bundles, and a long pole. Its wheels came spoked, not the solid plank wheels asked for; accepted, as they read at the distance it stands."
+  }
+}

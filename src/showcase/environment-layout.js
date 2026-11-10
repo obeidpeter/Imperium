@@ -27,6 +27,17 @@ export function hash(x,z=0,s=0){const a=Math.sin(x*127.1+z*311.7+s*74.7)*43758.5
 export function noise(x,z,s=0){const ix=Math.floor(x),iz=Math.floor(z),u=smooth(x-ix),v=smooth(z-iz),a=hash(ix,iz,s)*(1-u)+hash(ix+1,iz,s)*u,b=hash(ix,iz+1,s)*(1-u)+hash(ix+1,iz+1,s)*u;return a*(1-v)+b*v;}
 export function gridToWorld(tile,encounter,tileSize=TILE_SIZE){return {x:(tile.x-(encounter.width-1)/2)*tileSize,y:0,z:(tile.y-(encounter.height-1)/2)*tileSize};}
 export function terrainAt(e,x,y){const t=e.terrain?.[y]?.[x];return typeof t==='string'?t:t?.type||'grass';}
+// The wetland's marsh sheet (environment-campaign-terrain.js) reaches this far past the board's edges, its opacity at
+// x, z the clamped board cells' marsh weight broken by a noise contour. Where water lies (environment-water.js) reads
+// the same opacity.
+export const MARSH_SHEET_MARGIN=6;
+export function marshSheetAlpha(e,x,z,tileSize=TILE_SIZE){
+  const wet=(a,b)=>terrainAt(e,Math.max(0,Math.min(e.width-1,a)),Math.max(0,Math.min(e.height-1,b)))==='marsh'?1:0;
+  const gx=x/tileSize+(e.width-1)/2,gy=z/tileSize+(e.height-1)/2,ix=Math.floor(gx),iy=Math.floor(gy),u=smooth(gx-ix),v=smooth(gy-iy);
+  const weight=(wet(ix,iy)*(1-u)+wet(ix+1,iy)*u)*(1-v)+(wet(ix,iy+1)*(1-u)+wet(ix+1,iy+1)*u)*v;
+  const contour=noise(x*.31,z*.31,37)*.48+noise(x*.94,z*.94,43)*.12;
+  return smooth((weight-.30-contour)*3.4);
+}
 export function worldToGrid(x,z,e,tileSize=TILE_SIZE){return {x:Math.round(x/tileSize+(e.width-1)/2),y:Math.round(z/tileSize+(e.height-1)/2)};}
 // relief:false omits the plateaus (the surface roads follow, so a verge never climbs a bank).
 export function createGroundHeight(e,tileSize=TILE_SIZE,{profile=null,relief=true}={}){

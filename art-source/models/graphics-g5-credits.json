@@ -9,8 +9,8 @@
     "textWithStandardTextures": 20,
     "source": "the calibration's measured prices (docs/graphics-calibration.md); each task's reported credits_consumed is recorded below"
   },
-  "spentCredits": 140,
-  "remainingAuthorization": 1705,
+  "spentCredits": 580,
+  "remainingAuthorization": 1265,
   "batches": [
     {
       "batch": "pilot",
@@ -113,6 +113,276 @@
           "accountedCredits": 20
         }
       ]
+    },
+    {
+      "batch": "first batch",
+      "date": "2026-11-09",
+      "ceilingCredits": 440,
+      "plannedCredits": 380,
+      "spentCredits": 440,
+      "items": [
+        "g5-brazier",
+        "g5-countermine",
+        "g5-siege-ramp",
+        "g5-cart-east",
+        "g5-ballista-b",
+        "g5-shot-stack",
+        "g5-bolt-crate",
+        "g5-siege-tower",
+        "g5-mantlets-b",
+        "g5-fascines",
+        "g5-wagon-gothic",
+        "g5-wagon-gothic-covered",
+        "g5-persian-tower",
+        "g5-persian-screens",
+        "g5-debris-gothic",
+        "g5-debris-east",
+        "g5-debris-roman",
+        "g5-debris-standard"
+      ],
+      "note": "The first batch after the pilot's review, with solid timbers and bold silhouettes: the pitch brazier, the countermine and the Persian siege ramp on their cells; the eastern cart and wicker barricade for the eastern battles; a ballista, stone shot and a crate of bolts beside the engines, and a Roman siege tower, mantlets and fascines beyond the west edge; a Gothic wagon laager and Persian siege works beyond the north edge; and debris beside the fallen on the walked field. 19 props at standard texture and geometry, 20 credits each, with room for three redos.",
+      "balance": {
+        "before": 8805,
+        "after": 8365,
+        "source": "the account balance read before the first task and after the last (frozen 0)"
+      },
+      "tasks": [
+        {
+          "id": "g5-brazier",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "0dc30722-dda3-46d8-b061-a4b0eb91e3ac",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-countermine",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d62db6e2-da3d-40e4-ab0c-bc8483e0d72a",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-siege-ramp",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "0ee92533-7c3e-4633-afbf-f7be1d69e9ab",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-cart-east",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "fdf5b52a-f908-4864-acdc-67d8182997c8",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-barricade-east",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "7902af2e-381b-4e48-a55a-8ea0d2d7f5ce",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20,
+          "rejectedAtReview": "The two hurdles came standing apart, face to face 1.6 m apart with a pole between them, not side by side in one line, and the row of stakes in front came as flat white blades."
+        },
+        {
+          "id": "g5-ballista",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "09ccaaf5-b32b-4452-9768-f80dfda5cf46",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20,
+          "rejectedAtReview": "Its colour map came out a flat neutral grey (saturation 4 of 255), so the whole engine read as grey clay, and its twisted-rope springs came as metal coil springs."
+        },
+        {
+          "id": "g5-shot-stack",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "4b4acfef-df4e-4e56-816a-a9762a3e08b4",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-bolt-crate",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "de00f092-b53e-4d23-bb4c-0872c253f9c1",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-siege-tower",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "8ab8bd50-ce43-46c4-9e01-f5b97cabae9c",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-mantlets",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "c4350782-7637-427f-8b1e-c1e52dc82f19",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20,
+          "rejectedAtReview": "Three narrow hide-hung wicker racks, each about 0.6 m wide, staggered on a diagonal: about two metres across in all where six were asked, and from above three thin lines, not the bold silhouette the release asks for."
+        },
+        {
+          "id": "g5-fascines",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "0bb00c9d-586e-4d4a-9d8d-bf9afd78eea6",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-wagon-gothic",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "58814c1f-562d-45cb-bf0e-d421911da877",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-wagon-gothic-covered",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "f535199a-1050-49b3-b5fd-bb8c930520d2",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-persian-tower",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "fe8827b4-27f1-4594-9dd3-ee978a36f7d5",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-persian-screens",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "68db1312-054c-497c-b8d8-051533290409",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-debris-gothic",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "9f6955ef-0940-42d4-a47e-c962cac1ff78",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-debris-east",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "e039e74c-43ed-4a7a-aff4-f3314139cde7",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-debris-roman",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "10e3678a-5b4d-475d-9861-706b14233f91",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-debris-standard",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "74fc8246-c0b8-4f9a-82bb-5b80fd82f967",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-barricade-east-b",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "285af73d-ca3c-4b26-b7f4-ee628dda77cd",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20,
+          "rejectedAtReview": "Four wicker baskets hanging by ropes from a rail between two posts, over a log: a rack of baskets, not a breastwork, and no barricade at the field's distance."
+        },
+        {
+          "id": "g5-ballista-b",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "3aca17f8-1400-4faf-910e-4bc60a2216ff",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-mantlets-b",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "1b165c32-1b53-4414-95c9-267f1d5fb551",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        }
+      ],
+      "rejected": {
+        "count": 4,
+        "of": 22,
+        "items": [
+          "g5-ballista",
+          "g5-barricade-east",
+          "g5-barricade-east-b",
+          "g5-mantlets"
+        ],
+        "note": "4 of 22 generations (18%) rejected at review, under the plan's 20% stop rule: g5-ballista (its colour map came out a flat neutral grey (saturation 4 of 255), so the whole engine read as grey clay, and its twisted-rope springs came as metal coil springs); g5-barricade-east (the two hurdles came standing apart, face to face 1.6 m apart with a pole between them, not side by side in one line, and the row of stakes in front came as flat white blades); g5-barricade-east-b (four wicker baskets hanging by ropes from a rail between two posts, over a log: a rack of baskets, not a breastwork, and no barricade at the field's distance); g5-mantlets (three narrow hide-hung wicker racks, each about 0.6 m wide, staggered on a diagonal: about two metres across in all where six were asked, and from above three thin lines, not the bold silhouette the release asks for)."
+      }
     }
   ]
 }

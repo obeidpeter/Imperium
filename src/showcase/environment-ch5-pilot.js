@@ -34,7 +34,8 @@ export function chapterFiveServicePads(e,tileSize=2.5){
   });
 }
 
-function riverProfile(x,e,tileSize){
+/** Chapter V's Euphrates beyond the fortress's north edge at x: its near bank's z, its width north of it, the ribbon's length. */
+export function chapterFiveRiverProfile(x,e,tileSize=2.5){
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2,length=Math.max(100,hx*2+60),i=(x/length+.5)*36;
   return {near:-hz-10.5-1.2*Math.sin(i*.24),width:16+2*Math.sin(i*.31),length};
 }
@@ -43,7 +44,7 @@ function riverProfile(x,e,tileSize){
 export function chapterFivePilotHeight(base,e,tileSize=2.5){
   if(!isChapterFivePilot(e))return base;
   return (x,z)=>{
-    const h=base(x,z),r=riverProfile(x,e,tileSize),d=r.near-z;
+    const h=base(x,z),r=chapterFiveRiverProfile(x,e,tileSize),d=r.near-z;
     const bank=smooth(d/2.5)*smooth((r.width-d)/2.5)*smooth((r.length*.5-Math.abs(x))/8);
     return h*(1-bank)-2.65*bank;
   };
@@ -148,7 +149,7 @@ export function addChapterFivePilot(ctx){
   // No decorative water or landing masks a walkable cell or creates a ford.
   const positions=[],uv=[],index=[];const length=Math.max(100,hx*2+60);
   for(let i=0;i<=36;i++)for(let side=0;side<2;side++){
-    const x=(i/36-.5)*length,r=riverProfile(x,e,tileSize),z=r.near-side*r.width;
+    const x=(i/36-.5)*length,r=chapterFiveRiverProfile(x,e,tileSize),z=r.near-side*r.width;
     positions.push(x,-1.2,z);uv.push(x*.025,side);
     if(i<36){const j=i*2;index.push(j,j+2,j+1,j+1,j+2,j+3);}
   }

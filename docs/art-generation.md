@@ -1975,6 +1975,102 @@ Each battle was seen twice at the same moment: once with G5's files refused, whi
 
   `tests/graphics-g5.test.mjs` checks every state's placement in every battle.
 
+## The rest of G5, the first batch · 9 November 2026
+
+The first batch of the rest of release G5 of the [graphics plan](graphics-tripo-plan.md#the-rest-of-g5-the-first-batch-9-november): eighteen models, made after the pilot's review in the game. As the pilot proposed, the requests ask for solid timbers and bold silhouettes, and each model was checked at the field's distance before it was placed. [The asset pipeline](asset-pipeline.md#the-rest-of-g5-its-first-batch-more-field-objects-set-pieces-on-two-edges-the-walked-fields-debris--2026-11-09) has how they are placed.
+
+The models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-09, from the text prompts in their requests only: no reference image or third-party model. The batch cost 440 credits of its 440-credit ceiling, task by task in [the G5 ledger](../art-source/models/graphics-g5-credits.json), and the balance read 8,805 before and 8,365 after. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Where | Chapters | Tripo task | Triangles | Runtime file |
+| --- | --- | --- | --- | ---: | ---: |
+| g5-brazier | the pitch brazier's cell, unlit or burning | III–X, XII | `0dc30722-dda3-46d8-b061-a4b0eb91e3ac` | 2,940 | 211,532 bytes |
+| g5-countermine | the countermine's cell while it is worked | V | `d62db6e2-da3d-40e4-ab0c-bc8483e0d72a` | 6,860 | 326,952 bytes |
+| g5-siege-ramp | the Persian siege ramp's cell while it is worked | V | `0ee92533-7c3e-4633-afbf-f7be1d69e9ab` | 3,430 | 279,820 bytes |
+| g5-cart-east | the supply cart's cell in the eastern battles, in every state | V, VI, IX | `fdf5b52a-f908-4864-acdc-67d8182997c8` | 3,919 | 244,292 bytes |
+| g5-ballista-b (ships as g5-ballista) | beyond the west edge, behind the Roman line | the sieges of IV, V, IX and XII | `3aca17f8-1400-4faf-910e-4bc60a2216ff` | 4,410 | 231,816 bytes |
+| g5-shot-stack | beside the onager | the sieges of IV, V, IX and XII | `4b4acfef-df4e-4e56-816a-a9762a3e08b4` | 2,940 | 199,428 bytes |
+| g5-bolt-crate | beside the carroballista | the field battles of VII–X | `de00f092-b53e-4d23-bb4c-0872c253f9c1` | 2,940 | 238,820 bytes |
+| g5-siege-tower | beyond the west edge, where the Romans attack a wall | IX, XII | `8ab8bd50-ce43-46c4-9e01-f5b97cabae9c` | 4,410 | 280,420 bytes |
+| g5-mantlets-b (ships as g5-mantlets) | beyond the west edge, where the Romans attack a wall | IX, XII | `1b165c32-1b53-4414-95c9-267f1d5fb551` | 3,920 | 263,980 bytes |
+| g5-fascines | beyond the west edge, where the Romans attack a wall | IX, XII | `0bb00c9d-586e-4d4a-9d8d-bf9afd78eea6` | 5,878 | 364,192 bytes |
+| g5-wagon-gothic | beyond the north edge, in the battles against Gothic bands | I–IV, VII, VIII, X | `58814c1f-562d-45cb-bf0e-d421911da877` | 4,409 | 293,628 bytes |
+| g5-wagon-gothic-covered | beyond the north edge, in the battles against Gothic bands | I–IV, VII, VIII, X | `f535199a-1050-49b3-b5fd-bb8c930520d2` | 4,410 | 286,396 bytes |
+| g5-persian-tower | beyond the north edge, at the Persian siege lines | V | `fe8827b4-27f1-4594-9dd3-ee978a36f7d5` | 4,409 | 285,948 bytes |
+| g5-persian-screens | beyond the north edge, at the Persian siege lines | V | `68db1312-054c-497c-b8d8-051533290409` | 3,918 | 269,032 bytes |
+| g5-debris-gothic | on the walked field, beside the beaten Gothic band's fallen | I–IV, VII, VIII, X | `9f6955ef-0940-42d4-a47e-c962cac1ff78` | 2,939 | 228,160 bytes |
+| g5-debris-east | on the walked field, beside a beaten eastern force's fallen | V, VI, IX | `e039e74c-43ed-4a7a-aff4-f3314139cde7` | 2,940 | 236,396 bytes |
+| g5-debris-roman | on the walked field, beside the rival Romans' fallen | XII | `10e3678a-5b4d-475d-9861-706b14233f91` | 2,939 | 219,676 bytes |
+| g5-debris-standard | on the walked field's first spot: a fallen war banner | every battle (I–X, XII) | `74fc8246-c0b8-4f9a-82bb-5b80fd82f967` | 2,939 | 192,924 bytes |
+
+Every runtime file was processed in Blender to its request's budget (512-pixel maps), compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. Budgets changed at review, each noted in its request:
+- **The countermine's and the fascines' triangles:** at 3,500 the countermine's timbers broke into shards, and the fascines' gabions crumpled into lumps (their separate sticks stop the decimator near 3,590 triangles whatever the target). The countermine was raised to 7,000 triangles and the fascines to 6,000, with their bytes.
+- **The bolt crate's height,** 0.75 m rather than 0.55: its lid came standing open, and 0.75 m keeps the chest about a metre long.
+- **The debris's heights,** set from each model's raw proportions, since a flat model is scaled by its height like every prop: 0.6 m for the Gothic gear (two shields came standing on their rims) and the fallen banner (its shaft raised at one end on a shield), 0.36 m for the eastern gear and 0.34 m for the Roman (its helmet stands highest). Each spreads under two metres.
+- **Bytes, for their textures:** the siege ramp, the bolt crate, the two Gothic wagons and the Gothic and eastern debris.
+
+The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`. Four generations were rejected at review and are not shipped, 80 credits in all: the first ballista (`g5-ballista`, task `09ccaaf5-b32b-4452-9768-f80dfda5cf46`), the first mantlets (`g5-mantlets`, task `c4350782-7637-427f-8b1e-c1e52dc82f19`) and both eastern barricades (`g5-barricade-east`, task `7902af2e-381b-4e48-a55a-8ea0d2d7f5ce`, and `g5-barricade-east-b`, task `285af73d-ca3c-4b26-b7f4-ee628dda77cd`). Four of 22 generations (18%) is under the plan's 20% stop rule.
+
+The prompts follow [the historical notes](historical-research.md) where the sources reach, and are evocations where they do not:
+- **The countermine and the siege ramp:** Dura-Europos's archaeology records a Sasanian siege ramp against the walls, Sasanian mines and the defenders' countermines. Chapter V's city is a fictional fortress inspired by Dura, so its countermine (a square shaft in heavy timbers with a windlass and baskets of spoil) and its ramp (earth and rubble in a timber-and-reed revetment) follow those works in outline only.
+- **The ballista:** a stone-thrower with two arms in twisted skeins of rope in an upright frame, the Roman *ballista* Vitruvius describes (*De architectura* 10.11).
+- **The siege tower and the mantlet:** Vegetius has towers covered with raw hides against fire (*Epitome* 4.17), and *plutei* woven of wicker in the shape of an apse, covered with hides and run on small wheels before the men at a wall (4.15). The mantlet is one such screen.
+- **The fascines and gabions:** the bundled brushwood and earth-filled baskets with which a besieging army filled ditches and raised its works. "Gabion" is the later word.
+- **The Gothic wagons:** the Goths moved with their families in wagons and fought from them drawn up in a laager, which Ammianus Marcellinus calls by their word, *carrago*, in the fourth century. The game's two wagons are evocations.
+- **The Persian tower and screens** are evocations of a besieger's works, not reconstructions: Dura's archaeology records the ramp and the mines, not towers.
+- **The debris** is each side's gear at the camera's distance: the Goths' round shields with iron bosses, the eastern armies' oval shields faced with painted hide, the Romans' red shields with bronze bosses, and a beaten force's torn red banner on its crossbar.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the battles in the desktop build at High, each restored from a moment the real-time bot reached from New Game through the Restore dialog. What it showed, and what was kept:
+
+![The batch's field objects and the walked field's debris from four sides with a 1.8 m figure for scale](images/g5-first-batch-field-models.jpg)
+
+![The batch's set pieces from four sides with a 1.8 m figure for scale](images/g5-first-batch-set-piece-models.jpg)
+
+- **The first ballista was rejected.** Its colour map came out a flat neutral grey (a saturation of 4 in 255), so the whole engine read as grey clay, and its twisted-rope springs came as metal coil springs. The second request named the colours of the oak, the rope and the iron, and put coil springs, steel and a grey engine in its negative prompt. It came brown oak with rope skeins, its arms behind an upright frame and a trough running back to the winch.
+- **The first mantlets were rejected.** Three narrow hide-hung wicker racks, each about 0.6 m wide, stood staggered on a diagonal: about two metres across where six were asked, and from above three thin lines, not the bold silhouette the batch asks for. The second request asked for one broad mantlet: an arched wicker screen faced with hides on heavy timber edges, about three metres wide, on wheels along its foot and propped from behind.
+- **The eastern barricade was rejected twice** and not made. The first came as two wicker hurdles standing apart, face to face, with flat white blades for its stakes. The second came as four wicker baskets hanging by ropes from a rail: a rack of baskets, not a breastwork. The pilot's timber barricade stands in the eastern battles too.
+- **The eastern cart's and the Gothic wagons' wheels** came spoked, not the solid wheels asked for. They were kept: the eastern cart, with its pale bed and faded red boards, still reads as a different cart beside the Roman one, and the wagons stand at a distance where spokes and planks look alike. The covered wagon's pole runs out at both ends.
+- **The siege tower** came without the drawbridge the prompt asked for. Three storeys hung with hides on four wheels, it stands 7 m high, and the Persian tower, open timber faced with reed mats, reads as lighter: the enemy's.
+- **The Persian screens** stand as one wall of four reed-mat panels with loopholes, 3.24 m long, half the six metres asked.
+- **The fascines** came on a low timber pallet the request did not ask for. It reads as a stores platform, and was kept.
+- **The debris:** the Gothic gear's shields stand propped on their rims against a spear, not flat as asked; from the camera's height they read as shields propped where they fell. The Roman gear's shields came round rather than oval, which suits the third century, and its helmet is a closed, cavalry-style helmet. The Roman debris was asked for in more chapters, and its request corrected at review to Chapter XII alone, the only battle against Romans.
+
+#### In the game
+
+Each battle was seen twice at the same moment, in the desktop build at High: once with G5's files refused, which leaves the code-built pieces or bare ground, and once with them. Each moment was paused and framed with the game's own controls. The camera was turned to each piece, as **Find objective** turns it, and a ring marks the spot in both captures. The eastern cart was seen with the camera on the soldier 8 m away, for the reason given below.
+
+![Field objects before (the code-built pieces) and with the batch's models, in the desktop build at High](images/g5-first-batch-battles.jpg)
+
+![Set pieces behind the lines, before (none) and with the batch's models](images/g5-first-batch-set-pieces.jpg)
+
+![The walked field after a win, before (the fallen alone) and with the beaten side's gear](images/g5-first-batch-walked-field.jpg)
+
+- **The siege ramp** (Chapter V's mine) stands against the city wall where the code-built ramp, a plank on two trestles, read as a bench. It reads as a slope of earth in a timber revetment rising to the wall. It is darker than the plank, and partly in the wall's shadow.
+- **The countermine** stands by the west edge as a dark timber head-frame with its windlass over the shaft, where the code-built piece read as a table over a heap of pale stones.
+- **The brazier** (Chapter IV's wall walk, in the rain) is an iron basket heaped with black pitch on three legs, where the code-built brazier was a dark disc on legs. At the Follow camera it is as small as the code-built one.
+- **The barricade** in Chapter V is the pilot's, which now stands in the eastern battles too. Its two lattice panels are thinner and darker than the code-built stakes and harder to pick out, as the pilot's review found.
+- **The eastern cart** (Chapter VI's eagle) stands whole, its pale bed and faded red side boards under the pilot's load. It reads as a different cart from the Roman one the code-built piece draws, with its dark timber and white sacks.
+  - With the camera framed on the objective, as **Find objective** leaves it, the near half of either cart fades, whatever X is set to. The game opens the scenery between the camera and an objective the camera frames, and the opening reaches the cart standing at the objective.
+  - That is older than G5. Stopping the opening short of the objective's own piece costs no credits.
+- **The engines behind the Roman line** read at once. In Chapter IV the ballista's brown oak frame stands on the grass beyond the wall walk, with the onager further north and the pale pyramid of its stone shot at its side. In Chapter VII the bolt crate stands beside the carroballista, toward the board. It reads as the engine's stores, though its bolts are too small to pick out.
+- **The Roman siege works** (Chapter IX) are the boldest of the batch. The 7 m siege tower, hung with hides, fills the upper part of the view beyond the west edge, and its top leaves the frame at the Follow camera. It stands behind the board from the camera, so it never hides the fight. The mantlet reads as a broad arched screen on wheels facing the board. The fascines stood outside the frame.
+- **The Gothic wagons** (Chapter II's marsh) showed the batch's one placement fault.
+  - The open wagon stood in the marsh's water, which reaches 6 m past the board, while the covered wagon read well on a grass bank.
+  - Set pieces now keep to dry ground ([the asset pipeline](asset-pipeline.md#the-rest-of-g5-its-first-batch-more-field-objects-set-pieces-on-two-edges-the-walked-fields-debris--2026-11-09)). Both wagons now stand on the grass bank between the marsh and the open water beyond the north edge: the open wagon heaped with sacks, and the covered wagon under its pale hide cover.
+  - Both read at once, the cover the brightest thing in the view.
+- **The Persian siege tower** (Chapter V's mine) stands on the dry bank above the Euphrates beyond the north edge. Open timber faced with yellow reed mats, it reads as the enemy's tower, lighter than the Roman one. The screens stand further east, at the frame's edge.
+- **The walked field:**
+  - the fallen war banner, torn red on its shaft, reads at once beside the dead. It is the brightest thing on Chapter III's grass and on Chapter VI's dusty road. In the bot's win at Chapter III's station one Goth fell, so that field had the banner alone;
+  - at Chapter IV's gate the Goths' round, iron-bossed shields stand propped on their rims among their fallen, with a spear. They read as gear where men fell, darker and smaller than the banner a few metres off;
+  - in Chapter VI the eastern gear, oval shields faced with painted hide and a broken lance, lies pale against the dust where an enemy fell, with another heap further north.
+- **Not seen:**
+  - the brazier burning, and the fascines, which stood outside the frame;
+  - the eastern cart in Chapters V and IX, and in its other states;
+  - the battles of Chapters I, VIII, X and XII, and with them the Roman debris, which lies in Chapter XII alone.
+
+  `tests/graphics-g5.test.mjs` checks every placement in every battle.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.

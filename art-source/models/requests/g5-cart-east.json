@@ -1,0 +1,97 @@
+{
+  "id": "g5-cart-east",
+  "status": "G5 first batch: processed, compressed and reviewed; ships as g5-cart-east, in Chapters V, VI and IX (on the web in Chapters V and VI only)",
+  "chapters": [
+    5,
+    6,
+    9
+  ],
+  "use": "The battle's abandoned supply cart (the field object 'stores') in the eastern battles, in every state; the load stands on its bed while the supplies are still to be recovered.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "An abandoned provincial supply cart of Roman Syria: a sturdy two-wheeled cart with two solid wooden disc wheels made of three planks each, a deep open box bed of pale planks with painted side boards in faded red and ochre, and a single draught pole with a short yoke bar resting on the ground in front; the bed is empty. About two and a half metres long including the pole and one and a half metres wide. Pale sun-bleached wood, faded paint and dark iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, spoked wheels, four wheels, covered wagon, canopy, chariot, cargo, sacks, barrels",
+      "model_seed": 2616130,
+      "image_seed": 2616131,
+      "texture_seed": 2616132
+    }
+  },
+  "budget": {
+    "triangles": 4000,
+    "texture": 512,
+    "bytes": 260000,
+    "heightMetres": 1.2,
+    "minHeight": 1.08,
+    "maxHeight": 1.32
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-09T21:49:56.626Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, spoked wheels, four wheels, covered wagon, canopy, chariot, cargo, sacks, barrels",
+      "model_seed": 2616130,
+      "image_seed": 2616131,
+      "texture_seed": 2616132,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "An abandoned provincial supply cart of Roman Syria: a sturdy two-wheeled cart with two solid wooden disc wheels made of three planks each, a deep open box bed of pale planks with painted side boards in faded red and ochre, and a single draught pole with a short yoke bar resting on the ground in front; the bed is empty. About two and a half metres long including the pole and one and a half metres wide. Pale sun-bleached wood, faded paint and dark iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8745,
+    "balanceSnapshotBefore": {
+      "balance": 8745,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "1243c25f-f7ce-4377-ae16-046b3394cbf8",
+      "state": "accepted",
+      "requestSha256": "1ac05308c971fe755580cc92101737db9aaeecb806d92c8b7533c7e880748062"
+    },
+    "taskId": "fdf5b52a-f908-4864-acdc-67d8182997c8",
+    "status": "success",
+    "generatedAt": "2026-11-09T21:51:49.365Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-cart-east.glb",
+    "rawBytes": 44843624,
+    "rawSha256": "d6298f4586f3a2b3d4f930193faee15966e18cc7c8e54f98194120027643a617",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "An abandoned provincial supply cart of Roman Syria: a sturdy two-wheeled cart with two solid wooden disc wheels made of three planks each, a deep open box bed of pale planks with painted side boards in faded red and ochre, and a single draught pole with a short yoke bar resting on the ground in front; the bed is empty. About two and a half metres long including the pole and one and a half metres wide. Pale sun-bleached wood, faded paint and dark iron. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616131,
+      "model_seed": 2616130,
+      "texture_seed": 2616132,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, soldier, animal, horse, mule, ox, camel, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, spoked wheels, four wheels, covered wagon, canopy, chariot, cargo, sacks, barrels",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-09T21:49:57.032477Z",
+    "tripoCompletedAt": "2026-11-09T21:51:43.624425Z",
+    "tripoRender": "art-source/models/raw/g5-cart-east-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-09",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A two-wheeled cart with a pale plank bed, faded red side boards and a long single pole. Its wheels came spoked, not the solid disc wheels asked for; accepted, since the cart reads as a different, eastern cart beside the Roman one. 3.33 m long with its pole at 1.2 m high."
+  }
+}

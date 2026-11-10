@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-countermine.glb",
+    "bytes": 46393152,
+    "sha256": "a90941f489a195171840e7472db669c753dbfa03b39f30a28b583482decb98bf",
+    "triangles": 1468834
+  },
+  "output": {
+    "path": "assets/models/world/g5-countermine.glb",
+    "bytes": 359356,
+    "sha256": "0f128f0ee07b44fa871b938568c0639fb5e7462a722c3d91b24bc0d3fc5066a6",
+    "triangles": 6860
+  },
+  "settings": {
+    "triangles": 7000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.5,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.622374875976838,
+  "sizeMetres": {
+    "width": 1.625,
+    "height": 1.5,
+    "depth": 1.4747
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_d62db6e2-da3d-40e4-ab0c-bc8483e0d72a",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_d62db6e2-da3d-40e4-ab0c-bc8483e0d72a",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_d62db6e2-da3d-40e4-ab0c-bc8483e0d72a",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

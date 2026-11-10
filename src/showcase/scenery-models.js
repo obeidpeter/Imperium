@@ -92,11 +92,11 @@ export function sceneryPlacements(e,{chapter,tileSize=2.5,withoutGate=false,desk
 const sceneryBounds=placements=>placements.flatMap(p=>p.component&&regionalComponentDimensions(p.id,p.component)?[regionalPlacementBounds(p)]:(p.instances??[p]).map(({x,z})=>{
   const w=(p.fitWithin?.width??4.4)/2,d=(p.fitWithin?.depth??4.4)/2;return {minX:x-w,maxX:x+w,minZ:z-d,maxZ:z+d};}));
 // A battle's set pieces beyond the board (G5, field-models.js) find their spots last, clear of everything else.
-const withBattleProps=(e,placements,tileSize)=>e?.kind!=='battle'||!hasBattleProps(e)?placements:
-  [...placements,...battlePropPlacements(e,{tileSize,occupied:sceneryBounds(placements)})];
+const withBattleProps=(e,placements,tileSize,chapter)=>e?.kind!=='battle'||!hasBattleProps(e)?placements:
+  [...placements,...battlePropPlacements(e,{tileSize,chapter,occupied:sceneryBounds(placements)})];
 function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
   if(hasRegionalWorld(e))return withBattleProps(e,[...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
-    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize,desktop),...campWallPlacements(e,chapter,tileSize)],tileSize);
+    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize,desktop),...campWallPlacements(e,chapter,tileSize)],tileSize,chapter);
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;
@@ -110,7 +110,7 @@ function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
     return {id:m.id,url:sceneryModelUrl(m.id),x,z,yaw};
   });
   // Chapter V's staging courtyard keeps its own props; its mudbrick walls are the camps' (G3).
-  return withBattleProps(e,[...props,...getChapterFiveKitPlacements(e,{chapter,tileSize}).map((p,i)=>({...p,key:`${p.id}:${p.component}:${i}`,url:sceneryModelUrl(p.id)})),...campWallPlacements(e,chapter,tileSize)],tileSize);
+  return withBattleProps(e,[...props,...getChapterFiveKitPlacements(e,{chapter,tileSize}).map((p,i)=>({...p,key:`${p.id}:${p.component}:${i}`,url:sceneryModelUrl(p.id)})),...campWallPlacements(e,chapter,tileSize)],tileSize,chapter);
 }
 
 // Each master's materials share the imported art's programs (model-materials.js).

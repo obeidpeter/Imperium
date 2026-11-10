@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-persian-tower.glb",
+    "bytes": 45213712,
+    "sha256": "cc4fbeb1f08c60d16d8fbffa7034bb8a7f736ac0c49b53e200fc4b7293a4aa3e",
+    "triangles": 1420243
+  },
+  "output": {
+    "path": "assets/models/world/g5-persian-tower.glb",
+    "bytes": 297572,
+    "sha256": "96e13873670a669d9bce783442b84366067fb941cca4361d12b4c7e20f897b9e",
+    "triangles": 4409
+  },
+  "settings": {
+    "triangles": 4500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 6.0,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 5.9766799555272625,
+  "sizeMetres": {
+    "width": 3.2848,
+    "height": 6.0,
+    "depth": 3.2386
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_fe8827b4-27f1-4594-9dd3-ee978a36f7d5",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_fe8827b4-27f1-4594-9dd3-ee978a36f7d5",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_fe8827b4-27f1-4594-9dd3-ee978a36f7d5",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

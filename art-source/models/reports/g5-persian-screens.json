@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-persian-screens.glb",
+    "bytes": 46843924,
+    "sha256": "d2f1d08ae907960e903728273e8fd4e38d7feb43d5e69e9d432096988f44eb3f",
+    "triangles": 1426680
+  },
+  "output": {
+    "path": "assets/models/world/g5-persian-screens.glb",
+    "bytes": 288268,
+    "sha256": "de4e03d80e8e5e21f1f3e51e998cd3345b89eba9398a2641548e5f4c78ad68ac",
+    "triangles": 3919
+  },
+  "settings": {
+    "triangles": 4000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.2,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.2320231088244515,
+  "sizeMetres": {
+    "width": 1.2506,
+    "height": 2.2,
+    "depth": 3.2376
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_68db1312-054c-497c-b8d8-051533290409",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_68db1312-054c-497c-b8d8-051533290409",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_68db1312-054c-497c-b8d8-051533290409",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}
