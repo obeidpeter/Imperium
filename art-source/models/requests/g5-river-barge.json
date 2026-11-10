@@ -1,0 +1,100 @@
+{
+  "id": "g5-river-barge",
+  "status": "G5 final batch: processed, compressed and reviewed; ships as g5-river-barge, in Chapters I, II, IV, VIII and X (on the web in Chapter II only)",
+  "chapters": [
+    1,
+    2,
+    4,
+    8,
+    10
+  ],
+  "use": "A Danube cargo barge afloat on the distant river beyond the board's north edge, in the battles whose scenes have it.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Danube river barge: a broad flat-bottomed cargo boat about eight metres long and two point five metres wide with a square stern and a gently raised bow, loaded amidships with stacked grain sacks, amphorae bedded in straw and a few barrels under a lashed brown leather sheet, a long steering oar at the stern and two long punting poles laid along the side. Tarred dark planks, brown leather, pale sacking, straw and terracotta. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, sea ship, sailing ship, raised mast, sails, cannons, cabin, deck house, water, waves, rowers",
+      "model_seed": 2616330,
+      "image_seed": 2616331,
+      "texture_seed": 2616332
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 330000,
+    "heightMetres": 1.5,
+    "minHeight": 1.35,
+    "maxHeight": 1.65,
+    "note": "A flat model: its height is set from its raw proportions at review. Reviewed: eight metres long by its raw proportions, 1.5 m from its keel to the top of its load."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T02:49:56.763Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, sea ship, sailing ship, raised mast, sails, cannons, cabin, deck house, water, waves, rowers",
+      "model_seed": 2616330,
+      "image_seed": 2616331,
+      "texture_seed": 2616332,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Danube river barge: a broad flat-bottomed cargo boat about eight metres long and two point five metres wide with a square stern and a gently raised bow, loaded amidships with stacked grain sacks, amphorae bedded in straw and a few barrels under a lashed brown leather sheet, a long steering oar at the stern and two long punting poles laid along the side. Tarred dark planks, brown leather, pale sacking, straw and terracotta. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8305,
+    "balanceSnapshotBefore": {
+      "balance": 8305,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "f3b119d7-91b8-4e66-ae2e-5aa41757a2db",
+      "state": "accepted",
+      "requestSha256": "8b59697c6b6269e28232271e972b3a7b3312f4106310f7c8d90d6c0426401395"
+    },
+    "taskId": "ea65184d-69e0-4696-b2e2-cdb88525db55",
+    "status": "success",
+    "generatedAt": "2026-11-10T02:51:39.394Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-river-barge.glb",
+    "rawBytes": 45822068,
+    "rawSha256": "1c13baef1d27c5fb1bb146831d370c2474c9bcbc61419397492cc0c1c9394ae7",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Danube river barge: a broad flat-bottomed cargo boat about eight metres long and two point five metres wide with a square stern and a gently raised bow, loaded amidships with stacked grain sacks, amphorae bedded in straw and a few barrels under a lashed brown leather sheet, a long steering oar at the stern and two long punting poles laid along the side. Tarred dark planks, brown leather, pale sacking, straw and terracotta. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616331,
+      "model_seed": 2616330,
+      "texture_seed": 2616332,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, sea ship, sailing ship, raised mast, sails, cannons, cabin, deck house, water, waves, rowers",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T02:49:57.168831Z",
+    "tripoCompletedAt": "2026-11-10T02:51:32.083312Z",
+    "tripoRender": "art-source/models/raw/g5-river-barge-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A flat-bottomed boat with a square stern and a raised bow, loaded with grain sacks, two amphorae, a barrel and a load under a lashed leather sheet; short oars in rowlocks came in place of the punting poles. Processed from its raw proportions at 7.8 m long and 1.5 m from its keel to the top of its load, 4.2 m across its oars."
+  }
+}

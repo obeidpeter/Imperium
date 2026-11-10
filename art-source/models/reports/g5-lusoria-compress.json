@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g5-lusoria.glb",
+  "output": "assets/models/world/g5-lusoria.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 270132,
+    "gzipBytes": 175853,
+    "sha256": "2c79f06e688d9d374cd9de2063fbc77bd550e00c33efcc07dc9d0a8601fd578f"
+  },
+  "after": {
+    "bytes": 257372,
+    "gzipBytes": 247616,
+    "sha256": "2e5b8bf207fb190a5e23785705c9424c2e2962c7c69cb5f337bc52a95f1e591f"
+  },
+  "geometryUnchanged": true,
+  "triangles": 4900,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 2888
+      },
+      "bytes": 6375,
+      "psnr": 47.937
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 23626
+      },
+      "bytes": 44804,
+      "psnr": 35.73
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 22446
+      },
+      "bytes": 38086,
+      "psnr": 36.485
+    }
+  ]
+}

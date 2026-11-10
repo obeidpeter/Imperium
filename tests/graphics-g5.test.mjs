@@ -9,8 +9,8 @@ import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {playRealtime} from '../scripts/realtime-autoplay.mjs';
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
 import {stageEncounter} from '../src/showcase/live-figures.js';
-import {gridToWorld,roadSegments,distantRiverCentre} from '../src/showcase/environment-layout.js';
-import {createWaterSampler} from '../src/showcase/environment-water.js';
+import {gridToWorld,roadSegments,distantRiverCentre,RIVER_WATER_LEVEL} from '../src/showcase/environment-layout.js';
+import {createWaterSampler,createWaterLevelSampler,DISTANT_RIVER_LEVEL} from '../src/showcase/environment-water.js';
 import {createRoadSurfaceSampler} from '../src/showcase/environment-road-surface.js';
 import {regionalPlacementBounds} from '../src/showcase/environment-regional-world.js';
 import {fieldModelUrls,fieldObjectModel,fieldModelPlacements,createFieldModelPieces,battlePropPlacements,aftermathDebrisPlacements} from '../src/showcase/field-models.js';
@@ -23,15 +23,16 @@ import {FIELD_OBJECT_MODELS,BATTLE_PROP_MODELS,AFTERMATH_DEBRIS_MODELS,WORLD_CAT
 // generated models on their cells in place of the code-built pieces (the supply cart and its load, Roman and eastern;
 // the timber barricade; the pitch brazier; Chapter V's Persian ram, siege ramp and countermine), the set
 // pieces beyond the board (siege engines and their ammunition behind the Roman line, Roman siege works where the Romans
-// attack a wall, a Gothic wagon laager and Persian siege works beyond the north edge), and on the walked field after a
-// win, the beaten side's gear beside its fallen. Presentation only: these tests prove where models stand, from battles
+// attack a wall, a Gothic wagon laager and Persian siege works beyond the north edge, a patrol boat and a barge on the
+// distant river beyond it), and on the walked field after a win, the beaten side's gear beside its fallen. Presentation only: these tests prove where models stand, from battles
 // reached by legal commands, not anything a player does.
 const root=new URL('../',import.meta.url),read=async path=>JSON.parse(await readFile(new URL(path,root),'utf8'));
 const PILOT=['g5-cart','g5-cart-load','g5-barricade','g5-ram','g5-carroballista','g5-onager'];
 const FIRST=['g5-brazier','g5-countermine','g5-siege-ramp','g5-cart-east','g5-ballista','g5-shot-stack','g5-bolt-crate',
   'g5-siege-tower','g5-mantlets','g5-fascines','g5-wagon-gothic','g5-wagon-gothic-covered','g5-persian-tower','g5-persian-screens',
   'g5-debris-gothic','g5-debris-east','g5-debris-roman','g5-debris-standard'];
-const SHIPPED=[...PILOT,...FIRST];
+const FINAL=['g5-signal','g5-signal-east','g5-lusoria','g5-river-barge'];
+const SHIPPED=[...PILOT,...FIRST,...FINAL];
 const EAST=[5,6,9],CART_STATES=['available','secured','forgone','missed'];
 const saves=new Map();let campaign;
 function battles(){
@@ -56,6 +57,7 @@ function expectedModel(o,state,chapter){
   if(o.gatePanel)return null;
   const east=EAST.includes(chapter);
   if(o.kind==='stores'&&CART_STATES.includes(state))return east?'g5-cart-east':'g5-cart';
+  if(o.kind==='signal'&&CART_STATES.includes(state))return east?'g5-signal-east':'g5-signal';
   if(o.kind==='barricade'&&state==='intact'&&chapter>=3)return 'g5-barricade';
   if(o.kind==='brazier'&&['unlit','burning'].includes(state)&&chapter>=3)return 'g5-brazier';
   if(chapter!==5||state!=='active')return null;
@@ -91,7 +93,7 @@ test('every model G5 ships has its task in the ledger, its manifest entry and it
     const request=await read(entry.source.prompt),p=request.provenance;
     assert.equal(tasks.find(t=>t.id===request.id&&t.operation==='text_to_model')?.taskId,p.taskId,`${entry.id}: its generation is in the ledger`);
     assert.equal(entry.source.taskId,p.taskId);assert.equal(entry.source.credits,20);
-    assert.match(request.status,/^G5 (pilot|first batch): processed, compressed and reviewed/,`${entry.id} is reviewed`);
+    assert.match(request.status,/^G5 (pilot|first batch|final batch): processed, compressed and reviewed/,`${entry.id} is reviewed`);
     const info=await inspectModel(await readFile(new URL(entry.path,root))),b=request.budget;
     assert.deepEqual(budgetProblems(info,{bytes:b.bytes,triangles:b.triangles,texture:b.texture,minHeight:b.minHeight,maxHeight:b.maxHeight}),[],entry.id);
     assert.equal(info.bytes,entry.export.bytes);assert.equal(info.triangles,entry.export.triangles,`${entry.id} records the shipped triangle count`);
@@ -100,7 +102,7 @@ test('every model G5 ships has its task in the ledger, its manifest entry and it
   }
   for(const t of tasks.filter(t=>t.rejectedAtReview)){
     assert.ok(!shipped.some(e=>e.source.taskId===t.taskId),`${t.id} is not shipped`);
-    assert.match((await read(`art-source/models/requests/${t.id}.json`)).status,/^G5 (pilot|first batch): rejected/);
+    assert.match((await read(`art-source/models/requests/${t.id}.json`)).status,/^G5 (pilot|first batch|final batch): rejected/);
   }
 });
 
@@ -175,13 +177,13 @@ async function drawField(field,ids){
 
 test('the models stand in their cells, grounded, as plain meshes over the cached models (the scenery\'s shader programs), and leave the code-built pieces to every other object', async () => {
   const byId=Object.fromEntries(battles().map(b=>[b.id,b]));
-  // A Roman field: the cart and its load, the barricade's two panels and the pitch brazier (Chapter III's station,
-  // whose web download carries them all).
+  // A Roman field: the cart and its load, the barricade's two panels, the pitch brazier and the signal post (Chapter
+  // III's station, whose web download carries them all).
   {
-    const {e}=byId['ch3-station'],{features,records,meshes,disposed}=await drawField(e,['g5-cart','g5-cart-load','g5-barricade','g5-brazier']);
+    const {e}=byId['ch3-station'],{features,records,meshes,disposed}=await drawField(e,['g5-cart','g5-cart-load','g5-barricade','g5-brazier','g5-signal']);
     assert.equal(meshes.filter(m=>/g5-barricade/.test(m.name)).length,2,'two barricade panels');
     const b=records.find(r=>r.kind==='barricade');assert.ok(b.max[0]-b.min[0]>2.1&&b.max[2]-b.min[2]<1.2,'the barricade spans its cell east to west');
-    assert.ok(features.group.getObjectByName(`signal · ${e.field.objects.find(o=>o.kind==='signal').state}`),'the code-built signal station');
+    assert.ok(records.find(r=>r.kind==='signal')?.model,'the signal station is the Roman signal post');
     features.dispose();assert.deepEqual(disposed,[],'the cache keeps its geometry and materials');
   }
   // Chapter V's city: the eastern cart, the barricade, the brazier, the countermine and the Persian siege ramp, and the
@@ -189,7 +191,7 @@ test('the models stand in their cells, grounded, as plain meshes over the cached
   {
     const {e}=byId['ch5-wall'],ram=e.field.objects.find(o=>o.kind==='ram')??{id:'ram-test',kind:'ram',state:'active',x:5,y:4};
     const field={...e,field:{...e.field,objects:[...e.field.objects.filter(o=>o.kind!=='ram'),{...ram,state:'active'}]}};
-    const ids=['g5-cart-east','g5-cart-load','g5-barricade','g5-brazier','g5-ram','g5-countermine','g5-siege-ramp'];
+    const ids=['g5-cart-east','g5-cart-load','g5-barricade','g5-brazier','g5-ram','g5-countermine','g5-siege-ramp','g5-signal-east'];
     const {features,meshes,disposed}=await drawField(field,ids);
     assert.deepEqual(features.stats().fieldModels,{models:ids.length,instances:ids.length+1,drawn:meshes.length},'one instance each, the barricade two');
     features.dispose();assert.deepEqual(disposed,[],'the cache keeps its geometry and materials');
@@ -218,13 +220,13 @@ test('a burning brazier drawn by its model keeps the stage\'s flame, on its heap
 
 // Chapter II's rearguard: past the north edge the marsh's water and the distant river leave dry room for one wagon.
 const NO_DRY_ROOM={'ch2-rearguard':['g5-wagon-gothic-covered']};
-test('the set pieces stand beyond the board in their own battles, on dry ground, clear of the roads that leave it, of the scene\'s other scenery and of each other', async () => {
+test('the set pieces stand beyond the board in their own battles, on dry ground or afloat on the distant river, clear of the roads that leave it, of the scene\'s other scenery and of each other', async () => {
   const seen=new Map();
   for(const {id,chapter,e}of battles()){
     const all=sceneryPlacements(e,{chapter,desktop:true}),props=all.filter(p=>BATTLE_PROP_MODELS[p.id]),others=all.filter(p=>!BATTLE_PROP_MODELS[p.id]);
     const expected=Object.entries(BATTLE_PROP_MODELS).filter(([prop,m])=>m.encounters.includes(id)&&!NO_DRY_ROOM[id]?.includes(prop)).map(([prop])=>prop);
     assert.deepEqual(props.map(p=>p.id),expected,`${id}'s set pieces`);
-    const water=createWaterSampler(e,{chapter});
+    const water=createWaterSampler(e,{chapter}),level=createWaterLevelSampler(e,{chapter});
     const hx=e.width*1.25,hz=e.height*1.25,road=createRoadSurfaceSampler(roadSegments(e,2.5),2.5).distance;
     const boxes=props.map(p=>{const m=BATTLE_PROP_MODELS[p.id];return {id:p.id,minX:p.x-m.fit.width/2,maxX:p.x+m.fit.width/2,minZ:p.z-m.fit.depth/2,maxZ:p.z+m.fit.depth/2};});
     for(const p of props){
@@ -235,6 +237,13 @@ test('the set pieces stand beyond the board in their own battles, on dry ground,
         const host=props.find(q=>q.id===m.beside.model);assert.ok(host,`${id}: ${p.id} stands only by its engine`);
         assert.ok(Math.abs(Math.hypot(p.x-host.x,p.z-host.z)-Math.hypot(m.beside.x,m.beside.z))<1e-6,`${id}: ${p.id} beside ${m.beside.model}`);
         assert.equal(p.yaw,m.yaw??host.yaw);
+      }else if(m.edge==='river'){
+        // Afloat on the distant river beyond the north edge, along the board, sunk by its draft below the surface, and
+        // wholly where that surface shows: not under a river that leaves the board and runs on over it, higher.
+        const river=distantRiverCentre(e);
+        assert.ok(p.z+d< -hz&&Math.abs(p.z-river)+d<=8,`${id}: ${p.id} on the distant river`);assert.ok(Math.abs(p.x)<=hx*.9+1e-9,`${id}: ${p.id} along the board`);
+        assert.equal(p.groundY,DISTANT_RIVER_LEVEL-m.draft);assert.ok(m.draft>0&&m.draft<1,`${p.id} floats`);assert.equal(p.yaw,m.yaw);
+        for(let i=0;i<=8;i++)for(let j=0;j<=8;j++)assert.equal(level(p.x-w+i*w/4,p.z-d+j*d/4),DISTANT_RIVER_LEVEL,`${id}: ${p.id} on the distant river's own surface`);
       }else if(m.edge==='north'){
         assert.ok(p.z+d< -hz&&p.z> -hz-9,`${id}: ${p.id} a few metres beyond the north edge`);assert.ok(Math.abs(p.x)+w<hx,`${id}: ${p.id} along the board`);
         assert.equal(p.yaw,m.yaw);
@@ -244,7 +253,9 @@ test('the set pieces stand beyond the board in their own battles, on dry ground,
       }
       assert.deepEqual(p.fitWithin,m.fit);assert.ok(!p.fallbackName,'no code-built stand-in');
       for(const [x,z]of [[p.x,p.z],[p.x-w,p.z-d],[p.x-w,p.z+d],[p.x+w,p.z-d],[p.x+w,p.z+d]])assert.ok(road(x,z)>=2.4,`${id}: ${p.id} clear of the road`);
-      for(let i=0;i<=4;i++)for(let j=0;j<=4;j++)assert.ok(!water(p.x-w+i*w/2,p.z-d+j*d/2),`${id}: ${p.id} on dry ground`);
+      for(let i=0;i<=4;i++)for(let j=0;j<=4;j++){
+        const wet=water(p.x-w+i*w/2,p.z-d+j*d/2);assert.equal(wet,m.edge==='river',`${id}: ${p.id} ${m.edge==='river'?'wholly on the water':'on dry ground'}`);
+      }
       for(const o of others){
         const b=o.component?regionalPlacementBounds(o):{minX:o.x-2.2,maxX:o.x+2.2,minZ:o.z-2.2,maxZ:o.z+2.2};
         assert.ok(p.x+w<=b.minX||p.x-w>=b.maxX||p.z+d<=b.minZ||p.z-d>=b.maxZ,`${id}: ${p.id} clear of ${o.id}`);
@@ -252,8 +263,9 @@ test('the set pieces stand beyond the board in their own battles, on dry ground,
     }
     for(const a of boxes)for(const b of boxes)if(a!==b)assert.ok(a.maxX<=b.minX||a.minX>=b.maxX||a.maxZ<=b.minZ||a.minZ>=b.maxZ,`${id}: ${a.id} clear of ${b.id}`);
     assert.deepEqual(sceneryPlacements(e,{chapter,desktop:true}),all,'presentation is data, not randomness');
-    // None stands in a camp or a contest, nor in the training ground.
+    // None stands in a camp or a contest; the training ground has only the boats on its river.
     for(const kind of ['camp','contest'])assert.deepEqual(battlePropPlacements({...e,kind}),[],`no set piece in a ${kind}`);
+    if(e.type==='training')assert.ok(props.every(p=>BATTLE_PROP_MODELS[p.id].edge==='river'),'the drill has no engines or wagons');
   }
   for(const [id,m]of Object.entries(BATTLE_PROP_MODELS))assert.deepEqual(seen.get(id),m.encounters.filter(b=>!NO_DRY_ROOM[b]?.includes(id)),`${id} in each of its battles`);
   // The water is the scene's own: the marsh reaches past the board's marsh, the distant river lies beyond the north
@@ -262,6 +274,14 @@ test('the set pieces stand beyond the board in their own battles, on dry ground,
   const marsh=at('ch2-rearguard'),mine=at('ch5-mine'),city=at('ch9-city');
   assert.ok(wet(marsh,0,-marsh.e.height*1.25-1),'the marsh\'s water just past the north edge');
   assert.ok(wet(marsh,0,distantRiverCentre(marsh.e)),'the distant river');
+  // Where a river leaves the board it runs on, at its own level, over the near half of the distant river: the surface
+  // seen there is the higher one.
+  {
+    const ferry=at('ch8-ferry'),level=createWaterLevelSampler(ferry.e,{chapter:ferry.chapter}),river=distantRiverCentre(ferry.e);
+    const xs=[...new Set(Array.from({length:ferry.e.width},(_,x)=>x).filter(x=>level(gridToWorld({x,y:0},ferry.e,2.5).x,river+2)===RIVER_WATER_LEVEL))];
+    assert.ok(xs.length>0,'Chapter VIII\'s river runs on over the distant river');
+    for(const x of xs)assert.equal(level(gridToWorld({x,y:0},ferry.e,2.5).x,river-2),DISTANT_RIVER_LEVEL,'and the distant river\'s far half shows its own surface');
+  }
   assert.ok(wet(mine,0,-mine.e.height*1.25-16),'Chapter V\'s Euphrates');
   assert.ok(!wet(city,-city.e.width*1.25-6,0),'the dry ground west of Palmyra\'s field');
   // Drawn as scenery, on the ground, within their room, and never on Performance.
@@ -277,6 +297,20 @@ test('the set pieces stand beyond the board in their own battles, on dry ground,
   }
   scenery.dispose();cache.clear();
   assert.deepEqual(createSceneryModels(new T.Scene(),e,{chapter,quality:'performance',cache:createSceneryModelCache({load:async()=>new T.Group()})}).placements,[]);
+  // The boats float at their draft below the river's surface, whatever the ground beneath, within their room.
+  {
+    const {e,chapter}=at('ch2-marsh'),boats=['g5-lusoria','g5-river-barge'],urls=new Set(boats.map(worldModelUrl));
+    const cache=createSceneryModelCache({load:u=>urls.has(u)?loadFile(u):Promise.resolve(new T.Group())});
+    const scenery=createSceneryModels(new T.Scene(),e,{chapter,heightAt:slope,cache,desktop:true});await scenery.ready;
+    for(const id of boats){
+      const model=scenery.group.getObjectByName(id);assert.ok(model,`${id} is placed`);
+      const box=new T.Box3().setFromObject(model),m=BATTLE_PROP_MODELS[id];
+      assert.ok(Math.abs(box.min.y-(DISTANT_RIVER_LEVEL-m.draft))<1e-6,`${id} floats ${m.draft} m deep`);
+      assert.ok(box.max.x-box.min.x<=m.fit.width+1e-6&&box.max.z-box.min.z<=m.fit.depth+1e-6,`${id} within its room`);
+      assert.ok(box.max.x-box.min.x>box.max.z-box.min.z,`${id} lies along the stream`);
+    }
+    scenery.dispose();cache.clear();
+  }
 });
 
 test('on the walked field after a win the beaten side\'s gear lies beside its fallen, the first spot the war banner, and nothing before the win', async () => {
@@ -326,7 +360,8 @@ test('the web carries a G5 model only where its chapter\'s download has room; th
     'g5-ram':[5],'g5-countermine':[5],'g5-siege-ramp':[5],'g5-carroballista':[7,8,9,10],'g5-onager':[4,5,9,12],'g5-ballista':[4,5,9,12],
     'g5-shot-stack':[4,5,9,12],'g5-bolt-crate':[7,8,9,10],'g5-siege-tower':[9,12],'g5-mantlets':[9,12],'g5-fascines':[9,12],
     'g5-wagon-gothic':[1,2,3,4,7,8,10],'g5-wagon-gothic-covered':[1,2,3,4,7,8,10],'g5-persian-tower':[5],'g5-persian-screens':[5],
-    'g5-debris-gothic':[1,2,3,4,7,8,10],'g5-debris-east':EAST,'g5-debris-roman':[12],'g5-debris-standard':BATTLES};
+    'g5-debris-gothic':[1,2,3,4,7,8,10],'g5-debris-east':EAST,'g5-debris-roman':[12],'g5-debris-standard':BATTLES,
+    'g5-signal':WEST,'g5-signal-east':EAST,'g5-lusoria':[1,2,4,8,10],'g5-river-barge':[1,2,4,8,10]};
   for(const id of SHIPPED){
     const entry=WORLD_CATALOG[id];assert.deepEqual(entry.files,[`assets/models/world/${id}.glb`]);assert.deepEqual(entry.chapters,CHAPTERS[id],`${id}'s chapters`);
     assert.deepEqual(entry.web,entry.chapters.filter(c=>!ROOM[c]||ROOM[c].includes(id)),`${id}'s web chapters`);
@@ -343,7 +378,7 @@ test('the web carries a G5 model only where its chapter\'s download has room; th
   assert.deepEqual(desktopOnlyWorldFiles().filter(f=>/\/g5-/.test(f)).sort(),
     ['g5-bolt-crate','g5-debris-roman','g5-fascines','g5-mantlets','g5-siege-tower'].map(id=>`assets/models/world/${id}.glb`));
   // The field objects' models follow their kinds' chapters, and a scene keeps every model it draws warm.
-  assert.deepEqual(Object.keys(FIELD_OBJECT_MODELS).sort(),['g5-barricade','g5-brazier','g5-cart','g5-cart-east','g5-cart-load','g5-countermine','g5-ram','g5-siege-ramp']);
+  assert.deepEqual(Object.keys(FIELD_OBJECT_MODELS).sort(),['g5-barricade','g5-brazier','g5-cart','g5-cart-east','g5-cart-load','g5-countermine','g5-ram','g5-siege-ramp','g5-signal','g5-signal-east']);
   for(const {id,chapter,e}of battles()){
     const urls=fieldModelUrls(e,{chapter,desktop:true}).map(([,u])=>u),scenery=new Set(sceneryPlacements(e,{chapter,desktop:true}).map(p=>p.url));
     const catalogued=[...Object.entries(FIELD_OBJECT_MODELS),...Object.entries(AFTERMATH_DEBRIS_MODELS)];

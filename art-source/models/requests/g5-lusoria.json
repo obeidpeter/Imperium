@@ -1,0 +1,100 @@
+{
+  "id": "g5-lusoria",
+  "status": "G5 final batch: processed, compressed and reviewed; ships as g5-lusoria, in Chapters I, II, IV, VIII and X (on the web in Chapter II only)",
+  "chapters": [
+    1,
+    2,
+    4,
+    8,
+    10
+  ],
+  "use": "A Roman river patrol boat of the Danube fleet afloat on the distant river beyond the board's north edge, in the battles whose scenes have it.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman river patrol boat of the Danube fleet, a navis lusoria: a long narrow open rowing galley about nine metres long and two metres wide, its low hull of dark tarred oak planks curving up at bow and stern, twelve oars a side resting level on the water line, the mast lowered and laid along the benches with its furled square sail, a broad steering oar at the stern and a row of plain red oval shields along the gunwale. Dark tarred oak, red shields and pale furled linen. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, sea ship, raised sails, pirate ship, dragon head, cannons, cabin, deck house, water, waves, rowers",
+      "model_seed": 2616320,
+      "image_seed": 2616321,
+      "texture_seed": 2616322
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 330000,
+    "heightMetres": 5.7,
+    "minHeight": 5.13,
+    "maxHeight": 6.27,
+    "note": "A flat model: its height is set from its raw proportions at review. Reviewed: the boat came with its mast raised and its square sail set, nine metres long by its raw proportions, 5.7 m to the masthead."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T02:47:57.312Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "person, people, figure, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, sea ship, raised sails, pirate ship, dragon head, cannons, cabin, deck house, water, waves, rowers",
+      "model_seed": 2616320,
+      "image_seed": 2616321,
+      "texture_seed": 2616322,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman river patrol boat of the Danube fleet, a navis lusoria: a long narrow open rowing galley about nine metres long and two metres wide, its low hull of dark tarred oak planks curving up at bow and stern, twelve oars a side resting level on the water line, the mast lowered and laid along the benches with its furled square sail, a broad steering oar at the stern and a row of plain red oval shields along the gunwale. Dark tarred oak, red shields and pale furled linen. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people."
+    },
+    "balanceBefore": 8325,
+    "balanceSnapshotBefore": {
+      "balance": 8325,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "e2d3ae69-b699-4800-8567-68934ec3502a",
+      "state": "accepted",
+      "requestSha256": "71e3719ef13a1385ecbe9c34cac256f4bf2585dff0107bb7fde422e0e3e19832"
+    },
+    "taskId": "58930a3c-74d7-45c0-8324-d38f6cf076e0",
+    "status": "success",
+    "generatedAt": "2026-11-10T02:49:56.054Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g5-lusoria.glb",
+    "rawBytes": 43806028,
+    "rawSha256": "68a1bc25466ff277b5086be268fd74b47ef48995ed7657eb0842f4905b2e2ac3",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman river patrol boat of the Danube fleet, a navis lusoria: a long narrow open rowing galley about nine metres long and two metres wide, its low hull of dark tarred oak planks curving up at bow and stern, twelve oars a side resting level on the water line, the mast lowered and laid along the benches with its furled square sail, a broad steering oar at the stern and a row of plain red oval shields along the gunwale. Dark tarred oak, red shields and pale furled linen. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette from above, restrained surface detail, level base and complete geometry from every side. No environment, ground plane, decorative display plinth, modern materials, text, logos or people.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2616321,
+      "model_seed": 2616320,
+      "texture_seed": 2616322,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "person, people, figure, animal, horse, ground plane, terrain, base plate, display plinth, text, letters, modern objects, fantasy, sea ship, raised sails, pirate ship, dragon head, cannons, cabin, deck house, water, waves, rowers",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T02:47:58.543315Z",
+    "tripoCompletedAt": "2026-11-10T02:49:49.320952Z",
+    "tripoRender": "art-source/models/raw/g5-lusoria-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the battles in the desktop build at High",
+    "notes": "A long open rowing galley of dark tarred planks with six oars a side, not twelve, round red shields along its gunwale and stem and stern posts curving up to red-capped heads, its mast raised and its square sail set rather than lowered along the benches as asked. Accepted: from the battle's distance it reads as an oared river warship, its pale sail the brightest thing on the river. Processed from its raw proportions at 9.1 m long and 5.7 m to the masthead, 5.4 m across its oars."
+  }
+}

@@ -2,6 +2,29 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G5, the last batch: the signal posts and boats on the river; G5 closes ([the plan](docs/graphics-tripo-plan.md#the-last-of-g5-10-november))
+
+Four Tripo models, made for 80 credits. A survey of what the battles still drew in code narrowed the first batch's proposal of about fifty: every battle's surroundings are already its chapter's regional kit, and the fortified gates, breaches and bridges the board kit's, so the one field object left was the signal station. G5 closes at 660 of its 1,845 credits, with 28 models.
+
+- **The signal station drawn by models,** on its cell in every battle, in all four of its states, in place of the code-built mast:
+  - a Roman post in the western battles: a mast on a fieldstone cairn with a crossbar, a long red banner, an iron fire basket and a stack of straw bundles;
+  - an eastern post in Chapters V, VI and IX: a stone pillar with a fire basket and brushwood on its top, a ladder and a red pennant.
+
+  The objective's marker shows whether the station was secured, forgone or missed. The code-built mast stays on Performance and after a failed download.
+- **Boats on the distant river** beyond the north edge, in the nine battles whose scenes have it (Chapters I, II, IV, VIII and X, including the training ground): a Roman patrol boat under oars and a square sail, and a Danube barge loaded with sacks and amphorae. Each floats on the first spot wholly on the river's water, its hull sunk by its draft below the surface, the patrol boat's oar blades at the waterline. Like the other set pieces, they have no code-built stand-in.
+- **Reviewed in the game,** before and after, in the battles of Chapters I, II, VI and VIII ([the art record](docs/art-generation.md#the-rest-of-g5-the-final-batch--10-november-2026)):
+  - the signal posts read at once, where the code-built mast was the smallest piece on its field;
+  - both boats float on the river behind Chapter II's marsh, the patrol boat's pale sail the brightest thing on the water.
+- **Boats only on the distant river's own surface:** at Chapter VIII's ferry the review found the barge looking sunk. The ferry's river leaves the board and runs on, at its own level 0.8 m higher, over the near half of the distant river, and the barge had taken a spot under it. The water sampler now tells which surface shows at a point, the highest where two meet, and a boat floats only where the distant river's own surface shows. In Chapter VIII's two battles and Chapter X's the boats lie further along the river.
+- **None of the four generations was rejected.** The patrol boat came with its mast raised and its sail set, where a lowered mast was asked for; it was kept.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web the Roman post rides in Chapters II and III, the eastern post in V and the boats in II, and the other chapters keep the code-built mast and an empty river. The largest chapter download is still 27.96 of 28 MB, Chapter I's 3D download 17.88 of 18 MB, and the complete web game 76.09 of 80 MB.
+- **What G5 leaves:** its other 1,185 credits join the 1,840 held from G3, for the animals (G4), the faces and people (G6), and the arms and standards (G2), as [the plan](docs/graphics-tripo-plan.md#what-g5-leaves) proposes. The animals come next.
+- **Checks:** `tests/graphics-g5.test.mjs` also covers:
+  - the batch's ledger and every shipped model's budget;
+  - the signal station drawn by its post in every state, the eastern post in the eastern battles;
+  - the boats wholly where the distant river's own surface shows in each of their battles, at their draft below it, lying along the stream and within their room, and the ferry river's water seen over the distant river's near half;
+  - each chapter's web and desktop packs.
+
 ### An objective the camera turns to keeps its own piece whole
 
 - When the camera looks at an objective, as **Find objective** leaves it, the game opens the scenery between the camera and the objective, so that walls, roofs and trees do not hide it. The opening reached the objective's own piece: the near half of a cart standing at an objective faded, whatever **X** was set to. The review of G5's first batch found it ([the art record](docs/art-generation.md#the-rest-of-g5-the-first-batch--9-november-2026)).

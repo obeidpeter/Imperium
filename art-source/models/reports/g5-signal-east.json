@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g5-signal-east.glb",
+    "bytes": 47691248,
+    "sha256": "44e087b9204c566781d82c339e637e5edfd20a786e1660858b4b82cb770c5ddc",
+    "triangles": 1478132
+  },
+  "output": {
+    "path": "assets/models/world/g5-signal-east.glb",
+    "bytes": 310664,
+    "sha256": "3ce8e3dbafa51d754c0b4e7fc76044c32a0674c067dde65e84d6525b00da6d96",
+    "triangles": 4410
+  },
+  "settings": {
+    "triangles": 4500,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 2.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 2.791423599923048,
+  "sizeMetres": {
+    "width": 1.8468,
+    "height": 2.8,
+    "depth": 2.2121
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_8b545a56-3e81-4474-9a60-fc3ad51b27c7",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_8b545a56-3e81-4474-9a60-fc3ad51b27c7",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_8b545a56-3e81-4474-9a60-fc3ad51b27c7",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

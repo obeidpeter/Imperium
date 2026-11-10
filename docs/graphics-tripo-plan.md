@@ -33,7 +33,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
 | G4 | Animals | 600 | |
-| G5 | Battle and siege | 1,845 | [the pilot](#g5s-pilot-9-november) (140 credits) and [the first batch](#the-rest-of-g5-the-first-batch-9-november) (440) done: 24 models. The pilot [proposes](#what-g5s-pilot-proposes) where G3's held 1,840 go, and the first batch [what comes next](#what-the-first-batch-proposes), within G5's 1,265 left |
+| G5 | Battle and siege | 1,845 | done: [the pilot](#g5s-pilot-9-november) (140 credits), [the first batch](#the-rest-of-g5-the-first-batch-9-november) (440) and [the last](#the-last-of-g5-10-november) (80): 28 models. Its other 1,185 credits [join G3's held 1,840](#what-g5-leaves) for G4, G6 and G2 |
 | G6 | Faces and people | 1,100 | |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
 | | **Total** | **7,900** | |
@@ -389,6 +389,60 @@ The batch bears out the pilot's lesson and adds three:
   - spent bolts and a broken cart for the walked field.
 - **The regional sets,** about 40 models: each region's battles take field objects and set pieces in their own style: the Danube (I, IV, VIII), the marshes (II), the East (V, VI), Palmyra (IX) and Italy (VII, X, XII).
 - **Downloads:** the web's chapter downloads are nearly full. Chapter II has 2.6 MB of room, III 1.2 MB and V 0.9 MB, and the other battles' chapters under 0.2 MB, so most of the last batches would ship in the desktop app alone. Raising the web's 28 MB chapter limit remains the owner's call.
+
+### The last of G5 (10 November)
+
+Four models, where the first batch proposed about fifty. Before they were asked for, a survey of what the battles still draw in code changed the proposal:
+- **The regional sets** would have duplicated what is already there. Every battle's surroundings are its chapter's regional kit, the Blender buildings around the board, and Chapter V's are its pilot's.
+- **The side gate and the footbridge** stand only in the fortified fields, where the board kit draws the gates, breaches and bridges.
+- **The signal station** is the one field object every battle still draws in code.
+- **Left out, after the first batch's lessons:**
+  - the Gothic ladder, the scorpion and the spent bolts, which are thin or small and do not read at the field's distance;
+  - the palisades, which would stand past the north edge, where the fortified fields have walls of their own and the wet chapters little dry room;
+  - the broken cart, since the walked field already has the beaten side's gear and the fallen banner.
+
+| Model | Where it stands | Chapters |
+| --- | --- | --- |
+| a Roman signal post: a mast on a fieldstone cairn, with its red banner, fire basket and beacon stack | on the signal station's cell, in every state | I–IV, VII, VIII, X, XII |
+| an eastern signal post: a stone pillar with its fire basket, brushwood, ladder and pennant | the same, in the eastern battles | V, VI, IX |
+| a Roman river patrol boat under oars and a square sail | afloat on the distant river beyond the north edge | the battles of I, II, IV, VIII and X |
+| a Danube barge loaded with sacks, amphorae and a lashed leather sheet | the same, further along the river | the same |
+
+- **Credits:** 80 of the batch's 100-credit ceiling: four generations at 20, none rejected. [The ledger](../art-source/models/graphics-g5-credits.json) has every task. The balance went from 8,365 to 8,285.
+- **Field objects:** the signal station takes one model in all four of its states, as the cart does, and the objective's marker shows whether it was secured, forgone or missed. The code-built mast stays on Performance, after a failed download and where a web download has no room.
+- **On the water:** the boats have a placement of their own. Each takes the first spot along the distant river whose footprint lies wholly where the river's own surface shows, sunk by its draft below the surface. Both float in all nine battles whose scenes have the river, including the training ground.
+- **Budgets:** the patrol boat came with its mast raised and its square sail set, where a lowered mast was asked for. Like the barge's, its height was set from its raw proportions: 5.7 m to the masthead.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web:
+  - the Roman post rides in Chapters II and III, the eastern post in V, and the boats in II;
+  - the other chapters keep the code-built mast and an empty river;
+  - the largest chapter download is still 27.96 of 28 MB and Chapter I's 3D download 17.88 of 18 MB; the complete web game is 76.09 of 80 MB.
+- **The review,** in the desktop build at High, each battle restored from a moment the real-time bot reached from New Game, before (G5's files refused) and after:
+  - the signal posts read at once where the code-built mast, a thin pole on a pale block, was the smallest piece on its field: the Roman post's long red banner at Chapter I's road, the eastern post's pale pillar at Chapter VI's wells;
+  - in Chapter II's marsh battle both boats float on the river behind the Gothic wagons' bank, the patrol boat's pale sail the brightest thing on the water;
+  - at Chapter VIII's ferry the barge looked sunk, only its load above the water. The ferry's river leaves the board and runs on, at its own level 0.8 m higher, over the near half of the distant river, and the barge had taken a spot under it. The boats now keep to where the distant river's own surface shows, and lie further along the river in Chapter VIII's two battles and Chapter X's;
+  - seen again after the fix, both boats at Chapter VIII's ferry float whole: the barge at the river's east end, and the patrol boat upstream of where the ferry's river comes in.
+
+![The signal station before (the code-built mast) and with the batch's signal posts, in the desktop build at High](images/g5-final-batch-signals.jpg)
+
+![The distant river before (empty) and with the batch's boats, and Chapter VIII's barge before and after the fix](images/g5-final-batch-boats.jpg)
+
+#### G5 closes
+
+G5 ends at 660 of its 1,845 credits with 28 models: six in the pilot, 18 in the first batch and four in the last. Of its 33 generations, five were rejected (15%), under the 20% stop rule. The battles' field objects take models in the states that read, and the code-built pieces stay for the rest: the Gothic ladder, each object's spent or broken state, and wherever a web download has no room. Behind the lines stand the engines, the siege works, the wagons and the boats, and the walked field has the beaten side's gear. Its lessons go to the releases after it:
+- solid shapes read from the camera's height, while thin frames, lattices and small stores do not;
+- Tripo gives spoked wheels whatever is asked, and thin wicker fails;
+- name every material's colour, and set a flat model's height from its raw proportions;
+- check a placement in the game, where water, walls and roads decide what fits.
+
+#### What G5 leaves
+
+G5's other 1,185 credits join the 1,840 held from G3: 3,025 for the three releases still to come, beyond their own caps of 2,400.
+- **Where the plan stands:** it has spent 2,415 credits, and its 70% floor (7,490) needs 5,075 more. That is nearly all of what G4, G6 and G2 could spend: 5,425 with the held credits.
+- **G5's pilot's proposal stands:** the held credits go where the camera still meets the weakest work.
+- **G5's 1,185 follow it,** in the same proportions: G6 +580, G4 +320 and G2 +285. G6's cap with its held credits would be 2,580, G4's 1,420 and G2's 1,425.
+- **Each release's pilot proposes its counts,** as G3's and G5's did.
+
+The order stays: the animals (G4) next, then the faces and people (G6), then the arms and standards (G2). If all of it is spent, the plan ends near 7,840 of its 7,900 credits, 73.3% of the balance.
 
 ## Around every release, at no credit cost
 

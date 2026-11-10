@@ -9,8 +9,8 @@
     "textWithStandardTextures": 20,
     "source": "the calibration's measured prices (docs/graphics-calibration.md); each task's reported credits_consumed is recorded below"
   },
-  "spentCredits": 580,
-  "remainingAuthorization": 1265,
+  "spentCredits": 660,
+  "remainingAuthorization": 1185,
   "batches": [
     {
       "batch": "pilot",
@@ -383,6 +383,73 @@
         ],
         "note": "4 of 22 generations (18%) rejected at review, under the plan's 20% stop rule: g5-ballista (its colour map came out a flat neutral grey (saturation 4 of 255), so the whole engine read as grey clay, and its twisted-rope springs came as metal coil springs); g5-barricade-east (the two hurdles came standing apart, face to face 1.6 m apart with a pole between them, not side by side in one line, and the row of stakes in front came as flat white blades); g5-barricade-east-b (four wicker baskets hanging by ropes from a rail between two posts, over a log: a rack of baskets, not a breastwork, and no barricade at the field's distance); g5-mantlets (three narrow hide-hung wicker racks, each about 0.6 m wide, staggered on a diagonal: about two metres across in all where six were asked, and from above three thin lines, not the bold silhouette the release asks for)."
       }
+    },
+    {
+      "batch": "final batch",
+      "date": "2026-11-10",
+      "ceilingCredits": 100,
+      "plannedCredits": 80,
+      "spentCredits": 80,
+      "items": [
+        "g5-signal",
+        "g5-signal-east",
+        "g5-lusoria",
+        "g5-river-barge"
+      ],
+      "note": "G5's last batch, after the first batch's review and a survey of what battles still draw in code: the signal station is the only field object still code-built in every battle (the fortified gates and bridges are the board kit's, and every battle's surroundings are its chapter's regional kit), so the batch makes a Roman and an eastern signal post, and a Danube patrol boat and a cargo barge for the distant river beyond the north edge of Chapters I, II, IV, VIII and X. The ceiling leaves room for one redo.",
+      "balance": {
+        "before": 8365,
+        "after": 8285,
+        "source": "the account balance read before the first task and after the last (frozen 0)"
+      },
+      "rejected": {
+        "count": 0,
+        "of": 4,
+        "items": [],
+        "note": "None of the four generations was rejected at review; the ceiling's room for one redo was not used."
+      },
+      "tasks": [
+        {
+          "id": "g5-signal",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "a1faa042-8b98-4dff-bcd7-9f1f9b7c35bf",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-signal-east",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "8b545a56-3e81-4474-9a60-fc3ad51b27c7",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-lusoria",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "58930a3c-74d7-45c0-8324-d38f6cf076e0",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g5-river-barge",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "ea65184d-69e0-4696-b2e2-cdb88525db55",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        }
+      ]
     }
   ]
 }

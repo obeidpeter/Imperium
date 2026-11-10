@@ -19688,6 +19688,230 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-signal",
+      "path": "assets/models/world/g5-signal.glb",
+      "subject": "Release G5 battle prop: a Roman signal post: a mast on a fieldstone cairn with a red banner, a fire basket and a beacon stack",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "a1faa042-8b98-4dff-bcd7-9f1f9b7c35bf",
+        "generatedAt": "2026-11-10T02:39:05.238Z",
+        "prompt": "art-source/models/requests/g5-signal.json",
+        "rawBytes": 46067000,
+        "rawSha256": "ebdc9f0c6fda9db7af25d90b4717b19a60fba8be829bedc5420a94e24db6183b",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 3.0,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-signal.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-signal-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The battles' signal station (graphics plan, G5): the field object 'signal' on its cell in every battle of Chapters I, II, III, IV, VII, VIII, X and XII (the eastern battles take g5-signal-east), in each of its states, its banner square to the camera (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js), drawn as the scenery's placed models are, with their shader programs. The objective's marker shows whether the station was secured, forgone or missed. It stands for the code-built mast, which stays its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 7, 8, 10, 12 at Balanced/High, preloaded with the battle's world kits; on the web only 2, 3: the web downloads of Chapters I, IV, VII, VIII, X and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the code-built signal station.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 270028,
+        "gzipBytes": 261764,
+        "sha256": "d441d3fc2fbc53cbb65bcf71e02e9fd24aeaa83170eceb9f93e3cfa647147c77",
+        "triangles": 4410,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.2411,
+          "height": 3.0,
+          "depth": 1.6321
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-signal-east",
+      "path": "assets/models/world/g5-signal-east.glb",
+      "subject": "Release G5 battle prop: an eastern signal post: a stone pillar with a fire basket, brushwood, a ladder and a pennant",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "8b545a56-3e81-4474-9a60-fc3ad51b27c7",
+        "generatedAt": "2026-11-10T02:41:26.467Z",
+        "prompt": "art-source/models/requests/g5-signal-east.json",
+        "rawBytes": 47691248,
+        "rawSha256": "44e087b9204c566781d82c339e637e5edfd20a786e1660858b4b82cb770c5ddc",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 4500,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.8,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-signal-east.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-signal-east-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The battles' signal station (graphics plan, G5): the field object 'signal' on its cell in every battle of Chapters V, VI and IX (the other battles take g5-signal), in each of its states, its pole and pennant on the camera's side of the pillar (FIELD_OBJECT_MODELS, src/ui/world-catalog.js; src/showcase/field-models.js), drawn as the scenery's placed models are, with their shader programs. The objective's marker shows whether the station was secured, forgone or missed. It stands for the code-built mast, which stays its fallback. Decorative only: the rules keep its state; it takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 5, 6, 9 at Balanced/High, preloaded with the battle's world kits; on the web only 5: the web downloads of Chapters VI and IX have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download keep the code-built signal station.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 293752,
+        "gzipBytes": 283970,
+        "sha256": "06c3e8ed000914bcae9c3fbeb72ef3fb0690693cfc4247a1dabc7a6285b2785f",
+        "triangles": 4410,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.8468,
+          "height": 2.8,
+          "depth": 2.2121
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-lusoria",
+      "path": "assets/models/world/g5-lusoria.glb",
+      "subject": "Release G5 battle prop: a Roman river patrol boat under oars and a square sail, shields along its sides",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "58930a3c-74d7-45c0-8324-d38f6cf076e0",
+        "generatedAt": "2026-11-10T02:49:56.054Z",
+        "prompt": "art-source/models/requests/g5-lusoria.json",
+        "rawBytes": 43806028,
+        "rawSha256": "68a1bc25466ff277b5086be268fd74b47ef48995ed7657eb0842f4905b2e2ac3",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 5.7,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-lusoria.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-lusoria-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A boat on the distant river (graphics plan, G5): afloat on the river beyond the board's north edge, which the camera sees behind both armies, lying along the stream 0.4 m deep, its oar blades at the waterline, on the first spot clear of the scene's other scenery whose footprint lies wholly where the distant river's own surface shows, not under a river that leaves the board and runs on over it (battlePropPlacements, src/showcase/field-models.js), in the battles of Chapters I, II, IV, VIII and X whose scene has the river, the training ground's drill among them (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it lies off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 4, 8, 10 at Balanced/High, preloaded with the battle's scenery; on the web only 2: the web downloads of Chapters I, IV, VIII and X have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the river empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 257372,
+        "gzipBytes": 247616,
+        "sha256": "2e5b8bf207fb190a5e23785705c9424c2e2962c7c69cb5f337bc52a95f1e591f",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 9.0924,
+          "height": 5.7,
+          "depth": 5.4321
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g5-river-barge",
+      "path": "assets/models/world/g5-river-barge.glb",
+      "subject": "Release G5 battle prop: a flat-bottomed river barge loaded with sacks, amphorae and a lashed leather sheet",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "ea65184d-69e0-4696-b2e2-cdb88525db55",
+        "generatedAt": "2026-11-10T02:51:39.394Z",
+        "prompt": "art-source/models/requests/g5-river-barge.json",
+        "rawBytes": 45822068,
+        "rawSha256": "1c13baef1d27c5fb1bb146831d370c2474c9bcbc61419397492cc0c1c9394ae7",
+        "program": "graphics-g5",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.5,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g5-river-barge.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g5-river-barge-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "A boat on the distant river (graphics plan, G5): afloat on the river beyond the board's north edge, which the camera sees behind both armies, lying along the stream 0.25 m deep under its load, on the first spot clear of the scene's other scenery whose footprint lies wholly where the distant river's own surface shows, not under a river that leaves the board and runs on over it (battlePropPlacements, src/showcase/field-models.js), in the battles of Chapters I, II, IV, VIII and X whose scene has the river, the training ground's drill among them (BATTLE_PROP_MODELS, src/ui/world-catalog.js). With no code-built stand-in. Decorative only: it lies off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 4, 8, 10 at Balanced/High, preloaded with the battle's scenery; on the web only 2: the web downloads of Chapters I, IV, VIII and X have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave the river empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 264516,
+        "gzipBytes": 255742,
+        "sha256": "7812c41682091c651b27df4be2c3db38a7c7973372510f91a018001c8a9c5b83",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 4.2055,
+          "height": 1.5,
+          "depth": 7.8007
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -19777,13 +20001,13 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 209,
+    "models": 213,
     "textures": 15,
     "src": 1,
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 80706069,
-  "totalModelBytes": 65402591,
+  "totalBundledAssetBytes": 81791737,
+  "totalModelBytes": 66488259,
   "derivedGeometryBytes": 47428
 }

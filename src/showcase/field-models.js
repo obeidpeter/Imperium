@@ -1,8 +1,8 @@
 import * as T from '../../vendor/three/three.module.js';
 import {FIELD_OBJECT_MODELS,BATTLE_PROP_MODELS,AFTERMATH_DEBRIS_MODELS,worldModelUrl,worldAssetShown} from '../ui/world-catalog.js';
-import {gridToWorld,roadSegments} from './environment-layout.js';
+import {gridToWorld,roadSegments,distantRiverCentre} from './environment-layout.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
-import {createWaterSampler} from './environment-water.js';
+import {createWaterLevelSampler,DISTANT_RIVER_LEVEL} from './environment-water.js';
 
 // The battle's field objects drawn from generated models (graphics plan, G5): each model draws its kind in the
 // states it names (world-catalog.js), on the object's cell, in place of the code-built piece (environment-fieldwork.js),
@@ -68,6 +68,9 @@ export function fieldModelPlacements(e,{chapter,tileSize=2.5,desktop,available=n
 // The set pieces' spots along the west edge, tried in turn: the model's own share of the half-depth first, then
 // further north and south of it, each a few metres out and then further.
 const ALONG_STEPS=Object.freeze([0,-.1,.1,-.2,.2,-.3,.3,-.45,.45,-.6,.6,-.75,.75]),GAPS=Object.freeze([4,5.5,7]);
+// A boat's spots on the distant river beyond the north edge: across its stream from the centre line out, each tried
+// along the river as the edges' spots are.
+const RIVER_OFFSETS=Object.freeze([0,-1.5,1.5,-3,3]);
 // Clear room about a set piece: from the scene's other scenery and buildings, and from a road's centre line.
 const PROP_MARGIN=1,ROAD_CLEARANCE=2.4;
 
@@ -78,17 +81,23 @@ export const hasBattleProps=e=>Object.values(BATTLE_PROP_MODELS).some(m=>m.encou
  * or beyond its north edge, which the camera sees behind both armies, each a few metres out, on the first spot whose
  * footprint is clear of the roads that leave the board, of `occupied` (the scene's other scenery and buildings, as
  * {minX, maxX, minZ, maxZ}) and of the set pieces before it; a piece `beside` another stands at its offset from that
- * piece, or the offset mirrored, clear of it and of the rest. Scenery placements, with no code-built stand-in:
+ * piece, or the offset mirrored, clear of it and of the rest. A boat (`edge: 'river'`) floats on the distant river
+ * beyond the north edge, where the scene has one: on the first spot whose footprint lies wholly where the river's own
+ * surface shows, sunk `draft` metres below it (its `groundY`). Scenery placements, with no code-built stand-in:
  * Performance and a failed download leave the ground empty. */
 export function battlePropPlacements(e,{tileSize=2.5,occupied=[],chapter}={}){
   if(e?.kind!=='battle'||!Number.isInteger(e.width)||!Number.isInteger(e.height)||e.width<=0||e.height<=0)return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2,road=createRoadSurfaceSampler(roadSegments(e,tileSize),tileSize).distance,taken=[...occupied],out=[];
   // Dry ground only: no point of a piece's room in the scene's water (a marsh, a river leaving the board, the distant river).
-  const water=createWaterSampler(e,{chapter,tileSize}),dry=b=>{for(let i=0;i<=4;i++)for(let j=0;j<=4;j++)if(water(b.minX+(b.maxX-b.minX)*i/4,b.minZ+(b.maxZ-b.minZ)*j/4))return false;return true;};
+  // A boat floats only where the distant river's own surface shows, not under a river that leaves the board and runs on
+  // over it at its own, higher level.
+  const water=createWaterLevelSampler(e,{chapter,tileSize}),points=b=>{const out=[];for(let i=0;i<=4;i++)for(let j=0;j<=4;j++)out.push([b.minX+(b.maxX-b.minX)*i/4,b.minZ+(b.maxZ-b.minZ)*j/4]);return out;};
+  const dry=b=>points(b).every(([x,z])=>water(x,z)===null),afloat=b=>points(b).every(([x,z])=>water(x,z)===DISTANT_RIVER_LEVEL);
   const overlaps=(a,b,margin=PROP_MARGIN)=>a.maxX+margin>b.minX&&a.minX-margin<b.maxX&&a.maxZ+margin>b.minZ&&a.minZ-margin<b.maxZ;
   const box=(x,z,m)=>({minX:x-m.fit.width/2,maxX:x+m.fit.width/2,minZ:z-m.fit.depth/2,maxZ:z+m.fit.depth/2});
-  const clear=(b,except=null)=>[[b.minX,b.minZ],[b.minX,b.maxZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2]]
-    .every(([cx,cz])=>road(cx,cz)>=ROAD_CLEARANCE)&&taken.every(o=>o===except?!overlaps(b,o,0):!overlaps(b,o))&&dry(b);
+  const open=(b,except=null)=>[[b.minX,b.minZ],[b.minX,b.maxZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2]]
+    .every(([cx,cz])=>road(cx,cz)>=ROAD_CLEARANCE)&&taken.every(o=>o===except?!overlaps(b,o,0):!overlaps(b,o));
+  const clear=(b,except=null)=>open(b,except)&&dry(b);
   for(const [id,m]of Object.entries(BATTLE_PROP_MODELS)){
     const url=worldModelUrl(id);if(!url||!m.encounters.includes(e.id))continue;
     let spot=null;
@@ -98,6 +107,12 @@ export function battlePropPlacements(e,{tileSize=2.5,occupied=[],chapter}={}){
         const at=turned(host.x,host.z,host.yaw??0,u,w),b=box(at.x,at.z,m);
         if(clear(b,host.box)){spot={x:at.x,z:at.z,b,yaw:m.yaw??host.yaw??0};break;}
       }
+    }else if(m.edge==='river'){
+      const centre=distantRiverCentre(e,tileSize);
+      for(const dz of RIVER_OFFSETS){for(const step of ALONG_STEPS){
+        const along=Math.max(-.9,Math.min(.9,m.along+step)),x=along*hx,z=centre+dz,b=box(x,z,m);
+        if(open(b)&&afloat(b)){spot={x,z,b,yaw:m.yaw??0,groundY:DISTANT_RIVER_LEVEL-m.draft};break;}
+      }if(spot)break;}
     }else{
       const north=m.edge==='north';
       for(const gap of GAPS){for(const step of ALONG_STEPS){
@@ -106,7 +121,7 @@ export function battlePropPlacements(e,{tileSize=2.5,occupied=[],chapter}={}){
       }if(spot)break;}
     }
     if(!spot)continue;
-    taken.push(spot.b);out.push({id,url,x:spot.x,z:spot.z,yaw:spot.yaw,fitWithin:{width:m.fit.width,depth:m.fit.depth},box:spot.b});
+    taken.push(spot.b);out.push({id,url,x:spot.x,z:spot.z,yaw:spot.yaw,fitWithin:{width:m.fit.width,depth:m.fit.depth},box:spot.b,...(Number.isFinite(spot.groundY)?{groundY:spot.groundY}:{})});
   }
   return out.map(({box:_,...p})=>p);
 }
