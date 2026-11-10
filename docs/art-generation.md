@@ -2052,7 +2052,9 @@ Each battle was seen twice at the same moment, in the desktop build at High: onc
 - **The barricade** in Chapter V is the pilot's, which now stands in the eastern battles too. Its two lattice panels are thinner and darker than the code-built stakes and harder to pick out, as the pilot's review found.
 - **The eastern cart** (Chapter VI's eagle) stands whole, its pale bed and faded red side boards under the pilot's load. It reads as a different cart from the Roman one the code-built piece draws, with its dark timber and white sacks.
   - With the camera framed on the objective, as **Find objective** leaves it, the near half of either cart fades, whatever X is set to. The game opens the scenery between the camera and an objective the camera frames, and the opening reaches the cart standing at the objective.
-  - That is older than G5. Stopping the opening short of the objective's own piece costs no credits.
+  - That is older than G5. It was fixed after the review, at no credit cost: the opening now ends 1.5 m short of the objective, and both carts stay whole.
+
+  ![Chapter VI's cart at its objective with the camera turned to it, before the fix and after: the code-built cart and the eastern cart](images/g5-objective-opening.jpg)
 - **The engines behind the Roman line** read at once. In Chapter IV the ballista's brown oak frame stands on the grass beyond the wall walk, with the onager further north and the pale pyramid of its stone shot at its side. In Chapter VII the bolt crate stands beside the carroballista, toward the board. It reads as the engine's stores, though its bolts are too small to pick out.
 - **The Roman siege works** (Chapter IX) are the boldest of the batch. The 7 m siege tower, hung with hides, fills the upper part of the view beyond the west edge, and its top leaves the frame at the Follow camera. It stands behind the board from the camera, so it never hides the fight. The mantlet reads as a broad arched screen on wheels facing the board. The fascines stood outside the frame.
 - **The Gothic wagons** (Chapter II's marsh) showed the batch's one placement fault.

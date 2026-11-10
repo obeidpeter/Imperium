@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as T from '../vendor/three/three.module.js';
-import {CUTAWAY_UNIFORMS,createSceneryOcclusion,sceneryCutawayWeight,sceneryFocusTargets} from '../src/showcase/environment-occlusion.js';
+import {CUTAWAY_STOP,CUTAWAY_UNIFORMS,OBJECTIVE_CUTAWAY_STOP,createSceneryOcclusion,sceneryCutawayWeight,sceneryFocusTargets} from '../src/showcase/environment-occlusion.js';
 
 test('Overview corridors retain the soldier and inspected figure, and expose only the camera-framed objective',()=>{
   const a={position:{x:0,y:0,z:0}},b={position:{x:3,y:0,z:0},mounted:true},goal={position:{x:8,y:0,z:0},tone:'goal'};
   const targets=sceneryFocusTargets([a,a,b],[{position:{x:7,y:0,z:0},tone:'secured'},goal],goal.position);
-  assert.equal(targets.length,3);assert.equal(targets[0].position.y,1.1);assert.equal(targets[1].position.y,1.8);assert.deepEqual(targets[2],{position:{x:8,y:.55,z:0},radius:2.5});
+  assert.equal(targets.length,3);assert.equal(targets[0].position.y,1.1);assert.equal(targets[1].position.y,1.8);assert.deepEqual(targets[2],{position:{x:8,y:.55,z:0},radius:2.5,stop:OBJECTIVE_CUTAWAY_STOP});
+  assert.equal(targets[0].stop,undefined,'a figure\'s corridor keeps the usual stop');
   assert.equal(sceneryFocusTargets([a],[goal],{x:30,y:0,z:0}).length,1);
   assert.equal(sceneryFocusTargets([a],[{...goal,tone:'warning'}],goal.position).length,1);
   assert.equal(sceneryFocusTargets([a],[{position:a.position}],a.position).length,1,'a nearby goal shares the soldier corridor');
@@ -25,6 +26,15 @@ test('Cutaway covers the camera-to-figure corridor, never scenery beside or behi
   assert.equal(sceneryCutawayWeight(target,target,target),0);
 });
 
+test('A framed objective\'s opening ends short of the objective\'s own piece, and still clears what stands before it',()=>{
+  // The camera looks down on an objective marker as Find objective leaves it; the target is 0.55 m above the marker.
+  const camera={x:0,y:8,z:8},objective={x:0,y:.62,z:0},cartTop={x:0,y:1.2,z:1},wall={x:0,y:2.5,z:3};
+  assert.equal(sceneryCutawayWeight(cartTop,camera,objective,2.5),1,'with the usual stop, the near half of the cart on the objective\'s cell fades');
+  assert.equal(sceneryCutawayWeight(cartTop,camera,objective,2.5,OBJECTIVE_CUTAWAY_STOP),0,'the objective\'s own piece stays whole');
+  assert.equal(sceneryCutawayWeight(wall,camera,objective,2.5,OBJECTIVE_CUTAWAY_STOP),1,'a wall in front of the objective is still cut');
+  assert.ok(OBJECTIVE_CUTAWAY_STOP>CUTAWAY_STOP);
+});
+
 test('The cutaway is compiled into scenery materials from the start and switched by uniforms only',()=>{
   const root=new T.Group(),geometry=new T.BoxGeometry(),texture=new T.Texture(),material=new T.MeshStandardMaterial({map:texture,alphaTest:.42,side:T.DoubleSide});
   material.userData.environmentVegetation=true;material.onBeforeCompile=shader=>{shader.uniforms.wind={value:2};shader.vertexShader+='\n// original wind';};material.customProgramCacheKey=()=> 'wind-original';
@@ -40,10 +50,15 @@ test('The cutaway is compiled into scenery materials from the start and switched
   assert.equal(shader.uniforms.wind.value,2);assert.match(shader.vertexShader,/instanceMatrix\*cutawayPosition/);assert.match(shader.vertexShader,/original wind/);
   assert.match(shader.fragmentShader,/if\(cutawayAmount>0\.0\)\{[\s\S]*discard/,'the cut costs nothing while it is off');
   assert.equal(shader.uniforms.cutawayAmount,CUTAWAY_UNIFORMS.cutawayAmount,'every patched program reads the same uniforms');
+  assert.equal(shader.uniforms.cutawayStops,CUTAWAY_UNIFORMS.cutawayStops);assert.match(shader.fragmentShader,/uniform float cutawayStops\[3\][\s\S]*1\.0-cutawayStops\[cutIndex\]\/axisLength/);
   assert.deepEqual(helper.stats(),{active:false,targets:0,materials:1,meshes:2,amount:0,disposed:false});
   helper.update(camera,{targets:[{position:{x:0,y:1.2,z:0},radius:1.4}],reducedMotion:true});
   assert.equal(wall.material,material);assert.equal(CUTAWAY_UNIFORMS.cutawayAmount.value,1);assert.deepEqual(CUTAWAY_UNIFORMS.cutawayTargets.value[0].toArray(),[0,1.2,0,1.4]);assert.equal(helper.stats().active,true);
+  assert.deepEqual(CUTAWAY_UNIFORMS.cutawayStops.value,[CUTAWAY_STOP,CUTAWAY_STOP,CUTAWAY_STOP]);
+  helper.update(camera,{targets:[{position:{x:0,y:1.2,z:0}},{position:{x:2,y:.6,z:0},radius:2.5,stop:OBJECTIVE_CUTAWAY_STOP}],reducedMotion:true});
+  assert.deepEqual(CUTAWAY_UNIFORMS.cutawayStops.value,[CUTAWAY_STOP,OBJECTIVE_CUTAWAY_STOP,CUTAWAY_STOP],'each target carries its own stop');
   helper.reset();assert.equal(CUTAWAY_UNIFORMS.cutawayAmount.value,0);assert.equal(helper.stats().active,false);
+  assert.deepEqual(CUTAWAY_UNIFORMS.cutawayStops.value,[CUTAWAY_STOP,CUTAWAY_STOP,CUTAWAY_STOP]);
   helper.update(camera,{targets:[{position:{x:0,y:1,z:0}}],delta:.05});assert.ok(CUTAWAY_UNIFORMS.cutawayAmount.value>0&&CUTAWAY_UNIFORMS.cutawayAmount.value<1,'the cut eases in');
   helper.update(camera,{enabled:false});assert.equal(CUTAWAY_UNIFORMS.cutawayAmount.value,0);
   helper.update(camera,{targets:[{position:{x:NaN,y:0,z:0}}]});assert.equal(helper.stats().active,false);

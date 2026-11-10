@@ -2,6 +2,12 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### An objective the camera turns to keeps its own piece whole
+
+- When the camera looks at an objective, as **Find objective** leaves it, the game opens the scenery between the camera and the objective, so that walls, roofs and trees do not hide it. The opening reached the objective's own piece: the near half of a cart standing at an objective faded, whatever **X** was set to. The review of G5's first batch found it ([the art record](docs/art-generation.md#the-rest-of-g5-the-first-batch--9-november-2026)).
+- The opening now ends 1.5 m short of the objective, along the camera's line. The cart at an objective stays whole, the code-built cart and the models alike. A wall standing further in front of the objective is still opened, and the soldier's own see-through is unchanged.
+- **Checks:** `tests/environment-occlusion.test.mjs` also checks each opening's stop: the objective's own piece kept, a wall in front of it still cut, and the stops written to the shared uniforms and reset with them. Seen in the desktop build at High in Chapter VI's battle, before and after.
+
 ### Release G5, the first batch: braziers, siege works, engines' stores, wagons and the walked field's debris ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g5-the-first-batch-9-november))
 
 Eighteen Tripo models, made for 440 credits after the pilot's review in the game and asked for, as it proposed, in solid timbers and bold silhouettes. G5 has spent 580 of its 1,845 credits.
@@ -20,7 +26,7 @@ Eighteen Tripo models, made for 440 credits after the pilot's review in the game
 - **Reviewed in the game,** before and after, in the battles of Chapters II–VII and IX ([the art record](docs/art-generation.md#the-rest-of-g5-the-first-batch--9-november-2026)):
   - the siege ramp, the countermine, the engines' stores, the siege towers and the mantlet read at once;
   - the brazier and the bolts are small at the field's distance;
-  - the eastern cart reads as a different cart from the Roman one. Framed at the objective, the near half of either cart fades: the opening the game cuts toward an objective the camera frames reaches the objective's own piece. That is older than G5, and stopping it short costs no credits;
+  - the eastern cart reads as a different cart from the Roman one. Framed at the objective, the near half of either cart fades: the opening the game cuts toward an objective the camera frames reaches the objective's own piece. That is older than G5, and [is now fixed](#an-objective-the-camera-turns-to-keeps-its-own-piece-whole);
   - on the walked field the fallen banner reads at once, and the beaten side's gear lies among the fallen.
 - **Set pieces on dry ground:** the review found the open Gothic wagon standing in Chapter II's marsh, whose water reaches 6 m past the board. A set piece now keeps its room out of the scene's water: the marsh, a river leaving the board, the distant river and Chapter V's Euphrates. Chapter II's rearguard has dry room for one wagon.
 - **Four generations were rejected** and three redone: the first ballista (a flat grey colour map and coil springs), the first mantlets (three thin racks) and both eastern barricades. Four of 22 (18%), under the 20% stop rule.
