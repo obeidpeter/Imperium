@@ -1,6 +1,8 @@
 import * as T from '../../vendor/three/three.module.js';
 import {createModelLoader} from './model-loader.js';
-import {worldModelUrl,worldAssetShown,CAMP_WALL_CHAPTERS,CAMP_WALL_MODELS} from '../ui/world-catalog.js';
+import {worldModelUrl,worldAssetShown,CAMP_WALL_CHAPTERS,CAMP_WALL_MODELS,FINALE_STANDARD_MODELS} from '../ui/world-catalog.js';
+import {finaleLayout,finaleStandardSpot,finaleVexillumBatches} from './environment-finale.js';
+import {getEncounterStaging} from './environment-staging.js';
 import {campWallStyle,campWallSections,campTowerSpots,campGateways,campGateSpan,BREASTWORK_BATCHES,CAMP_PARAPET_BATCHES} from './camp-walls.js';
 import {getChapterFiveKitPlacements} from './environment-ch5-pilot.js';
 import {createSceneryModelCache} from './scenery-cache.js';
@@ -97,9 +99,18 @@ const sceneryBounds=placements=>placements.flatMap(p=>p.component&&regionalCompo
 // A battle's set pieces beyond the board (G5, field-models.js) find their spots last, clear of everything else.
 const withBattleProps=(e,placements,tileSize,chapter)=>e?.kind!=='battle'||!hasBattleProps(e)?placements:
   [...placements,...battlePropPlacements(e,{tileSize,chapter,occupied:sceneryBounds(placements)})];
+// The finale's vexilla (G2): each side's generated vexillum over each of its blocks before Rome, at the code-built
+// vexillum's spot (environment-finale.js), whose batches it hides once placed. They stand where the blocks stand,
+// so they come after the battle's set pieces, which keep their own spots.
+function finaleStandardPlacements(e,{chapter,tileSize=2.5}={}){
+  if(!e||getEncounterStaging(e,{chapter}).key!=='rome-approach')return [];
+  const spots=finaleLayout(e,tileSize).blocks.map(finaleStandardSpot);
+  return Object.entries(FINALE_STANDARD_MODELS).map(([side,id])=>({id,key:`finale-standards:${side}`,url:worldModelUrl(id),
+    instances:spots.filter(spot=>spot.side===side).map(({x,z,yaw})=>({x,z,yaw})),fallbackNames:[...finaleVexillumBatches(side)]})).filter(p=>p.url&&p.instances.length);
+}
 function chapterScenery(e,{chapter,tileSize=2.5,withoutGate=false,desktop}={}){
-  if(hasRegionalWorld(e))return withBattleProps(e,[...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
-    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize,desktop),...campWallPlacements(e,chapter,tileSize)],tileSize,chapter);
+  if(hasRegionalWorld(e))return [...withBattleProps(e,[...regionalPropPlacements(e,{chapter,tileSize}),...getRegionalKitPlacements(e,{chapter,tileSize,withoutGate}).map(p=>({...p,url:sceneryModelUrl(p.id)})),
+    ...curiaPlacements(e,{chapter,tileSize}),...tentLinePlacements(e,tileSize,desktop),...campWallPlacements(e,chapter,tileSize)],tileSize,chapter),...finaleStandardPlacements(e,{chapter,tileSize})];
   const set=SCENERY_MODELS[chapter];
   if(!set||!set.encounters.includes(e?.id))return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2;

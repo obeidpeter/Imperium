@@ -30,7 +30,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | --- | --- | --- | --- |
 | 0 | Use what's paid for, then calibrate | 250 | done: calibrated (190 credits, [results](graphics-calibration.md)), and the 3D kit made (seven weapons and helmets, no credits); the landmarks' re-texture skipped |
 | G1 | Armies | 1,005 | done: the [pilot](#g1s-pilot-8-november) (310 credits) and [the rest](#the-rest-of-g1-9-november) (695): 22 bodies and 2 horses. Its other 1,295 credits went to G3 and G5 |
-| G2 | Arms and standards | 700 | |
+| G2 | Arms and standards | 700 | paused at its stop rule, at 1,845 with its held credits: [the pilot](#g2s-pilot-10-november) (80 credits): a century's signum and a legion's eagle on their bearers' backs, and the finale's vexilla. [The owner decides whether it goes on](#after-g2s-pilot-10-november) |
 | G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
 | G4 | Animals | 600 | done: [the pilot](#g4s-pilot-10-november) (80 credits), [seven more animals](#the-rest-of-g4-seven-more-animals-10-november) (160) and [the battles' animals](#the-battles-animals-10-november) (no credits): 12 models and the horse lines' horses, beside 20 pieces. [Walking animals wait](#g4-closes); the 1,180 credits it leaves, its own and those held for it, follow to G6 and G2 |
 | G5 | Battle and siege | 1,845 | done: [the pilot](#g5s-pilot-9-november) (140 credits), [the first batch](#the-rest-of-g5-the-first-batch-9-november) (440) and [the last](#the-last-of-g5-10-november) (80): 28 models. Its other 1,185 credits [join G3's held 1,840](#what-g5-leaves) for G4, G6 and G2 |
@@ -652,6 +652,36 @@ Faces from four more named men's portraits, the other two senators in togas to t
   - Severianus's face again from the bust already made, at no credit cost.
 - **Next:** the arms and standards (G2), a release of its own, which the stop rule does not pause. G6 waits for the owner's word.
 
+### G2's pilot (10 November)
+
+The standards first (decision 10): a century's signum and a legion's eagle on the backs of the figures that carry the code-built ones, and a vexillum over each block of the finale's massed armies.
+
+| What | Where | Chapters | Credits |
+| --- | --- | --- | --- |
+| the century's signum | on the back of Signifer Quintus in his camps, and of a veteran trained to lead in the battles | I, IV–X, XII | 20 |
+| the legion's eagle | on the back of the eagle-bearer, in his camp and at the wells | VI | 40, with the rejected first |
+| the vexillum | over each of the finale's six blocks, the claimant's two recoloured to his cohorts' blue-grey | XII | 20 |
+
+- **Credits:** 80 of the pilot's 100-credit ceiling: four generations at 20. [The ledger](../art-source/models/graphics-g2-credits.json) has every task. The balance went from 7,070 to 6,990.
+- **Rejected at review:** the first eagle came out grey all over, its colour map almost colourless (mean saturation 3 of 255), not the gilded eagle and dark wooden shaft asked for: the failure of G5's first ballista. The second, its colours named outright and grey, silver and monochrome in its negative prompt, ships.
+- **The stop rule:** 1 of the pilot's 4 generations was rejected (25%), over the line; in a pilot this small, one rejection is enough to cross it. So G2 pauses after its pilot, and [the owner is asked](#after-g2s-pilot-10-november) whether it goes on.
+- **On the figures:** a new kind for the kit processor, `--kind standard`, lays out a standard as the figure carries it: upright, its ornament at the top and its grip a tenth of the way up its pole. It sets the pole upright, as an ornament heavy on one side tips the model's longest axis off it (the eagle's by 3.9°). The figure fits it to the code-built standard's extent on its standard joint, from the code-built foot to the code-built top, and it sways with the joint as the code-built one did ([the pipeline](asset-pipeline.md#g2s-pilot-the-standards--2026-11-10)).
+  - Signifer Quintus now carries a signum in his camps, the code-built one on the web and on Performance.
+  - The standards are carried on the back, as the code-built ones always were.
+- **In the finale:** each side's vexillum stands over its blocks where the code-built one stood and hides it once placed. The claimant's is the same model with its crimson cloth recoloured to his cohorts' blue-grey by a new tool, `scripts/assets/recolour-model.py`, at no credit cost; its gold fringe and dark wood are unchanged.
+- **Downloads:** all four files ship in the desktop app alone, as the web downloads are full (the signum 171 kB, the eagle 160 kB and the vexilla 164 and 165 kB). On the web the figures carry the code-built standards and the finale keeps its code-built vexilla. The web downloads are unchanged but for the code.
+- **Reviewed in the game** ([the art record](art-generation.md#g2s-pilot-the-standards--10-november-2026)): the signum and the eagle read on their bearers' backs in the camps of Chapters I, IV, VI and XII, where the code-built standards hardly read, and the commander's vexilla read over his legions in the finale. The claimant's vexilla were not seen: his cohorts stand just before the walls, which hide them from the field's fixed bearing, as they hid the code-built vexilla.
+
+#### What the pilot leaves
+
+- **Credits:** G2 has spent 80 of its 1,845, and 1,765 remain. The plan has spent 3,710 credits since 8 November, so its 70% floor (7,490) needs 3,780 more: all but 350 of the 4,130 that G2 and G6 have left between them.
+- **What more G2 could make,** all of it for the desktop app:
+  - the other standards: the cavalry's draco and vexillum, the emperor's image (*imago*) and the Persian banner;
+  - the helmets the equipped figures wear that are still code-built: the centurion's crested helmet, the Persian and the Palmyrene;
+  - not the faction shields, bows, lances and maces, too small to read in battle (decision 10).
+- **At no credit cost:** the finale's claimant cohorts could stand where the field's camera sees them, so that their vexilla show.
+- **Next:** G2 and G6 both wait for the owner's word ([decisions 12 and 13](#after-g2s-pilot-10-november)).
+
 ## Around every release, at no credit cost
 
 - **Pipeline:**
@@ -701,6 +731,12 @@ After the calibration (8 November):
 12. **G6 pauses at its stop rule.** 7 of its 27 generations have not shipped: five rejected at review, Dida's body refused by the rig check and Severianus's face not passing review. The owner decides whether it goes on, with my recommendation first:
     - **go on after G2** with a second batch for the desktop app, prompts that leave the hands empty and the feet showing, and each body's rig checked before the next is generated (recommended): the 70% floor needs about 2,015 of G6's remaining 2,365 credits;
     - or **end G6 here**, and the plan ends near 5,475 credits, 51% of the balance, under its 70% floor.
+
+### After G2's pilot (10 November)
+
+13. **G2 pauses at its stop rule.** 1 of its 4 generations was rejected at review (25%): the first eagle, grey all over. The owner decides whether it goes on, with my recommendation first:
+    - **go on** with a batch of the other standards and the equipped figures' code-built helmets, each prompt naming its colours, as the eagle's redo did (recommended). With G6's second batch (decision 12), the 70% floor needs 3,780 of the 4,130 credits the two have left;
+    - or **end G2 here**. With G6's second batch at its full 2,365, the plan ends near 6,075 credits, 57% of the balance, under its 70% floor; without it, near 3,710, 35%.
 
 ## Rules for the spend
 

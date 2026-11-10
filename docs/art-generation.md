@@ -2396,6 +2396,52 @@ The camps of Chapters II, V, VI, IX, X and XI were seen twice at the same moment
 - **The faces** are small at the camp camera's distance, as Lucan's is: Varro's grey hair and Paullus's toga read, the faces hardly do. The figure viewer shows them close.
 - **Not seen:** the senators' new togas in a chamber (the figure viewer showed them), the staff in the camps of other chapters, and the web build, where each figure wears what it wore before. `tests/actor-bodies.test.mjs` checks that every body is worn in exactly its chapters, in the desktop app and on the web.
 
+## G2's pilot: the standards · 10 November 2026
+
+Release G2's pilot of the [graphics plan](graphics-tripo-plan.md#g2s-pilot-10-november), the standards first (decision 10): a century's signum and a legion's eagle, carried on the backs of the figures that carry the code-built ones, and a vexillum over each block of the finale's massed armies. [The asset pipeline](asset-pipeline.md#g2s-pilot-the-standards--2026-11-10) has how they are made and placed.
+
+The models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-10, from the text prompts in their requests only: no reference image or third-party model. The pilot cost 80 credits of its 100-credit ceiling, task by task in [the G2 ledger](../art-source/models/graphics-g2-credits.json), and the balance read 7,070 before and 6,990 after. One generation was rejected and redone. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit the generated models, as confirmed by the owner on 2026-10-20; Tripo receives a royalty-free, non-exclusive licence to use and display them as necessary to provide its service.
+
+| Model | Where | Chapters | Tripo task | Triangles | Runtime file |
+| --- | --- | --- | --- | ---: | ---: |
+| kit-signum (g2-signum) | on the back of Signifer Quintus and of a veteran trained to lead | I, IV–X, XII | `7549c772-a2a5-4b14-9a2d-13390b0496e5` | 2,698 | 171,456 bytes |
+| kit-aquila (g2-aquila-b) | on the back of the eagle-bearer | VI | `a9f70da3-6423-4a0b-bb5c-1fa4c2c3a2b6` | 2,698 | 159,624 bytes |
+| g2-vexillum | over each of the commander's four blocks in the finale | XII | `1cc6dec1-aa68-4d7b-a9fa-4c83a53688a4` | 2,352 | 163,632 bytes |
+| g2-vexillum-claimant | over each of the claimant's two blocks: g2-vexillum, its cloth recoloured | XII | the same | 2,352 | 165,304 bytes |
+| g2-aquila | rejected at review | — | `9f18541c-f433-41d6-a970-74ae9c3de27b` | — | — |
+
+The two standards were processed for the figure by the kit processor to a 2.3 m standard (near level 2,400 triangles, overview 300, a 512-pixel colour map and 256-pixel detail maps), the vexillum by the prop processor to 3.8 m, the code-built vexillum's height (2,400 triangles, 512-pixel maps). The claimant's vexillum is the processed vexillum with its crimson cloth recoloured to the claimant's shield colour, `#4b5e7a`, by `scripts/assets/recolour-model.py`, at no credit cost. Every runtime file was compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. All four ship in the desktop app alone. The raw files stay outside the repository.
+
+The prompts follow [the historical notes](historical-research.md) where the sources reach. The signum's discs, crossbar and pendants follow the century standard's known form; its count of discs means nothing. Dio's golden eagle stands on a shaft with a spiked foot. The vexilla are plain, where the one surviving vexillum is painted with Victory.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render and measured in its raw colour map, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the game.
+
+![The pilot's models: the signum and the eagle as processed, from four sides with a 1.8 m figure for scale, the rejected first eagle, and the two vexilla's colour maps](images/g2-pilot-models.jpg)
+
+- **The signum** came as asked: a dark wooden shaft with a bronze butt spike, a gilded leaf-shaped finial over a bronze crossbar, two pendants hanging from its ends on leather thongs, five silver discs down the shaft, and a gilded crescent with a short red tassel below them. Its crescent turns up like a cupped hand. Its pole leaned 0.4° from its longest axis.
+- **The first eagle was rejected.** Its shape was right, a spread-winged eagle on a thunderbolt atop its pole, but every surface came in one dull grey: its colour map's mean saturation is 3 of 255. Gilded bronze and a dark wooden shaft were asked for; a grey eagle reads as silver or unpainted. The second named its colours outright and put grey, silver, chrome and monochrome in its negative prompt.
+- **The second eagle** came gilded, bright yellow gold, with its wings raised and spread and its head turned, standing on a straight golden bar pointed at both ends, the thunderbolt, on a dark reddish-brown shaft with a bronze butt spike. Its colour map's mean saturation is 207 of 255. Its eagle sits back from the pole, so its longest axis leaned 3.9° from the pole; the processor set the pole upright, and the eagle now sits a little behind it.
+- **The vexillum** came as asked: a plain crimson cloth, a gold fringe along its lower edge and sides, hanging by cloth loops from a turned wooden crossbar tied to a tall dark shaft, under a small bronze spearhead, with a pale butt cap. Nothing is painted on the cloth.
+- **The claimant's vexillum** takes the cloth's red (71% of its colour map) to blue-grey, its mean exactly the claimant's shield colour, and leaves the fringe's gold and the wood's brown as they were.
+
+#### In the game
+
+![Signifer Quintus in Chapters I and IV, the eagle-bearer in VI and Quintus in XII, each with the code-built standard (as on the web and on Performance) and then the generated one (the desktop app)](images/g2-pilot-camps.jpg)
+
+The bearers' camps were seen twice at the same moments in this pilot's desktop build at High: once with the G2 files refused, so the figures carry the code-built standards, as on the web and on Performance, and once with them. Each camp was restored through the Restore dialog from a save reached from New Game by legal commands, the soldier walked by legal move commands to stand beside the bearer, and the view paused and brought in with the game's own zoom keys:
+- **The signum** reads at camp distance as a standard: the gilded spearhead over the crossbar and its two pendants, the column of discs and the red tassel, where the code-built one is a thin dark pole with a small crossbar. It stands behind the shoulder from the same foot to the same top. Its five discs read as one dark column at this distance.
+- **The eagle** reads as a gilded eagle with its wings raised over the bearer's head, where the code-built one is a small dark outline on its pole. The eagle-bearer wears the camp's civilian dress, as he did before.
+- **Quintus** carries a standard in his three camps for the first time; on main he carried none.
+
+![The commander's legions in the finale with the code-built vexilla (left) and the generated ones (right), and two of their vexilla closer below](images/g2-pilot-finale.jpg)
+
+The finale was reached by the real-time bot from New Game by legal commands, restored through the desktop build's Restore dialog, paused and framed with the game's own zoom keys, with the G2 files refused and then served:
+- **The commander's vexilla** read as vexilla: a bright crimson cloth with its gold fringe under a crossbar and spearhead, where the code-built ones are dark red rectangles on black poles. Their crimson is close to the legions' shields, so they stand out by their shape and fringe more than their colour.
+- **Not seen: the claimant's vexilla.** His two cohorts stand just before the walls, and from the field's fixed bearing the walls stand between them and the camera, in the Overview too; they hid the code-built vexilla there in the same way. The claimant's placement and the code-built batches it hides are checked by `tests/graphics-g2.test.mjs`, and its recoloured cloth is in the colour maps above.
+- **Not captured:** a veteran trained to lead carrying the signum in battle. He wears the same model on the same joint, which `tests/actor-kit-models.test.mjs` fits to the code-built standard's extent, and `tests/actor-bodies.test.mjs` finds the signum carried in exactly its chapters through the legal campaigns.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.

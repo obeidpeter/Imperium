@@ -1,0 +1,98 @@
+{
+ "id": "g2-vexillum",
+ "status": "G2 pilot: accepted at review, processed and compressed; ships as g2-vexillum over the commander's blocks in the finale (XII), and recoloured as g2-vexillum-claimant over the claimant's, in the desktop app",
+ "chapters": [
+  12
+ ],
+ "use": "A flag standard (vexillum) over each block of the finale's massed army (environment-finale.js), in place of the code-built pole and cloth.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "A Roman flag standard (vexillum) of the third century AD: a square crimson-red woollen cloth about seventy centimetres across with a gold-coloured fringe along its lower edge, hanging flat from a horizontal wooden crossbar tied to it with cords at both ends, the crossbar fixed near the top of a tall straight dark wooden shaft about two point five metres tall that ends above it in a small bronze spearhead finial, with a pointed bronze butt spike at its foot. The cloth plain, without any letters, pictures or emblems. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette, restrained surface detail, the pole straight and vertical with its foot at the bottom, complete geometry from every side. No people, no hands holding it, no ground plane, no display stand or plinth, no text, letters or inscriptions, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "negative_prompt": "person, hand, soldier, ground plane, base plate, display stand, plinth, text, letters, inscription, modern objects, fantasy, medieval heraldry, eagle, discs, emblem, picture on the cloth, stripes, pennant, tattered flag",
+   "model_seed": 2620020,
+   "image_seed": 2620021,
+   "texture_seed": 2620022
+  }
+ },
+ "budget": {
+  "triangles": 2400,
+  "texture": 512,
+  "bytes": 300000,
+  "heightMetres": 3.8,
+  "minHeight": 3.42,
+  "maxHeight": 4.18,
+  "note": "Set at review to the height of the code-built vexillum it stands for in the finale (environment-finale.js), 3.8 m from the foot of its shaft to its spearhead, in place of the 2.3 m written with the other standards; a placed prop, it has no overview level."
+ },
+ "provenance": {
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T19:29:31.322Z",
+  "requestBody": {
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "negative_prompt": "person, hand, soldier, ground plane, base plate, display stand, plinth, text, letters, inscription, modern objects, fantasy, medieval heraldry, eagle, discs, emblem, picture on the cloth, stripes, pennant, tattered flag",
+   "model_seed": 2620020,
+   "image_seed": 2620021,
+   "texture_seed": 2620022,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "A Roman flag standard (vexillum) of the third century AD: a square crimson-red woollen cloth about seventy centimetres across with a gold-coloured fringe along its lower edge, hanging flat from a horizontal wooden crossbar tied to it with cords at both ends, the crossbar fixed near the top of a tall straight dark wooden shaft about two point five metres tall that ends above it in a small bronze spearhead finial, with a pointed bronze butt spike at its foot. The cloth plain, without any letters, pictures or emblems. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette, restrained surface detail, the pole straight and vertical with its foot at the bottom, complete geometry from every side. No people, no hands holding it, no ground plane, no display stand or plinth, no text, letters or inscriptions, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7030,
+  "balanceSnapshotBefore": {
+   "balance": 7030,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "92744b38-9b9a-4642-997c-8c248c998b6f",
+   "state": "accepted",
+   "requestSha256": "f3a79f31ba508e4af377ac0dab8aa2764b398d1a89ecbedbd70ea9d4be413444"
+  },
+  "taskId": "1cc6dec1-aa68-4d7b-a9fa-4c83a53688a4",
+  "status": "success",
+  "generatedAt": "2026-11-10T19:30:57.738Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/g2-vexillum.glb",
+  "rawBytes": 35128552,
+  "rawSha256": "08fada90de040321b98652833461f5f7c549083b197951c9b3222c73039ef613",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "A Roman flag standard (vexillum) of the third century AD: a square crimson-red woollen cloth about seventy centimetres across with a gold-coloured fringe along its lower edge, hanging flat from a horizontal wooden crossbar tied to it with cords at both ends, the crossbar fixed near the top of a tall straight dark wooden shaft about two point five metres tall that ends above it in a small bronze spearhead finial, with a pointed bronze butt spike at its foot. The cloth plain, without any letters, pictures or emblems. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette, restrained surface detail, the pole straight and vertical with its foot at the bottom, complete geometry from every side. No people, no hands holding it, no ground plane, no display stand or plinth, no text, letters or inscriptions, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2620021,
+   "model_seed": 2620020,
+   "texture_seed": 2620022,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "person, hand, soldier, ground plane, base plate, display stand, plinth, text, letters, inscription, modern objects, fantasy, medieval heraldry, eagle, discs, emblem, picture on the cloth, stripes, pennant, tattered flag",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T19:29:31.897982Z",
+  "tripoCompletedAt": "2026-11-10T19:30:52.406534Z",
+  "tripoRender": "art-source/models/raw/g2-vexillum-tripo-render.webp",
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g2"
+ },
+ "review": {
+  "date": "2026-11-10",
+  "scope": "Tripo's own render and the raw model's colour map; the processed model in four views with a 1.8 m figure for scale (scripts/assets/preview-model.mjs)",
+  "notes": "A plain crimson cloth with a gold fringe hanging from a wooden crossbar by cloth loops, the crossbar tied to a tall dark shaft under a small bronze spearhead, with a pale butt cap. No letters or pictures on the cloth, as asked."
+ }
+}

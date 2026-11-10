@@ -1,0 +1,98 @@
+{
+ "id": "g2-aquila-b",
+ "status": "G2 pilot: accepted at review, processed and compressed; ships as kit-aquila, on the back of the eagle-bearer (VI), in the desktop app",
+ "chapters": [
+  6
+ ],
+ "use": "The legion's eagle (aquila) carried by the eagle-bearer in Chapter VI's camp, worn on the figure's standard joint in place of the code-built pole and eagle (actors.js). The second attempt: the first (g2-aquila) came out grey all over.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "A Roman legionary eagle standard (aquila) of the third century AD: a gilded eagle of bright yellow gold with its wings raised and spread wide and its head turned to one side, standing on a golden thunderbolt, mounted on top of a tall straight shaft of dark brown wood about two point three metres tall with a pointed bronze butt spike at its foot and a short horizontal golden crossbar just below the eagle. Eagle, thunderbolt and crossbar shining gold; the shaft brown wood. The eagle large and clear, the only ornament. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette, restrained surface detail, the pole straight and vertical with its foot at the bottom, complete geometry from every side. No people, no hands holding it, no ground plane, no display stand or plinth, no text, letters or inscriptions, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "negative_prompt": "person, hand, soldier, ground plane, display stand, plinth, text, letters, modern objects, fantasy, flag, cloth banner, discs, double-headed eagle, living bird, crown, wreath, silver, chrome, grey metal, monochrome, untextured",
+   "model_seed": 2620030,
+   "image_seed": 2620031,
+   "texture_seed": 2620032
+  }
+ },
+ "budget": {
+  "triangles": 2400,
+  "overviewTriangles": 300,
+  "texture": 512,
+  "bytes": 300000,
+  "heightMetres": 2.3,
+  "minHeight": 2,
+  "maxHeight": 2.6
+ },
+ "provenance": {
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T19:34:24.289Z",
+  "requestBody": {
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "negative_prompt": "person, hand, soldier, ground plane, display stand, plinth, text, letters, modern objects, fantasy, flag, cloth banner, discs, double-headed eagle, living bird, crown, wreath, silver, chrome, grey metal, monochrome, untextured",
+   "model_seed": 2620030,
+   "image_seed": 2620031,
+   "texture_seed": 2620032,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "A Roman legionary eagle standard (aquila) of the third century AD: a gilded eagle of bright yellow gold with its wings raised and spread wide and its head turned to one side, standing on a golden thunderbolt, mounted on top of a tall straight shaft of dark brown wood about two point three metres tall with a pointed bronze butt spike at its foot and a short horizontal golden crossbar just below the eagle. Eagle, thunderbolt and crossbar shining gold; the shaft brown wood. The eagle large and clear, the only ornament. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette, restrained surface detail, the pole straight and vertical with its foot at the bottom, complete geometry from every side. No people, no hands holding it, no ground plane, no display stand or plinth, no text, letters or inscriptions, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7010,
+  "balanceSnapshotBefore": {
+   "balance": 7010,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "03c17f70-4d83-421c-88e8-07c44363db40",
+   "state": "accepted",
+   "requestSha256": "c1951b5d09032a906d970f3b69d672e42cc851d4a969883f929aa202097eaa36"
+  },
+  "taskId": "a9f70da3-6423-4a0b-bb5c-1fa4c2c3a2b6",
+  "status": "success",
+  "generatedAt": "2026-11-10T19:35:40.416Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/g2-aquila-b.glb",
+  "rawBytes": 27888672,
+  "rawSha256": "22265492c2afea01f716bb8395c42ca073ef7fe334e3f556a32d5d6d73616554",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "A Roman legionary eagle standard (aquila) of the third century AD: a gilded eagle of bright yellow gold with its wings raised and spread wide and its head turned to one side, standing on a golden thunderbolt, mounted on top of a tall straight shaft of dark brown wood about two point three metres tall with a pointed bronze butt spike at its foot and a short horizontal golden crossbar just below the eagle. Eagle, thunderbolt and crossbar shining gold; the shaft brown wood. The eagle large and clear, the only ornament. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, believable hand-made construction and a bold, solid, readable silhouette, restrained surface detail, the pole straight and vertical with its foot at the bottom, complete geometry from every side. No people, no hands holding it, no ground plane, no display stand or plinth, no text, letters or inscriptions, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2620031,
+   "model_seed": 2620030,
+   "texture_seed": 2620032,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "person, hand, soldier, ground plane, display stand, plinth, text, letters, modern objects, fantasy, flag, cloth banner, discs, double-headed eagle, living bird, crown, wreath, silver, chrome, grey metal, monochrome, untextured",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T19:34:24.855553Z",
+  "tripoCompletedAt": "2026-11-10T19:35:35.097127Z",
+  "tripoRender": "art-source/models/raw/g2-aquila-b-tripo-render.webp",
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g2"
+ },
+ "review": {
+  "date": "2026-11-10",
+  "scope": "Tripo's own render and the raw model's colour map; the processed model in four views with a 1.8 m figure for scale (scripts/assets/preview-model.mjs)",
+  "notes": "A gilded eagle with raised, spread wings and its head turned, standing on a golden double-pointed thunderbolt bar, on a dark reddish-brown shaft with a bronze butt spike. Its colour map is coloured (mean saturation 207 of 255). Its pole leans about four degrees from its longest axis, which the processing sets upright."
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "id": "g2-signum",
+ "status": "G2 pilot: accepted at review, processed and compressed; ships as kit-signum, on the back of Signifer Quintus (I, IV, XII) and of a veteran trained to lead (IV–X, XII), in the desktop app",
+ "chapters": [
+  1,
+  4,
+  12
+ ],
+ "use": "The century's standard (signum) carried by Signifer Quintus in the camps of Chapters I, IV and XII, and by a veteran trained to lead, worn on the figure's standard joint in place of the code-built pole, crossbar and discs (actors.js).",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "A Roman century standard (signum) of the third century AD: a tall straight dark wooden shaft about two point three metres tall with a pointed bronze butt spike at its foot, topped by a small leaf-shaped bronze spearhead; just below the spearhead a short horizontal bronze crossbar with two short leather thongs hanging from its ends, each ending in a small bronze ivy-leaf pendant; below the crossbar a vertical stack of five round polished silver discs fixed one above another to the front of the shaft, and beneath them a small bronze upturned crescent and a short red wool tassel. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, a bold, solid, readable silhouette, the pole straight and vertical with its foot at the bottom, complete geometry from every side. No people, no hands holding it, no ground plane, no display stand or plinth, no text, letters or inscriptions.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "negative_prompt": "person, hand, soldier, ground plane, base plate, display stand, plinth, text, letters, inscription, modern objects, fantasy, medieval heraldry, eagle, animal figure, flag, cloth banner, wreath, portrait",
+   "model_seed": 2620000,
+   "image_seed": 2620001,
+   "texture_seed": 2620002
+  }
+ },
+ "budget": {
+  "triangles": 2400,
+  "overviewTriangles": 300,
+  "texture": 512,
+  "bytes": 300000,
+  "heightMetres": 2.3,
+  "minHeight": 2,
+  "maxHeight": 2.6
+ },
+ "provenance": {
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T19:26:48.460Z",
+  "requestBody": {
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "negative_prompt": "person, hand, soldier, ground plane, base plate, display stand, plinth, text, letters, inscription, modern objects, fantasy, medieval heraldry, eagle, animal figure, flag, cloth banner, wreath, portrait",
+   "model_seed": 2620000,
+   "image_seed": 2620001,
+   "texture_seed": 2620002,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "A Roman century standard (signum) of the third century AD: a tall straight dark wooden shaft about two point three metres tall with a pointed bronze butt spike at its foot, topped by a small leaf-shaped bronze spearhead; just below the spearhead a short horizontal bronze crossbar with two short leather thongs hanging from its ends, each ending in a small bronze ivy-leaf pendant; below the crossbar a vertical stack of five round polished silver discs fixed one above another to the front of the shaft, and beneath them a small bronze upturned crescent and a short red wool tassel. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, a bold, solid, readable silhouette, the pole straight and vertical with its foot at the bottom, complete geometry from every side. No people, no hands holding it, no ground plane, no display stand or plinth, no text, letters or inscriptions."
+  },
+  "balanceBefore": 7070,
+  "balanceSnapshotBefore": {
+   "balance": 7070,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "435b1629-9bf2-4494-af94-e87c38dcbd08",
+   "state": "accepted",
+   "requestSha256": "4664497710548f6ff3d88c93512f6b4033774c704684d4d606d546b8e52955f3"
+  },
+  "taskId": "7549c772-a2a5-4b14-9a2d-13390b0496e5",
+  "status": "success",
+  "generatedAt": "2026-11-10T19:28:04.101Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/g2-signum.glb",
+  "rawBytes": 24745532,
+  "rawSha256": "e98d4bdcc8172efe4745a7166d196ce1900df4a2e1b7263a0cd51ab4fe48b344",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "A Roman century standard (signum) of the third century AD: a tall straight dark wooden shaft about two point three metres tall with a pointed bronze butt spike at its foot, topped by a small leaf-shaped bronze spearhead; just below the spearhead a short horizontal bronze crossbar with two short leather thongs hanging from its ends, each ending in a small bronze ivy-leaf pendant; below the crossbar a vertical stack of five round polished silver discs fixed one above another to the front of the shaft, and beneath them a small bronze upturned crescent and a short red wool tassel. Single isolated static prop for a grounded painterly-realistic historical game set in the third century Roman world. Physically based aged materials, a bold, solid, readable silhouette, the pole straight and vertical with its foot at the bottom, complete geometry from every side. No people, no hands holding it, no ground plane, no display stand or plinth, no text, letters or inscriptions.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2620001,
+   "model_seed": 2620000,
+   "texture_seed": 2620002,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "person, hand, soldier, ground plane, base plate, display stand, plinth, text, letters, inscription, modern objects, fantasy, medieval heraldry, eagle, animal figure, flag, cloth banner, wreath, portrait",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T19:26:49.119603Z",
+  "tripoCompletedAt": "2026-11-10T19:28:00.998760Z",
+  "tripoRender": "art-source/models/raw/g2-signum-tripo-render.webp",
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g2"
+ },
+ "review": {
+  "date": "2026-11-10",
+  "scope": "Tripo's own render and the raw model's colour map; the processed model in four views with a 1.8 m figure for scale (scripts/assets/preview-model.mjs)",
+  "notes": "A century's signum: a dark wooden shaft with a bronze butt spike, a gilded leaf-shaped spearhead over a bronze crossbar with two pendants on leather thongs, five silver discs down the front, a gilded crescent and a red tassel below them. Read at once as the standard asked for; nothing to cut away."
+ }
+}

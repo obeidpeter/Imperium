@@ -21974,6 +21974,267 @@
         "overviewTriangles": 3218
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "kit-signum",
+      "path": "assets/models/kit/kit-signum.glb",
+      "subject": "Release G2 standard: a century's signum, with its spearhead, crossbar and pendants, silver discs, crescent and tassel on a dark wooden shaft",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS by scripts/assets/process-kit.py for the standard a figure carries on its back; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "7549c772-a2a5-4b14-9a2d-13390b0496e5",
+        "generatedAt": "2026-11-10T19:28:04.101Z",
+        "prompt": "art-source/models/requests/g2-signum.json",
+        "rawBytes": 24745532,
+        "rawSha256": "e98d4bdcc8172efe4745a7166d196ce1900df4a2e1b7263a0cd51ab4fe48b344",
+        "program": "graphics-g2",
+        "credits": 20,
+        "processing": {
+          "kind": "standard",
+          "length": 2.3,
+          "turn": 0,
+          "triangles": 2400,
+          "overviewTriangles": 300,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "sharpAngle": 45,
+          "fit": {
+            "flipped": false,
+            "gripFromEnd": 0.1,
+            "poleLeanDegrees": 0.436,
+            "turnDegrees": 0
+          },
+          "overviewCell": 0.08961
+        },
+        "report": "art-source/models/reports/kit-signum.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/kit-signum-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Carried on the back of Signifer Quintus in the camps of Chapters I, IV and XII, and a veteran trained to lead (his specialization) in the battles of Chapters IV–X and XII, in place of the code-built pole, crossbar, discs and spearhead, on Balanced and High in the desktop app (actorKitModelIds, src/showcase/actors.js; KIT_STANDARD_MODELS, src/showcase/actor-kit-catalog.js). The figure fits it to the code-built standard's extent on its joint, scaled as one so its top meets the code-built top and its grip, the model's origin a tenth of the way up its pole, stays on the joint; it sways with the joint as the code-built standard did (src/showcase/actor-kit-models.js). Its near level is textured; its overview level draws the colours baked into its vertices. Decorative only: it takes no picks and changes no rule.",
+      "loading": "Deferred local GLB in the offline groups of Chapters I, IV, V, VI, VII, VIII, IX, X and XII in the desktop app only (src/ui/art.js): made after the web downloads filled, it is in no web chapter's download, so the web build leaves it out (scripts/build.mjs) and there its figures carry the code-built standard; loaded once per page by src/showcase/actor-kit-models.js for the figures that carry it. Performance and a failed download keep the code-built standard; a standard that arrives after a figure is built rebuilds that figure once.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression); two meshes, near and overview",
+        "bytes": 171456,
+        "gzipBytes": 163776,
+        "sha256": "2cd554ca204ae27c8b68af0eab9278bcb36a7121dd473d4bc8fc897045d7541a",
+        "triangles": 2698,
+        "nearTriangles": 2399,
+        "overviewTriangles": 299,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.5122,
+          "height": 2.302,
+          "depth": 0.2957
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "kit-aquila",
+      "path": "assets/models/kit/kit-aquila.glb",
+      "subject": "Release G2 standard: a legion's eagle (aquila), gilded, its wings raised over a golden thunderbolt, on a dark wooden shaft",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS by scripts/assets/process-kit.py for the standard a figure carries on its back; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "a9f70da3-6423-4a0b-bb5c-1fa4c2c3a2b6",
+        "generatedAt": "2026-11-10T19:35:40.416Z",
+        "prompt": "art-source/models/requests/g2-aquila-b.json",
+        "rawBytes": 27888672,
+        "rawSha256": "22265492c2afea01f716bb8395c42ca073ef7fe334e3f556a32d5d6d73616554",
+        "program": "graphics-g2",
+        "credits": 20,
+        "creditsNote": "The second attempt: the first eagle, g2-aquila (20 credits), came out grey all over and was rejected at review; both are in the ledger (art-source/models/graphics-g2-credits.json)",
+        "processing": {
+          "kind": "standard",
+          "length": 2.3,
+          "turn": 0,
+          "triangles": 2400,
+          "overviewTriangles": 300,
+          "texture": 512,
+          "detailTexture": 256,
+          "webpQuality": 80,
+          "sharpAngle": 45,
+          "fit": {
+            "flipped": false,
+            "gripFromEnd": 0.1,
+            "poleLeanDegrees": 3.855,
+            "turnDegrees": 0
+          },
+          "overviewCell": 0.08957
+        },
+        "report": "art-source/models/reports/kit-aquila.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/kit-aquila-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "Carried on the back of the eagle-bearer in Chapter VI's camp and at the wells, where the soldier escorts him, in place of the code-built pole, crossbar, discs and eagle, on Balanced and High in the desktop app (actorKitModelIds, src/showcase/actors.js; KIT_STANDARD_MODELS, src/showcase/actor-kit-catalog.js). The figure fits it to the code-built standard's extent on its joint, scaled as one so its top meets the code-built top and its grip, the model's origin a tenth of the way up its pole, stays on the joint; it sways with the joint as the code-built standard did (src/showcase/actor-kit-models.js). Its near level is textured; its overview level draws the colours baked into its vertices. Decorative only: it takes no picks and changes no rule.",
+      "loading": "Deferred local GLB in the offline group of Chapter VI in the desktop app only (src/ui/art.js): made after the web downloads filled, it is in no web chapter's download, so the web build leaves it out (scripts/build.mjs) and there its figures carry the code-built standard; loaded once per page by src/showcase/actor-kit-models.js for the figures that carry it. Performance and a failed download keep the code-built standard; a standard that arrives after a figure is built rebuilds that figure once.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression); two meshes, near and overview",
+        "bytes": 159624,
+        "gzipBytes": 152289,
+        "sha256": "cfb97053f02daa708d5e55b181d40777a6de58bc9241122ff19610f41d7dd689",
+        "triangles": 2698,
+        "nearTriangles": 2400,
+        "overviewTriangles": 298,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.8106,
+          "height": 2.2981,
+          "depth": 0.5514
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g2-vexillum",
+      "path": "assets/models/world/g2-vexillum.glb",
+      "subject": "Release G2 standard: a vexillum, a plain crimson cloth with a gold fringe hanging from a crossbar on a tall dark shaft under a small bronze spearhead",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "1cc6dec1-aa68-4d7b-a9fa-4c83a53688a4",
+        "generatedAt": "2026-11-10T19:30:57.738Z",
+        "prompt": "art-source/models/requests/g2-vexillum.json",
+        "rawBytes": 35128552,
+        "rawSha256": "08fada90de040321b98652833461f5f7c549083b197951c9b3222c73039ef613",
+        "program": "graphics-g2",
+        "credits": 20,
+        "processing": {
+          "triangles": 2400,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 3.8,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g2-vexillum.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g2-vexillum-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The vexillum over each of the commander's four legions drawn up behind the western edge in the finale (Chapter XII), where the code-built vexillum stands, a little before the block's front rank (finaleStandardSpot, src/showcase/environment-finale.js), drawn as one instanced batch with the scenery's placed models and their shader programs (finale-standards, src/showcase/scenery-models.js). Placed, it hides its side's code-built vexilla, which stay its fallback. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred local GLB in the offline group of Chapter XII in the desktop app only (src/ui/art.js): made after the web downloads filled, it is in no web chapter's download, so the web build leaves it out (scripts/build.mjs) and there the code-built vexilla stand; preloaded with the finale's scenery at Balanced and High. Performance and a failed download keep the code-built vexilla.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 163632,
+        "gzipBytes": 158328,
+        "sha256": "dbf5feb1cf8a8becc49485913edb22331c5893dec5049c4894981bc58dd557d7",
+        "triangles": 2352,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.3302,
+          "height": 3.8,
+          "depth": 1.2996
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g2-vexillum-claimant",
+      "path": "assets/models/world/g2-vexillum-claimant.glb",
+      "subject": "Release G2 standard: the finale's vexillum in the claimant's blue-grey, its crimson cloth recoloured",
+      "source": {
+        "method": "Derived from g2-vexillum (Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS): its colour map's crimson cloth recoloured to the claimant's blue-grey by scripts/assets/recolour-model.py, its geometry and other maps unchanged; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "1cc6dec1-aa68-4d7b-a9fa-4c83a53688a4",
+        "generatedAt": "2026-11-10T19:30:57.738Z",
+        "prompt": "art-source/models/requests/g2-vexillum.json",
+        "rawBytes": 35128552,
+        "rawSha256": "08fada90de040321b98652833461f5f7c549083b197951c9b3222c73039ef613",
+        "program": "graphics-g2",
+        "credits": 0,
+        "derivedFrom": "g2-vexillum",
+        "creditsNote": "No credits of its own: a recolouring of g2-vexillum (20 credits, recorded with it)",
+        "processing": {
+          "triangles": 2400,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 3.8,
+          "sharpAngle": 35,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g2-vexillum.json",
+        "recolour": {
+          "tool": "scripts/assets/recolour-model.py",
+          "report": "art-source/models/reports/g2-vexillum-claimant.json",
+          "settings": {
+            "hue": 0,
+            "width": 18,
+            "soft": 10,
+            "minSaturation": 0.45,
+            "to": "#4b5e7a",
+            "webpQuality": 80
+          }
+        },
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g2-vexillum-claimant-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "The vexillum over each of the claimant's two cohorts before the Aurelian Walls in the finale (Chapter XII), where the code-built vexillum stands, a little before the block's front rank (finaleStandardSpot, src/showcase/environment-finale.js), drawn as one instanced batch with the scenery's placed models and their shader programs (finale-standards, src/showcase/scenery-models.js). Placed, it hides its side's code-built vexilla, which stay its fallback. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred local GLB in the offline group of Chapter XII in the desktop app only (src/ui/art.js): made after the web downloads filled, it is in no web chapter's download, so the web build leaves it out (scripts/build.mjs) and there the code-built vexilla stand; preloaded with the finale's scenery at Balanced and High. Performance and a failed download keep the code-built vexilla.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 165304,
+        "gzipBytes": 160010,
+        "sha256": "eec9d1048eee977dc68c10753f3719ae65359403937a7b2b98f33eb93c15652e",
+        "triangles": 2352,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 0.3302,
+          "height": 3.8,
+          "depth": 1.2996
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -22063,13 +22324,13 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 241,
+    "models": 245,
     "textures": 15,
     "src": 1,
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 92496777,
-  "totalModelBytes": 77193299,
+  "totalBundledAssetBytes": 93156793,
+  "totalModelBytes": 77853315,
   "derivedGeometryBytes": 47428
 }

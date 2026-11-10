@@ -264,6 +264,11 @@ export const animalModelUrl=(model,chapter)=>ANIMAL_COATS[model]?(ANIMAL_COATS[m
   :(ANIMAL_CHAPTERS[model]?.includes(chapter)?`assets/models/world/${model}.glb`:null);
 // The generated landmarks on the chapters' horizons (release 9), with the chapters whose
 // LANDMARK_LAYOUT (world-layouts.js) names each. The Colosseum keeps its code-built outline.
+// The finale's vexilla (graphics plan, G2): one over each block of the massed armies before Rome (environment-finale.js),
+// the commander's cloth in its generated red, the claimant's recoloured to his cohorts' blue-grey
+// (scripts/assets/recolour-model.py). Made after the web downloads filled, they stand in the desktop app alone; on the
+// web, and on Performance, the code-built vexilla stay.
+export const FINALE_STANDARD_MODELS=Object.freeze({commander:'g2-vexillum',claimant:'g2-vexillum-claimant'});
 export const LANDMARK_CHAPTERS=Object.freeze(Object.fromEntries(Object.entries({
   'landmark-novae-gate':[1],'landmark-signal-tower':[1,4],'landmark-burial-mound':[1,4],
   'landmark-pile-hut':[2],'landmark-bridge-piers':[2],'landmark-river-quay':[2],
@@ -320,6 +325,7 @@ export const WORLD_CATALOG=Object.freeze({
   ...Object.fromEntries(Object.entries(BATTLE_PROP_MODELS).map(([id,m])=>[id,g5(id,encounterChapters(m.encounters))])),
   ...Object.fromEntries(Object.entries(AFTERMATH_DEBRIS_MODELS).map(([id,m])=>[id,g5(id,m.chapters)])),
   ...Object.fromEntries(Object.entries(ANIMAL_CHAPTERS).map(([id,chapters])=>[id,g4(id,chapters)])),
+  ...Object.fromEntries(Object.values(FINALE_STANDARD_MODELS).map(id=>[id,asset('prop',[`assets/models/world/${id}.glb`],[12],[])])),
   ...Object.fromEntries(Object.entries(LANDMARK_CHAPTERS).map(([id,chapters])=>[id,asset('landmark',[`assets/models/landmarks/${id}.glb`],chapters)])),
   // The ground's photographed layers (ground-layers.js), shared by every chapter.
   'ground-layers':asset('texture',Object.values(GROUND_FILES),[1,2,3,4,5,6,7,8,9,10,11,12]),

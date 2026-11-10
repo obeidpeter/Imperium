@@ -8,6 +8,7 @@ import {PRESENTATION_BUDGET as budget} from '../src/ui/presentation-budget.js';
 import {CONFIG} from '../src/config.js';
 import {BUILD_ONLY,chapterAudioAssets} from '../src/ui/art.js';
 import {chapterBodies,chapterHorses,desktopOnlyBodyFiles} from '../src/ui/actor-body-catalog.js';
+import {chapterKitFiles,desktopOnlyKitFiles} from '../src/showcase/actor-kit-catalog.js';
 import {chapterWorldFiles,desktopOnlyWorldFiles,worldFiles} from '../src/ui/world-catalog.js';
 
 const manifest=JSON.parse(await readFile('docs/asset-manifest.json','utf8'));
@@ -88,13 +89,17 @@ const world=new Set(worldFiles().map(file=>'./'+file));
 const desktopOnly=new Set(build.target==='desktop'?[]:desktopOnlyWorldFiles().map(file=>'./'+file));
 // So are the bodies no chapter's web download carries (actor-body-catalog.js).
 const desktopOnlyBodies=build.target==='desktop'?[]:desktopOnlyBodyFiles().map(file=>'./'+file);
-assert.equal(build.desktopOnlyFiles,desktopOnly.size+desktopOnlyBodies.length,'Desktop-only world files and bodies left out of the web build');
-for(const path of desktopOnlyBodies)assert.ok(!existsSync('dist/'+path.slice(2))&&![...build.initialAssets,...build.deferredAssets,...Object.values(build.chapterAssets).flat()].includes(path),'Desktop-only body left out of the web build: '+path);
+// And the kit no chapter's web download carries (actor-kit-catalog.js: G2's standards).
+const desktopOnlyKit=build.target==='desktop'?[]:desktopOnlyKitFiles().map(file=>'./'+file);
+assert.equal(build.desktopOnlyFiles,desktopOnly.size+desktopOnlyBodies.length+desktopOnlyKit.length,'Desktop-only world files, bodies and kit left out of the web build');
+for(const path of [...desktopOnlyBodies,...desktopOnlyKit])assert.ok(!existsSync('dist/'+path.slice(2))&&![...build.initialAssets,...build.deferredAssets,...Object.values(build.chapterAssets).flat()].includes(path),'Desktop-only body or kit left out of the web build: '+path);
 // A generated character body belongs to the chapters whose figures wear it.
 const characterBody=path=>/^\.\/assets\/models\/characters\/([\w-]+)\.glb$/.exec(path)?.[1];
 // A generated horse belongs to the chapters whose riders ride it.
 const generatedHorse=path=>/^\.\/assets\/models\/horses\/([\w-]+)\.glb$/.exec(path)?.[1];
-const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!world.has(path)&&!characterBody(path)&&!generatedHorse(path)&&!BUILD_ONLY.includes(path));
+// A piece of generated kit belongs to the chapters whose figures wear or carry it.
+const kitFile=path=>/^\.\/assets\/models\/kit\/[\w-]+\.glb$/.test(path);
+const shared3D=build.showcaseAssets.filter(path=>!femaleAssets.includes(path)&&!standalone(path)&&!retiredAssets.includes(path)&&!world.has(path)&&!characterBody(path)&&!generatedHorse(path)&&!kitFile(path)&&!BUILD_ONLY.includes(path));
 for(const path of BUILD_ONLY)assert.ok(build.deferredAssets.includes(path)&&Object.values(build.chapterAssets).every(paths=>!paths.includes(path)),'Only the complete download carries '+path);
 for(const path of ['./vendor/three/addons/libs/basis/basis_worker.js','./vendor/three/addons/libs/basis/basis_transcoder.wasm','./vendor/three/addons/libs/meshopt_decoder.module.js'])assert.ok(shared3D.includes(path),'Every chapter decodes compressed models: '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets))for(const path of shared3D)assert.ok(paths.includes(path),'Chapter '+chapter+' omitted shared 3D resource: '+path);
@@ -108,6 +113,7 @@ for(const path of world){
 }
 assert.deepEqual(build.deferredAssets.filter(path=>path.startsWith('./assets/models/chapters/')&&!world.has(path)),[],'Every chapter model is in the world catalog');
 for(const path of build.showcaseAssets.filter(characterBody))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterBodies(Number(chapter),{desktop:build.target==='desktop'}).includes(characterBody(path)),'Chapter '+chapter+' and character body '+path);
+for(const path of build.showcaseAssets.filter(kitFile))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterKitFiles(Number(chapter),{desktop:build.target==='desktop'}).includes(path.slice(2)),'Chapter '+chapter+' and kit '+path);
 for(const path of build.showcaseAssets.filter(generatedHorse))for(const [chapter,paths]of Object.entries(build.chapterAssets))assert.equal(paths.includes(path),chapterHorses(Number(chapter)).includes(generatedHorse(path)),'Chapter '+chapter+' and generated horse '+path);
 for(const [chapter,paths]of Object.entries(build.chapterAssets)){
   for(const path of femaleAssets)assert.ok(paths.includes(path),'Every chapter carries the woman\'s figure (Syra keeps the camp from Chapter I): '+path);

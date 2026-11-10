@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g2-vexillum.glb",
+  "output": "assets/models/world/g2-vexillum.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 141524,
+    "gzipBytes": 106557,
+    "sha256": "a2e27c47c0581ebd31abe4d7c61f9c14f7b00f6e81601c7ff3b99f1311a36db0"
+  },
+  "after": {
+    "bytes": 163632,
+    "gzipBytes": 158328,
+    "sha256": "dbf5feb1cf8a8becc49485913edb22331c5893dec5049c4894981bc58dd557d7"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2352,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 8184
+      },
+      "bytes": 16501,
+      "psnr": 38.676
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 18448
+      },
+      "bytes": 37062,
+      "psnr": 33.668
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 21554
+      },
+      "bytes": 40245,
+      "psnr": 30.391
+    }
+  ]
+}

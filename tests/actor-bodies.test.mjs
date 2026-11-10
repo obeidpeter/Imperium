@@ -12,6 +12,7 @@ import {actorKit} from '../src/showcase/actor-kit.js';
 import {actorIdentity} from '../src/showcase/actor-identity.js';
 import {ceremonyScene} from '../src/showcase/ceremony.js';
 import {ACTOR_BODIES,actorBodyId,actorBodyUrl,chapterBodies,HORSE_BODIES,horseBodyId,SENATOR_BODIES} from '../src/ui/actor-body-catalog.js';
+import {KIT_MODELS,KIT_STANDARD_MODELS} from '../src/showcase/actor-kit-catalog.js';
 import {trimBands} from '../src/ui/bloc-style.js';
 import {createActorBodyLibrary,BODY_JOINTS,BODY_REPLACES,blocTrimGeometry} from '../src/showcase/actor-bodies.js';
 import {createActor,BLOC_TRIM} from '../src/showcase/actors.js';
@@ -42,11 +43,14 @@ const library=createActorBodyLibrary(parse);
 const legionary={id:'hero',name:'Aurelius Marcellus',side:'player',role:'infantry'};
 const sided=bone=>/^(elbow|hand|knee|ankle)$/.test(bone.name)?`${/^left-/.test(bone.parent.name)||/^left-/.test(bone.parent.parent?.name)?'left':'right'}-${bone.name}`:bone.name;
 
-test('every generated body and horse is worn or ridden in its listed chapters, through both ceremonies, Chapter II choices and the patron-backed court, in turns and real time', () => {
+test('every generated body and horse is worn or ridden, and every standard carried, in its listed chapters, through both ceremonies, Chapter II choices and the patron-backed court, in turns and real time', () => {
   let patronCourt=false;
   // The desktop app carries every body in all of its chapters; the web each chapter's that its download has room for (G6).
   const used=new Map(),usedWeb=new Map(),seen=new Set(),add=(id,chapter,map=used)=>{if(id){if(!map.has(id))map.set(id,new Set());map.get(id).add(chapter);}};
-  const wear=(kit,key,chapter)=>{add(actorBodyId(kit,key,{desktop:true}),chapter);add(actorBodyId(kit,key,{desktop:false}),chapter,usedWeb);for(const map of [used,usedWeb])add(horseBodyId(kit),chapter,map);};
+  // A standard is carried wherever a figure has one on its back (G2's, in the desktop app alone).
+  const carried=new Map();
+  const wear=(kit,key,chapter)=>{add(actorBodyId(kit,key,{desktop:true}),chapter);add(actorBodyId(kit,key,{desktop:false}),chapter,usedWeb);for(const map of [used,usedWeb])add(horseBodyId(kit),chapter,map);
+    add(KIT_STANDARD_MODELS[kit.signum],chapter,carried);};
   const collect=s=>{
     const e=G.getChapter(s).encounters[s.encounterIndex],key=`${s.chapter}:${e?.id??'end'}`;if(seen.has(key))return;seen.add(key);
     const look=(unit,state=s)=>{const kit=actorKit(unit,{chapter:state.chapter,rank:state.rank});wear(kit,actorIdentity(unit,kit).key,state.chapter);};
@@ -84,6 +88,7 @@ test('every generated body and horse is worn or ridden in its listed chapters, t
     assert.deepEqual(chapters(used)(id),[...(body.desktop??body.chapters)],`${id} in the desktop app`);
     assert.deepEqual(chapters(usedWeb)(id),[...(body.web??body.chapters)],`${id} on the web`);
   }
+  for(const id of Object.values(KIT_STANDARD_MODELS))assert.deepEqual(chapters(carried)(id),[...KIT_MODELS[id].chapters],`${id} is carried in its chapters`);
   // The chamber's members wear the senators' togas; the protagonist and the named keep the procedural toga.
   assert.ok(SENATOR_BODIES.includes(actorBodyId({civic:true,faction:'Roman',role:'speaker',identity:7},'figure-7')));
   assert.equal(actorBodyId({civic:true,hero:true,faction:'Roman',role:'speaker'},'marcellus'),null);
