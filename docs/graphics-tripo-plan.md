@@ -355,7 +355,7 @@ Eighteen models, the first of the two batches the pilot proposed, asked for in s
   - the engines' stores (the stone shot, the bolt crate) and the new ballista read at once behind the Roman line. The Roman siege tower is the batch's boldest piece, and the mantlet reads as a broad arched screen;
   - the Persian tower, open timber faced with reed mats, reads as the enemy's, lighter than the Roman one;
   - the brazier is as small as the code-built one at the field's distance, and the bolts in their crate are too small to pick out;
-  - the eastern cart reads as a different cart from the Roman one, its pale bed and faded red boards under the pilot's load. Framed at the objective, the near half of either cart fades: the opening the game cuts toward an objective the camera frames reaches the objective's own piece. That is older than G5, and stopping it short costs no credits;
+  - the eastern cart reads as a different cart from the Roman one, its pale bed and faded red boards under the pilot's load. Framed at the objective, the near half of either cart fades: the opening the game cuts toward an objective the camera frames reaches the objective's own piece. That is older than G5, and is now fixed at no credit cost: the opening ends 1.5 m short of the objective;
   - on the walked field the fallen banner reads at once, the brightest thing there. The beaten side's gear lies among the fallen, darker and smaller than the banner (the Goths') or pale against the dust (the eastern armies');
   - the review found the open Gothic wagon standing in Chapter II's marsh, whose water reaches 6 m past the board. Set pieces now keep to dry ground, out of the marsh, a river leaving the board, the distant river and Chapter V's Euphrates. Before the change 5 of the 60 set pieces touched water, and now none does; Chapter II's rearguard has dry room for one wagon.
 
@@ -378,7 +378,7 @@ The batch bears out the pilot's lesson and adds three:
   - a model of many small parts is given room above the decimator's floor.
 - **Dry ground:** in the wet chapters there is little room past the north edge. Chapter II's rearguard holds one wagon.
 
-**At no credit cost,** the opening the game cuts toward an objective the camera frames should stop short of the objective's own piece, so that a cart standing at an objective stays whole.
+**Done at no credit cost:** the opening the game cuts toward an objective the camera frames now ends 1.5 m short of the objective, so a cart standing at an objective stays whole.
 
 **The last of G5,** within its 1,265 credits left, in two batches of about 26 models, each reviewed in the game before the next. That is about 1,150 credits with a tenth for rejects, and G5 would end near 1,730 of its 1,845:
 - **The rest of the pilot's list,** about 12 models:
