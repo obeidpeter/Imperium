@@ -660,3 +660,21 @@ Seven more Tripo animals ([the plan](graphics-tripo-plan.md#the-rest-of-g4-seven
 - **Facing.** The grazing ewe and the courier's horse came facing +z and were processed with `--turn 90`, the couched camel with `--turn 85`, and the dark ox, which came standing askew, with `--turn -59`.
 - **Downloads** (`G4_WEB_ROOM`): on the web the goats ride in Chapters II and XI, the donkey in XI, and the courier's horse in III. The sheep, the dark ox and the couched camel ship in the desktop app alone; the camel by the trough stands there alone too, and the dog by the cooks' fire on the web only in Chapter III. Chapter III's download rises to 27.72 of 28 MB and XI's to 21.12, the largest is still 27.96, and the complete web game is 77.39 of 80 MB.
 - **The idle cache.** Chapter IX's camp in the desktop app now keeps 36 models in its working set, so `SCENERY_IDLE_MASTERS` rises from 36 to 40.
+
+## The battles' animals: oxen by the Gothic wagons, mules by the engines · 2026-11-10
+
+The pilot's oxen and mules beside four of the battles' set pieces, at no credit cost ([the plan](graphics-tripo-plan.md#the-battles-animals-10-november), [the art record](art-generation.md#the-battles-animals--10-november-2026)):
+
+- **The pieces' formations** (`SET_PIECE_ANIMALS` in [`world-catalog.js`](../src/ui/world-catalog.js)). Each piece has its formations in order, each a pair of animals as `[model, x, z, yaw]` in the piece's own frame, as `CAMP_ANIMALS` gives them:
+  - an unyoked pair of oxen, the grey and the dark, before each Gothic wagon's pole, which mirrored stands them behind the wagon, or else alongside it;
+  - a pair of mules alongside the onager and the carroballista, on the side away from their stores, or else at the engine's end.
+- **Where they stand** (`battlePropPlacements` in [`field-models.js`](../src/showcase/field-models.js)). Once every set piece has its spot, so no piece moves for them, a pair takes its piece's first formation, as given or mirrored across the piece's length, its breadth or both, where both animals stand:
+  - off the board and on dry ground;
+  - clear of the piece, of each other, of the scene's other scenery and set pieces, and of the roads, as the set pieces keep clear of them;
+  - each by the room its spot keeps clear (`ANIMAL_FOOTPRINTS`, a little over what its model measures), turned with it.
+
+  Each animal faces as its offset says, mirrored with its spot. Where no formation is clear, the piece stands alone: Chapter II's marsh leaves no dry room beside its wagons.
+- **As scenery.** An animal is a placement of its own that names its piece (`host`), with no code-built stand-in, so it goes wherever its piece goes: where the piece is left out (on the web, or with no room), the animal is too, and on Performance and after a failed download the ground stays empty.
+- **The same spots on the web.** The formations are chosen from every animal the piece has in the desktop app. The web then shows only those its chapter's download carries, so its animals stand where the desktop app stands them, never somewhere else. In Chapter III the grey ox stands alone by each wagon.
+- **Chapters.** An animal downloads with its pieces' chapters, in the camps and beside the set pieces (`ANIMAL_CHAPTERS`): the oxen now in Chapters I–IV, VII, VIII and X, and the mules in IV, V and VII–XII. `tests/graphics-g4.test.mjs` checks every pair in every battle reached by legal commands, and finds every animal standing in each chapter that downloads it.
+- **Downloads** (`G4_WEB_ROOM`): on the web both oxen ride in Chapter II, the grey ox in III and the mules in V. Chapter II's download rises to 27.17 of 28 MB, III's to 27.94 and V's to 27.57. The largest is still 27.96 and the complete web game is 77.80 of 80 MB. The engines of Chapters IX and X, and the wagons of the chapters whose web downloads leave them out, stand there without their animals.

@@ -32,7 +32,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | G1 | Armies | 1,005 | done: the [pilot](#g1s-pilot-8-november) (310 credits) and [the rest](#the-rest-of-g1-9-november) (695): 22 bodies and 2 horses. Its other 1,295 credits went to G3 and G5 |
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
-| G4 | Animals | 600 | [the pilot](#g4s-pilot-10-november) (80 credits) and [seven more animals](#the-rest-of-g4-seven-more-animals-10-november) (160) done: 12 models and the horse lines' horses. [What remains](#what-remains-of-g4), walking animals and the pilot's beside more pieces, needs no credits |
+| G4 | Animals | 600 | done: [the pilot](#g4s-pilot-10-november) (80 credits), [seven more animals](#the-rest-of-g4-seven-more-animals-10-november) (160) and [the battles' animals](#the-battles-animals-10-november) (no credits): 12 models and the horse lines' horses, beside 20 pieces. [Walking animals wait](#g4-closes); the 1,180 credits it leaves, its own and those held for it, follow to G6 and G2 |
 | G5 | Battle and siege | 1,845 | done: [the pilot](#g5s-pilot-9-november) (140 credits), [the first batch](#the-rest-of-g5-the-first-batch-9-november) (440) and [the last](#the-last-of-g5-10-november) (80): 28 models. Its other 1,185 credits [join G3's held 1,840](#what-g5-leaves) for G4, G6 and G2 |
 | G6 | Faces and people | 1,100 | |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
@@ -520,13 +520,40 @@ The new animals the pilot proposed, made after its review in the game, and the p
 
 ![The camps with the new animals, in the desktop build at High](images/g4-rest-camps.jpg)
 
-#### What remains of G4
+### The battles' animals (10 November)
 
-The pilot's other proposals, at no credit cost:
-- **The pilot's animals beside more pieces:** oxen by the Gothic wagons beyond the north edge of the Gothic battles, and mules by the engines behind the Roman line.
-- **Walking animals:** the ox, the mules and the camel bound to the game's horse skeleton, as the calibration's mule was, a few of them led along the roads beyond the board. Each species takes its own scale, which also mends the northern horse's size.
+The pilot's last proposal for its animals, beside more pieces, at no credit cost: its oxen by the Gothic wagons and its mules by the engines.
 
-G4 would then end at 240 of its 600 credits, without the 820 held credits the plan proposed for it. The plan has spent 2,655 credits, and its 70% floor (7,490) needs 4,835 more: nearly all of the 5,245 it has left, so the floor rests on G6 and G2 with what G4 leaves.
+| Animals | Where they stand | Chapters |
+| --- | --- | --- |
+| a pair of oxen, the grey and the dark, unyoked | at one end of each Gothic wagon beyond the north edge of the battles against Gothic bands, before its pole or behind it | I–IV, VII, VIII, X |
+| a pair of mules, unhitched | alongside each engine behind the Roman line, the onager and the carroballista, or at its end | IV, V, VII–X, XII |
+
+- **Where they stand:** once every set piece has its spot, so none moves for them, each pair takes its piece's first formation, as given or mirrored, where both stand off the board and on dry ground, clear of the piece, of each other, of the scene's other scenery and of the roads. Every wagon and engine has its pair but in Chapter II's marsh, whose water leaves no dry room beside the wagons. They are scenery with no code-built stand-in, so none stand on Performance or after a failed download.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web:
+  - both oxen ride in Chapter II, the grey ox in III, standing alone by each wagon, and the mules in V;
+  - the engines of IX and X stand there without their mules, their downloads having no room;
+  - Chapter II's download rises from 26.76 to 27.17 MB, III's from 27.72 to 27.94 and V's from 27.36 to 27.57. The largest is still 27.96 of 28 MB, Chapter I's 3D download 17.89 of 18, and the complete web game is 77.80 of 80.
+- **The review** was in the desktop build at High, in the battles of Chapters II, III, V and VII. Each moment was reached from New Game by the real-time bot's legal commands, restored through the Restore dialog, and seen twice, with the animals' files refused and with them:
+  - the oxen read at once as a pair, the grey and the dark side by side before the wagon's pole: at Chapter II's rearguard on the dry strip between the marsh and the river, and before both wagons at Chapter III's station;
+  - the mules stood at the engine's end away from the board, their long ears plain: by Chapter V's onager, and by Chapter VII's carroballista, whose place they mark more plainly than its own thin frame;
+  - not seen: the battles of Chapters I, IV, VIII, IX, X and XII, and the web build. The tests check every pair.
+- **The stage benchmark** with CI's ceilings is unchanged from main: Chapter V's mine battle at Balanced draws 163 calls, 493,523 triangles and 46 programs, and Chapter XII 162, 799,585 and 47, with no shader program compiled in the first frame or in play.
+
+![The battles' set pieces before and with their animals, in the desktop build at High](images/g4-battle-animals.jpg)
+
+#### G4 closes
+
+G4 ends at 240 of its 600 credits: 12 models and the horse lines' horses, beside 20 pieces of the camps and the battles.
+
+- **Walking animals wait.** The pilot proposed binding the ox, the mules and the camel to the game's horse skeleton, as the calibration's mule was, and leading a few along the roads beyond the board. Two things stand in the way, and neither needs credits:
+  - **Size.** The binder sets the back of every animal it binds to the game's one saddle height, so a bound ox, mule or camel would come out a horse's size, as the northern horse did. Each species would need its own size in three places: the horse's frame, whose body joint stands at one height for every horse; its gait, the stride and the planted hooves; and, for a ridden horse, its rider's seat. That reworks what every cavalry battle stands on, for animals seen only beyond the board.
+  - **Movement.** Nothing in the game yet moves an animal without a rider. A led animal needs its own path along the roads beyond the board, from the presentation seed, never from the game's random streams.
+
+  So they wait until after G6 and G2. Then the horse's frame can take a size for each species once, mending the northern horse's with it, checked in the cavalry battles.
+- **Credits:** G4 leaves 360 of its 600 and the 820 held for it: 1,180 in all. The plan has spent 2,655 credits, and its 70% floor (7,490) needs 4,835 more. G6 and G2 can spend 4,005 with their held credits, so the floor needs G4's 1,180 too. They follow in proportion to the two caps: G6 +760 and G2 +420, for caps of 3,340 and 1,845. If all of it is spent, the plan ends near 7,840 of its 7,900 credits, 73.3% of the balance.
+
+The order stays: the faces and people (G6) next, then the arms and standards (G2).
 
 ## Around every release, at no credit cost
 

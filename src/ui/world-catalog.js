@@ -223,20 +223,41 @@ export const CAMP_ANIMALS=Object.freeze(Object.fromEntries(Object.entries({
   'courier-table':{across:true,shift:[0,.45],chapters:[3,7],animals:[['g4-courier-horse',.1,-.65,.05]]}
 }).map(([id,{shift=[0,0],across=false,chapters,animals}])=>[id,Object.freeze({shift:Object.freeze(shift),across,...(chapters?{chapters:Object.freeze(chapters)}:{}),
   animals:Object.freeze(animals.map(a=>Object.freeze(a)))})])));
+// Animals by the battles' set pieces (G4; BATTLE_PROP_MODELS): an unyoked pair of oxen by each Gothic wagon beyond the
+// north edge, and a pair of mules by each engine behind the Roman line. Each piece has its formations in
+// order, each a list of [model, x, z, yaw] in the piece's own frame, as CAMP_ANIMALS gives them: the oxen before the
+// pole, or else alongside; the mules alongside the engine away from its stores, or else at its end. After every set
+// piece has its spot (field-models.js), a pair takes the first formation, as given or mirrored, where both stand clear
+// of the piece, of the scene's other scenery and set pieces and of the roads, off the board and on dry ground; where
+// none is clear, the piece stands alone.
+export const SET_PIECE_ANIMALS=Object.freeze(Object.fromEntries(Object.entries({
+  'g5-wagon-gothic':[[['g4-ox',2.95,.52,.03],['g4-ox-dark',2.9,-.5,-.04]],[['g4-ox',.15,1.7,.03],['g4-ox-dark',-.2,2.6,-.02]]],
+  'g5-wagon-gothic-covered':[[['g4-ox-dark',3.75,.52,.02],['g4-ox',3.7,-.5,-.03]],[['g4-ox-dark',.2,1.95,.02],['g4-ox',-.2,2.85,-.03]]],
+  'g5-carroballista':[[['g4-mule',.2,-1.75,.03],['g4-mule',-.25,-2.55,-.02]],[['g4-mule',3.05,.42,.03],['g4-mule',3,-.42,-.03]]],
+  'g5-onager':[[['g4-mule',.2,-1.8,.03],['g4-mule',-.25,-2.6,-.02]],[['g4-mule',3.05,.42,.03],['g4-mule',3,-.42,-.03]]]
+}).map(([id,formations])=>[id,Object.freeze(formations.map(f=>Object.freeze(f.map(a=>Object.freeze(a)))))])));
+const setPieceChapters=id=>encounterChapters(BATTLE_PROP_MODELS[id].encounters);
+// The room each such animal takes on the ground, [length along its own x, breadth along its z] in metres, a little
+// over what its model measures (its processing report), for its spot to keep clear (field-models.js).
+export const ANIMAL_FOOTPRINTS=Object.freeze({'g4-ox':Object.freeze([2.3,.92]),'g4-ox-dark':Object.freeze([2.3,.86]),'g4-mule':Object.freeze([2.1,.72])});
 // The coats among them, and the turn that sets a coat (facing its +z) to face +x like the generated animals.
 export const ANIMAL_COATS=Object.freeze({'horse-roman':HORSE_BODIES['horse-roman']});
 export const ANIMAL_COAT_TURN=Math.PI/2;
 const hostChapters=id=>CAMP_PROP_CHAPTERS[id]??LIFE_PROP_CHAPTERS[id]??REGIONAL_PROP_CHAPTERS[id]??[];
-// The chapters whose scenes set out each generated animal: those of the pieces it stands with.
-export const ANIMAL_CHAPTERS=Object.freeze(Object.fromEntries([...new Set(Object.values(CAMP_ANIMALS).flatMap(h=>h.animals.map(([model])=>model)))]
-  .filter(model=>!ANIMAL_COATS[model]).map(model=>[model,Object.freeze([...new Set(Object.entries(CAMP_ANIMALS)
-    .filter(([,h])=>h.animals.some(([m])=>m===model)).flatMap(([host,h])=>h.chapters??hostChapters(host)))].sort((a,b)=>a-b))])));
+// The chapters whose scenes set out each generated animal: those of the pieces it stands with, in the camps and the
+// battles' baggage lines (CAMP_ANIMALS) and beside the battles' set pieces (SET_PIECE_ANIMALS).
+const animalHosts=[...Object.entries(CAMP_ANIMALS).map(([host,h])=>[h.animals,h.chapters??hostChapters(host)]),
+  ...Object.entries(SET_PIECE_ANIMALS).map(([host,formations])=>[formations.flat(),setPieceChapters(host)])];
+export const ANIMAL_CHAPTERS=Object.freeze(Object.fromEntries([...new Set(animalHosts.flatMap(([animals])=>animals.map(([model])=>model)))]
+  .filter(model=>!ANIMAL_COATS[model]).map(model=>[model,Object.freeze([...new Set(animalHosts
+    .filter(([animals])=>animals.some(([m])=>m===model)).flatMap(([,chapters])=>chapters))].sort((a,b)=>a-b))])));
 // What a chapter's web download has room for of G4's animals (presentation-budget.js): Chapter II takes its pack mule, dog
-// and goats, III its pack mule, dog and courier's horse, and XI its mules, goats and donkey; the others had too little room
-// left after G3 and G5, so their pieces stand alone on the web. The horses at the horse lines need no room: their coat is
-// already in the download.
-const G4_WEB_ROOM=Object.freeze({2:Object.freeze(['g4-pack-mule','g4-dog','g4-goat']),3:Object.freeze(['g4-pack-mule','g4-dog','g4-courier-horse']),
-  11:Object.freeze(['g4-mule','g4-goat','g4-donkey'])});
+// and goats, and both oxen for its Gothic wagon; III its pack mule, dog and courier's horse, and the grey ox, which
+// stands alone by each wagon there; V the mules for its onager; XI its mules, goats and donkey. The others had
+// too little room left after G3 and G5, so their pieces stand alone on the web. The horses at the horse lines need no
+// room: their coat is already in the download.
+const G4_WEB_ROOM=Object.freeze({2:Object.freeze(['g4-pack-mule','g4-dog','g4-goat','g4-ox','g4-ox-dark']),
+  3:Object.freeze(['g4-pack-mule','g4-dog','g4-courier-horse','g4-ox']),5:Object.freeze(['g4-mule']),11:Object.freeze(['g4-mule','g4-goat','g4-donkey'])});
 const g4=(id,chapters)=>asset('prop',[`assets/models/world/${id}.glb`],chapters,chapters.filter(c=>G4_WEB_ROOM[c]?.includes(id)));
 /** The model an animal of a chapter's scene stands as: a generated animal's, or the coat its chapter's cavalry downloads. */
 export const animalModelUrl=(model,chapter)=>ANIMAL_COATS[model]?(ANIMAL_COATS[model].chapters.includes(chapter)?horseBodyUrl(model):null)

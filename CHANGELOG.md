@@ -2,6 +2,19 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### G4 closes: oxen by the Gothic wagons and mules by the engines ([the plan](docs/graphics-tripo-plan.md#the-battles-animals-10-november))
+
+The pilot's oxen and mules, with the dark ox, beside four of the battles' set pieces, at no credit cost. G4 ends at 240 of its 600 credits.
+
+- **Who stands where:**
+  - a pair of oxen, the grey and the dark, unyoked at one end of each Gothic wagon beyond the north edge of the battles against Gothic bands, before its pole or behind it (Chapters I–IV, VII, VIII and X);
+  - a pair of mules alongside each engine behind the Roman line, the onager and the carroballista, or at its end (IV, V, VII–X and XII).
+- **Where they stand:** each pair takes its piece's first formation, as given or mirrored, that is off the board and on dry ground and clear of the piece, of each other, of the scene's other scenery and of the roads. The set pieces stand where they stood. Chapter II's marsh leaves no dry room beside its wagons, which stand alone.
+- **Downloads:** on the web both oxen ride in Chapter II, the grey ox in III and the mules in V; the engines of IX and X stand there alone. Chapter II's download rises to 27.17 MB, III's to 27.94 and V's to 27.57; the largest is still 27.96 of 28, and the complete web game is 77.80 of 80.
+- **Reviewed in the game** in the battles of Chapters II, III, V and VII ([the art record](docs/art-generation.md#the-battles-animals--10-november-2026)): the oxen read at once by the wagons, and the mules mark the engines' places, Chapter VII's carroballista more plainly than its own thin frame. The other battles were not seen; the tests check every pair.
+- **Walking animals wait** until after G6 and G2, with the northern horse's size ([the plan](docs/graphics-tripo-plan.md#g4-closes)): the binder gives every animal a horse's saddle height, so each species needs its own size in the horse's frame, gait and rider's seat, and nothing yet moves an animal without a rider. The 1,180 credits G4 leaves, its own and those held for it, follow to G6 (+760) and G2 (+420).
+- **Checks:** `tests/graphics-g4.test.mjs` checks every pair in every battle reached by legal commands: one of its piece's formations, off the board, on dry ground, clear of the piece, the roads, the scene's other scenery and each other, the same spots on the web, and each animal standing in every chapter that downloads it. The stage benchmark with CI's ceilings is unchanged from main.
+
 ### The rest of G4: seven more animals in the camps ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g4-seven-more-animals-10-november))
 
 Seven Tripo animals made for 160 credits, the new ones G4's pilot proposed. Each stands beside the piece of the camps' furniture or life it belongs to, as the pilot's do.

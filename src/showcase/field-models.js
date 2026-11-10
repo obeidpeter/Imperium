@@ -1,5 +1,5 @@
 import * as T from '../../vendor/three/three.module.js';
-import {FIELD_OBJECT_MODELS,BATTLE_PROP_MODELS,AFTERMATH_DEBRIS_MODELS,worldModelUrl,worldAssetShown} from '../ui/world-catalog.js';
+import {FIELD_OBJECT_MODELS,BATTLE_PROP_MODELS,AFTERMATH_DEBRIS_MODELS,SET_PIECE_ANIMALS,ANIMAL_FOOTPRINTS,animalModelUrl,worldModelUrl,worldAssetShown} from '../ui/world-catalog.js';
 import {gridToWorld,roadSegments,distantRiverCentre} from './environment-layout.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
 import {createWaterLevelSampler,DISTANT_RIVER_LEVEL} from './environment-water.js';
@@ -123,7 +123,26 @@ export function battlePropPlacements(e,{tileSize=2.5,occupied=[],chapter}={}){
     if(!spot)continue;
     taken.push(spot.b);out.push({id,url,x:spot.x,z:spot.z,yaw:spot.yaw,fitWithin:{width:m.fit.width,depth:m.fit.depth},box:spot.b,...(Number.isFinite(spot.groundY)?{groundY:spot.groundY}:{})});
   }
-  return out.map(({box:_,...p})=>p);
+  // The pieces' animals (G4, SET_PIECE_ANIMALS), once every piece has its spot, so that no piece moves for them: each
+  // pair in its piece's first formation, as given or mirrored across the piece's length, its breadth or both, where every
+  // animal stands clear of the piece, of the rest and of the roads, off the board and on dry ground. Each faces as its
+  // offset says, mirrored with it. An animal is a placement of its own that names its piece (`host`), with no
+  // code-built stand-in.
+  const animals=[],offBoard=b=>b.maxX< -hx||b.minX>hx||b.maxZ< -hz||b.minZ>hz;
+  for(const host of [...out]){
+    const formations=SET_PIECE_ANIMALS[host.id];if(!formations||formations.flat().some(([model])=>!animalModelUrl(model,chapter)))continue;
+    placing:for(const herd of formations)for(const [mx,mz]of [[1,1],[1,-1],[-1,1],[-1,-1]]){
+      const herdBoxes=[],spots=herd.map(([model,u,w,turn])=>{
+        const at=turned(host.x,host.z,host.yaw??0,mx*u,mz*w),yaw=(host.yaw??0)+mz*(mx>0?turn:Math.PI-turn),[length,breadth]=ANIMAL_FOOTPRINTS[model];
+        const c=Math.abs(Math.cos(yaw)),n=Math.abs(Math.sin(yaw)),hw=(length*c+breadth*n)/2,hd=(length*n+breadth*c)/2;
+        return {model,x:at.x,z:at.z,yaw,b:{minX:at.x-hw,maxX:at.x+hw,minZ:at.z-hd,maxZ:at.z+hd}};
+      });
+      if(!spots.every(spot=>{const ok=offBoard(spot.b)&&clear(spot.b,host.box)&&herdBoxes.every(o=>!overlaps(spot.b,o,0));herdBoxes.push(spot.b);return ok;}))continue;
+      spots.forEach(({model,x,z,yaw,b},k)=>{taken.push(b);animals.push({id:model,key:`${host.id}:${model}:${k}`,url:animalModelUrl(model,chapter),host:host.id,x,z,yaw,fitWithin:{width:4.4,depth:4.4}});});
+      break placing;
+    }
+  }
+  return [...out.map(({box:_,...p})=>p),...animals];
 }
 
 // The walked field's debris (AFTERMATH_DEBRIS_MODELS): at most this many spots, each beside one of the fallen and at

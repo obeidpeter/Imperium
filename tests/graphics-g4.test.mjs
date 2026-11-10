@@ -8,19 +8,23 @@ import * as G from '../src/core/game.js';
 import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
 import {stageEncounter} from '../src/showcase/live-figures.js';
-import {regionalPropPlacements} from '../src/showcase/environment-regional-world.js';
+import {regionalPropPlacements,regionalPlacementBounds} from '../src/showcase/environment-regional-world.js';
+import {roadSegments} from '../src/showcase/environment-layout.js';
+import {createRoadSurfaceSampler} from '../src/showcase/environment-road-surface.js';
+import {createWaterSampler} from '../src/showcase/environment-water.js';
 import {sceneryPlacements,createSceneryModels,standSkinnedModel,SCENERY_IDLE_MASTERS} from '../src/showcase/scenery-models.js';
 import {createSceneryModelCache} from '../src/showcase/scenery-cache.js';
 import {HORSE_BODIES,horseBodyUrl} from '../src/ui/actor-body-catalog.js';
-import {CAMP_ANIMALS,ANIMAL_CHAPTERS,ANIMAL_COATS,ANIMAL_COAT_TURN,CAMP_PROP_CHAPTERS,LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,WORLD_CATALOG,
-  animalModelUrl,chapterWorldFiles,desktopOnlyWorldFiles,worldModelUrl} from '../src/ui/world-catalog.js';
+import {CAMP_ANIMALS,SET_PIECE_ANIMALS,ANIMAL_FOOTPRINTS,ANIMAL_CHAPTERS,ANIMAL_COATS,ANIMAL_COAT_TURN,BATTLE_PROP_MODELS,CAMP_PROP_CHAPTERS,LIFE_PROP_CHAPTERS,
+  REGIONAL_PROP_CHAPTERS,WORLD_CATALOG,animalModelUrl,chapterWorldFiles,desktopOnlyWorldFiles,worldModelUrl} from '../src/ui/world-catalog.js';
 
 // Release G4 of the graphics plan (docs/graphics-tripo-plan.md): animals. They stand in the camps' courts beyond the board
 // and in the battles' baggage line, each beside the piece of furniture or life it belongs to: the Roman horse's coat, baked
 // standing, at the horse lines; generated oxen by the ox cart, mules by the covered carriage, camels by the camel gear and
 // the caravan's trough and baggage, a dog by the ovens and the cooks' fire, sheep by the loom, goats by the woodpile and
 // the market stall, a pack donkey by the pottery stall and a courier's horse by the courier table; and the calibration's
-// pack mule by the broken cart and the handcart. Presentation only: these tests prove where they stand, in camps and
+// pack mule by the broken cart and the handcart. Beyond the battles' boards, the pilot's oxen stand before the Gothic
+// wagons and its mules by the Roman engines. Presentation only: these tests prove where they stand, in camps and
 // battles reached by legal commands, not anything a player does.
 const root=new URL('../',import.meta.url),read=async path=>JSON.parse(await readFile(new URL(path,root),'utf8'));
 const fixtures=await read('tests/fixtures/graphics-scenes.json');
@@ -116,32 +120,47 @@ test('every animal G4 ships has its task, its manifest entry and its budget, and
 });
 
 test('each animal is in the chapters of the pieces it stands with, the web carries those it has room for, and a horse is its chapters\' cavalry coat', () => {
-  const models=new Set(Object.values(CAMP_ANIMALS).flatMap(h=>h.animals.map(([model])=>model)));
-  assert.deepEqual([...models].filter(m=>!ANIMAL_COATS[m]).sort(),[...SHIPPED].sort());
+  // The pieces each stands with: the camps' furniture and life (CAMP_ANIMALS), and the battles' set pieces
+  // (SET_PIECE_ANIMALS) in the chapters of the battles that set them out.
+  const battleChapters=id=>[...new Set(BATTLE_PROP_MODELS[id].encounters.map(b=>Number(/^ch(\d+)-/.exec(b)[1])))];
+  const hosts=[...Object.entries(CAMP_ANIMALS).map(([host,h])=>[h.animals.map(([m])=>m),h.chapters??hostChapters(host)]),
+    ...Object.entries(SET_PIECE_ANIMALS).map(([host,formations])=>[formations.flat().map(([m])=>m),battleChapters(host)])];
+  assert.deepEqual([...new Set(hosts.flatMap(([animals])=>animals))].filter(m=>!ANIMAL_COATS[m]).sort(),[...SHIPPED].sort());
   for(const model of SHIPPED){
-    const hosts=Object.entries(CAMP_ANIMALS).filter(([,h])=>h.animals.some(([m])=>m===model)).map(([host])=>host);
-    assert.deepEqual(WORLD_CATALOG[model].chapters,[...new Set(hosts.flatMap(host=>CAMP_ANIMALS[host].chapters??hostChapters(host)))].sort((a,b)=>a-b),
+    assert.deepEqual(WORLD_CATALOG[model].chapters,[...new Set(hosts.filter(([animals])=>animals.includes(model)).flatMap(([,chapters])=>chapters))].sort((a,b)=>a-b),
       `${model} stands where its pieces stand`);
     assert.deepEqual(ANIMAL_CHAPTERS[model],WORLD_CATALOG[model].chapters);
   }
+  // By the set pieces, a pair of the pilot's oxen by each Gothic wagon and of its mules by each engine, in each of
+  // the piece's formations, every one with the room it keeps clear.
+  assert.deepEqual(Object.keys(SET_PIECE_ANIMALS).sort(),['g5-carroballista','g5-onager','g5-wagon-gothic','g5-wagon-gothic-covered']);
+  for(const [host,formations]of Object.entries(SET_PIECE_ANIMALS)){
+    assert.ok(BATTLE_PROP_MODELS[host]&&formations.length>=2,`${host}: a set piece with its formations`);
+    for(const herd of formations){
+      assert.deepEqual(herd.map(([model])=>model).sort(),/wagon/.test(host)?['g4-ox','g4-ox-dark']:['g4-mule','g4-mule'],`${host}: its pair`);
+      for(const [model,u,w,turn]of herd)assert.ok(ANIMAL_FOOTPRINTS[model]&&[u,w,turn].every(Number.isFinite),`${host}: ${model}`);
+    }
+  }
+  assert.deepEqual(Object.keys(ANIMAL_FOOTPRINTS).sort(),['g4-mule','g4-ox','g4-ox-dark']);
   // A piece that names its animals' chapters names some of its own: Chapter XI's courier table stands on a service pad.
   for(const [host,h]of Object.entries(CAMP_ANIMALS))if(h.chapters)assert.ok(h.chapters.every(c=>hostChapters(host).includes(c)),host);
   assert.deepEqual(CAMP_ANIMALS['courier-table'].chapters,[3,7]);
-  // On the web, Chapter II carries its pack mule, dog and goats, III its pack mule, dog and courier's horse, and XI its
-  // mules, goats and donkey; every other web chapter leaves its animals out, and the desktop app has them all.
+  // On the web, Chapter II carries its pack mule, dog and goats and both oxen for its Gothic wagon, III its pack mule, dog
+  // and courier's horse and the grey ox, V the mules for its onager, and XI its mules, goats and donkey; every other web
+  // chapter leaves its animals out, and the desktop app has them all.
   const web=Object.fromEntries(SHIPPED.map(model=>[model,WORLD_CATALOG[model].web]));
-  assert.deepEqual(web,{'g4-ox':[],'g4-mule':[11],'g4-camel':[],'g4-dog':[2,3],'g4-pack-mule':[2,3],'g4-sheep':[],'g4-sheep-grazing':[],'g4-goat':[2,11],
-    'g4-donkey':[11],'g4-ox-dark':[],'g4-camel-couched':[],'g4-courier-horse':[3]});
+  assert.deepEqual(web,{'g4-ox':[2,3],'g4-mule':[5,11],'g4-camel':[],'g4-dog':[2,3],'g4-pack-mule':[2,3],'g4-sheep':[],'g4-sheep-grazing':[],'g4-goat':[2,11],
+    'g4-donkey':[11],'g4-ox-dark':[2],'g4-camel-couched':[],'g4-courier-horse':[3]});
   for(const model of SHIPPED)for(const chapter of WORLD_CATALOG[model].chapters){
     assert.equal(chapterWorldFiles(chapter,{desktop:true}).includes(worldModelUrl(model)),true);
     assert.equal(chapterWorldFiles(chapter,{desktop:false}).includes(worldModelUrl(model)),web[model].includes(chapter));
   }
-  assert.deepEqual(desktopOnlyWorldFiles().filter(f=>/\/g4-/.test(f)).sort(),['g4-camel','g4-ox','g4-sheep','g4-sheep-grazing','g4-ox-dark','g4-camel-couched'].map(worldModelUrl).sort());
+  assert.deepEqual(desktopOnlyWorldFiles().filter(f=>/\/g4-/.test(f)).sort(),['g4-camel','g4-sheep','g4-sheep-grazing','g4-camel-couched'].map(worldModelUrl).sort());
   // The horse lines' horses are the coat those chapters' cavalry already download: no file of their own.
   assert.deepEqual(Object.keys(ANIMAL_COATS),['horse-roman']);
   for(const chapter of CAMP_PROP_CHAPTERS['g3-horse-lines'])assert.ok(HORSE_BODIES['horse-roman'].chapters.includes(chapter),`Chapter ${chapter} downloads the Roman horse`);
   assert.equal(animalModelUrl('horse-roman',7),horseBodyUrl('horse-roman'));assert.equal(animalModelUrl('horse-roman',8),null);
-  assert.equal(animalModelUrl('g4-ox',8),worldModelUrl('g4-ox'));assert.equal(animalModelUrl('g4-ox',7),null);
+  assert.equal(animalModelUrl('g4-ox',8),worldModelUrl('g4-ox'));assert.equal(animalModelUrl('g4-ox',5),null);
 });
 
 test('in every camp and battle, each animal stands with its piece, within the piece\'s court or line spot, clear of it and of the others, on its far side from the board, and in every chapter that downloads it', async () => {
@@ -180,11 +199,99 @@ test('in every camp and battle, each animal stands with its piece, within the pi
         checked++;
       });
     }
+    // And the animals beside a battle's set pieces, which the next test checks.
+    if(e.kind==='battle')for(const a of sceneryPlacements(e,{chapter,desktop:true}).filter(p=>SET_PIECE_ANIMALS[p.host]))(shown[a.id]??=new Set()).add(chapter);
     assert.equal(JSON.stringify(e),before,`${id}: placement reads the scene and changes nothing`);
   }
   assert.ok(checked>=60,`${checked} animals checked`);
   // No chapter downloads an animal that none of its camps or battles stands: a piece on a service pad has none.
   for(const model of SHIPPED)assert.deepEqual([...shown[model]??[]].sort((a,b)=>a-b),WORLD_CATALOG[model].chapters,`${model} stands in every chapter that downloads it`);
+});
+
+// Where the marsh leaves no dry room beside a battle's set piece, it stands without its animals.
+const SET_PIECES_ALONE={'ch2-marsh':['g5-wagon-gothic','g5-wagon-gothic-covered']};
+// What the web stands beside the set pieces it shows: both oxen by Chapter II's wagon and the grey ox alone by III's,
+// the mules by Chapter V's onager, and none by the engines of IX and X, whose downloads have no room for them.
+const WEB_HERDS={'ch2-marsh':{'g5-wagon-gothic':[],'g5-wagon-gothic-covered':[]},'ch2-rearguard':{'g5-wagon-gothic':['g4-ox','g4-ox-dark']},
+  'ch3-station':{'g5-wagon-gothic':['g4-ox'],'g5-wagon-gothic-covered':['g4-ox']},'ch3-rolls':{'g5-wagon-gothic':['g4-ox'],'g5-wagon-gothic-covered':['g4-ox']},
+  'ch5-mine':{'g5-onager':['g4-mule','g4-mule']},'ch5-wall':{'g5-onager':['g4-mule','g4-mule']},
+  'ch9-wing':{'g5-carroballista':[]},'ch9-city':{'g5-onager':[]},'ch10-road':{'g5-carroballista':[]}};
+const boxQuad=b=>[[b.minX,b.minZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[b.minX,b.maxZ]];
+test('beside the battles\' set pieces, a pair of oxen stands by each Gothic wagon and a pair of mules by each engine, as one of its formations sets them: off the board, on dry ground, clear of the piece, of the roads, of the scene\'s other scenery and of each other', async () => {
+  let checked=0;const herds=new Set(),webHerds={};
+  for(const {id,chapter,e}of battles()){
+    const before=JSON.stringify(e),all=sceneryPlacements(e,{chapter,desktop:true}),hx=e.width*1.25,hz=e.height*1.25;
+    const road=createRoadSurfaceSampler(roadSegments(e,2.5),2.5).distance,water=createWaterSampler(e,{chapter});
+    const pieces=all.filter(p=>SET_PIECE_ANIMALS[p.id]),animals=all.filter(p=>SET_PIECE_ANIMALS[p.host]);
+    // Where an animal stands, by its model's own footprint; where the rest of the scene stands, by the room the set
+    // pieces keep clear of (scenery-models.js): a building by its footprint, a set piece or a placed prop by its room.
+    const quad=async a=>corners(a.x,a.z,await footprint(a.id),a.yaw);
+    const rooms=p=>p.component?[regionalPlacementBounds(p)]:(p.instances??[p]).map(({x,z})=>{
+      const w=(p.fitWithin?.width??4.4)/2,d=(p.fitWithin?.depth??4.4)/2;return {minX:x-w,maxX:x+w,minZ:z-d,maxZ:z+d};});
+    for(const piece of pieces){
+      const herd=animals.filter(a=>a.host===piece.id);
+      if(SET_PIECES_ALONE[id]?.includes(piece.id)){assert.deepEqual(herd,[],`${id}: ${piece.id} stands alone`);continue;}
+      // One of the piece's formations, as given or mirrored across its length, its breadth or both, each animal turned
+      // from the piece's own x as its formation says, mirrored with its spot.
+      const yaw=piece.yaw??0,c=Math.cos(yaw),s=Math.sin(yaw);
+      const formations=SET_PIECE_ANIMALS[piece.id].flatMap(formation=>[[1,1],[1,-1],[-1,1],[-1,-1]].map(([mx,mz])=>({formation,mx,mz})));
+      assert.ok(formations.some(({formation,mx,mz})=>formation.length===herd.length&&formation.every(([model,u,w,turn],k)=>{
+        const a=herd.find(p=>p.key===`${piece.id}:${model}:${k}`);if(!a||a.id!==model)return false;
+        const x=piece.x+mx*u*c+mz*w*s,z=piece.z-mx*u*s+mz*w*c,facing=yaw+mz*(mx>0?turn:Math.PI-turn);
+        return Math.abs(a.x-x)<1e-9&&Math.abs(a.z-z)<1e-9&&Math.abs(Math.sin((a.yaw-facing)/2))<1e-9;
+      })),`${id}: ${piece.id}'s animals stand as one of its formations`);
+      herds.add(piece.id);
+      const own=boxQuad(rooms(piece)[0]),others=all.filter(o=>o!==piece&&o.host!==piece.id);
+      for(const a of herd){
+        const q=await quad(a),[w,d]=await footprint(a.id),[length,breadth]=ANIMAL_FOOTPRINTS[a.id];
+        // The room its spot keeps clear covers the model.
+        assert.ok(w<=length&&d<=breadth,`${a.id}: ${w.toFixed(2)} × ${d.toFixed(2)} m within its ${length} × ${breadth} m`);
+        assert.equal(a.url,animalModelUrl(a.id,chapter));assert.deepEqual(a.fitWithin,{width:4.4,depth:4.4});assert.ok(!a.fallbackName,'no code-built stand-in');
+        assert.ok(q.every(([x])=>x< -hx)||q.every(([x])=>x>hx)||q.every(([,z])=>z< -hz)||q.every(([,z])=>z>hz),`${id}: ${a.key} off the board`);
+        for(const [x,z]of [...q,[a.x,a.z]])assert.ok(road(x,z)>=2.4,`${id}: ${a.key} clear of the road`);
+        for(let i=0;i<=4;i++)for(let j=0;j<=4;j++){
+          const t=i/4,v=j/4,x=(1-t)*(1-v)*q[0][0]+t*(1-v)*q[1][0]+t*v*q[2][0]+(1-t)*v*q[3][0],z=(1-t)*(1-v)*q[0][1]+t*(1-v)*q[1][1]+t*v*q[2][1]+(1-t)*v*q[3][1];
+          assert.equal(water(x,z),false,`${id}: ${a.key} on dry ground`);
+        }
+        assert.ok(!overlaps(q,own),`${id}: ${a.key} clear of its piece`);
+        for(const b of herd)if(b!==a)assert.ok(!overlaps(q,await quad(b)),`${id}: ${a.key} clear of ${b.key}`);
+        for(const o of others){
+          const theirs=SET_PIECE_ANIMALS[o.host]?[await quad(o)]:rooms(o).map(boxQuad);
+          assert.ok(theirs.every(r=>!overlaps(q,r)),`${id}: ${a.key} clear of ${o.key??o.id}`);
+        }
+        checked++;
+      }
+    }
+    assert.equal(JSON.stringify(e),before,`${id}: placement reads the scene and changes nothing`);
+    assert.deepEqual(sceneryPlacements(e,{chapter,desktop:true}),all,'presentation is data, not randomness');
+    // On the web, the same animals stand in the same spots, with their pieces, where the download carries them.
+    const web=sceneryPlacements(e,{chapter,desktop:false});
+    for(const a of web.filter(p=>SET_PIECE_ANIMALS[p.host])){
+      assert.deepEqual(a,animals.find(p=>p.key===a.key),`${id}: ${a.key} stands on the web where it stands in the desktop app`);
+      assert.ok(WORLD_CATALOG[a.id].web.includes(chapter),`${id}: ${a.key} is in the web download`);
+    }
+    const shown=web.filter(p=>SET_PIECE_ANIMALS[p.id]);
+    if(shown.length)webHerds[id]=Object.fromEntries(shown.map(p=>[p.id,web.filter(a=>a.host===p.id).map(a=>a.id).sort()]));
+  }
+  assert.ok(checked>=60,`${checked} animals checked`);
+  assert.deepEqual([...herds].sort(),Object.keys(SET_PIECE_ANIMALS).sort(),'every set piece has its animals in some battle');
+  assert.deepEqual(webHerds,WEB_HERDS);
+  // Drawn as scenery: plain meshes that take no picks, on the ground, off the board, and never on Performance.
+  const {e,chapter}=battles().find(b=>b.id==='ch8-ferry'),slope=(x,z)=>.03*x-.02*z,hx=e.width*1.25,hz=e.height*1.25;
+  const urls=new Set(['g4-ox','g4-ox-dark','g4-mule'].map(worldModelUrl));
+  const cache=createSceneryModelCache({load:u=>urls.has(u)?loadFile(u):Promise.resolve(new T.Group())});
+  const scenery=createSceneryModels(new T.Scene(),e,{chapter,heightAt:slope,cache,desktop:true});await scenery.ready;
+  const placed=scenery.placements.filter(p=>SET_PIECE_ANIMALS[p.host]);
+  assert.deepEqual(placed.map(p=>p.id).sort(),['g4-mule','g4-mule','g4-ox','g4-ox','g4-ox-dark','g4-ox-dark'],'Chapter VIII\'s ferry: its oxen and mules');
+  for(const a of placed){
+    const model=scenery.group.getObjectByName(a.key);assert.ok(model,a.key);
+    model.traverse(o=>{if(o.isMesh){assert.ok(!o.isSkinnedMesh,`${a.key} is a plain mesh`);assert.equal(o.raycast(),undefined);}});
+    const box=new T.Box3().setFromObject(model,true),lowest=Math.min(...[[box.min.x,box.min.z],[box.min.x,box.max.z],[box.max.x,box.min.z],[box.max.x,box.max.z]].map(([x,z])=>slope(x,z)));
+    assert.ok(box.min.y<=lowest+.05&&box.min.y>=lowest-.8,`${a.key} grounded`);
+    assert.ok(box.max.x< -hx||box.min.x>hx||box.max.z< -hz||box.min.z>hz,`${a.key} stands off the board`);
+  }
+  scenery.dispose();cache.clear();
+  assert.deepEqual(createSceneryModels(new T.Scene(),e,{chapter,quality:'performance',cache:createSceneryModelCache({load:async()=>new T.Group()})}).placements,[]);
 });
 
 test('an animal shows only with its piece and only where its download carries it, and a camp\'s models still fit the idle cache', () => {
