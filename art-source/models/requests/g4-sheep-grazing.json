@@ -1,0 +1,97 @@
+{
+  "id": "g4-sheep-grazing",
+  "status": "G4 rest: processed, compressed and reviewed; ships as g4-sheep-grazing, in Chapters VIII and X (the desktop app only)",
+  "chapters": [
+    8,
+    10
+  ],
+  "use": "A grazing sheep of the camp's flock, its head down, by the loom in the court beyond the board (Chapters VIII and X), between the standing sheep.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A sheep of a Roman camp's flock, mid-3rd century AD, grazing: standing with all four legs straight and evenly spaced, its neck lowered and its muzzle down at ground level as if cropping grass, short tail hanging down, symmetrical. A sturdy hornless ewe about 0.75 metres at the shoulder with a thick oatmeal-brown fleece in tight curls, a dark brown face and dark brown lower legs. No collar, no bell, no people. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "lamb, ram, horns, goat, llama, alpaca, lying down, sitting, shorn, collar, bell, person, people, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617060,
+      "image_seed": 2617061,
+      "texture_seed": 2617062
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 250000,
+    "heightMetres": 0.8,
+    "minHeight": 0.72,
+    "maxHeight": 0.88,
+    "note": "An animal: its height, to the top of its head, horns, ears or hump, is set from its raw proportions at review."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T09:13:24.760Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "lamb, ram, horns, goat, llama, alpaca, lying down, sitting, shorn, collar, bell, person, people, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617060,
+      "image_seed": 2617061,
+      "texture_seed": 2617062,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A sheep of a Roman camp's flock, mid-3rd century AD, grazing: standing with all four legs straight and evenly spaced, its neck lowered and its muzzle down at ground level as if cropping grass, short tail hanging down, symmetrical. A sturdy hornless ewe about 0.75 metres at the shoulder with a thick oatmeal-brown fleece in tight curls, a dark brown face and dark brown lower legs. No collar, no bell, no people. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 8185,
+    "balanceSnapshotBefore": {
+      "balance": 8185,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "d623a2cb-9d1d-4df3-8926-a5ff839665c9",
+      "state": "accepted",
+      "requestSha256": "c9bec05c48c5de81be35984d8775096e6736c921744a11e1c431c678d2f2fb8d"
+    },
+    "taskId": "3525b735-a10e-481d-9443-569cc6166941",
+    "status": "success",
+    "generatedAt": "2026-11-10T09:15:27.363Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g4-sheep-grazing.glb",
+    "rawBytes": 47686000,
+    "rawSha256": "9352b6535ca62814c2233d89d0d1ce08dde76aa8a840f0fe5a9b9cdcb024a6c6",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A sheep of a Roman camp's flock, mid-3rd century AD, grazing: standing with all four legs straight and evenly spaced, its neck lowered and its muzzle down at ground level as if cropping grass, short tail hanging down, symmetrical. A sturdy hornless ewe about 0.75 metres at the shoulder with a thick oatmeal-brown fleece in tight curls, a dark brown face and dark brown lower legs. No collar, no bell, no people. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2617061,
+      "model_seed": 2617060,
+      "texture_seed": 2617062,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "lamb, ram, horns, goat, llama, alpaca, lying down, sitting, shorn, collar, bell, person, people, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T09:13:25.304295Z",
+    "tripoCompletedAt": "2026-11-10T09:15:19.302388Z",
+    "tripoRender": "art-source/models/raw/g4-sheep-grazing-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "As asked: an oatmeal-brown fleece, a dark brown face and legs, its muzzle down at the grass. It came facing its +z and was turned a quarter round: 1.14 m long and 0.8 m high. In Chapter VIII's camp it grazes by the loom between the two white sheep, the darker of the three."
+  }
+}

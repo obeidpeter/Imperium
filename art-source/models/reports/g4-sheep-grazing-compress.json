@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/world/g4-sheep-grazing.glb",
+  "output": "assets/models/world/g4-sheep-grazing.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 236852,
+    "gzipBytes": 180305,
+    "sha256": "d98bd47140ec6c9f934fd2a2724e600a3cdf67dd9af7693eb9047371fe414d39"
+  },
+  "after": {
+    "bytes": 226428,
+    "gzipBytes": 219688,
+    "sha256": "936cc8f4488dc1871eda3e61eae4cfd1fb78f6952f3364ea69d0dfc79fd21adf"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2939,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 37120
+      },
+      "bytes": 40865,
+      "psnr": 34.139
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 55834
+      },
+      "bytes": 58948,
+      "psnr": 30.869
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10104
+      },
+      "bytes": 26608,
+      "psnr": 40.765
+    }
+  ]
+}

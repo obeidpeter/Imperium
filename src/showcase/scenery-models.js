@@ -134,9 +134,9 @@ export function standSkinnedModel(root){
 }
 // Each master's materials share the imported art's programs (model-materials.js).
 const loadScene=url=>createModelLoader().loadAsync(url).then(gltf=>normaliseModelMaterials(standSkinnedModel(gltf.scene)));
-/** Idle masters kept between stages: enough for any one scene's working set (at most 34: Chapter IX's camp in the desktop
+/** Idle masters kept between stages: enough for any one scene's working set (at most 36: Chapter IX's camp in the desktop
  * app, with G3's furniture and walls and G4's animals), so a chapter's next stage finds its models still warm. */
-export const SCENERY_IDLE_MASTERS=36;
+export const SCENERY_IDLE_MASTERS=40;
 const masters=createSceneryModelCache({maxIdle:SCENERY_IDLE_MASTERS,load:loadScene});
 export const warmSceneryModel=(url,load)=>masters.warm(url,load);
 export const sceneryMaster=url=>masters.master(url);

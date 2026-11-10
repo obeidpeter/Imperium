@@ -2,6 +2,27 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The rest of G4: seven more animals in the camps ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g4-seven-more-animals-10-november))
+
+Seven Tripo animals made for 160 credits, the new ones G4's pilot proposed. Each stands beside the piece of the camps' furniture or life it belongs to, as the pilot's do.
+
+- **Who stands where:**
+  - two white sheep and a brown ewe grazing between them, beside the loom (Chapters VIII and X);
+  - two goats by the woodpile (I, II and IV) or the market stall (IX–XII);
+  - a grey pack donkey with a basket of jars at each side, beside the pottery stall (VI, IX, XI and XII);
+  - a dark ox beside the pilot's grey one, by the ox cart (VIII and X);
+  - a dromedary couched at rest beside the caravan's baggage, in the baggage line of Chapter IX's battles;
+  - a courier's bay horse under a red saddle cloth, beside the courier table (III and VII).
+- **The pilot's animals beside two more pieces,** in the battles' baggage lines: its camel by the caravan's trough (IX), and its dog by the cooks' fire (I, III and VII). In the camps those pieces stand on service pads, where no animal stands.
+- **Only where it is seen:** Chapter XI's courier table stands on a service pad and XI has no battle, so the courier's horse is not downloaded there. A test finds every animal standing somewhere in each chapter that downloads it.
+- **One of eight generations rejected:** the first courier's horse came under a saddle of a later shape, a stirrup hanging at its side; the second, under a saddle cloth with no saddle frame, ships. Kept with a note in [the art record](docs/art-generation.md#the-rest-of-g4-seven-more-animals--10-november-2026): the standing sheep came horned where a hornless ewe was asked, the dark ox has a small udder, and the courier's horse's ear tips came red.
+- **Reviewed in the game** in the camps of Chapters II, III, VIII, IX and XI ([the art record](docs/art-generation.md#the-rest-of-g4-seven-more-animals--10-november-2026)):
+  - the sheep by the loom, the dark ox beside the grey and the courier's horse by its table read at once;
+  - the goats and the donkey read as goats and a donkey, though small;
+  - the camels by the caravan's trough and baggage and the dog by the cooks' fire stand only in battles' baggage lines, and were not seen; the tests check every placement.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web the goats ride in Chapters II and XI, the donkey in XI and the courier's horse in III; the other new animals stand in the desktop app alone. Chapter II's download rises to 26.76 MB, III's to 27.72 and XI's to 21.12; the largest is still 27.96 of 28 MB, and the complete web game is 77.39 of 80.
+- **Checks:** `tests/graphics-g4.test.mjs` now covers both batches: each ledger, the rejected courier's horse and the second that ships under its name, every shipped model's task, manifest entry and budget, each animal's chapters and web room, and every animal of both batches, in every camp and battle reached by legal commands, inside its piece's court or line spot, clear of the piece and of the others.
+
 ### Release G4's pilot: animals beside the camps' furniture ([the plan](docs/graphics-tripo-plan.md#g4s-pilot-10-november))
 
 The game's first animals other than the cavalry's horses: four Tripo models made for 80 credits, the pack mule step 0's calibration made, and the Roman horse's coat stood at the horse lines. Each stands beside the piece of the camps' furniture or life it belongs to.

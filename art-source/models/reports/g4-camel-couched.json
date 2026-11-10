@@ -1,0 +1,50 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g4-camel-couched.glb",
+    "bytes": 45041868,
+    "sha256": "d8a977c18ce4018747231abbcc14ef1e9ea6836301689acbb20c0ff5e0c91df4",
+    "triangles": 1421206
+  },
+  "output": {
+    "path": "assets/models/world/g4-camel-couched.glb",
+    "bytes": 260512,
+    "sha256": "ad8540700ad920fdaa0262fc643830b711e89accdba115b6a02549ce7204bcde",
+    "triangles": 4900
+  },
+  "settings": {
+    "triangles": 5000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 1.6,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false,
+    "turn": 85.0
+  },
+  "scale": 2.485749167328458,
+  "sizeMetres": {
+    "width": 2.5048,
+    "height": 1.6,
+    "depth": 1.0002
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_092c39ed-b69e-48e9-977c-94105ef1c8e7",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_092c39ed-b69e-48e9-977c-94105ef1c8e7",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_092c39ed-b69e-48e9-977c-94105ef1c8e7",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

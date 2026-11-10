@@ -2184,6 +2184,69 @@ Each model was compared with Tripo's render, then rendered from four sides with 
   - Chapter IX: 237 and 733,068, against 231 and 695,468.
 - **Not seen:** the oxen in Chapter X, the mules in VII except from the Overview camera, the dog by Chapter VIII's field oven, the animals of Chapters I and IV, and every animal in the battles' baggage lines. `tests/graphics-g4.test.mjs` checks every placement in every camp and battle reached by legal commands.
 
+## The rest of G4: seven more animals · 10 November 2026
+
+The rest of release G4 of the [graphics plan](graphics-tripo-plan.md#the-rest-of-g4-seven-more-animals-10-november): the new animals the pilot proposed, made after its review in the game. Each stands beside the piece of the camps' furniture or life it belongs to, as the pilot's do, in that piece's court beyond a camp's board or by its spot in a battle's baggage line, and the pilot's camel and dog stand beside two more pieces. [The asset pipeline](asset-pipeline.md#the-rest-of-g4-seven-more-animals--2026-11-10) has how they are placed.
+
+The models were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) on 2026-11-10, from the text prompts in their requests only: no reference image or third-party model. The batch cost 160 credits of its 180-credit ceiling, task by task in [the G4 ledger](../art-source/models/graphics-g4-credits.json), and the balance read 8,205 before and 8,045 after. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Where | Chapters | Tripo task | Triangles | Runtime file |
+| --- | --- | --- | --- | ---: | ---: |
+| g4-sheep | two, by the loom | VIII, X | `f39dfe37-1368-4246-b3b1-c1f5313369ff` | 2,940 | 208,432 bytes |
+| g4-sheep-grazing | between them, grazing | VIII, X | `3525b735-a10e-481d-9443-569cc6166941` | 2,939 | 226,428 bytes |
+| g4-goat | two, by the woodpile or the market stall | I, II, IV, IX–XII | `d66b0a5a-9e86-429e-a66c-952651437b05` | 2,940 | 195,636 bytes |
+| g4-donkey | beside the pottery stall | VI, IX, XI, XII | `d5330dd0-0156-4e5f-a0ee-d7f4fedd19c4` | 4,900 | 261,084 bytes |
+| g4-ox-dark | beside the ox cart, with the pilot's grey ox | VIII, X | `fdb40ee4-e19b-40e9-b7a1-ce71024e61cd` | 4,900 | 201,132 bytes |
+| g4-camel-couched | couched beside the caravan's baggage, in the battles' baggage line | IX | `092c39ed-b69e-48e9-977c-94105ef1c8e7` | 4,900 | 246,564 bytes |
+| g4-courier-horse-b (ships as g4-courier-horse) | beside the courier table | III, VII | `330e35eb-66dd-4a01-981c-142251b9e0af` | 4,899 | 233,828 bytes |
+
+The pilot's models stand beside two more pieces at no cost: its camel by the caravan's trough, and its dog by the cooks' fire. These pieces, like the caravan's baggage, stand on service pads inside the camps, where no animal stands, so their animals stand only in the battles' baggage lines: Chapter IX's for the camels, and Chapters I, III and VII's for the dog. Chapter XI's courier table stands on a pad too, and XI has no battle, so the courier's horse stands in III and VII alone. Beside the ox cart, the second of the pilot's grey oxen gives way to the dark one.
+
+Every runtime file was processed in Blender to its request's budget (512-pixel maps), compressed (meshopt geometry, ETC1S KTX2 with mipmaps) with its geometry checked unchanged, and passes `check-model` within its request's budget. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the processing and compression reports in `art-source/models/reports/`. One generation was rejected at review and is not shipped, 20 credits: the first courier's horse (`g4-courier-horse`, task `eadcf2e6-f17b-46a1-818f-f2c35b2cedb7`). One of eight generations (13%) is under the plan's 20% stop rule.
+
+The prompts ask for each animal standing square, as the pilot's did, except the grazing ewe and the couched camel. They are evocations, not reconstructions:
+- **the sheep:** a sturdy hornless ewe with a thick creamy-white fleece, and a second, oatmeal-brown with a dark face, grazing;
+- **the goat:** a wiry nanny goat with backswept horns, a small beard and a rope collar, for a town's market;
+- **the donkey:** a small grey pack donkey under a wooden pack saddle, with a wicker pannier of clay jars on each side, for the pottery stall;
+- **the dark ox:** a draught ox like the pilot's, dark chestnut shading to near black at the neck and shoulders, so the cart's pair are two beasts rather than one twice;
+- **the couched camel:** a dromedary resting with its legs folded beneath it, under the pilot's camel's red and ochre blanket, beside the baggage it carries;
+- **the courier's horse:** a lean bay waiting by the courier table. The first prompt asked for a Roman four-horned saddle without stirrups; the second asked for a fringed red saddle cloth held by a breast strap and a girth, with no saddle frame at all.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render, then rendered from four sides with a 1.8 m figure for scale (`scripts/assets/preview-model.mjs`), and finally seen in the camps in the desktop build at High, as the pilot's were. What it showed, and what was kept:
+
+![The seven new models from four sides with a 1.8 m figure for scale](images/g4-rest-models.jpg)
+
+- **The first courier's horse was rejected.** Its saddle came in a later shape, with a deep seat and a knobbed pommel, and a stirrup leather and its iron hung at its side, although the prompt said "without stirrups" and the negative prompt named stirrups: an anachronism in the third century. The second request asked for a saddle cloth and no saddle frame, and put the saddle frame, its horn and pommel and the stirrups in its negative prompt.
+- **The courier's horse** came as the second request asked: a bay with a black mane, tail and lower legs, in a studded bridle with its reins, under a fringed red saddle cloth held by a breast strap and a girth. Kept, with a note: its ear tips came tinted the red of the cloth. It came facing its +z and was processed a quarter turn round, like the pilot's camel. It is 2.03 m long and 1.8 m to its ear tips.
+- **The standing sheep** came horned, its horns curling at the sides of its head like a ram's, although a hornless ewe was asked and the negative prompt named a ram and horns. Its creamy-white fleece in tight curls, its pale face and its dark lower legs are as asked, and it reads at once as a sheep, so it was kept. It is 1.10 m long and 0.95 m to the top of its head.
+- **The grazing ewe** came as asked: an oatmeal-brown fleece, a dark brown face and legs, its muzzle down at the grass. It came facing its +z and was turned a quarter round. It is 1.14 m long and 0.8 m high.
+- **The goat** came as asked, but mottled dark brown all over rather than patched brown and black, with no pale belly: backswept horns, a small beard, upright ears, its short tail held up and a thin collar. It is 1.20 m long and 0.95 m to its horn tips.
+- **The donkey** came as asked, though darker grey than "dusty": long upright ears, a pale muzzle, a short dark mane and a halter, under a pale pack pad, with a wicker basket of clay jars hanging at each side. It is 1.60 m long and 1.4 m to its ear tips.
+- **The dark ox** came as asked: dark chestnut shading to near black at the neck and shoulders, a pale muzzle, pale horns with dark tips and a rope halter. It came standing askew in its file, 59° round from facing +x, and was turned to face +x like the others. Kept, with a note: under its belly, between the hind legs, is a small pale udder, which the negative prompt named. It is 2.24 m long and 1.6 m to its horn tips.
+- **The couched camel** came as asked: a sandy dromedary resting on its folded legs, its long neck curving up, under a patterned red and ochre blanket held by a girth. Two short wooden posts stand at the blanket's front and back, as a saddle's frame would, which the negative prompt named; they are small, and it was kept. It came facing nearly its +z, and was turned 85° to face +x. It is 2.50 m long and 1.6 m high.
+
+#### In the game
+
+![The camps with the new animals, in the desktop build at High](images/g4-rest-camps.jpg)
+
+Each camp was restored through the Restore dialog from a save reached from New Game by legal commands, the soldier walked by legal move commands to the board's edge beside each piece with animals, and the view framed with the game's own Follow camera and zoom keys, drawn further back where a court lies far beyond the board:
+- **The sheep** stand by the loom in Chapter VIII's camp: two white sheep and the brown ewe grazing between them, sheep at once beside the loom's frame, even in the camp's rain.
+- **The dark ox** stands with the pilot's pale grey ox beside Chapter VIII's ox cart, and the pair are now plainly two beasts. The udder under it does not show from the camp camera.
+- **The goats** stand by Chapter II's woodpile in the marsh's rain, and by the market stall in Chapters IX and XI: small, but goats at once by their horns and beards.
+- **The donkey** stands by the pottery stall. In Chapter XI its long ears and baskets of jars read at once. In Chapter IX its court lies 16 m beyond the board, so the camera must be drawn back to take it in, and there it is small.
+- **The courier's horse** stands by Chapter III's courier table, its red cloth the brightest thing in the court. Its red ear tips do not show at the camp camera's distance.
+- **What they cost:** seen whole with the Overview camera, each camp drew a few more calls:
+  - Chapter VIII: 150 draw calls and 570,401 triangles, against 147 and 561,858 before;
+  - Chapter IX: 244 and 757,752, against 237 and 733,212;
+  - Chapter XI: 211 and 820,311, against 208 and 807,617.
+- **Not seen:**
+  - the couched camel and the pilot's camel by the caravan's trough, which stand only in the baggage line of Chapter IX's battles, and the pilot's dog by the cooks' fire, only in the baggage lines of the battles of Chapters I, III and VII. An attempt to frame Chapter IX's baggage line, from a moment the real-time bot reached from New Game, fell back to Performance quality under software rendering, where animals are not drawn;
+  - the animals of Chapters I, IV, VI, VII, X and XII.
+
+  `tests/graphics-g4.test.mjs` checks every placement in every camp and battle reached by legal commands.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.

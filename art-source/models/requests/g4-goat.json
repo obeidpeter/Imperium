@@ -1,0 +1,102 @@
+{
+  "id": "g4-goat",
+  "status": "G4 rest: processed, compressed and reviewed; ships as g4-goat, in Chapters I, II, IV, IX, X, XI and XII (on the web in Chapters II and XI only)",
+  "chapters": [
+    1,
+    2,
+    4,
+    9,
+    10,
+    11,
+    12
+  ],
+  "use": "Two goats, one model set out twice, by the woodpile (Chapters I, II and IV) and by the market stall (Chapters IX to XII) in the courts beyond the board.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A goat of a Roman town market, mid-3rd century AD, standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, short tail held up, symmetrical. A wiry nanny goat about 0.7 metres at the shoulder with a short-haired coat of dark brown and black patches, a pale belly, backswept curved horns, a small beard, upright ears and a rope collar. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "kid, sheep, ram, ibex, wool, fleece, bell, harness, person, people, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617070,
+      "image_seed": 2617071,
+      "texture_seed": 2617072
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 250000,
+    "heightMetres": 0.95,
+    "minHeight": 0.85,
+    "maxHeight": 1.04,
+    "note": "An animal: its height, to the top of its head, horns, ears or hump, is set from its raw proportions at review."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T09:15:28.058Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "kid, sheep, ram, ibex, wool, fleece, bell, harness, person, people, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617070,
+      "image_seed": 2617071,
+      "texture_seed": 2617072,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A goat of a Roman town market, mid-3rd century AD, standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, short tail held up, symmetrical. A wiry nanny goat about 0.7 metres at the shoulder with a short-haired coat of dark brown and black patches, a pale belly, backswept curved horns, a small beard, upright ears and a rope collar. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 8165,
+    "balanceSnapshotBefore": {
+      "balance": 8165,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "6bc9c2af-a68b-44b0-ba2c-b82802e754c6",
+      "state": "accepted",
+      "requestSha256": "c22b595c8651fb4904d1832d5f3cc7d022f58ea931b360629d582d05d089d412"
+    },
+    "taskId": "d66b0a5a-9e86-429e-a66c-952651437b05",
+    "status": "success",
+    "generatedAt": "2026-11-10T09:17:10.338Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g4-goat.glb",
+    "rawBytes": 43713100,
+    "rawSha256": "ddb36dfbe3529ab4eb331283cb17588c24dcee24a62a42736fc778b3f06c448c",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A goat of a Roman town market, mid-3rd century AD, standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, short tail held up, symmetrical. A wiry nanny goat about 0.7 metres at the shoulder with a short-haired coat of dark brown and black patches, a pale belly, backswept curved horns, a small beard, upright ears and a rope collar. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2617071,
+      "model_seed": 2617070,
+      "texture_seed": 2617072,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "kid, sheep, ram, ibex, wool, fleece, bell, harness, person, people, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T09:15:28.819617Z",
+    "tripoCompletedAt": "2026-11-10T09:17:06.711403Z",
+    "tripoRender": "art-source/models/raw/g4-goat-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "Mottled dark brown all over rather than patched brown and black, with no pale belly; otherwise as asked: backswept horns, a small beard, upright ears, its tail held up and a thin collar, 1.20 m long and 0.95 m to its horn tips. Two of it stand by Chapter II's woodpile, in the rain, and by the market stall in Chapters IX and XI: small, but goats at once by their horns and beards."
+  }
+}

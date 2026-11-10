@@ -1,0 +1,97 @@
+{
+  "id": "g4-sheep",
+  "status": "G4 rest: processed, compressed and reviewed; ships as g4-sheep, in Chapters VIII and X (the desktop app only)",
+  "chapters": [
+    8,
+    10
+  ],
+  "use": "Sheep of the camp's flock, standing by the loom in the court beyond the board (Chapters VIII and X), beside the grazing sheep: one model set out twice. The hay rick, first meant for them, fills its court.",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A sheep of a Roman camp's flock, mid-3rd century AD, standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, tail hanging straight down, symmetrical. A sturdy hornless ewe about 0.75 metres at the shoulder with a thick creamy-white fleece in tight curls over the body and neck, a short-woolled pale face with dark eyes and small drooping ears, and dark grey lower legs. No collar, no bell, no people. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "lamb, ram, horns, goat, llama, alpaca, shorn, collar, bell, person, people, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617050,
+      "image_seed": 2617051,
+      "texture_seed": 2617052
+    }
+  },
+  "budget": {
+    "triangles": 3000,
+    "texture": 512,
+    "bytes": 250000,
+    "heightMetres": 0.95,
+    "minHeight": 0.85,
+    "maxHeight": 1.04,
+    "note": "An animal: its height, to the top of its head, horns, ears or hump, is set from its raw proportions at review."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T09:11:11.261Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "lamb, ram, horns, goat, llama, alpaca, shorn, collar, bell, person, people, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617050,
+      "image_seed": 2617051,
+      "texture_seed": 2617052,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A sheep of a Roman camp's flock, mid-3rd century AD, standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, tail hanging straight down, symmetrical. A sturdy hornless ewe about 0.75 metres at the shoulder with a thick creamy-white fleece in tight curls over the body and neck, a short-woolled pale face with dark eyes and small drooping ears, and dark grey lower legs. No collar, no bell, no people. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 8205,
+    "balanceSnapshotBefore": {
+      "balance": 8205,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "cacce8db-e57c-410a-a579-e09309807e58",
+      "state": "accepted",
+      "requestSha256": "85977b6bf866f396bb52593e4fda54a802818a5d92a2b25656b0414de57605a4"
+    },
+    "taskId": "f39dfe37-1368-4246-b3b1-c1f5313369ff",
+    "status": "success",
+    "generatedAt": "2026-11-10T09:13:24.096Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g4-sheep.glb",
+    "rawBytes": 46132892,
+    "rawSha256": "074767e773fd8e8177b696c663e4b5a4936acde60091a8ebe4d5d0172e07dc61",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A sheep of a Roman camp's flock, mid-3rd century AD, standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, tail hanging straight down, symmetrical. A sturdy hornless ewe about 0.75 metres at the shoulder with a thick creamy-white fleece in tight curls over the body and neck, a short-woolled pale face with dark eyes and small drooping ears, and dark grey lower legs. No collar, no bell, no people. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2617051,
+      "model_seed": 2617050,
+      "texture_seed": 2617052,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "lamb, ram, horns, goat, llama, alpaca, shorn, collar, bell, person, people, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T09:11:11.860871Z",
+    "tripoCompletedAt": "2026-11-10T09:13:15.992274Z",
+    "tripoRender": "art-source/models/raw/g4-sheep-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "Came horned, its horns curling at the sides of its head like a ram's, although a hornless ewe was asked and the negative prompt named a ram and horns; its creamy-white fleece in tight curls, pale face and dark lower legs are as asked, and it reads at once as a sheep, so it was kept: 1.10 m long and 0.95 m to the top of its head. In Chapter VIII's camp two of it stand by the loom with the grazing ewe between them, and read at once as sheep beside the loom."
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "id": "g4-donkey",
+  "status": "G4 rest: processed, compressed and reviewed; ships as g4-donkey, in Chapters VI, IX, XI and XII (on the web in Chapter XI only)",
+  "chapters": [
+    6,
+    9,
+    11,
+    12
+  ],
+  "use": "A pack donkey with panniers of pots beside the pottery stall in the courts beyond the board (Chapters VI, IX, XI and XII).",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman pack donkey of the mid-3rd century AD standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, tail hanging straight down, symmetrical. A small sturdy donkey about 1.1 metres at the withers with a dusty grey coat, a dark cross over the shoulders, a pale muzzle and belly, long upright ears and a short upright dark mane, wearing a plain rope halter and a simple wooden pack saddle on a woollen pad, with a wicker pannier hanging on each side filled with clay jars packed in straw. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "rider, person, people, cart, shafts, wagon, saddle with stirrups, horse, mule, zebra, foal, modern, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617080,
+      "image_seed": 2617081,
+      "texture_seed": 2617082
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 330000,
+    "heightMetres": 1.4,
+    "minHeight": 1.26,
+    "maxHeight": 1.54,
+    "note": "An animal: its height, to the top of its head, horns, ears or hump, is set from its raw proportions at review."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T09:17:11.036Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "rider, person, people, cart, shafts, wagon, saddle with stirrups, horse, mule, zebra, foal, modern, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617080,
+      "image_seed": 2617081,
+      "texture_seed": 2617082,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman pack donkey of the mid-3rd century AD standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, tail hanging straight down, symmetrical. A small sturdy donkey about 1.1 metres at the withers with a dusty grey coat, a dark cross over the shoulders, a pale muzzle and belly, long upright ears and a short upright dark mane, wearing a plain rope halter and a simple wooden pack saddle on a woollen pad, with a wicker pannier hanging on each side filled with clay jars packed in straw. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 8145,
+    "balanceSnapshotBefore": {
+      "balance": 8145,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "4c62c263-8261-4f6a-8ca3-108f122af8b2",
+      "state": "accepted",
+      "requestSha256": "c5d56da4555f65c891aaf285fcb3211cd13b1ee6da1a23f4c3eb9a122c7b74ba"
+    },
+    "taskId": "d5330dd0-0156-4e5f-a0ee-d7f4fedd19c4",
+    "status": "success",
+    "generatedAt": "2026-11-10T09:19:25.265Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g4-donkey.glb",
+    "rawBytes": 44843284,
+    "rawSha256": "1932a715e83191d4aad6f57f03143b6df279ef28f0d6b0f3420e798ecfdc1233",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman pack donkey of the mid-3rd century AD standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, tail hanging straight down, symmetrical. A small sturdy donkey about 1.1 metres at the withers with a dusty grey coat, a dark cross over the shoulders, a pale muzzle and belly, long upright ears and a short upright dark mane, wearing a plain rope halter and a simple wooden pack saddle on a woollen pad, with a wicker pannier hanging on each side filled with clay jars packed in straw. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2617081,
+      "model_seed": 2617080,
+      "texture_seed": 2617082,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "rider, person, people, cart, shafts, wagon, saddle with stirrups, horse, mule, zebra, foal, modern, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T09:17:12.187192Z",
+    "tripoCompletedAt": "2026-11-10T09:19:18.412937Z",
+    "tripoRender": "art-source/models/raw/g4-donkey-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "As asked, though darker grey than dusty: long upright ears, a pale muzzle, a short dark mane and a halter, under a pale pack pad, with a wicker basket of clay jars at each side, 1.60 m long and 1.4 m to its ear tips. Beside Chapter XI's pottery stall its long ears and baskets of jars read at once; in Chapter IX its court lies 16 m beyond the board, so the camera must be drawn back to take it in, and there it is small."
+  }
+}

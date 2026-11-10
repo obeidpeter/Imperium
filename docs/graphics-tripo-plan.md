@@ -32,7 +32,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | G1 | Armies | 1,005 | done: the [pilot](#g1s-pilot-8-november) (310 credits) and [the rest](#the-rest-of-g1-9-november) (695): 22 bodies and 2 horses. Its other 1,295 credits went to G3 and G5 |
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
-| G4 | Animals | 600 | [the pilot](#g4s-pilot-10-november) done (80 credits): four animals, the calibration's pack mule and the horse lines' horses; the rest next |
+| G4 | Animals | 600 | [the pilot](#g4s-pilot-10-november) (80 credits) and [seven more animals](#the-rest-of-g4-seven-more-animals-10-november) (160) done: 12 models and the horse lines' horses. [What remains](#what-remains-of-g4), walking animals and the pilot's beside more pieces, needs no credits |
 | G5 | Battle and siege | 1,845 | done: [the pilot](#g5s-pilot-9-november) (140 credits), [the first batch](#the-rest-of-g5-the-first-batch-9-november) (440) and [the last](#the-last-of-g5-10-november) (80): 28 models. Its other 1,185 credits [join G3's held 1,840](#what-g5-leaves) for G4, G6 and G2 |
 | G6 | Faces and people | 1,100 | |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
@@ -482,6 +482,51 @@ The game's first animals other than the cavalry's horses. Each stands beside the
   - walking animals: the ox, the mules and the camel bound to the game's horse skeleton as the calibration's mule was, a few of them led along the roads beyond the board. Each species takes its own scale, which also mends the northern horse's size.
 - **About ten new animals, near 200 credits:** a small flock of sheep and goats by the stalls and hay ricks, a donkey with panniers, a dark ox to pair with the grey, a camel couched at rest and a cart horse.
 - **Credits:** G4 would then end near 300 of its 600 credits, without the 820 held credits the plan proposed for it. The plan would have spent about 2,715, and its 70% floor (7,490) would rest on G6 and G2: about 4,800 of the 5,200 credits the plan would have left.
+
+### The rest of G4: seven more animals (10 November)
+
+The new animals the pilot proposed, made after its review in the game, and the pilot's camel and dog beside two more pieces:
+
+| Animal | Where it stands | Chapters | Credits |
+| --- | --- | --- | --- |
+| two white sheep, horned, and a brown ewe grazing between them | beside the loom | VIII, X | 40 |
+| two goats | beside the woodpile, or the market stall | I, II, IV; IX–XII | 20 |
+| a grey pack donkey with a basket of jars at each side | beside the pottery stall | VI, IX, XI, XII | 20 |
+| a dark ox, beside the pilot's grey one | by the ox cart | VIII, X | 20 |
+| a dromedary couched at rest | beside the caravan's baggage, in the battles' baggage line | IX | 20 |
+| a courier's bay horse under a red saddle cloth | beside the courier table | III, VII | 40, with the rejected first |
+| the pilot's dromedary | beside the caravan's trough, in the battles' baggage line | IX | none |
+| the pilot's dog | beside the cooks' fire, in the battles' baggage line | I, III, VII | none |
+
+- **Credits:** 160 of the batch's 180-credit ceiling: eight generations at 20. [The ledger](../art-source/models/graphics-g4-credits.json) has every task. The balance went from 8,205 to 8,045. G4 has spent 240 of its 600 credits.
+- **Rejected:** one of eight (13%), under the 20% stop rule. The first courier's horse came under a saddle of a later shape, a stirrup hanging at its side. The second, with a saddle cloth and no saddle frame, ships.
+- **Kept, with notes:** the standing sheep came horned, where a hornless ewe was asked; the dark ox has a small udder; and the courier's horse's ear tips came red. [The art record](art-generation.md#the-rest-of-g4-seven-more-animals--10-november-2026) has each.
+- **Changed from the pilot's proposal:**
+  - the sheep stand by the loom, since the hay rick fills its court; the goats by the woodpile and the market stall, which had no animal;
+  - a courier's horse waits by the courier table in place of a cart horse, since the camps' carts have their oxen and mules, and the courier table had no animal;
+  - seven models rather than about ten: the goats and the standing sheep are each one model set out twice.
+- **Where they stand:** as the pilot's do, on the piece's far side from the board, the piece moved aside in its court or line spot to make room. Every animal stays inside it, clear of the piece and of the others, in every camp and every battle, and stands only where its piece does.
+- **Only where it is seen:** a piece on a service pad inside a camp has no animals. The caravan's trough and baggage and the cooks' fire stand on pads in their camps, so their animals stand in the battles' baggage lines alone. Chapter XI's courier table stands on a pad and XI has no battle, so the courier's horse is not downloaded there. A test now finds every animal standing somewhere in each chapter that downloads it.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web:
+  - the goats ride in Chapters II and XI, the donkey in XI, and the courier's horse in III;
+  - the sheep, the dark ox and the couched camel ship in the desktop app alone, as do the camel by the trough and, but in Chapter III, the dog by the cooks' fire;
+  - Chapter II's download rises from 26.57 to 26.76 MB, III's from 27.50 to 27.72 and XI's from 20.68 to 21.12. The largest is still 27.96 of 28 MB, Chapter I's 3D download 17.88 of 18, and the complete web game is 77.39 of 80.
+- **The review** was in the desktop build at High, in the camps of Chapters II, III, VIII, IX and XI, each restored through the Restore dialog from a save reached from New Game by legal commands:
+  - the sheep by the loom, the dark ox beside the grey and the courier's horse by its table read at once;
+  - the goats and the donkey read as goats and a donkey, though small: the donkey smallest in Chapter IX, whose pottery stall stands 16 m beyond the board;
+  - neither the dark ox's udder nor the courier's horse's red ear tips shows from the camp camera;
+  - seen whole with the Overview camera, each camp draws a few more calls: Chapter VIII 150 against 147, IX 244 against 237 and XI 211 against 208;
+  - not seen: the camels by the caravan's trough and baggage and the dog by the cooks' fire, which stand only in battles' baggage lines. An attempt at Chapter IX's fell back to Performance quality under software rendering, where animals are not drawn. The tests check every placement.
+
+![The camps with the new animals, in the desktop build at High](images/g4-rest-camps.jpg)
+
+#### What remains of G4
+
+The pilot's other proposals, at no credit cost:
+- **The pilot's animals beside more pieces:** oxen by the Gothic wagons beyond the north edge of the Gothic battles, and mules by the engines behind the Roman line.
+- **Walking animals:** the ox, the mules and the camel bound to the game's horse skeleton, as the calibration's mule was, a few of them led along the roads beyond the board. Each species takes its own scale, which also mends the northern horse's size.
+
+G4 would then end at 240 of its 600 credits, without the 820 held credits the plan proposed for it. The plan has spent 2,655 credits, and its 70% floor (7,490) needs 4,835 more: nearly all of the 5,245 it has left, so the floor rests on G6 and G2 with what G4 leaves.
 
 ## Around every release, at no credit cost
 

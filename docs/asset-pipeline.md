@@ -644,3 +644,19 @@ Four Tripo animals and the calibration's pack mule ([the plan](graphics-tripo-pl
 
   The largest chapter download is still 27.96 of 28 MB, Chapter III's rises to 27.50, and the complete web game is 76.72 of 80 MB.
 - **The idle cache.** Chapter IX's camp in the desktop app now keeps 34 models in its working set, under `SCENERY_IDLE_MASTERS` (36).
+
+## The rest of G4: seven more animals · 2026-11-10
+
+Seven more Tripo animals ([the plan](graphics-tripo-plan.md#the-rest-of-g4-seven-more-animals-10-november), [the art record](art-generation.md#the-rest-of-g4-seven-more-animals--10-november-2026)), processed, compressed and placed as the pilot's are:
+
+- **More pieces with animals** (`CAMP_ANIMALS`):
+  - sheep by the loom, goats by the woodpile and the market stall, and a donkey by the pottery stall;
+  - a couched camel by the caravan's baggage, and the pilot's camel by its trough;
+  - a courier's horse by the courier table, and the pilot's dog by the cooks' fire;
+  - the dark ox in place of the second grey one by the ox cart.
+- **Room in the court.** As the pilot's, each piece moves aside by its `shift` and keeps its court's middle (`court.x`, `court.z`). The hay rick and the supply stack, each about 4 m on a side, fill their 4.8 m courts, so they take no animals.
+- **Not on a pad.** A piece on a service pad inside a camp has no animals (`withAnimals`). The caravan's trough and baggage and the cooks' fire stand on pads in their camps, so their animals stand only in the battles' baggage lines.
+- **Chapters seen.** An animal downloads with its pieces' chapters (`ANIMAL_CHAPTERS`), and a piece may name fewer (`chapters` in `CAMP_ANIMALS`): Chapter XI's courier table stands on a pad and XI has no battle, so the courier table names III and VII. `tests/graphics-g4.test.mjs` finds every animal standing in some camp or battle of each chapter that downloads it.
+- **Facing.** The grazing ewe and the courier's horse came facing +z and were processed with `--turn 90`, the couched camel with `--turn 85`, and the dark ox, which came standing askew, with `--turn -59`.
+- **Downloads** (`G4_WEB_ROOM`): on the web the goats ride in Chapters II and XI, the donkey in XI, and the courier's horse in III. The sheep, the dark ox and the couched camel ship in the desktop app alone; the camel by the trough stands there alone too, and the dog by the cooks' fire on the web only in Chapter III. Chapter III's download rises to 27.72 of 28 MB and XI's to 21.12, the largest is still 27.96, and the complete web game is 77.39 of 80 MB.
+- **The idle cache.** Chapter IX's camp in the desktop app now keeps 36 models in its working set, so `SCENERY_IDLE_MASTERS` rises from 36 to 40.

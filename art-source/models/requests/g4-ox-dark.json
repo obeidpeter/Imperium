@@ -1,0 +1,97 @@
+{
+  "id": "g4-ox-dark",
+  "status": "G4 rest: processed, compressed and reviewed; ships as g4-ox-dark, in Chapters VIII and X (the desktop app only)",
+  "chapters": [
+    8,
+    10
+  ],
+  "use": "A dark draught ox, unyoked, paired with the grey ox beside the ox cart in the quartermaster's court beyond the board (Chapters VIII and X).",
+  "generator": {
+    "service": "Tripo",
+    "task": "text_to_model",
+    "prompt": "A Roman draught ox of the mid-3rd century AD standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, tail hanging straight down, symmetrical. A heavy, deep-chested working ox about 1.45 metres at the withers with a dark chestnut-brown coat shading to near black on the neck and shoulders, a paler muzzle, a loose dewlap, medium-length upward-curving pale horns with dark tips and a plain hemp rope halter. No yoke, no harness, no cart, no plough, no rider, no people. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+    "options": {
+      "model_version": "v3.1-20260211",
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "yoke, harness, cart, wagon, plough, rider, person, people, saddle, nose ring, bison, buffalo, bull, udder, calf, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617090,
+      "image_seed": 2617091,
+      "texture_seed": 2617092
+    }
+  },
+  "budget": {
+    "triangles": 5000,
+    "texture": 512,
+    "bytes": 330000,
+    "heightMetres": 1.6,
+    "minHeight": 1.44,
+    "maxHeight": 1.76,
+    "note": "An animal: its height, to the top of its head, horns, ears or hump, is set from its raw proportions at review."
+  },
+  "provenance": {
+    "apiVersion": 3,
+    "apiBase": "https://openapi.tripo3d.ai/v3",
+    "endpoint": "/generation/text-to-model",
+    "requestedAt": "2026-11-10T09:19:25.925Z",
+    "requestBody": {
+      "texture": true,
+      "pbr": true,
+      "geometry_quality": "standard",
+      "texture_quality": "standard",
+      "negative_prompt": "yoke, harness, cart, wagon, plough, rider, person, people, saddle, nose ring, bison, buffalo, bull, udder, calf, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "model_seed": 2617090,
+      "image_seed": 2617091,
+      "texture_seed": 2617092,
+      "model": "v3.1-20260211",
+      "texture_version": "v3.0-20250812",
+      "prompt": "A Roman draught ox of the mid-3rd century AD standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, tail hanging straight down, symmetrical. A heavy, deep-chested working ox about 1.45 metres at the withers with a dark chestnut-brown coat shading to near black on the neck and shoulders, a paler muzzle, a loose dewlap, medium-length upward-curving pale horns with dark tips and a plain hemp rope halter. No yoke, no harness, no cart, no plough, no rider, no people. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements."
+    },
+    "balanceBefore": 8125,
+    "balanceSnapshotBefore": {
+      "balance": 8125,
+      "frozen": 0
+    },
+    "submission": {
+      "id": "88fbbd1d-7efd-4f2a-9279-247c379997c6",
+      "state": "accepted",
+      "requestSha256": "40233c629626304c2e8242dffbe7fe9138a6c474330f3aa14125298e712917f8"
+    },
+    "taskId": "fdb40ee4-e19b-40e9-b7a1-ce71024e61cd",
+    "status": "success",
+    "generatedAt": "2026-11-10T09:21:29.604Z",
+    "output": "model_url",
+    "raw": "art-source/models/raw/g4-ox-dark.glb",
+    "rawBytes": 44254068,
+    "rawSha256": "0bfbaa7c211524326358ec8cfbd69888e9820cea85fc482fb26b9a05ffc49f61",
+    "tripoInput": {
+      "pbr": true,
+      "prompt": "A Roman draught ox of the mid-3rd century AD standing square: all four legs straight and vertical, evenly spaced, head held level and facing forward, tail hanging straight down, symmetrical. A heavy, deep-chested working ox about 1.45 metres at the withers with a dark chestnut-brown coat shading to near black on the neck and shoulders, a paler muzzle, a loose dewlap, medium-length upward-curving pale horns with dark tips and a plain hemp rope halter. No yoke, no harness, no cart, no plough, no rider, no people. Realistic proportions, anatomically accurate. Single isolated model with complete geometry from every side and a bold, solid, readable silhouette from above. No ground plane, no display plinth, no text or inscriptions, no modern objects, no fantasy elements.",
+      "texture": true,
+      "export_uv": true,
+      "image_seed": 2617091,
+      "model_seed": 2617090,
+      "texture_seed": 2617092,
+      "model_version": "v3.1-20260211",
+      "negative_prompt": "yoke, harness, cart, wagon, plough, rider, person, people, saddle, nose ring, bison, buffalo, bull, udder, calf, ground plane, terrain, base plate, display plinth, text, modern objects, fantasy, cartoon",
+      "texture_quality": "standard",
+      "texture_version": "v3.0-20250812",
+      "geometry_quality": "standard",
+      "texture_alignment": "geometry"
+    },
+    "modelVersion": "v3.1-20260211",
+    "modelVersionSource": "task response",
+    "creditsSpent": 20,
+    "creditSource": "task.credits_consumed",
+    "tripoCreatedAt": "2026-11-10T09:19:26.313666Z",
+    "tripoCompletedAt": "2026-11-10T09:21:11.280937Z",
+    "tripoRender": "art-source/models/raw/g4-ox-dark-tripo-render.webp"
+  },
+  "review": {
+    "date": "2026-11-10",
+    "scope": "Tripo's own render, four views of the final compressed model with a 1.8 m figure for scale (scripts/assets/preview-model.mjs), and the camps in the desktop build at High",
+    "notes": "As asked: dark chestnut shading to near black at the neck and shoulders, a pale muzzle, pale horns with dark tips and a rope halter. It came standing askew in its file, 59 degrees round from facing +x, and was turned to face +x: 2.24 m long and 1.6 m to its horn tips. Kept with a note: under its belly, between the hind legs, is a small pale udder, which the negative prompt named. Beside Chapter VIII's ox cart it stands with the pilot's pale grey ox, the pair now plainly two beasts; the udder does not show from the camp camera."
+  }
+}

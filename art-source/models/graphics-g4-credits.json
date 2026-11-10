@@ -1,83 +1,196 @@
 {
- "scope": "Release G4 of the graphics plan (docs/graphics-tripo-plan.md): animals",
- "authorization": {
-  "credits": 600,
-  "approvedBy": "Owner",
-  "source": "docs/graphics-tripo-plan.md: release G4, capped at 600 credits on 8 November 2026; decision 9 (9 November 2026) leaves the rest of the plan to my judgement within each release's cap, each pilot reviewed in the game before the rest of its release is generated. The held credits the plan proposes for G4 (500 of G3's and 320 of G5's) are not drawn on by the pilot"
- },
- "pricing": {
-  "textWithStandardTextures": 20,
-  "source": "the calibration's measured prices (docs/graphics-calibration.md); each task's reported credits_consumed is recorded below"
- },
- "spentCredits": 80,
- "remainingAuthorization": 520,
- "batches": [
-  {
-   "batch": "pilot",
-   "date": "2026-11-10",
-   "ceilingCredits": 100,
-   "plannedCredits": 80,
-   "spentCredits": 80,
-   "items": [
-    "g4-ox",
-    "g4-mule",
-    "g4-camel",
-    "g4-dog"
-   ],
-   "note": "Four animals at standard texture and geometry, 20 credits each, within the pilot's 100-credit ceiling (one redo). They stand in the camps' courts beyond the board beside the furniture they belong to. The calibration's pack mule ships with them from its own task, and the camps' horse lines take the Roman horse's coat, which those chapters already download, neither for any credits.",
-   "balance": {
-    "before": 8285,
-    "after": 8205,
-    "source": "the account balance read before the first task and after the last (frozen 0)"
-   },
-   "tasks": [
+  "scope": "Release G4 of the graphics plan (docs/graphics-tripo-plan.md): animals",
+  "authorization": {
+    "credits": 600,
+    "approvedBy": "Owner",
+    "source": "docs/graphics-tripo-plan.md: release G4, capped at 600 credits on 8 November 2026; decision 9 (9 November 2026) leaves the rest of the plan to my judgement within each release's cap, each pilot reviewed in the game before the rest of its release is generated. The held credits the plan proposes for G4 (500 of G3's and 320 of G5's) are not drawn on by the pilot"
+  },
+  "pricing": {
+    "textWithStandardTextures": 20,
+    "source": "the calibration's measured prices (docs/graphics-calibration.md); each task's reported credits_consumed is recorded below"
+  },
+  "spentCredits": 240,
+  "remainingAuthorization": 360,
+  "batches": [
     {
-     "id": "g4-ox",
-     "operation": "text_to_model",
-     "expectedCredits": 20,
-     "status": "success",
-     "taskId": "5cfeabc3-89c7-459a-8adb-f52dd82dd1da",
-     "creditsReported": 20,
-     "creditSource": "task.credits_consumed",
-     "accountedCredits": 20
+      "batch": "pilot",
+      "date": "2026-11-10",
+      "ceilingCredits": 100,
+      "plannedCredits": 80,
+      "spentCredits": 80,
+      "items": [
+        "g4-ox",
+        "g4-mule",
+        "g4-camel",
+        "g4-dog"
+      ],
+      "note": "Four animals at standard texture and geometry, 20 credits each, within the pilot's 100-credit ceiling (one redo). They stand in the camps' courts beyond the board beside the furniture they belong to. The calibration's pack mule ships with them from its own task, and the camps' horse lines take the Roman horse's coat, which those chapters already download, neither for any credits.",
+      "balance": {
+        "before": 8285,
+        "after": 8205,
+        "source": "the account balance read before the first task and after the last (frozen 0)"
+      },
+      "tasks": [
+        {
+          "id": "g4-ox",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "5cfeabc3-89c7-459a-8adb-f52dd82dd1da",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g4-mule",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "b826b863-2b43-4779-a60b-c3f70af6565b",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g4-camel",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "ab72a253-cbc6-41fb-b379-a896c3b273cf",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g4-dog",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "4c1b7ba5-ae04-4a4d-9574-5e35efe1e05e",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        }
+      ],
+      "rejected": {
+        "count": 0,
+        "of": 4,
+        "items": [],
+        "note": "None of the four generations was rejected at review."
+      }
     },
     {
-     "id": "g4-mule",
-     "operation": "text_to_model",
-     "expectedCredits": 20,
-     "status": "success",
-     "taskId": "b826b863-2b43-4779-a60b-c3f70af6565b",
-     "creditsReported": 20,
-     "creditSource": "task.credits_consumed",
-     "accountedCredits": 20
-    },
-    {
-     "id": "g4-camel",
-     "operation": "text_to_model",
-     "expectedCredits": 20,
-     "status": "success",
-     "taskId": "ab72a253-cbc6-41fb-b379-a896c3b273cf",
-     "creditsReported": 20,
-     "creditSource": "task.credits_consumed",
-     "accountedCredits": 20
-    },
-    {
-     "id": "g4-dog",
-     "operation": "text_to_model",
-     "expectedCredits": 20,
-     "status": "success",
-     "taskId": "4c1b7ba5-ae04-4a4d-9574-5e35efe1e05e",
-     "creditsReported": 20,
-     "creditSource": "task.credits_consumed",
-     "accountedCredits": 20
+      "batch": "rest",
+      "date": "2026-11-10",
+      "ceilingCredits": 180,
+      "plannedCredits": 140,
+      "spentCredits": 160,
+      "items": [
+        "g4-sheep",
+        "g4-sheep-grazing",
+        "g4-goat",
+        "g4-donkey",
+        "g4-ox-dark",
+        "g4-camel-couched",
+        "g4-courier-horse"
+      ],
+      "note": "The rest of G4's static animals, after the pilot's review in the game (#101): two sheep for the loom (the hay rick, first meant for them, fills its court) and a goat for the woodpile and the market stall, a pack donkey for the pottery stall, a dark ox to pair with the grey, a couched camel for the caravan baggage and a courier's horse for the courier table, at standard texture and geometry, 20 credits each, within a 180-credit ceiling (two redos).",
+      "balance": {
+        "before": 8205,
+        "after": 8045,
+        "source": "the account balance read before the first task and after the last (frozen 0)"
+      },
+      "tasks": [
+        {
+          "id": "g4-sheep",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "f39dfe37-1368-4246-b3b1-c1f5313369ff",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g4-sheep-grazing",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "3525b735-a10e-481d-9443-569cc6166941",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g4-goat",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d66b0a5a-9e86-429e-a66c-952651437b05",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g4-donkey",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "d5330dd0-0156-4e5f-a0ee-d7f4fedd19c4",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g4-ox-dark",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "fdb40ee4-e19b-40e9-b7a1-ce71024e61cd",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g4-camel-couched",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "092c39ed-b69e-48e9-977c-94105ef1c8e7",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        },
+        {
+          "id": "g4-courier-horse",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "eadcf2e6-f17b-46a1-818f-f2c35b2cedb7",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20,
+          "rejectedAtReview": "the saddle came as a later shape, with a deep seat, a knobbed pommel and a stirrup leather and iron at its side, despite \"without stirrups\" in the prompt and stirrups in its negative prompt: an anachronism in the 3rd century"
+        },
+        {
+          "id": "g4-courier-horse-b",
+          "operation": "text_to_model",
+          "expectedCredits": 20,
+          "status": "success",
+          "taskId": "330e35eb-66dd-4a01-981c-142251b9e0af",
+          "creditsReported": 20,
+          "creditSource": "task.credits_consumed",
+          "accountedCredits": 20
+        }
+      ],
+      "rejected": {
+        "count": 1,
+        "of": 8,
+        "items": [
+          "g4-courier-horse"
+        ],
+        "note": "The courier horse's saddle came as a later shape, with a stirrup leather and iron at its side, despite the prompt and its negative prompt: an anachronism in the 3rd century. The second attempt, g4-courier-horse-b, with a saddle cloth and no saddle, ships as g4-courier-horse. One of eight generations (13%), under the plan's 20% stop rule."
+      }
     }
-   ],
-   "rejected": {
-    "count": 0,
-    "of": 4,
-    "items": [],
-    "note": "None of the four generations was rejected at review."
-   }
-  }
- ]
+  ]
 }
