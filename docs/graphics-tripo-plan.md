@@ -322,6 +322,74 @@ The pilot shows the field objects and the set pieces read in battle, so the rest
 
 The plan would then end near 7,700 of its 7,900 credits, 72% of the balance. Each of those releases' pilots proposes its counts, as G3's and G5's did, and nothing beyond G5's own cap is spent before the owner has seen this proposal.
 
+### The rest of G5: the first batch (9 November)
+
+Eighteen models, the first of the two batches the pilot proposed, asked for in solid timbers and bold silhouettes and checked at the field's distance before they were placed. They extend the pilot's field objects and set pieces, and add the walked field's debris:
+
+| Model | Where it stands | Chapters |
+| --- | --- | --- |
+| a pitch brazier, an iron fire basket on three legs heaped with pitch | on the brazier's cell, unlit or burning; burning, the stage's flame and smoke rise from its heap | III–X, XII |
+| the countermine, a square shaft in heavy timbers under a windlass | on its cell while it is worked | V |
+| the Persian siege ramp of earth and rubble in a timber-and-reed revetment | on its cell while it is worked | V |
+| an eastern supply cart, a pale bed with faded red boards | on the supply cart's cell in the eastern battles, in every state, with the pilot's load | V, VI, IX |
+| a two-armed ballista | beyond the west edge, behind the Roman line | the sieges of IV, V, IX and XII |
+| a stack of stone shot | beside the onager | the sieges of IV, V, IX and XII |
+| a crate of bolts | beside the carroballista | the field battles of VII–X |
+| a siege tower hung with hides, a broad wicker mantlet, and fascines with gabions | beyond the west edge, where the Romans attack a wall | IX, XII |
+| the Goths' open and covered wagons | beyond the north edge, behind both armies | the battles against Gothic bands (I–IV, VII, VIII, X) |
+| the Persian siege tower and reed-mat screens | beyond the north edge | V |
+| the beaten side's gear (the Goths', the eastern armies' or the rival Romans') and a fallen war banner | on the walked field after a win, beside the beaten side's fallen | every battle |
+
+- **Credits:** 440 of the batch's 440-credit ceiling: 22 generations at 20. [The ledger](../art-source/models/graphics-g5-credits.json) has every task. The balance went from 8,805 to 8,365. G5 has spent 580 of its 1,845 credits and has 1,265 left.
+- **Rejected:** four generations of 22 (18%), under the 20% stop rule. The first ballista (a flat grey colour map and metal coil springs) and the first mantlets (three thin racks) were redone and ship. The eastern barricade was rejected twice (two hurdles standing apart, then a rack of hanging baskets) and not made a third time: the pilot's timber barricade now stands in every battle from Chapter III.
+- **Field objects:** each model draws its object only in the states it is made for. A spent brazier, a disabled countermine or ramp, and every object on Performance keep their code-built pieces. The eastern cart carries the pilot's load on its own bed.
+- **Set pieces on two edges:** beyond the west edge as in the pilot, and now beyond the north edge, which the fixed camera sees behind both armies. A piece may stand beside another, at an offset in that piece's frame: the shot by the onager, the bolts by the carroballista. A piece tries 13 shares of its edge rather than 9, since a fortified field's north edge is crowded with its walls.
+- **The walked field's debris:** up to six spots, each 1.1 m off one of the beaten side's fallen, at least 6 m apart, on the board and clear of the field objects. The first takes the fallen banner. The fallen men's ids order the spots, so nothing is drawn from the game's random streams, and the chronicle is unchanged.
+- **Budgets:** the countermine and the fascines were raised to 7,000 and 6,000 triangles to keep their timbers and gabions whole. The debris's heights were set from each model's proportions, since a flat model is scaled by its height.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web:
+  - Chapters II, III and V take all of theirs, and VI the eastern cart, the brazier and the eastern debris;
+  - Chapters I, IV and VII–XII take none of the new ones, so the bolts, the Roman siege works and the Roman debris ship in the desktop app alone;
+  - the largest chapter download is 27.96 of 28 MB, Chapter I's 3D download 17.88 of 18 MB, and the complete web game 75.04 of 80 MB.
+- **The review,** in the desktop build at High, each battle restored from a moment the real-time bot reached from New Game, before (G5's files refused) and after:
+  - the siege ramp and the countermine read at once, where the code-built pieces read as a bench and a table;
+  - the engines' stores (the stone shot, the bolt crate) and the new ballista read at once behind the Roman line. The Roman siege tower is the batch's boldest piece, and the mantlet reads as a broad arched screen;
+  - the Persian tower, open timber faced with reed mats, reads as the enemy's, lighter than the Roman one;
+  - the brazier is as small as the code-built one at the field's distance, and the bolts in their crate are too small to pick out;
+  - the eastern cart reads as a different cart from the Roman one, its pale bed and faded red boards under the pilot's load. Framed at the objective, the near half of either cart fades: the opening the game cuts toward an objective the camera frames reaches the objective's own piece. That is older than G5, and stopping it short costs no credits;
+  - on the walked field the fallen banner reads at once, the brightest thing there. The beaten side's gear lies among the fallen, darker and smaller than the banner (the Goths') or pale against the dust (the eastern armies');
+  - the review found the open Gothic wagon standing in Chapter II's marsh, whose water reaches 6 m past the board. Set pieces now keep to dry ground, out of the marsh, a river leaving the board, the distant river and Chapter V's Euphrates. Before the change 5 of the 60 set pieces touched water, and now none does; Chapter II's rearguard has dry room for one wagon.
+
+![Field objects before (the code-built pieces) and with the batch's models, in the desktop build at High](images/g5-first-batch-battles.jpg)
+
+![Set pieces behind the lines, before (none) and with the batch's models](images/g5-first-batch-set-pieces.jpg)
+
+![The walked field after a win, before (the fallen alone) and with the beaten side's gear](images/g5-first-batch-walked-field.jpg)
+
+#### What the first batch proposes
+
+The batch bears out the pilot's lesson and adds three:
+- **Bold pieces read; small ones do not.** From the camera's height the ramp, the countermine, the engines and the towers read at once, while a 1 m brazier and a crate of bolts read only as shapes. The next requests favour pieces a metre and a half or more on a side, and gather small stores into larger stacks.
+- **What Tripo will not do:**
+  - it gave spoked wheels each of the three times solid wheels were asked for, so the next requests stop asking, since spokes and planks look alike at the field's distance;
+  - thin wicker failed three times (the first mantlets and both eastern barricades), so the next requests ask for solid timber, earth and hides.
+- **Colours named, heights set:**
+  - a request names each material's colour, since the first ballista came grey;
+  - a flat model has its height set from its raw proportions;
+  - a model of many small parts is given room above the decimator's floor.
+- **Dry ground:** in the wet chapters there is little room past the north edge. Chapter II's rearguard holds one wagon.
+
+**At no credit cost,** the opening the game cuts toward an objective the camera frames should stop short of the objective's own piece, so that a cart standing at an objective stays whole.
+
+**The last of G5,** within its 1,265 credits left, in two batches of about 26 models, each reviewed in the game before the next. That is about 1,150 credits with a tenth for rejects, and G5 would end near 1,730 of its 1,845:
+- **The rest of the pilot's list,** about 12 models:
+  - the field objects still code-built: the signal station (Roman and eastern), the Gothic ladder, the side gate and the footbridge;
+  - a scorpion beside the ballista;
+  - palisades for the Danube's and the East's fields;
+  - a patrol boat and a barge on Chapter VIII's river. These stand on the water, so they need a placement of their own;
+  - spent bolts and a broken cart for the walked field.
+- **The regional sets,** about 40 models: each region's battles take field objects and set pieces in their own style: the Danube (I, IV, VIII), the marshes (II), the East (V, VI), Palmyra (IX) and Italy (VII, X, XII).
+- **Downloads:** the web's chapter downloads are nearly full. Chapter II has 2.6 MB of room, III 1.2 MB and V 0.9 MB, and the other battles' chapters under 0.2 MB, so most of the last batches would ship in the desktop app alone. Raising the web's 28 MB chapter limit remains the owner's call.
+
 ## Around every release, at no credit cost
 
 - **Pipeline:**

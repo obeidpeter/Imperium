@@ -2036,6 +2036,41 @@ Each model was compared with Tripo's render, then rendered from four sides with 
 - **The fascines** came on a low timber pallet the request did not ask for. It reads as a stores platform, and was kept.
 - **The debris:** the Gothic gear's shields stand propped on their rims against a spear, not flat as asked; from the camera's height they read as shields propped where they fell. The Roman gear's shields came round rather than oval, which suits the third century, and its helmet is a closed, cavalry-style helmet. The Roman debris was asked for in more chapters, and its request corrected at review to Chapter XII alone, the only battle against Romans.
 
+#### In the game
+
+Each battle was seen twice at the same moment, in the desktop build at High: once with G5's files refused, which leaves the code-built pieces or bare ground, and once with them. Each moment was paused and framed with the game's own controls. The camera was turned to each piece, as **Find objective** turns it, and a ring marks the spot in both captures. The eastern cart was seen with the camera on the soldier 8 m away, for the reason given below.
+
+![Field objects before (the code-built pieces) and with the batch's models, in the desktop build at High](images/g5-first-batch-battles.jpg)
+
+![Set pieces behind the lines, before (none) and with the batch's models](images/g5-first-batch-set-pieces.jpg)
+
+![The walked field after a win, before (the fallen alone) and with the beaten side's gear](images/g5-first-batch-walked-field.jpg)
+
+- **The siege ramp** (Chapter V's mine) stands against the city wall where the code-built ramp, a plank on two trestles, read as a bench. It reads as a slope of earth in a timber revetment rising to the wall. It is darker than the plank, and partly in the wall's shadow.
+- **The countermine** stands by the west edge as a dark timber head-frame with its windlass over the shaft, where the code-built piece read as a table over a heap of pale stones.
+- **The brazier** (Chapter IV's wall walk, in the rain) is an iron basket heaped with black pitch on three legs, where the code-built brazier was a dark disc on legs. At the Follow camera it is as small as the code-built one.
+- **The barricade** in Chapter V is the pilot's, which now stands in the eastern battles too. Its two lattice panels are thinner and darker than the code-built stakes and harder to pick out, as the pilot's review found.
+- **The eastern cart** (Chapter VI's eagle) stands whole, its pale bed and faded red side boards under the pilot's load. It reads as a different cart from the Roman one the code-built piece draws, with its dark timber and white sacks.
+  - With the camera framed on the objective, as **Find objective** leaves it, the near half of either cart fades, whatever X is set to. The game opens the scenery between the camera and an objective the camera frames, and the opening reaches the cart standing at the objective.
+  - That is older than G5. Stopping the opening short of the objective's own piece costs no credits.
+- **The engines behind the Roman line** read at once. In Chapter IV the ballista's brown oak frame stands on the grass beyond the wall walk, with the onager further north and the pale pyramid of its stone shot at its side. In Chapter VII the bolt crate stands beside the carroballista, toward the board. It reads as the engine's stores, though its bolts are too small to pick out.
+- **The Roman siege works** (Chapter IX) are the boldest of the batch. The 7 m siege tower, hung with hides, fills the upper part of the view beyond the west edge, and its top leaves the frame at the Follow camera. It stands behind the board from the camera, so it never hides the fight. The mantlet reads as a broad arched screen on wheels facing the board. The fascines stood outside the frame.
+- **The Gothic wagons** (Chapter II's marsh) showed the batch's one placement fault.
+  - The open wagon stood in the marsh's water, which reaches 6 m past the board, while the covered wagon read well on a grass bank.
+  - Set pieces now keep to dry ground ([the asset pipeline](asset-pipeline.md#the-rest-of-g5-its-first-batch-more-field-objects-set-pieces-on-two-edges-the-walked-fields-debris--2026-11-09)). Both wagons now stand on the grass bank between the marsh and the open water beyond the north edge: the open wagon heaped with sacks, and the covered wagon under its pale hide cover.
+  - Both read at once, the cover the brightest thing in the view.
+- **The Persian siege tower** (Chapter V's mine) stands on the dry bank above the Euphrates beyond the north edge. Open timber faced with yellow reed mats, it reads as the enemy's tower, lighter than the Roman one. The screens stand further east, at the frame's edge.
+- **The walked field:**
+  - the fallen war banner, torn red on its shaft, reads at once beside the dead. It is the brightest thing on Chapter III's grass and on Chapter VI's dusty road. In the bot's win at Chapter III's station one Goth fell, so that field had the banner alone;
+  - at Chapter IV's gate the Goths' round, iron-bossed shields stand propped on their rims among their fallen, with a spear. They read as gear where men fell, darker and smaller than the banner a few metres off;
+  - in Chapter VI the eastern gear, oval shields faced with painted hide and a broken lance, lies pale against the dust where an enemy fell, with another heap further north.
+- **Not seen:**
+  - the brazier burning, and the fascines, which stood outside the frame;
+  - the eastern cart in Chapters V and IX, and in its other states;
+  - the battles of Chapters I, VIII, X and XII, and with them the Roman debris, which lies in Chapter XII alone.
+
+  `tests/graphics-g5.test.mjs` checks every placement in every battle.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.

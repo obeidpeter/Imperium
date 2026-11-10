@@ -2,6 +2,37 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G5, the first batch: braziers, siege works, engines' stores, wagons and the walked field's debris ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g5-the-first-batch-9-november))
+
+Eighteen Tripo models, made for 440 credits after the pilot's review in the game and asked for, as it proposed, in solid timbers and bold silhouettes. G5 has spent 580 of its 1,845 credits.
+
+- **More field objects drawn by models,** on their cells, in place of the code-built pieces:
+  - the pitch brazier (Chapters III–X and XII), an iron fire basket on three legs heaped with pitch, unlit or burning. Burning, the stage's flame and smoke rise from the top of its heap;
+  - at Chapter V's city, while they are worked: the countermine, a square shaft in heavy timbers under a windlass, and the Persian siege ramp of earth and rubble in a timber-and-reed revetment;
+  - an eastern supply cart, with a pale bed and faded red boards, in the eastern battles (Chapters V, VI and IX), bearing the same load as the Roman cart.
+
+  Each draws its object only in the states it is made for: a spent brazier, a disabled countermine and a disabled ramp keep their code-built remains. The pilot's timber barricade now stands in every battle from Chapter III: the eastern barricade, asked for twice, was rejected both times.
+- **More set pieces, on two edges:**
+  - behind the Roman line, beyond the west edge: a two-armed ballista in the sieges of Chapters IV, V, IX and XII; and where the Romans attack a wall (Chapters IX and XII), a siege tower hung with hides, a broad wicker mantlet and fascines with gabions;
+  - beside the engines: a stack of stone shot by the onager, and a crate of bolts by the carroballista;
+  - beyond the north edge, which the camera sees behind both armies: the Goths' open and covered wagons in the battles against Gothic bands, and the Persian siege tower and reed-mat screens at Chapter V's city.
+- **The walked field's debris:** after a win, the beaten side's gear lies beside its fallen at up to six spots, the first a fallen war banner: the Goths' round shields, spear and axe, the eastern armies' oval shields and broken lance, or, in Chapter XII, the rival Romans' red shields, swords and helmet. The spots follow the fallen men's ids, so nothing is drawn from the game's random streams. On Performance the field stays as it was.
+- **Reviewed in the game,** before and after, in the battles of Chapters II–VII and IX ([the art record](docs/art-generation.md#the-rest-of-g5-the-first-batch--9-november-2026)):
+  - the siege ramp, the countermine, the engines' stores, the siege towers and the mantlet read at once;
+  - the brazier and the bolts are small at the field's distance;
+  - the eastern cart reads as a different cart from the Roman one. Framed at the objective, the near half of either cart fades: the opening the game cuts toward an objective the camera frames reaches the objective's own piece. That is older than G5, and stopping it short costs no credits;
+  - on the walked field the fallen banner reads at once, and the beaten side's gear lies among the fallen.
+- **Set pieces on dry ground:** the review found the open Gothic wagon standing in Chapter II's marsh, whose water reaches 6 m past the board. A set piece now keeps its room out of the scene's water: the marsh, a river leaving the board, the distant river and Chapter V's Euphrates. Chapter II's rearguard has dry room for one wagon.
+- **Four generations were rejected** and three redone: the first ballista (a flat grey colour map and coil springs), the first mantlets (three thin racks) and both eastern barricades. Four of 22 (18%), under the 20% stop rule.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web, Chapters II, III and V take all of theirs, and VI the eastern cart, the brazier and the eastern debris; the bolts, the Roman siege works and the Roman debris ship in the desktop app alone. The largest chapter download is 27.96 of 28 MB, Chapter I's 3D download is 17.88 of 18 MB, and the complete web game is 75.04 of 80 MB.
+- **What comes next** for G5 is in [the plan](docs/graphics-tripo-plan.md#what-the-first-batch-proposes).
+- **Checks:** `tests/graphics-g5.test.mjs` also covers:
+  - the batch's ledger and every shipped model's budget;
+  - the brazier's flame over the model's heap, and the eastern cart in the eastern battles;
+  - the set pieces on both edges and beside their engines, clear of each other, within their room and on dry ground, and the scene's water at the marsh, the distant river and the Euphrates;
+  - the walked field's debris, in battles reached and won by legal commands from New Game: beside the fallen, on the board, clear of the field objects and of each other, the same spots every time, the chronicle unchanged, and nothing before the win;
+  - each chapter's web and desktop packs.
+
 ### Release G5's pilot: the battles' cart, barricade and ram, and engines behind the line ([the plan](docs/graphics-tripo-plan.md#g5s-pilot-9-november))
 
 Six Tripo models, made for 140 credits and reviewed in the game before the rest of G5 is generated:
