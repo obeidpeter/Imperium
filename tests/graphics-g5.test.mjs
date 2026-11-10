@@ -9,7 +9,8 @@ import {runCommandCampaign} from '../scripts/command-autoplay.mjs';
 import {playRealtime} from '../scripts/realtime-autoplay.mjs';
 import {inspectModel,budgetProblems} from '../scripts/assets/check-model.mjs';
 import {stageEncounter} from '../src/showcase/live-figures.js';
-import {gridToWorld,roadSegments} from '../src/showcase/environment-layout.js';
+import {gridToWorld,roadSegments,distantRiverCentre} from '../src/showcase/environment-layout.js';
+import {createWaterSampler} from '../src/showcase/environment-water.js';
 import {createRoadSurfaceSampler} from '../src/showcase/environment-road-surface.js';
 import {regionalPlacementBounds} from '../src/showcase/environment-regional-world.js';
 import {fieldModelUrls,fieldObjectModel,fieldModelPlacements,createFieldModelPieces,battlePropPlacements,aftermathDebrisPlacements} from '../src/showcase/field-models.js';
@@ -215,12 +216,15 @@ test('a burning brazier drawn by its model keeps the stage\'s flame, on its heap
   let flames=0;cold.group.traverse(o=>{if(o.name==='pitch flame and rising smoke')flames++;});assert.equal(flames,0);cold.dispose();
 });
 
-test('the set pieces stand beyond the board in their own battles, clear of the roads that leave it, of the scene\'s other scenery and of each other', async () => {
+// Chapter II's rearguard: past the north edge the marsh's water and the distant river leave dry room for one wagon.
+const NO_DRY_ROOM={'ch2-rearguard':['g5-wagon-gothic-covered']};
+test('the set pieces stand beyond the board in their own battles, on dry ground, clear of the roads that leave it, of the scene\'s other scenery and of each other', async () => {
   const seen=new Map();
   for(const {id,chapter,e}of battles()){
     const all=sceneryPlacements(e,{chapter,desktop:true}),props=all.filter(p=>BATTLE_PROP_MODELS[p.id]),others=all.filter(p=>!BATTLE_PROP_MODELS[p.id]);
-    const expected=Object.entries(BATTLE_PROP_MODELS).filter(([,m])=>m.encounters.includes(id)).map(([prop])=>prop);
+    const expected=Object.entries(BATTLE_PROP_MODELS).filter(([prop,m])=>m.encounters.includes(id)&&!NO_DRY_ROOM[id]?.includes(prop)).map(([prop])=>prop);
     assert.deepEqual(props.map(p=>p.id),expected,`${id}'s set pieces`);
+    const water=createWaterSampler(e,{chapter});
     const hx=e.width*1.25,hz=e.height*1.25,road=createRoadSurfaceSampler(roadSegments(e,2.5),2.5).distance;
     const boxes=props.map(p=>{const m=BATTLE_PROP_MODELS[p.id];return {id:p.id,minX:p.x-m.fit.width/2,maxX:p.x+m.fit.width/2,minZ:p.z-m.fit.depth/2,maxZ:p.z+m.fit.depth/2};});
     for(const p of props){
@@ -240,6 +244,7 @@ test('the set pieces stand beyond the board in their own battles, clear of the r
       }
       assert.deepEqual(p.fitWithin,m.fit);assert.ok(!p.fallbackName,'no code-built stand-in');
       for(const [x,z]of [[p.x,p.z],[p.x-w,p.z-d],[p.x-w,p.z+d],[p.x+w,p.z-d],[p.x+w,p.z+d]])assert.ok(road(x,z)>=2.4,`${id}: ${p.id} clear of the road`);
+      for(let i=0;i<=4;i++)for(let j=0;j<=4;j++)assert.ok(!water(p.x-w+i*w/2,p.z-d+j*d/2),`${id}: ${p.id} on dry ground`);
       for(const o of others){
         const b=o.component?regionalPlacementBounds(o):{minX:o.x-2.2,maxX:o.x+2.2,minZ:o.z-2.2,maxZ:o.z+2.2};
         assert.ok(p.x+w<=b.minX||p.x-w>=b.maxX||p.z+d<=b.minZ||p.z-d>=b.maxZ,`${id}: ${p.id} clear of ${o.id}`);
@@ -250,7 +255,15 @@ test('the set pieces stand beyond the board in their own battles, clear of the r
     // None stands in a camp or a contest, nor in the training ground.
     for(const kind of ['camp','contest'])assert.deepEqual(battlePropPlacements({...e,kind}),[],`no set piece in a ${kind}`);
   }
-  for(const [id,m]of Object.entries(BATTLE_PROP_MODELS))assert.deepEqual(seen.get(id),m.encounters,`${id} in each of its battles`);
+  for(const [id,m]of Object.entries(BATTLE_PROP_MODELS))assert.deepEqual(seen.get(id),m.encounters.filter(b=>!NO_DRY_ROOM[b]?.includes(id)),`${id} in each of its battles`);
+  // The water is the scene's own: the marsh reaches past the board's marsh, the distant river lies beyond the north
+  // edge, Chapter V's Euphrates beyond the fortress, and the west of a dry field is dry.
+  const at=id=>battles().find(b=>b.id===id),wet=(b,x,z)=>createWaterSampler(b.e,{chapter:b.chapter})(x,z);
+  const marsh=at('ch2-rearguard'),mine=at('ch5-mine'),city=at('ch9-city');
+  assert.ok(wet(marsh,0,-marsh.e.height*1.25-1),'the marsh\'s water just past the north edge');
+  assert.ok(wet(marsh,0,distantRiverCentre(marsh.e)),'the distant river');
+  assert.ok(wet(mine,0,-mine.e.height*1.25-16),'Chapter V\'s Euphrates');
+  assert.ok(!wet(city,-city.e.width*1.25-6,0),'the dry ground west of Palmyra\'s field');
   // Drawn as scenery, on the ground, within their room, and never on Performance.
   const {e,chapter}=battles().find(b=>b.id==='ch9-city'),slope=(x,z)=>.03*x-.02*z;
   const urls=new Set(['g5-onager','g5-siege-tower','g5-mantlets'].map(worldModelUrl));

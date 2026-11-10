@@ -2,6 +2,7 @@ import * as T from '../../vendor/three/three.module.js';
 import {FIELD_OBJECT_MODELS,BATTLE_PROP_MODELS,AFTERMATH_DEBRIS_MODELS,worldModelUrl,worldAssetShown} from '../ui/world-catalog.js';
 import {gridToWorld,roadSegments} from './environment-layout.js';
 import {createRoadSurfaceSampler} from './environment-road-surface.js';
+import {createWaterSampler} from './environment-water.js';
 
 // The battle's field objects drawn from generated models (graphics plan, G5): each model draws its kind in the
 // states it names (world-catalog.js), on the object's cell, in place of the code-built piece (environment-fieldwork.js),
@@ -79,13 +80,15 @@ export const hasBattleProps=e=>Object.values(BATTLE_PROP_MODELS).some(m=>m.encou
  * {minX, maxX, minZ, maxZ}) and of the set pieces before it; a piece `beside` another stands at its offset from that
  * piece, or the offset mirrored, clear of it and of the rest. Scenery placements, with no code-built stand-in:
  * Performance and a failed download leave the ground empty. */
-export function battlePropPlacements(e,{tileSize=2.5,occupied=[]}={}){
+export function battlePropPlacements(e,{tileSize=2.5,occupied=[],chapter}={}){
   if(e?.kind!=='battle'||!Number.isInteger(e.width)||!Number.isInteger(e.height)||e.width<=0||e.height<=0)return [];
   const hx=e.width*tileSize/2,hz=e.height*tileSize/2,road=createRoadSurfaceSampler(roadSegments(e,tileSize),tileSize).distance,taken=[...occupied],out=[];
+  // Dry ground only: no point of a piece's room in the scene's water (a marsh, a river leaving the board, the distant river).
+  const water=createWaterSampler(e,{chapter,tileSize}),dry=b=>{for(let i=0;i<=4;i++)for(let j=0;j<=4;j++)if(water(b.minX+(b.maxX-b.minX)*i/4,b.minZ+(b.maxZ-b.minZ)*j/4))return false;return true;};
   const overlaps=(a,b,margin=PROP_MARGIN)=>a.maxX+margin>b.minX&&a.minX-margin<b.maxX&&a.maxZ+margin>b.minZ&&a.minZ-margin<b.maxZ;
   const box=(x,z,m)=>({minX:x-m.fit.width/2,maxX:x+m.fit.width/2,minZ:z-m.fit.depth/2,maxZ:z+m.fit.depth/2});
   const clear=(b,except=null)=>[[b.minX,b.minZ],[b.minX,b.maxZ],[b.maxX,b.minZ],[b.maxX,b.maxZ],[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2]]
-    .every(([cx,cz])=>road(cx,cz)>=ROAD_CLEARANCE)&&taken.every(o=>o===except?!overlaps(b,o,0):!overlaps(b,o));
+    .every(([cx,cz])=>road(cx,cz)>=ROAD_CLEARANCE)&&taken.every(o=>o===except?!overlaps(b,o,0):!overlaps(b,o))&&dry(b);
   for(const [id,m]of Object.entries(BATTLE_PROP_MODELS)){
     const url=worldModelUrl(id);if(!url||!m.encounters.includes(e.id))continue;
     let spot=null;
