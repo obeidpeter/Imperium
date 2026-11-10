@@ -2247,6 +2247,24 @@ Each camp was restored through the Restore dialog from a save reached from New G
 
   `tests/graphics-g4.test.mjs` checks every placement in every camp and battle reached by legal commands.
 
+## The battles' animals · 10 November 2026
+
+The last of release G4 of the [graphics plan](graphics-tripo-plan.md#the-battles-animals-10-november): the pilot's oxen and mules, with the dark ox of the rest of G4, beside four of the battles' set pieces. A pair of oxen, the grey and the dark, stands unyoked at one end of each Gothic wagon beyond the north edge of the battles against Gothic bands, before its pole or behind it, and a pair of mules beside each engine behind the Roman line, alongside it or at its end. No model was made and no credits were spent: these are the files the camps already ship, standing where more pieces stand. [The asset pipeline](asset-pipeline.md#the-battles-animals-oxen-by-the-gothic-wagons-mules-by-the-engines--2026-11-10) has how they are placed.
+
+### In the game
+
+![The battles' set pieces before (alone) and with their animals, in the desktop build at High](images/g4-battle-animals.jpg)
+
+Each battle was seen twice at the same moment, in the desktop build at High: once with the oxen's and mules' files refused, which leaves the pieces alone, and once with them. Each moment was reached from New Game by the real-time bot's legal commands, restored through the Restore dialog, paused and framed with the game's own controls, the camera turned to the piece as **Find objective** turns it.
+
+- **The oxen** read at once as a pair, the pale grey and the dark chestnut side by side before the wagon's pole, turned the way it points. Across the battles, seven of the nineteen wagons with oxen have them behind the wagon instead, where the pole's end has no room.
+  - At Chapter II's rearguard, in the mist, they stand before the open wagon on the dry strip between the marsh and the distant river. The covered wagon has no dry room there and is left out, as G5 found.
+  - At Chapter III's station both wagons have their pair, the covered wagon's beside the well and the open wagon's by the wheat. They are the largest and brightest things beyond the north edge.
+- **The mules** stood at the engine's end away from the board in both battles seen, a pale pair facing outward, their long ears plain. Across the battles, five of the eleven engines have their mules alongside instead.
+  - By Chapter V's onager they stand clear of the pile of its stone shot, which lies at the engine's side.
+  - By Chapter VII's carroballista they mark the engine's place more plainly than its own thin frame and dark timber, which G5's review found hard to tell from the scrub.
+- **Not seen:** the battles of Chapters I, IV, VIII, IX, X and XII, and the web build, where Chapter III's wagons each have the grey ox alone. `tests/graphics-g4.test.mjs` checks every pair in every battle reached by legal commands.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.
