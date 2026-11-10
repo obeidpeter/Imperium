@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/kit/kit-signum.glb",
+  "output": "assets/models/kit/kit-signum.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 170260,
+    "gzipBytes": 115162,
+    "sha256": "b93e53b737e4f256be9cf2158b0b8c8ad391eeaee68ee3a8541c167216f501ea"
+  },
+  "after": {
+    "bytes": 171456,
+    "gzipBytes": 163776,
+    "sha256": "2cd554ca204ae27c8b68af0eab9278bcb36a7121dd473d4bc8fc897045d7541a"
+  },
+  "geometryUnchanged": true,
+  "triangles": 2698,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 5246
+      },
+      "bytes": 8875,
+      "psnr": 36.909
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 30724
+      },
+      "bytes": 50890,
+      "psnr": 33.511
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 256,
+      "height": 256,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7412
+      },
+      "bytes": 12784,
+      "psnr": 26.047
+    }
+  ]
+}

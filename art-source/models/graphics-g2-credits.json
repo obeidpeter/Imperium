@@ -1,0 +1,95 @@
+{
+ "scope": "Release G2 of the graphics plan (docs/graphics-tripo-plan.md): arms and standards",
+ "authorization": {
+  "credits": 1845,
+  "approvedBy": "Owner",
+  "source": "docs/graphics-tripo-plan.md: release G2, capped at 700 credits on 8 November 2026, with 725 of G3’s and G5’s held credits and 420 of G4’s (#103) proposed for it, 1,845 in all; decision 9 (9 November 2026) leaves the rest of the plan to my judgement within each release’s cap, each pilot reviewed in the game before the rest of its release is generated; decision 10 puts the standards first"
+ },
+ "pricing": {
+  "textWithStandardTextures": 20,
+  "imageWithStandardTextures": 30,
+  "bipedRig": 25,
+  "rigCheck": 0,
+  "source": "the calibration's measured prices (docs/graphics-calibration.md), and image-to-model at standard textures as G6's pilot measured it (30 credits, not the 20 the pilot planned); each task's reported credits_consumed is recorded below"
+ },
+ "spentCredits": 80,
+ "remainingAuthorization": 1765,
+ "paused": {
+  "since": "2026-11-10",
+  "after": "pilot",
+  "reason": "The plan’s stop rule: 1 of the release’s 4 generations was rejected at review (g2-aquila, grey all over), over its 20%",
+  "until": "the owner decides whether G2 goes on (docs/graphics-tripo-plan.md, decision 13)"
+ },
+ "batches": [
+  {
+   "batch": "pilot",
+   "date": "2026-11-10",
+   "ceilingCredits": 100,
+   "plannedCredits": 60,
+   "spentCredits": 80,
+   "items": [
+    "g2-signum",
+    "g2-aquila",
+    "g2-vexillum",
+    "g2-aquila-b"
+   ],
+   "note": "G2's pilot, the standards first: a century's signum and a legion's eagle, worn on the figure's standard joint in place of the code-built pole and its ornaments, and a vexillum for the finale's blocks, each generated at standard texture and geometry (20 credits), within a 100-credit ceiling. The first eagle was rejected and redone: 80 credits.",
+   "balance": {
+    "before": 7070,
+    "after": 6990,
+    "source": "the account balance read before the batch’s first task and after its last (frozen 0)"
+   },
+   "tasks": [
+    {
+     "id": "g2-signum",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "7549c772-a2a5-4b14-9a2d-13390b0496e5",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g2-aquila",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "9f18541c-f433-41d6-a970-74ae9c3de27b",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20,
+     "rejectedAtReview": "the eagle and its pole came out grey all over: a flat colour map with almost no colour in it (mean saturation 3 of 255), not the gilded eagle and dark wooden shaft asked for, the failure of G5's first ballista"
+    },
+    {
+     "id": "g2-vexillum",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "1cc6dec1-aa68-4d7b-a9fa-4c83a53688a4",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g2-aquila-b",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "a9f70da3-6423-4a0b-bb5c-1fa4c2c3a2b6",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    }
+   ],
+   "rejected": {
+    "count": 1,
+    "of": 4,
+    "items": [
+     "g2-aquila"
+    ],
+    "note": "The first eagle came out grey all over (a flat colour map with almost no colour in it (mean saturation 3 of 255), not the gilded eagle and dark wooden shaft asked for, the failure of G5's first ballista). The second, g2-aquila-b, with its colours named outright, ships as kit-aquila. One of four generations (25%), over the plan's 20% stop rule: G2 pauses after its pilot."
+   }
+  }
+ ]
+}

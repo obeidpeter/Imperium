@@ -10,7 +10,10 @@ along +Y (glTF), the flat of its blade or its axe head across X and its thicknes
 Its grip end goes down: a sword's or a knife's guard, its widest section, sits just above
 the grip, while an axe's head, its widest part, is at the far end from it and points to +X.
 It is scaled to --length and its origin put at the middle of its grip, where the figure's
-hand holds it. A helmet loses any display stand under its rim (everything below the lowest
+hand holds it. A standard (--kind standard) is laid out as a weapon, its ornament or cloth, its widest
+part, at the top and across X; it is scaled to its height (--length) and held a tenth of the way up
+its pole, where the code-built standard it replaces is carried, its pole set upright (a heavy ornament
+can tip the longest axis off it) and turned about it by --turn degrees so its face looks along +Z. A helmet loses any display stand under its rim (everything below the lowest
 section half as wide as the widest), is turned about the vertical by --turn degrees so its
 face looks along +Z, scaled to --height and stood on the origin, centred. Then the near level is
 decimated to --triangles (a collapse can stop short of it where Tripo's surfaces cross; the
@@ -46,7 +49,10 @@ weld_and_shade, triangles, digest, shown = (
     character.weld_and_shade, character.triangles, character.digest, character.shown)
 bake_vertex_colours, shrink_textures = character.bake_vertex_colours, character.shrink_textures
 
-KINDS = ('sword', 'axe', 'helmet')
+KINDS = ('sword', 'axe', 'helmet', 'standard')
+# A standard is held a tenth of the way up its pole, where the figure's standard joint carries the
+# code-built pole it replaces (actors.js: its foot 0.14 m below the joint, its top 1.28 m above).
+STANDARD_GRIP = 0.1
 SLICES = 48
 
 
@@ -56,10 +62,10 @@ def parse_args():
     p.add_argument('--input', required=True, help='Tripo text-to-model item .glb')
     p.add_argument('--output', required=True, help='kit .glb')
     p.add_argument('--report', help='JSON report path (default: output with .json)')
-    p.add_argument('--kind', required=True, choices=KINDS, help='sword (and knife), axe or helmet')
-    p.add_argument('--length', type=float, help='a weapon\'s length from grip end to tip, in metres')
+    p.add_argument('--kind', required=True, choices=KINDS, help='sword (and knife), axe, helmet or standard (a pole with its ornament or cloth at the top)')
+    p.add_argument('--length', type=float, help='a weapon\'s length from grip end to tip, or a standard\'s height from foot to top, in metres')
     p.add_argument('--height', type=float, help='a helmet\'s height, in metres')
-    p.add_argument('--turn', type=float, default=0.0, help='a helmet\'s turn about the vertical, in degrees, so it faces +Z')
+    p.add_argument('--turn', type=float, default=0.0, help='a helmet\'s or a standard\'s turn about the vertical, in degrees, so it faces +Z')
     p.add_argument('--triangles', type=int, default=1200, help='triangle budget of the near level')
     p.add_argument('--overview-triangles', type=int, default=160, help='triangle budget of the overview level')
     p.add_argument('--texture', type=int, default=256, help='longest edge of the colour map in pixels')
@@ -209,12 +215,14 @@ def orient_weapon(o, kind, length):
     transform(o, turn @ Matrix.Translation(-centre))
     profile = widths(points(o))
     widest = int(np.argmax(profile))
-    # A guard sits low, just above the grip; an axe's head sits high, away from it.
+    # A guard sits low, just above the grip; an axe's head and a standard's ornament or cloth sit high,
+    # away from it.
     flipped = widest > SLICES / 2 if kind == 'sword' else widest < SLICES / 2
     if flipped:
         transform(o, Matrix.Rotation(math.pi, 4, 'X'))
         profile = profile[::-1]
         widest = SLICES - 1 - widest
+    lean = upright_pole(o) if kind == 'standard' else None
     co = points(o)
     z0, z1 = co[:, 2].min(), co[:, 2].max()
     if kind == 'axe':
@@ -224,14 +232,42 @@ def orient_weapon(o, kind, length):
             co = points(o)
     scale = length / (z1 - z0)
     span = z1 - z0
-    # The hand holds a sword between its pommel and its guard, an axe near the end of its haft.
-    grip = z0 + (widest / SLICES * span) / 2 if kind == 'sword' else z0 + 0.16 * span
+    # The hand holds a sword between its pommel and its guard, an axe near the end of its haft, and a
+    # standard's pole a tenth of the way up.
+    grip = z0 + (widest / SLICES * span) / 2 if kind == 'sword' else z0 + (STANDARD_GRIP if kind == 'standard' else 0.16) * span
     low = co[co[:, 2] < grip + 0.05 * span]
     centre = ((low[:, 0].max() + low[:, 0].min()) / 2, (low[:, 1].max() + low[:, 1].min()) / 2, grip)
     transform(o, Matrix.Scale(scale, 4) @ Matrix.Translation([-c for c in centre]))
     return {'flipped': bool(flipped), 'widestSlice': widest, 'slices': SLICES,
             'gripFromEnd': round((grip - z0) / span, 4), 'scale': round(scale, 6),
+            **({'poleLeanDegrees': lean} if lean is not None else {}),
             'widthProfile': [round(float(w), 4) for w in profile]}
+
+
+def upright_pole(o):
+    """A standard's longest axis leans where its ornament or cloth is heavier on one side: its pole is set
+    upright, by the line through the centres of its bare lower slices (from a twentieth to two fifths of
+    its height, below any ornament or cloth). Returns the lean taken out, in degrees."""
+    import numpy as np
+    co = points(o)
+    z0, z1 = co[:, 2].min(), co[:, 2].max()
+    span = z1 - z0
+    centres = []
+    for i in range(8):
+        lo, hi = z0 + span * (0.05 + 0.35 * i / 8), z0 + span * (0.05 + 0.35 * (i + 1) / 8)
+        band = co[(co[:, 2] >= lo) & (co[:, 2] < hi)]
+        if len(band):
+            centres.append(((band[:, 0].max() + band[:, 0].min()) / 2, (band[:, 1].max() + band[:, 1].min()) / 2, (lo + hi) / 2))
+    if len(centres) < 3:
+        return 0.0
+    c = np.array(centres)
+    dx, dy = np.polyfit(c[:, 2], c[:, 0], 1)[0], np.polyfit(c[:, 2], c[:, 1], 1)[0]
+    axis = np.array([dx, dy, 1.0]) / math.sqrt(dx * dx + dy * dy + 1)
+    lean = math.degrees(math.acos(max(-1.0, min(1.0, axis[2]))))
+    if lean > 1e-3:
+        from mathutils import Vector
+        transform(o, Vector(axis.tolist()).rotation_difference(Vector((0, 0, 1))).to_matrix().to_4x4())
+    return round(lean, 3)
 
 
 def strip_stand(o):
@@ -284,6 +320,11 @@ def main():
     before = triangles([item])
     weld_and_shade(item, a.sharp_angle)
     fit = orient_weapon(item, a.kind, a.length) if a.kind != 'helmet' else stand_helmet(item, a.turn, a.height)
+    if a.kind == 'standard':
+        # Which way a standard's ornament looks is not in its outline: --turn faces it to +Z, where the
+        # figure that carries it on its back looks.
+        transform(item, Matrix.Rotation(math.radians(a.turn), 4, 'Z'))
+        fit['turnDegrees'] = a.turn
     decimate(item, a.triangles)
     overview = item.copy()
     overview.data = item.data.copy()

@@ -28,7 +28,8 @@ The following were generated with **Tripo**'s text-to-model service, from text p
 - the camp and town props;
 - the landmarks, the rocks and Chapter V's scenery;
 - the finale's distant crowd;
-- the models behind the inventory's item pictures, seven of which the figures also wear as their weapons and helmets.
+- the models behind the inventory's item pictures, seven of which the figures also wear as their weapons and helmets;
+- the standards the figures carry, and the finale's vexilla, one of them recoloured by the project's own script for the other side ([the art record](art-generation.md#g2s-pilot-the-standards--10-november-2026)).
 
 Five faces were generated with Tripo's image-to-model service on the same account, from a picture rather than a prompt, each from its man's campaign portrait, the game's own art: Lucan's ([the art record](art-generation.md#g6s-pilot-faces-and-people--10-november-2026)), and Varro's, Sabinus's, Crispus's and Paullus's ([the art record](art-generation.md#the-rest-of-g6-the-first-batch--10-november-2026)).
 

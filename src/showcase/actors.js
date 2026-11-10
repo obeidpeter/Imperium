@@ -35,7 +35,7 @@ import {ACTOR_BODIES,actorBodyId,horseBodyId} from '../ui/actor-body-catalog.js'
 import {actorBody,warmActorBody,mountActorBody,blocTrimGeometry,BODY_REPLACES,BARE_HEAD_REPLACES} from './actor-bodies.js';
 import {IDENTITY_HEAD_BODY,usesPersistentHead} from './generated-identity.js';
 import {defaultActorKitLibrary,wearKitModel} from './actor-kit-models.js';
-import {KIT_WEAPON_MODELS,KIT_HEADWEAR_MODELS} from './actor-kit-catalog.js';
+import {KIT_MODELS,KIT_WEAPON_MODELS,KIT_HEADWEAR_MODELS,KIT_STANDARD_MODELS,kitShown} from './actor-kit-catalog.js';
 export {actorPose,horsePose} from './actor-pose.js';
 export {actorKit} from './actor-kit.js';
 
@@ -67,13 +67,16 @@ function drape(rows,{from=0,to=1,offset=0}={}){const p=[],uv=[],indices=[],n=16;
 export const BLOC_TRIM=Object.freeze(Object.fromEntries(Object.entries(BLOC_STYLE).map(([bloc,style])=>[bloc,parseInt(style.color.slice(1),16)])));
 /** The generated kit a figure wears (actor-kit-catalog.js): the inventory's own sword or axe and
  * helmet or felt cap, on a figure dressed in the items chosen for it (the player's soldier, his
- * companions, named veterans and his squads). The rank and file and the enemy keep the code-built
- * pieces, which read more clearly at the field's distance and cost a fraction of the triangles;
- * so does every figure on Performance. */
+ * companions, named veterans and his squads), and the standard on the back of any figure that
+ * carries one, where its platform's download has it. The rank and file and the enemy keep the
+ * code-built weapons and helmets, which read more clearly at the field's distance and cost a
+ * fraction of the triangles; every figure on Performance keeps every code-built piece. */
 export function actorKitModelIds(kit,options={}){
-  if(options.quality==='performance'||!kit.equipped)return [];
+  if(options.quality==='performance')return [];
+  const standardModel=KIT_STANDARD_MODELS[kit.signum],standard=standardModel&&kitShown(standardModel,kit.chapter,options)?standardModel:null;
+  if(!kit.equipped)return [standard].filter(Boolean);
   const weapon=KIT_WEAPON_MODELS[kit.weapon]??null,headwear=kit.helmet?KIT_HEADWEAR_MODELS[kit.helmet]??null:kit.cap?KIT_HEADWEAR_MODELS.cap:null;
-  return [weapon,headwear].filter(Boolean);
+  return [weapon,headwear,standard].filter(Boolean);
 }
 export function createActor(unit={},options={}){
   let rig=createActorRig(unit,options),disposed=false,lastInput={},group=rig.group,rebuilt=false;
@@ -471,10 +474,10 @@ function createActorRig(unit={},options={},reuseGroup=null){
   if(horse&&horseCoat){const replaced=[];horse.group.traverse(o=>{if(o.isMesh&&o.parent?.isBone&&HORSE_REPLACES.test(o.parent.name))replaced.push(o);});
     for(const item of replaced){item.removeFromParent();for(const g of [item.geometry,item.userData.overviewGeometry])if(g){geometries.delete(g);g.dispose();}}}
   // Generated kit (actor-kit-models.js) in place of the code-built sword or axe, helmet or cap
-  // still standing, fitted to it; a piece not yet loaded is noted, so the figure rebuilds when it is.
+  // still standing, and standard, fitted to it; a piece not yet loaded is noted, so the figure rebuilds when it is.
   const kitLibrary=options.kitLibrary??defaultActorKitLibrary,kitWorn=[],kitWanted=[];
-  const kitIds=actorKitModelIds(kit,options),headwearIds=new Set(Object.values(KIT_HEADWEAR_MODELS));
-  const weaponModel=kitIds.find(id=>!headwearIds.has(id))??null,headwearModel=kitIds.find(id=>headwearIds.has(id))??null;
+  const kitIds=actorKitModelIds(kit,options),kitOf=kind=>kitIds.find(id=>kind.includes(KIT_MODELS[id]?.kind))??null;
+  const weaponModel=kitOf(['sword','axe']),headwearModel=kitOf(['helmet']),standardModel=kitOf(['standard']);
   const wear=(piece,id,uniform)=>{
     if(!piece||!id||!piece.children.some(o=>o.isMesh))return;
     const master=kitLibrary.model(id);if(!master){kitWanted.push(id);return;}
@@ -482,6 +485,9 @@ function createActorRig(unit={},options={},reuseGroup=null){
   };
   if(weapon&&weaponModel)wear(weapon,weaponModel,true);
   if(headwearModel)wear(kit.helmet?group.getObjectByName(`${kit.helmet}-helmet`):group.getObjectByName('equipped-arming-cap'),headwearModel,false);
+  // A standard, scaled as one to the code-built pole's top with its grip (the model's origin) on the standard's
+  // joint; it sways with the joint as the code-built one did.
+  if(signum&&standardModel)wear(signum,standardModel,true);
   Object.assign(group.userData.actor,{kitModels:kitWorn,kitWanted});
   overview(group);
   if(anatomy){const replaced=[];group.traverse(o=>{if(o.isMesh&&o.userData.anatomyReplacement)replaced.push(o);});for(const item of replaced){item.removeFromParent();geometries.delete(item.geometry);item.geometry.dispose();}}

@@ -46,7 +46,7 @@ export {gridToWorld} from './environment-layout.js';
 export function createEnvironment(scene,encounter,options){return runSteps(buildEnvironment(scene,encounter,options));}
 // The same build in steps: it yields wherever a time-sliced build may give the
 // page a turn (build-steps.js); each step is a small part of the world.
-export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter,boardKit=null,treeKit=null,rockKit=null,wallsKit=null,kitFinish=null,landmarkModels=null}={}){
+export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='balanced',loadTextures=true,chapter,boardKit=null,treeKit=null,rockKit=null,wallsKit=null,kitFinish=null,landmarkModels=null,desktop}={}){
   if(!scene?.add||!Number.isInteger(encounter?.width)||!Number.isInteger(encounter?.height)||!Number.isFinite(tileSize)||tileSize<=0)throw new TypeError('Environment requires a scene, legal terrain and a positive tile size.');
   const profile=getSceneProfile(encounter,{chapter}),training=isTrainingGround(encounter),root=new THREE.Group();root.name=training?'Fort training yard environment':profile.region+' environment';root.userData.environmentMode=training?'training':profile.setting;root.userData.sceneProfile=profile;scene.add(root);
   const geometries=new Set(),extraMaterials=new Set(),animated=[];let disposed=false;
@@ -185,7 +185,7 @@ export function* buildEnvironment(scene,encounter,{tileSize=TILE_SIZE,quality='b
   }
   yield;
   const vegetation=createVegetationFactory({p,m,instance,height,quality,planter});
-  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation,rockGeometry,rocks,geometries,regionalWorld:regional,wallsKit};
+  const campaignContext={root,e,p,m,profile,height,tileSize,quality,instance,branch,animated,ownMaterial,vegetation,rockGeometry,rocks,geometries,regionalWorld:regional,wallsKit,desktop};
   const pilot=isChapterFivePilot(e)&&profile.chapter===5;
   if(pilot||regional){root.userData.environmentLandmarks=[];root.userData.inhabitedSetpieces=[];}
   for(const add of [addCampaignTerrain,addCampaignScenery,addEnvironmentDepth,addEncounterPrecinct,addFinaleApproach,addInhabitedEnvironment,

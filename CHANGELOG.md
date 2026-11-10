@@ -2,6 +2,18 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G2's pilot: the standards; G2 pauses ([the plan](docs/graphics-tripo-plan.md#g2s-pilot-10-november))
+
+80 credits of the pilot's 100: a century's signum, a legion's eagle and the finale's vexilla, in the desktop app.
+
+- **The standards on the figures' backs:** Signifer Quintus (Chapters I, IV and XII) and a veteran trained to lead (the battles of IV–X and XII) carry the generated signum, with its spearhead, crossbar, silver discs and red tassel; the eagle-bearer (Chapter VI) carries a gilded eagle. Each spans the code-built standard's extent on its joint and sways with it. Quintus carries a standard for the first time, the code-built one on the web and on Performance.
+- **The finale's vexilla:** a crimson vexillum over each of the commander's four legions, and over the claimant's two cohorts the same model with its cloth recoloured to their blue-grey, each where the code-built one stood. On the web and on Performance the code-built vexilla stay, in the same draw calls as before. The walls hide the claimant's cohorts from the field's camera, as they hid them before.
+- **Reviewed in the game:** the bearers in the camps of Chapters I, IV, VI and XII and the commander's legions in the finale, each with the code-built standards and with the generated ones, in the desktop build at High ([the art record](docs/art-generation.md#g2s-pilot-the-standards--10-november-2026)).
+- **Tools:** the kit processor's `--kind standard` lays out a standard as its bearer carries it and sets its pole upright; `scripts/assets/recolour-model.py` recolours one hue of a processed model's colour map. Kit now names its chapters and the web downloads that carry it, as bodies do (`chapterKitFiles`, `desktopOnlyKitFiles`).
+- **Downloads:** the four files (160–171 kB each) ship in the desktop app alone; the web downloads grow by 2 kB of code. The largest chapter download is 27.99 of 28 MB, Chapter I's 3D download 17.93 of 18, and the complete web game 78.57 of 80.
+- **G2 pauses at its stop rule.** The first eagle came out grey all over and was rejected; its redo, with its colours named, ships. One of the pilot's four generations (25%) is over the plan's 20%, so G2 generates nothing more until the owner decides; with G6 paused too, the plan waits on decisions 12 and 13 ([the decision](docs/graphics-tripo-plan.md#after-g2s-pilot-10-november)).
+- **Records:** the manifest, the requests and reports, the G2 ledger with its pause, the art record, the pipeline and provenance notes, the project notices, sourced historical notes on the three standards, and the Steam AI disclosure, which lists the standards apart from the weapons and helmets. `tests/graphics-g2.test.mjs` checks the ledger, the pause, the shipped models and the finale's placements; `tests/actor-kit-models.test.mjs` checks each standard against the code-built one on its joint, and `tests/actor-bodies.test.mjs` that each is carried in exactly its chapters.
+
 ### The rest of G6, the first batch: four faces from portraits, two senators and ten of the camps' people; G6 pauses ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g6-the-first-batch-10-november))
 
 790 credits of the batch's 820: four more faces from portraits, and twelve bodies. Most ship in the desktop app alone, as the web downloads are full.

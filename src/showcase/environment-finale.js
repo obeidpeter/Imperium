@@ -3,6 +3,7 @@ import {hash} from './environment-layout.js';
 import {stagingEdge} from './environment-staging.js';
 import {FINALE_CROWD_DATA,FINALE_CROWD_SOURCE,FINALE_CROWD_CLIPS} from './finale-crowd-data.js';
 import {aurelianWallBounds,aurelianWallPieces} from './aurelian-walls.js';
+import {FINALE_STANDARD_MODELS,worldAssetShown} from '../ui/world-catalog.js';
 
 // The finale's approach to Rome. Aurelian's new brick curtain (begun AD 271,
 // still rising in 275) runs north and south from the gate: finished stretches
@@ -86,7 +87,15 @@ export function finaleLayout(e,tileSize=2.5,{quality='balanced'}={}){
   }
   return {wallX,gateZ:gate.z,gateGap:8.2,reach:58,blocks};
 }
-export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,instance,geometries,animated=[],ownMaterial=material=>material,wallsKit=null}){
+/** Where a block's vexillum stands: on the block's axis, a little before its front rank, turned with it. */
+export function finaleStandardSpot(block){
+  const c=Math.cos(block.yaw),s=Math.sin(block.yaw),out=(block.ranks-1)/2*RANK_GAP+.9;
+  return {side:block.side,x:block.x+s*out,z:block.z+c*out,yaw:block.yaw};
+}
+/** Each side's code-built vexilla, a batch of poles and one of cloths, where the side's generated vexillum (G2) can
+ * stand in their place: the generated one hides them once it is placed (scenery-models.js). */
+export const finaleVexillumBatches=side=>Object.freeze([`finale vexillum poles: ${side}`,`finale vexillum cloths: ${side}`]);
+export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,instance,geometries,animated=[],ownMaterial=material=>material,wallsKit=null,desktop}){
   if(profile.staging?.key!=='rome-approach')return null;
   const perf=quality==='performance',layout=finaleLayout(e,tileSize,{quality}),{wallX,gateZ,gateGap,reach}=layout;
   const tint=(hex,k)=>new THREE.Color(hex).multiplyScalar(.86+hash(k,17)*.24);
@@ -124,10 +133,13 @@ export function addFinaleApproach({root,e,p,m,profile,height,tileSize,quality,in
       instance(detail?'massed legion front ranks':'massed legion figures',detail?body:distant,soldierMaterial,[x,y,z],[scale,scale,scale],[0,yaw,0],tint('#ffffff',k));
       instance('massed legion shields',p.box,m.cloth,[x+Math.sin(yaw)*.3-Math.cos(yaw)*.12,y+.95,z+Math.cos(yaw)*.3+Math.sin(yaw)*.12],[.56,.86,.07],[0,yaw,0],tint(palette.shield,k+3));
     }
-    // One vexillum per block, its cloth in the block's colours.
-    const sx=block.x+s*((block.ranks-1)/2*RANK_GAP+.9),sz=block.z+c*((block.ranks-1)/2*RANK_GAP+.9),sy=height(sx,sz);
-    instance('finale timber',p.cylinder,m.wood,[sx,sy+1.9,sz],[.05,3.8,.05]);
-    instance('massed legion shields',p.box,m.cloth,[sx,sy+3.2,sz],[.07,.8,.9],[0,block.yaw,0],tint(palette.shield,b+40));
+    // One vexillum per block, its cloth in the block's colours. Where the side's generated vexillum can stand (the
+    // desktop app, above Performance), the code-built ones are batches of their own, which it hides once placed;
+    // elsewhere they join the scene's timber and shields.
+    const {x:sx,z:sz}=finaleStandardSpot(block),sy=height(sx,sz);
+    const [poles,cloths]=!perf&&worldAssetShown(FINALE_STANDARD_MODELS[block.side],profile.chapter??12,desktop===undefined?{}:{desktop})?finaleVexillumBatches(block.side):['finale timber','massed legion shields'];
+    instance(poles,p.cylinder,m.wood,[sx,sy+1.9,sz],[.05,3.8,.05]);
+    instance(cloths,p.box,m.cloth,[sx,sy+3.2,sz],[.07,.8,.9],[0,block.yaw,0],tint(palette.shield,b+40));
   }
   root.userData.environmentLandmarks?.push('the rising Aurelian Walls');
   return layout;

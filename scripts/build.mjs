@@ -9,6 +9,7 @@ import {moduleClosure,staticImportClosure,studyAssets,initialAssets} from './mod
 import {CAMPAIGN_CHAPTERS,DEMO_LAST_CHAPTER,laterChapterOnly} from './edition.mjs';
 import {desktopOnlyWorldFiles} from '../src/ui/world-catalog.js';
 import {desktopOnlyBodyFiles,webOnlyBodyFiles} from '../src/ui/actor-body-catalog.js';
+import {desktopOnlyKitFiles} from '../src/showcase/actor-kit-catalog.js';
 
 // The target (the Steam plan, docs/steam-plan.md): `web` (the default) is the static site with its service worker and
 // install manifest; `desktop` is the same game for the Electron app in desktop/, which serves it from its own files:
@@ -68,7 +69,7 @@ if(demo){
 // The web leaves out the world files and bodies no chapter's web download carries (world-catalog.js,
 // actor-body-catalog.js): the desktop app has them.
 const desktopOnly=[];
-if(!desktop)for(const file of [...desktopOnlyWorldFiles(),...desktopOnlyBodyFiles()]){
+if(!desktop)for(const file of [...desktopOnlyWorldFiles(),...desktopOnlyBodyFiles(),...desktopOnlyKitFiles()]){
   const path=join(dist,file);let data;try{data=await readFile(path);}catch(error){if(error.code==='ENOENT')continue;throw error;}
   desktopOnly.push({url:'./'+file,bytes:data.length,gzipBytes:gzipSync(data).length});await rm(path);
 }

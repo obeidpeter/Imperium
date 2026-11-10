@@ -8,7 +8,8 @@ import * as G from '../src/core/game.js';
 import {createSceneryModels,sceneryPlacements} from '../src/showcase/scenery-models.js';
 import {createSceneryModelCache} from '../src/showcase/scenery-cache.js';
 import {REGIONAL_PROP_CHAPTERS,regionalServicePads,regionalTentPitches,TENT_VARIANTS} from '../src/showcase/environment-regional-world.js';
-import {CAMP_PROP_CHAPTERS,CAMP_WALL_CHAPTERS,LIFE_PROP_CHAPTERS} from '../src/ui/world-catalog.js';
+import {CAMP_PROP_CHAPTERS,CAMP_WALL_CHAPTERS,FINALE_STANDARD_MODELS,LIFE_PROP_CHAPTERS} from '../src/ui/world-catalog.js';
+import {finaleLayout,finaleStandardSpot} from '../src/showcase/environment-finale.js';
 import {campWallSections,campTowerSpots,campGateways} from '../src/showcase/camp-walls.js';
 import {terrainAt} from '../src/showcase/environment-layout.js';
 const root=new URL('../',import.meta.url);
@@ -47,6 +48,11 @@ test('All shipped regional models load completely and keep their true geometry o
           if(gate)assert.ok(campGateways(e).some(g=>g.cells.some(c=>c.x===x&&c.y===y)),`${e.id}/${p.key} spans its gateway`);
           else assert.equal(terrainAt(e,x,y),'wall',`${e.id}/${p.key} stands on the wall`);
         }
+      }else if(p.instances&&Object.values(FINALE_STANDARD_MODELS).includes(p.id)){
+        // The finale's vexilla (G2) stand at their side's blocks' vexillum spots, beyond the board's east and west edges.
+        const side=Object.entries(FINALE_STANDARD_MODELS).find(([,id])=>id===p.id)[0];
+        assert.deepEqual(p.instances,finaleLayout(e).blocks.map(finaleStandardSpot).filter(s=>s.side===side).map(({x,z,yaw})=>({x,z,yaw})),`${e.id}/${p.key} at its blocks`);
+        assert.ok(b.max.x < -hx||b.min.x > hx,`${e.id}/${p.key} actual silhouette stays outside the full board`);
       }else if(p.instances){
         // The tent lines stand on their pitches, which the camp world blocks for walking (camp-tents.test.mjs), each
         // model on its own.

@@ -24,7 +24,9 @@ export function actorKit(unit={},options={}){
   let identity=2166136261;for(const c of String(unit.veteranId??unit.name??unit.id??role))identity=Math.imul(identity^c.charCodeAt(0),16777619)>>>0;
   const commendations=Number.isFinite(options.commendations)?options.commendations:Number.isFinite(options.commendations?.[unit.veteranId])?options.commendations[unit.veteranId]:Number.isFinite(unit.commendations)?unit.commendations:unit.moraleResistance?6:unit.specialization?3:0;
   const veteranTier=!civic&&!escort&&!trainer&&faction==='Roman'?(commendations>=6?3:commendations>=3?2:commendations>=1?1:0):0;
-  const signum=options.signum==='aquila'||escort&&/eagle-bearer/i.test(name)?'aquila':options.signum==='signum'||options.signum===true||(!civic&&!escort&&!trainer&&faction==='Roman'&&unit.specialization==='leader')?'signum':null;
+  // The standard on his back: the legion's eagle for its bearer; a century's signum for a camp's standard-bearer
+  // (Signifer Quintus) and for a Roman veteran trained to lead.
+  const signum=options.signum==='aquila'||escort&&/eagle-bearer/i.test(name)?'aquila':options.signum==='signum'||options.signum===true||staff==='standard-bearer'||(!civic&&!escort&&!trainer&&faction==='Roman'&&unit.specialization==='leader')?'signum':null;
   // What the rules made the unit (its own role, unmapped), which choose a type's body
   // (actor-body-catalog.js): a war band's skirmisher, a claimant's Roman, a champion by his id.
   const troop=String(unit.role??''),skirmisher=/skirmisher/i.test(name);

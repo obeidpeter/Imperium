@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g2-vexillum.glb",
+    "bytes": 35128552,
+    "sha256": "08fada90de040321b98652833461f5f7c549083b197951c9b3222c73039ef613",
+    "triangles": 1151948
+  },
+  "output": {
+    "path": "assets/models/world/g2-vexillum.glb",
+    "bytes": 141524,
+    "sha256": "a2e27c47c0581ebd31abe4d7c61f9c14f7b00f6e81601c7ff3b99f1311a36db0",
+    "triangles": 2352
+  },
+  "settings": {
+    "triangles": 2400,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 3.8,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 3.784122767806399,
+  "sizeMetres": {
+    "width": 0.3302,
+    "height": 3.8,
+    "depth": 1.2996
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_1cc6dec1-aa68-4d7b-a9fa-4c83a53688a4",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_1cc6dec1-aa68-4d7b-a9fa-4c83a53688a4",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_1cc6dec1-aa68-4d7b-a9fa-4c83a53688a4",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

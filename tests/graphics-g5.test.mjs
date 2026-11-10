@@ -224,7 +224,9 @@ test('the set pieces stand beyond the board in their own battles, on dry ground 
   const seen=new Map();
   for(const {id,chapter,e}of battles()){
     // The animals beside a set piece stand with it, and are G4's to check (tests/graphics-g4.test.mjs).
-    const all=sceneryPlacements(e,{chapter,desktop:true}),props=all.filter(p=>BATTLE_PROP_MODELS[p.id]),others=all.filter(p=>!BATTLE_PROP_MODELS[p.id]&&!BATTLE_PROP_MODELS[p.host]);
+    // A model placed many times over (the finale's vexilla, G2) stands at each of its instances.
+    const all=sceneryPlacements(e,{chapter,desktop:true}),props=all.filter(p=>BATTLE_PROP_MODELS[p.id]),others=all.filter(p=>!BATTLE_PROP_MODELS[p.id]&&!BATTLE_PROP_MODELS[p.host])
+      .flatMap(p=>p.instances?p.instances.map(({x,z})=>({id:p.id,x,z})):[p]);
     const expected=Object.entries(BATTLE_PROP_MODELS).filter(([prop,m])=>m.encounters.includes(id)&&!NO_DRY_ROOM[id]?.includes(prop)).map(([prop])=>prop);
     assert.deepEqual(props.map(p=>p.id),expected,`${id}'s set pieces`);
     const water=createWaterSampler(e,{chapter}),level=createWaterLevelSampler(e,{chapter});

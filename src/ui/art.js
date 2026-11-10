@@ -4,6 +4,7 @@ import {PRESENTATION_BUDGET} from './presentation-budget.js';
 import {animationAssets} from './sprite-frames.js';
 import {chapterBodies,actorBodyUrl,chapterHorses,horseBodyUrl} from './actor-body-catalog.js';
 import {chapterWorldFiles,worldFiles} from './world-catalog.js';
+import {chapterKitFiles} from '../showcase/actor-kit-catalog.js';
 import {ITEM_ATLAS} from '../data/item-pictures.js';
 import {demoLastChapter,networkConnection} from './platform.js';
 // Presentation assets never infer or award campaign milestones.
@@ -91,11 +92,12 @@ export function chapterOfflineAssets(chapter,availableFiles=[],{desktop}={}) {
   // pack, as Syra keeps the camp from Chapter I; the complete inventory retains it always.
   // A world asset belongs to the chapters the world catalog names, and a
   // generated character body to the chapters whose figures wear it, a generated horse to those
-  // whose riders ride it.
+  // whose riders ride it, a piece of generated kit to those whose figures wear or carry it.
   const n=Math.max(1,Math.min(12,Math.trunc(chapter)||1)),bodies=chapterBodies(n,desktop===undefined?{}:{desktop}).map(id=>'./'+actorBodyUrl(id)),horses=chapterHorses(n).map(id=>'./'+horseBodyUrl(id));
+  const kit=chapterKitFiles(n,desktop===undefined?{}:{desktop}).map(file=>'./'+file);
   // On the web a chapter's pack carries only the world files its download has room for (world-catalog.js).
   const world=new Set(worldFiles().map(file=>'./'+file)),own=new Set(chapterWorldFiles(n,desktop===undefined?{}:{desktop}).map(file=>'./'+file));
-  const shared3D=availableFiles.filter(path=>own.has(path)||!world.has(path)&&path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/characters/')&&!bodies.includes(path))&&!(path.startsWith('./assets/models/horses/')&&!horses.includes(path))&&![...BUILD_ONLY,'./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
+  const shared3D=availableFiles.filter(path=>own.has(path)||!world.has(path)&&path!=='./src/showcase/showcase.css'&&!(path.startsWith('./assets/models/characters/')&&!bodies.includes(path))&&!(path.startsWith('./assets/models/horses/')&&!horses.includes(path))&&!(path.startsWith('./assets/models/kit/')&&!kit.includes(path))&&![...BUILD_ONLY,'./assets/showcase/character-materials-v015.webp','./assets/showcase/earth.webp','./assets/showcase/stone.webp','./assets/showcase/timber.webp'].includes(path)&&['./src/showcase/','./assets/showcase/','./assets/models/','./assets/textures/','./vendor/three/','./vendor/makehuman/'].some(prefix=>path.startsWith(prefix)));
   return [...new Set([...chapterAssets(chapter).filter(path=>!isFlatArt(path)),...shared3D,...chapterAudioAssets(chapter)])];
 }
 export const chapterFlatAssets=chapter=>chapterAssets(chapter).filter(isFlatArt);

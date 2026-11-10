@@ -502,6 +502,7 @@ Step 0 of the [graphics plan](graphics-tripo-plan.md) gives seven of the item pi
    [`process-kit.py`](../scripts/assets/process-kit.py) welds the importer's seam splits, then:
    - **a weapon** (`--kind sword` for a sword or a knife, `axe` for an axe): it lays the longest axis up, with the flat of the blade or the axe head across and the grip end down, found from the widths along its length (a sword's widest section is its guard, just above the grip; an axe's is its head, at the far end). It scales it to `--length` and puts the origin at the middle of the grip.
    - **a helmet** (`--kind helmet`): it cuts away any display stand (everything below the lowest section at least half as wide as the widest), turns it by `--turn` degrees so its face looks forward, scales it to `--height` and stands it on its foot.
+   - **a standard** (`--kind standard`, release G2): laid out as a weapon, its ornament at the top, its pole set upright and its origin a tenth of the way up ([G2's pilot](#g2s-pilot-the-standards--2026-11-10)).
    - **both levels:** it reduces the near level to `--triangles` by a collapse, which can stop short where Tripo's surfaces cross; the report records where it stopped. It draws a copy together on the finest grid that fits `--overview-triangles` for the overview level, and bakes the colour map's colours into that level's vertices. It shrinks the maps (`--texture` colour, `--detail-texture` normal and metal-roughness) and exports one GLB with the meshes `near` and `overview`. The report records the digests, settings and the orientation found.
 
    The pieces shipped with lengths 0.83 m (spatha), 0.57 (gladius), 0.33 (knife, 1,000 triangles) and 0.74 (axe), and heights 0.3 m (helmets, `--turn 180` for the galea and `-90` for the Niederbieber, 2,400 triangles, a 512-pixel colour map) and 0.22 (cap, `--turn -90`, 3,200 triangles). The game rescales every piece to the code-built one, so these sizes set only the file's own scale.
@@ -710,3 +711,32 @@ The faces of Varro, Sabinus, Crispus and Paullus from their campaign portraits, 
   - the gate sentry (`camp-sentry`), Quartermaster Aper (`camp-quartermaster`), the veteran instructor (`camp-instructor`, VI–XII) and the supply orderly (`camp-porter`, IV and VI–XII). The camps' other orderlies keep the orderlies' body. The clerks' body rides the desktop app from Chapter III, as in Chapters I and II only Aper wore it;
   - the traders Barnaios (V), Abgar (VI), Malku (IX) and Atticus (XI), and Caecilia and Licinia (X), with their own heads as the camp's other women have.
 - **Downloads.** The web carries the senators' new togas and Atticus: the others ship in the desktop app alone, and on the web each figure wears what it wore before. The four staff bodies first rode the web in Chapter XI, which had room, but the complete web game then came to 80.26 MB, over its 80, so they ship in the desktop app alone, and the escorts' body is carried in Chapter XI on the web again. The bearded senator was bound again with 256-pixel detail maps (`--detail-texture 256`), from 442 to 405 kB, for Chapter XII's room. The largest chapter download is 27.98 of 28 MB, Chapter I's 3D download 17.93 of 18, and the complete web game 78.57 of 80 MB.
+
+## G2's pilot: the standards · 2026-11-10
+
+A century's signum and a legion's eagle on the backs of the figures that carry the code-built ones, and a vexillum over each block of the finale's massed armies ([the plan](graphics-tripo-plan.md#g2s-pilot-10-november), [the art record](art-generation.md#g2s-pilot-the-standards--10-november-2026)):
+
+- **A standard on a figure** is kit, like the swords and helmets, and comes from the kit processor:
+
+  ```sh
+  "$BLENDER_PYTHON" scripts/assets/process-kit.py --input art-source/models/raw/g2-signum.glb \
+    --output assets/models/kit/kit-signum.glb --report art-source/models/reports/kit-signum.json \
+    --kind standard --length 2.3 --triangles 2400 --overview-triangles 300 --texture 512 --detail-texture 256
+  ```
+
+  - **`--kind standard`** lays a standard out as the figure carries it: its pole along +Y, its ornament or cloth (its widest part) at the top and across X, scaled to its height (`--length`), and its origin a tenth of the way up the pole, where the figure's standard joint carries the code-built pole (`STANDARD_GRIP`).
+  - **The pole is set upright.** An ornament heavy on one side tips the model's longest axis off the pole, so the processor fits a line through the centres of the pole's bare lower slices (from a twentieth to two fifths of its height) and turns it vertical. The report records the lean taken out (`fit.poleLeanDegrees`): the eagle's was 3.9°, the signum's 0.4°.
+  - **`--turn`** turns a standard about its pole, as a helmet, so its face looks along +Z. Both standards needed none.
+- **On the figure** ([`actors.js`](../src/showcase/actors.js), [`actor-kit-catalog.js`](../src/showcase/actor-kit-catalog.js)): a figure whose kit has a standard (`kit.signum`) wears the model its kind names (`KIT_STANDARD_MODELS`) on the standard's joint, fitted as a weapon is, scaled as one so its top meets the code-built top, its grip on the joint. It sways with the joint. Signifer Quintus now carries a signum, as a camp's standard-bearer (`actor-kit.js`). Every figure on Performance, and every figure on the web, carries the code-built standard.
+- **Kit by chapter and platform.** A piece of kit names its chapters and the web downloads that carry it (`chapters` and `web`, all of them unless named, as a body does), and `kitShown` decides whether a figure may wear it. The standards ride in the desktop app alone: the web build leaves them out (`desktopOnlyKitFiles`, `scripts/build.mjs`), and a chapter's download group carries a piece of kit only in its chapters (`chapterKitFiles`, `art.js`). `npm run verify`'s asset check holds both.
+- **The finale's vexilla** are scenery: one instanced batch for each side, over each of its blocks, where the code-built vexillum stands (`finaleStandardSpot`, `environment-finale.js`; `finale-standards`, `scenery-models.js`). Where a side's model can stand (the desktop app, above Performance), its code-built vexilla are batches of their own, which the model hides once placed; elsewhere they join the scene's timber and shields, so the web's draw calls do not change.
+- **A recoloured variant.** The claimant's vexillum is the commander's with its crimson cloth recoloured to his cohorts' blue-grey, by a new tool that works on a processed model's colour map, before compression:
+
+  ```sh
+  python3 -I scripts/assets/recolour-model.py --input assets/models/world/g2-vexillum.glb \
+    --output assets/models/world/g2-vexillum-claimant.glb --report art-source/models/reports/g2-vexillum-claimant.json \
+    --hue 0 --to '#4b5e7a'
+  ```
+
+  The pixels near `--hue` (within `--width` degrees, fading over `--soft` more) and saturated enough (`--min-saturation`) take `--to`'s hue, and their saturation and value are scaled so that the region's mean is `--to`, which keeps its folds and shading. Its geometry and other maps are unchanged. It needs Pillow and NumPy, not Blender. The report records the share of the map recoloured and the region's mean before and after (`#8c1812`, `#4b5e7a`).
+- **Downloads.** All four files ship in the desktop app alone: the signum (171 kB), the eagle (160 kB) and the two vexilla (164 and 165 kB). The web downloads grow by 2 kB of code: the largest chapter download is 27.99 of 28 MB, Chapter I's 3D download 17.93 of 18, and the complete web game 78.57 of 80.

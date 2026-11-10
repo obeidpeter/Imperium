@@ -1,0 +1,32 @@
+{
+  "tool": "scripts/assets/recolour-model.py",
+  "input": {
+    "path": "assets/models/world/g2-vexillum.glb",
+    "bytes": 141524,
+    "sha256": "a2e27c47c0581ebd31abe4d7c61f9c14f7b00f6e81601c7ff3b99f1311a36db0"
+  },
+  "output": {
+    "path": "assets/models/world/g2-vexillum-claimant.glb",
+    "bytes": 141820,
+    "sha256": "12c9133851deed5cb2f7096c4d905c22ce3cc7ee1cfe57789ecb1db662331488"
+  },
+  "settings": {
+    "hue": 0.0,
+    "width": 18.0,
+    "soft": 10.0,
+    "minSaturation": 0.45,
+    "to": "#4b5e7a",
+    "webpQuality": 80
+  },
+  "maps": [
+    {
+      "image": 1,
+      "width": 512,
+      "height": 512,
+      "mimeType": "image/webp",
+      "regionShare": 0.7131,
+      "regionMeanBefore": "#8c1812",
+      "regionMeanAfter": "#4b5e7a"
+    }
+  ]
+}

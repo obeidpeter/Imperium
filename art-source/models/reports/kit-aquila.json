@@ -1,0 +1,118 @@
+{
+  "tool": "scripts/assets/process-kit.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g2-aquila-b.glb",
+    "bytes": 27888672,
+    "sha256": "22265492c2afea01f716bb8395c42ca073ef7fe334e3f556a32d5d6d73616554",
+    "triangles": 860126
+  },
+  "output": {
+    "path": "assets/models/kit/kit-aquila.glb",
+    "bytes": 157472,
+    "sha256": "d459b9ec9b72133dba37969540a1caae0e8ce44fe1352ab84ecdd4b672015252",
+    "triangles": 2400,
+    "overviewTriangles": 298
+  },
+  "settings": {
+    "kind": "standard",
+    "length": 2.3,
+    "height": null,
+    "turn": 0.0,
+    "triangles": 2400,
+    "overviewTriangles": 300,
+    "texture": 512,
+    "detailTexture": 256,
+    "webpQuality": 80,
+    "sharpAngle": 45.0
+  },
+  "fit": {
+    "flipped": false,
+    "widestSlice": 47,
+    "slices": 48,
+    "gripFromEnd": 0.1,
+    "scale": 2.300111,
+    "poleLeanDegrees": 3.855,
+    "widthProfile": [
+      0.0158,
+      0.0242,
+      0.0386,
+      0.0432,
+      0.0198,
+      0.0199,
+      0.0199,
+      0.0199,
+      0.0199,
+      0.0199,
+      0.0199,
+      0.0198,
+      0.0199,
+      0.0199,
+      0.02,
+      0.02,
+      0.0198,
+      0.0198,
+      0.0198,
+      0.0198,
+      0.0197,
+      0.0197,
+      0.0198,
+      0.0198,
+      0.0198,
+      0.0198,
+      0.0198,
+      0.0198,
+      0.0197,
+      0.0197,
+      0.0196,
+      0.0196,
+      0.0196,
+      0.0197,
+      0.0347,
+      0.2317,
+      0.3009,
+      0.2623,
+      0.0918,
+      0.0906,
+      0.1159,
+      0.162,
+      0.2037,
+      0.2612,
+      0.2955,
+      0.3158,
+      0.3438,
+      0.3496
+    ],
+    "turnDegrees": 0.0
+  },
+  "overviewCell": 0.08957,
+  "bounds": {
+    "min": [
+      -0.4056,
+      -0.2291,
+      -0.4478
+    ],
+    "max": [
+      0.405,
+      2.0689,
+      0.1036
+    ]
+  },
+  "textures": [
+    {
+      "name": "Color_a9f70da3-6423-4a0b-bb5c-1fa4c2c3a2b6",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_a9f70da3-6423-4a0b-bb5c-1fa4c2c3a2b6",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "name": "ORM_a9f70da3-6423-4a0b-bb5c-1fa4c2c3a2b6",
+      "width": 256,
+      "height": 256
+    }
+  ]
+}
