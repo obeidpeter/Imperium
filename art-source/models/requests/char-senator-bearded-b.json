@@ -1,0 +1,100 @@
+{
+ "id": "char-senator-bearded-b",
+ "status": "G6 batch A: rejected at review (its toga came ending at mid-shin over bare legs and sandals, though the prompt asked for it to fall to his ankles all round: the length the remake was for); the third attempt, char-senator-bearded-c, asks for its hem at the ground",
+ "chapters": [
+  7,
+  8,
+  10,
+  11,
+  12
+ ],
+ "use": "A senator of the chamber, a heavy-set man about fifty with a short grey beard, remade in a toga that falls to his feet and closed shoes (the first, char-senator-bearded, came knee-length over sandals): the game draws his bloc's colour and trim along the band of his toga. Ships under the first's name, senator-bearded.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Roman senator of the mid-3rd century AD, a heavy-set man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds down to his ankles all round, so that only the toes of his shoes show beneath it. A long-sleeved white tunic shows on both arms. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with short curly grey-brown hair and a short full grey beard, a broad round face with a heavy brow and a shrewd expression, a warm olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "knee-length, short tunic, bare legs, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611400,
+   "image_seed": 2611401,
+   "texture_seed": 2611402
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:18:48.257Z",
+  "requestBody": {
+   "negative_prompt": "knee-length, short tunic, bare legs, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611400,
+   "image_seed": 2611401,
+   "texture_seed": 2611402,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Roman senator of the mid-3rd century AD, a heavy-set man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds down to his ankles all round, so that only the toes of his shoes show beneath it. A long-sleeved white tunic shows on both arms. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with short curly grey-brown hair and a short full grey beard, a broad round face with a heavy brow and a shrewd expression, a warm olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7710,
+  "balanceSnapshotBefore": {
+   "balance": 7710,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "50e1e84a-0d7d-4fd4-9356-57d4b42909dc",
+   "state": "accepted",
+   "requestSha256": "ed483f9d184a42046d21d2e8807d5e4588b253c374e33b96c559db8899fdbd58"
+  },
+  "taskId": "558fcfe2-b8e8-48ad-88c0-3eb840ec7739",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:20:25.178Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-senator-bearded-b.glb",
+  "rawBytes": 43885588,
+  "rawSha256": "f3f0ff2c7331262bf710596910ca5098b57bed4639ecd7ce08f77d6d6769c57f",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Roman senator of the mid-3rd century AD, a heavy-set man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds down to his ankles all round, so that only the toes of his shoes show beneath it. A long-sleeved white tunic shows on both arms. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with short curly grey-brown hair and a short full grey beard, a broad round face with a heavy brow and a shrewd expression, a warm olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611401,
+   "model_seed": 2611400,
+   "texture_seed": 2611402,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "knee-length, short tunic, bare legs, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:18:48.782244Z",
+  "tripoCompletedAt": "2026-11-10T16:20:18.659435Z",
+  "tripoRender": "art-source/models/raw/char-senator-bearded-b-tripo-render.webp"
+ }
+}

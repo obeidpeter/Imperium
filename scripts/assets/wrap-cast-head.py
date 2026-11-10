@@ -29,9 +29,10 @@ With --face, his face comes from a bust instead of his generated head: a raw ima
 .glb made from his portrait, with a likeness a text-made head lacks. The bust is turned to
 face the front (the turn whose view shows a nose, its most forward point with the face
 falling away evenly to either side, refined to the most nearly mirror-symmetric face;
---face-turn takes a turn from review), scaled from its skull's half-width (again at other
-scales while its eyes disagree), levelled by its eyes and scaled again so they stand as far
-apart as the shared head's.
+--face-turn takes a turn from review; a bust that looks down or up is nodded level with
+--face-nod, from review), scaled from its skull's half-width (again at other scales while its
+eyes disagree), levelled by its eyes and scaled again so they stand as far apart as the
+shared head's.
 Then it is wrapped and baked as his own head would be; his body stays his own.
 """
 import argparse
@@ -97,6 +98,9 @@ CAGE, REACH, UNPAINTED = 0.05, 0.12, 0.002
 FACE_HEAD, FACE_SKULL, FACE_RETRY = 0.6, 0.10, (1, 0.9, 1.1, 0.8, 1.2)
 FACE_CELLS, FACE_SWING, FACE_STEP, FACE_NOSE_BAND = 40, 40, 10, (0.25, 0.8)
 FACE_MAX_TILT, FACE_MAX_SCALE = 20, 0.25
+# A bust is nodded (--face-nod) about the line through its ears, this many of its skull's
+# half-widths below its crown (about 12 cm on a man's head).
+FACE_EARS = 1.2
 # A bust's collar or scarf would paint the shared head's throat: below this far under the
 # shared head's lip line (metres) his head takes its shape and paint from his own body instead.
 FACE_CHIN = 0.045
@@ -117,6 +121,7 @@ def parse_args():
     p.add_argument('--scalp-out', type=float, default=0.008, help='farthest the scalp may rise above the shared head\'s, in metres')
     p.add_argument('--scalp-in', type=float, default=0.006, help='farthest the scalp may sink below it, in metres')
     p.add_argument('--max-scale', type=float, default=0.15, help='largest change of his head\'s size, as a fraction')
+    p.add_argument('--max-mouth-fit', type=float, default=0.2, help='largest change of the height between his eyes and his mouth, as a fraction (a long face from a portrait may need more)')
     p.add_argument('--samples', type=int, default=4, help='Cycles samples per bake')
     p.add_argument('--bake-cage', type=float, default=CAGE, help='how far outside the wrapped head the bake\'s rays start, in metres (long hair may stand farther off)')
     p.add_argument('--bake-reach', type=float, default=REACH, help='how far the bake\'s rays reach, in metres')
@@ -127,9 +132,12 @@ def parse_args():
                    help='paint inside the eyes: the shared head\'s own (made for its lids and blinks) or his')
     p.add_argument('--face', help='a bust from his portrait (raw image-to-model .glb) to take his face\'s shape and paint from, in place of his generated head')
     p.add_argument('--face-turn', type=float, help='degrees about the vertical axis that bring the bust\'s face to the front, from review, in place of the finder\'s')
+    p.add_argument('--face-nod', type=float, default=0, help='degrees about the line through the bust\'s ears that level its face after its turn, from review: positive lifts a face that looks down')
     a = p.parse_args(argv)
-    if a.face_turn is not None and not a.face:
-        p.error('--face-turn needs --face')
+    if (a.face_turn is not None or a.face_nod) and not a.face:
+        p.error('--face-turn and --face-nod need --face')
+    if abs(a.face_nod) > 45:
+        p.error('--face-nod is degrees, at most 45 either way')
     if not 64 <= a.texture <= 2048 or not 64 <= a.detail_texture <= 2048 or not 1 <= a.quality <= 100 or not 0 < a.reach <= 0.1:
         p.error('settings out of range')
     return a
@@ -514,8 +522,8 @@ def transform(o, matrix):
     o.data.update()
 
 
-def face_source(path, shared, turn, pictures):
-    """His head from a bust (--face): turned to the front; scaled from its skull's half-width,
+def face_source(path, shared, turn, nod, pictures):
+    """His head from a bust (--face): turned to the front and nodded level (--face-nod); scaled from its skull's half-width,
     its face's centre line on the shared head's and its crown at the shared head's height,
     until its eyes agree (FACE_RETRY); levelled by its eyes; and scaled again so they stand as
     far apart as the shared head's. Returns the bust, its landmarks and what was done, for
@@ -529,6 +537,12 @@ def face_source(path, shared, turn, pictures):
     # The turn is about the skull's middle, which keeps the head's measures.
     pivot = Vector((*head['middle'], 0))
     transform(bust, Matrix.Translation(pivot) @ Matrix.Rotation(math.radians(turn), 4, 'Z') @ Matrix.Translation(-pivot))
+    if nod:
+        # A face that looks down is lifted (a positive nod) about the line through its ears;
+        # the turn above faced it toward -Y, so the nod is about the X axis.
+        ears = Vector((*head['middle'], head['crown'] - FACE_EARS * head['radius']))
+        transform(bust, Matrix.Translation(ears) @ Matrix.Rotation(math.radians(-nod), 4, 'X') @ Matrix.Translation(-ears))
+        head = {**head, 'crown': max(v.co.z for v in bust.data.vertices)}
     depth, points = head_view(BVHTree.FromObject(bust, bpy.context.evaluated_depsgraph_get()), head, 0)
     seen = face_scores(depth, head['radius'])
     if seen is None:
@@ -568,7 +582,7 @@ def face_source(path, shared, turn, pictures):
     eyes = middle(found)
     transform(bust, Matrix.Translation(eyes) @ Matrix.Scale(second, 4) @ Matrix.Translation(-eyes))
     found = landmarks(Surface(bust), pictures + '-his-face.png')
-    return bust, found, {'path': character.shown(path), 'sha256': character.digest(path), 'turn': round(turn, 2), 'turnFrom': 'finder' if found_turn else 'review',
+    return bust, found, {'path': character.shown(path), 'sha256': character.digest(path), 'turn': round(turn, 2), 'turnFrom': 'finder' if found_turn else 'review', 'nod': round(nod, 2),
                          'turnFinder': found_turn, 'head': {k: (round(v, 4) if isinstance(v, float) else v) for k, v in head.items()},
                          'tries': tries, 'firstScale': round(first, 4), 'tilt': round(tilt, 2), 'eyeScale': round(second, 4)}
 
@@ -742,6 +756,14 @@ def finish_colour(head, material, donor_image, eyes, samples, shared, picture, l
         out.save()
         sys.exit(f'The bake left {round(unpainted * 100, 2)}% of his head unpainted: his surface lies beyond the rays\' reach (see the report pictures)')
     result = {'unpainted': round(unpainted, 5)}
+    if holes.any():
+        # Within the limit, a texel no ray reached takes its painted neighbours' colour, spread
+        # in from the hole's edge, rather than staying black.
+        his = fill_holes(his, holes)
+        colour.pixels.foreach_set(his.ravel())
+        colour.update()
+        colour.pack()
+        result['filled'] = int(holes.sum())
     if shared:
         donor = bpy.data.images.new('eyes-donor', w, h, alpha=False)
 
@@ -771,6 +793,26 @@ def finish_colour(head, material, donor_image, eyes, samples, shared, picture, l
     for image in (origin, inside):
         bpy.data.images.remove(image)
     return result
+
+
+def fill_holes(image, holes, rounds=64):
+    """The image with each hole texel given the mean of its painted neighbours (those not
+    black), spreading one texel a round from the edge of each hole."""
+    import numpy as np
+    image, todo = image.copy(), holes.copy()
+    for _ in range(rounds):
+        if not todo.any():
+            break
+        known = ~todo & (image[..., :3].sum(axis=2) >= 0.003)
+        total, count = np.zeros(image.shape[:2] + (3,)), np.zeros(image.shape[:2])
+        for shift in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            near = np.roll(known, shift, axis=(0, 1))
+            total += np.roll(image[..., :3], shift, axis=(0, 1)) * near[..., None]
+            count += near
+        fill = todo & (count > 0)
+        image[fill, :3] = total[fill] / count[fill][:, None]
+        todo &= ~fill
+    return image.astype(np.float32)
 
 
 def bake_head(head, source, size, detail, samples, cage=CAGE, reach=REACH):
@@ -812,7 +854,7 @@ def main():
     face = None
     if a.face:
         # A bust from his portrait, turned, levelled and scaled to the shared head's eyes.
-        source, found['his'], face = face_source(os.path.abspath(a.face), found['shared'], a.face_turn, pictures)
+        source, found['his'], face = face_source(os.path.abspath(a.face), found['shared'], a.face_turn, a.face_nod, pictures)
     else:
         # His generated head, above the neck: what the shared head takes its shape and paint from.
         paint = import_glb(paint_path, 'paint') if a.paint else his
@@ -824,7 +866,7 @@ def main():
     # The alignment put his eyes on the shared head's line; his mouth, as found or reviewed
     # on his own head, is carried there like the rest of it.
     line = found['shared']['eyeLine']
-    mouth = fit_mouth(source, line, line + (found['his']['mouth']['height'] - found['his']['eyeLine']) * scale, found['shared']['mouth']['height'])
+    mouth = fit_mouth(source, line, line + (found['his']['mouth']['height'] - found['his']['eyeLine']) * scale, found['shared']['mouth']['height'], a.max_mouth_fit)
     if face:
         # The bust stops a little under the chin, where a portrait's collar or scarf begins; his
         # throat below comes from his own generated body, which stands on the same skeleton.
@@ -890,7 +932,7 @@ def main():
         'output': {'path': character.shown(output), 'bytes': os.path.getsize(output), 'sha256': character.digest(output),
                    'triangles': {o.name: character.triangles([o]) for o in (his['body'], his['body-overview'], heads['cast-head'], heads['cast-head-overview'])}},
         'settings': {'texture': a.texture, 'detailTexture': a.detail_texture, 'webpQuality': a.quality, 'reach': a.reach, 'scalpOut': a.scalp_out, 'scalpIn': a.scalp_in,
-                     'maxScale': a.max_scale, 'samples': a.samples, 'bakeCage': a.bake_cage, 'bakeReach': a.bake_reach, 'eyes': a.eyes, 'eyeHalf': EYE_HALF, 'eyeFeather': EYE_FEATHER,
+                     'maxScale': a.max_scale, 'maxMouthFit': a.max_mouth_fit, 'samples': a.samples, 'bakeCage': a.bake_cage, 'bakeReach': a.bake_reach, 'eyes': a.eyes, 'eyeHalf': EYE_HALF, 'eyeFeather': EYE_FEATHER,
                      'eyeFinder': {'spot': EYE_SPOT, 'spotSurround': EYE_SPOT_SURROUND, 'opening': EYE_BOX, 'openingSurround': EYE_SURROUND, 'rows': EYE_ROWS},
                      'mouthFinder': {'fromNose': MOUTH_FROM_NOSE, 'belowNose': MOUTH_BELOW_NOSE, 'lipShare': MOUTH_LIP_SHARE, 'lipContrast': MOUTH_LIP_CONTRAST, 'lipMargin': MOUTH_LIP_MARGIN, 'valley': MOUTH_VALLEY}, 'neck': NECK, 'headFrom': HEAD_FROM, 'bodyTo': BODY_TO,
                      'wrapFrom': WRAP_FROM, 'wrapFull': WRAP_FULL, 'scalp': SCALP},

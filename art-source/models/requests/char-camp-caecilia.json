@@ -1,0 +1,164 @@
+{
+ "id": "char-camp-caecilia",
+ "status": "bound, quantized and compressed: G6 batch A, accepted at review (as asked, without the shorter brown overtunic); ships as camp-caecilia in Chapter X in the desktop app only (the chapter's web download has no room)",
+ "chapters": [
+  10
+ ],
+ "use": "Caecilia the grain-seller, who sells grain in Chapter X's courtyard (data/camps.js): a body of her own, where she has been drawn as the game's procedural woman. A woman's body, with her own head.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Roman provincial woman of the mid-3rd century AD, a grain-seller in a frontier town, a sturdy, capable woman about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool tunic in dull ochre, a shorter sleeveless overtunic of brown wool belted high at the waist with a cord, a mantle of grey-blue wool around her shoulders with both arms free, and closed leather shoes. Her greying brown hair is drawn back into a low bun at the nape, bare-headed; a broad, practical face with sharp brown eyes, a firm mouth and a tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no sack, no basket, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, sack, basket, modern dress, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611470,
+   "image_seed": 2611471,
+   "texture_seed": 2611472
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:31:09.633Z",
+  "requestBody": {
+   "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, sack, basket, modern dress, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611470,
+   "image_seed": 2611471,
+   "texture_seed": 2611472,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Roman provincial woman of the mid-3rd century AD, a grain-seller in a frontier town, a sturdy, capable woman about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool tunic in dull ochre, a shorter sleeveless overtunic of brown wool belted high at the waist with a cord, a mantle of grey-blue wool around her shoulders with both arms free, and closed leather shoes. Her greying brown hair is drawn back into a low bun at the nape, bare-headed; a broad, practical face with sharp brown eyes, a firm mouth and a tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no sack, no basket, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7570,
+  "balanceSnapshotBefore": {
+   "balance": 7570,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "aea902cc-fbc6-4043-abeb-641314731114",
+   "state": "accepted",
+   "requestSha256": "ad2c8e5855e0c623b2f4e13e5b689d2307d7e125cc76fcddef5210663555d0d3"
+  },
+  "taskId": "5becd4b4-0c06-4169-bae9-1760960cc7f8",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:32:46.328Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-caecilia.glb",
+  "rawBytes": 45215780,
+  "rawSha256": "b48723686a729bf723a4391b09d677c930b6ca86766f8997b1eeb1cfc4be6a4f",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Roman provincial woman of the mid-3rd century AD, a grain-seller in a frontier town, a sturdy, capable woman about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length wool tunic in dull ochre, a shorter sleeveless overtunic of brown wool belted high at the waist with a cord, a mantle of grey-blue wool around her shoulders with both arms free, and closed leather shoes. Her greying brown hair is drawn back into a low bun at the nape, bare-headed; a broad, practical face with sharp brown eyes, a firm mouth and a tanned complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no sack, no basket, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611471,
+   "model_seed": 2611470,
+   "texture_seed": 2611472,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, sack, basket, modern dress, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:31:10.137804Z",
+  "tripoCompletedAt": "2026-11-10T16:32:39.190579Z",
+  "tripoRender": "art-source/models/raw/char-camp-caecilia-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T16:57:41.396Z",
+   "requestBody": {
+    "input": "5becd4b4-0c06-4169-bae9-1760960cc7f8"
+   },
+   "submission": {
+    "id": "4db8be08-a3f7-4e30-a650-b8c5b5d28b49",
+    "state": "accepted",
+    "requestSha256": "0f6fe247ebdd10d151dc934b5e3a32f22f1440c99c959af31f98787e045772d3"
+   },
+   "taskId": "7a80c879-617a-4799-8b5d-54aa2e4d72a8",
+   "status": "success",
+   "output": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  },
+  "rig": {
+   "check": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig",
+   "requestedAt": "2026-11-10T16:57:47.546Z",
+   "requestBody": {
+    "input": "5becd4b4-0c06-4169-bae9-1760960cc7f8",
+    "model": "v1.0-20240301",
+    "rig_type": "biped",
+    "spec": "tripo",
+    "out_format": "glb"
+   },
+   "balanceBefore": 7170,
+   "balanceSnapshotBefore": {
+    "balance": 7170,
+    "frozen": 0
+   },
+   "submission": {
+    "id": "9a1bda38-74c9-4ca4-bf06-6806d81977f4",
+    "state": "accepted",
+    "requestSha256": "5a3668a0fce41a46051b66ddaa37f9ec244e96ed0015193f384d87f35136022a"
+   },
+   "taskId": "085ce4bc-5c47-4c11-9b3a-e92b2af15816",
+   "status": "success",
+   "generatedAt": "2026-11-10T16:58:53.775Z",
+   "output": "model_url",
+   "raw": "art-source/models/raw/char-camp-caecilia-rigged.glb",
+   "rawBytes": 60393584,
+   "rawSha256": "87da9604f9b27ec8e7b3f0699d81e968474070faaca1fea7163009418513d19e",
+   "tripoInput": {
+    "spec": "tripo",
+    "topology": "biped",
+    "out_format": "glb",
+    "original_model_id": "5becd4b4-0c06-4169-bae9-1760960cc7f8"
+   },
+   "modelVersion": "v1.0-20240301",
+   "modelVersionSource": "submitted request",
+   "creditsSpent": 25,
+   "creditSource": "task.credits_consumed",
+   "tripoCreatedAt": "2026-11-10T16:57:47.812741Z",
+   "tripoCompletedAt": "2026-11-10T16:58:45.439071Z"
+  }
+ }
+}

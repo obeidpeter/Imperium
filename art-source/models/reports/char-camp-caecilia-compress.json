@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/camp-caecilia.glb",
+  "output": "assets/models/characters/camp-caecilia.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 496748,
+    "gzipBytes": 349297,
+    "sha256": "c18a84992a9cf6f6df93506fa1388b4796cb6e89fca572c7ed8d75e1236c223e"
+  },
+  "after": {
+    "bytes": 445472,
+    "gzipBytes": 422329,
+    "sha256": "9a098fba49f231590838776865e5b0a522be5f8a33b1d670c60f8bbc5d416b81"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13870,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7490
+      },
+      "bytes": 16939,
+      "psnr": 42.761
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 57250
+      },
+      "bytes": 149328,
+      "psnr": 37.503
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 22082
+      },
+      "bytes": 39241,
+      "psnr": 36.605
+    }
+  ]
+}

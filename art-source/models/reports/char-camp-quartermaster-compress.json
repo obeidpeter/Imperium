@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/camp-quartermaster.glb",
+  "output": "assets/models/characters/camp-quartermaster.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 463428,
+    "gzipBytes": 317795,
+    "sha256": "4eab21c8374873b0125e5949272bfbd34f115e97381fd0702c76470bc22eef1d"
+  },
+  "after": {
+    "bytes": 389436,
+    "gzipBytes": 367399,
+    "sha256": "8c4110343a818bfcbdd3c837ebca50472fce89a8b73a280e54181d7c1896c4fb"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13683,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 3776
+      },
+      "bytes": 8872,
+      "psnr": 45.933
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 43072
+      },
+      "bytes": 118571,
+      "psnr": 38.245
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 19732
+      },
+      "bytes": 38144,
+      "psnr": 37.641
+    }
+  ]
+}

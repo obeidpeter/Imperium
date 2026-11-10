@@ -45,6 +45,29 @@ test('every body G6 ships has its tasks in the ledger, and a rejected attempt is
   }
 });
 
+test('a generation that does not ship is accounted but never shipped, and past the stop rule\'s line the release pauses', async () => {
+  const ledger=await read('art-source/models/graphics-g6-credits.json'),manifest=await read('docs/asset-manifest.json'),tasks=ledger.batches.flatMap(b=>b.tasks);
+  const shipped=new Set(manifest.assets.flatMap(a=>[a.source?.taskId,a.source?.face?.taskId].filter(Boolean)));
+  // A body the free rig check refuses is never rigged, and never ships.
+  const refused=ledger.batches.flatMap(b=>b.notRiggable?.items??[]);
+  for(const id of refused){
+    const request=await read(`art-source/models/requests/${id}.json`);
+    assert.ok(tasks.some(t=>t.id===id&&t.operation==='animate_prerigcheck'),`${id}: its rig check is in the ledger`);
+    assert.ok(!tasks.some(t=>t.id===id&&t.operation==='animate_rig')&&!request.provenance.rig,`${id} was never rigged`);
+    assert.ok(!shipped.has(request.provenance.taskId),`${id} is not shipped`);
+  }
+  // A face made but not shipped says why in its request.
+  const unshippedFaces=tasks.filter(t=>t.operation==='image_to_model'&&!shipped.has(t.taskId));
+  for(const t of unshippedFaces)assert.match((await read(`art-source/models/requests/${t.id}.json`)).status,/did not ship/,`${t.id} records why it does not ship`);
+  // The plan's stop rule: once more than 20% of the release's generations have not shipped, the ledger records the pause.
+  const generations=tasks.filter(t=>t.operation==='text_to_model'||t.operation==='image_to_model');
+  const failed=generations.filter(t=>t.rejectedAtReview).length+refused.length+unshippedFaces.length;
+  if(failed>generations.length*.2){
+    assert.ok(ledger.paused?.since&&ledger.paused.until,'G6 records its pause and what ends it');
+    assert.equal(ledger.paused.after,ledger.batches.at(-1).batch,'No batch is generated after the pause');
+  }
+});
+
 test('a face from a portrait records its picture, its task and its credits, and ships in its man\'s own body', async () => {
   const ledger=await read('art-source/models/graphics-g6-credits.json'),manifest=await read('docs/asset-manifest.json'),tasks=ledger.batches.flatMap(b=>b.tasks);
   const faces=manifest.assets.filter(a=>a.source?.face?.program==='graphics-g6');

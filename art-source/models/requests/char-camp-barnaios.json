@@ -1,0 +1,164 @@
+{
+ "id": "char-camp-barnaios",
+ "status": "bound, quantized and compressed: G6 batch A, accepted at review (as asked); ships as camp-barnaios in Chapter V in the desktop app only (the chapter's web download has no room)",
+ "chapters": [
+  5
+ ],
+ "use": "Barnaios the date-seller, who keeps a stall in the canabae of Chapter V's camp on the Euphrates (data/camps.js): a body of his own, where he has worn the escorts' civilian body.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Syrian merchant of the middle Euphrates in the mid-3rd century AD, a date-seller who trades with a Roman garrison, a plump, genial man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved belted tunic to the knee in ochre-yellow linen with two vertical dark red stripes from the shoulders to the hem, loose white trousers gathered at the ankle, a mantle of undyed brown wool over the left shoulder with both arms free, and soft brown leather shoes. Bare head with thick curly black hair greying at the temples and a full rounded black beard, a broad, smiling face with dark eyes and a warm brown complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no turban, no jewellery, no basket, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, turban, hat, crown, jewellery, gold, basket, sack, bag, modern clothing, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611490,
+   "image_seed": 2611491,
+   "texture_seed": 2611492
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:34:35.368Z",
+  "requestBody": {
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, turban, hat, crown, jewellery, gold, basket, sack, bag, modern clothing, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611490,
+   "image_seed": 2611491,
+   "texture_seed": 2611492,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Syrian merchant of the middle Euphrates in the mid-3rd century AD, a date-seller who trades with a Roman garrison, a plump, genial man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved belted tunic to the knee in ochre-yellow linen with two vertical dark red stripes from the shoulders to the hem, loose white trousers gathered at the ankle, a mantle of undyed brown wool over the left shoulder with both arms free, and soft brown leather shoes. Bare head with thick curly black hair greying at the temples and a full rounded black beard, a broad, smiling face with dark eyes and a warm brown complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no turban, no jewellery, no basket, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7530,
+  "balanceSnapshotBefore": {
+   "balance": 7530,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "e6b98dd6-b4c8-4957-b0fa-96d35d6fdb81",
+   "state": "accepted",
+   "requestSha256": "ffb1c49f3e726191466b1f322c04bd2f5e49da260bf8e0284710ab2a3484166b"
+  },
+  "taskId": "d2f5d081-2508-4adb-a7f8-b69e615b0bc4",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:36:24.028Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-barnaios.glb",
+  "rawBytes": 45147200,
+  "rawSha256": "e5f9ae14e2db36d22ee6fc71fe3b932573aaf2f59cbdc6a07de4751f532f2f15",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Syrian merchant of the middle Euphrates in the mid-3rd century AD, a date-seller who trades with a Roman garrison, a plump, genial man about fifty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved belted tunic to the knee in ochre-yellow linen with two vertical dark red stripes from the shoulders to the hem, loose white trousers gathered at the ankle, a mantle of undyed brown wool over the left shoulder with both arms free, and soft brown leather shoes. Bare head with thick curly black hair greying at the temples and a full rounded black beard, a broad, smiling face with dark eyes and a warm brown complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no turban, no jewellery, no basket, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611491,
+   "model_seed": 2611490,
+   "texture_seed": 2611492,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, turban, hat, crown, jewellery, gold, basket, sack, bag, modern clothing, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:34:36.016873Z",
+  "tripoCompletedAt": "2026-11-10T16:36:18.104659Z",
+  "tripoRender": "art-source/models/raw/char-camp-barnaios-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T17:00:05.459Z",
+   "requestBody": {
+    "input": "d2f5d081-2508-4adb-a7f8-b69e615b0bc4"
+   },
+   "submission": {
+    "id": "ef62247f-2ff2-44e3-a630-59ecb90003be",
+    "state": "accepted",
+    "requestSha256": "c3dc652d64985b1e3b19b32e7ca6a18cf6014312782851670150db1177de7d52"
+   },
+   "taskId": "a0d27b17-d1c8-4733-9b9e-edc9d4f3dd04",
+   "status": "success",
+   "output": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  },
+  "rig": {
+   "check": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig",
+   "requestedAt": "2026-11-10T17:00:11.679Z",
+   "requestBody": {
+    "input": "d2f5d081-2508-4adb-a7f8-b69e615b0bc4",
+    "model": "v1.0-20240301",
+    "rig_type": "biped",
+    "spec": "tripo",
+    "out_format": "glb"
+   },
+   "balanceBefore": 7120,
+   "balanceSnapshotBefore": {
+    "balance": 7120,
+    "frozen": 0
+   },
+   "submission": {
+    "id": "5e1cb8ee-6b54-4a44-a370-1349edf0fc85",
+    "state": "accepted",
+    "requestSha256": "30063f3bfeb105d272bfc05f2f8955f0337390390ee3cb02e9c901a562307efa"
+   },
+   "taskId": "eab405d5-63fc-4034-b2c4-e55699e6f18d",
+   "status": "success",
+   "generatedAt": "2026-11-10T17:01:02.059Z",
+   "output": "model_url",
+   "raw": "art-source/models/raw/char-camp-barnaios-rigged.glb",
+   "rawBytes": 60331624,
+   "rawSha256": "ab47ca1654a75473fcd1457e3660edcc739dac1f91a0af27cd9c903e81753519",
+   "tripoInput": {
+    "spec": "tripo",
+    "topology": "biped",
+    "out_format": "glb",
+    "original_model_id": "d2f5d081-2508-4adb-a7f8-b69e615b0bc4"
+   },
+   "modelVersion": "v1.0-20240301",
+   "modelVersionSource": "submitted request",
+   "creditsSpent": 25,
+   "creditSource": "task.credits_consumed",
+   "tripoCreatedAt": "2026-11-10T17:00:12.095965Z",
+   "tripoCompletedAt": "2026-11-10T17:00:56.591718Z"
+  }
+ }
+}

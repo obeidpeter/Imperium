@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/camp-atticus.glb",
+  "output": "assets/models/characters/camp-atticus.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 469140,
+    "gzipBytes": 322403,
+    "sha256": "8943bd10d0e06abb1e77f27c0ac3bebb3c1b7ace3e62be7c0859a215ebfbed16"
+  },
+  "after": {
+    "bytes": 403572,
+    "gzipBytes": 380281,
+    "sha256": "0786aa20b2b0fe91d9e8165999f51469740277531c10a8bec69969b6afea43d9"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13773,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 4956
+      },
+      "bytes": 11892,
+      "psnr": 43.564
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 45500
+      },
+      "bytes": 123988,
+      "psnr": 38.08
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 10936
+      },
+      "bytes": 26823,
+      "psnr": 37.559
+    }
+  ]
+}

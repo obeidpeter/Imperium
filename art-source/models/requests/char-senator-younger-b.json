@@ -1,0 +1,168 @@
+{
+ "id": "char-senator-younger-b",
+ "status": "bound with its bloc band, quantized and compressed: G6 batch A, accepted at review (its toga falls to the ankles over a long tunic; it wears sandals where closed shoes were asked); ships as senator-younger in place of char-senator-younger, in Chapters VII, VIII, X, XI and XII",
+ "chapters": [
+  7,
+  8,
+  10,
+  11,
+  12
+ ],
+ "use": "A senator of the chamber, a fit man about forty with a close-trimmed dark beard, remade in a toga that falls to his feet and closed shoes (the first, char-senator-younger, came knee-length over sandals): the game draws his bloc's colour and trim along the band of his toga. Ships under the first's name, senator-younger.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Roman senator of the mid-3rd century AD, a fit man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds down to his ankles all round, so that only the toes of his shoes show beneath it. A long-sleeved white tunic shows on both arms. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with short dark hair brushed forward and a close-trimmed dark beard, a square face with a straight nose and an alert, ambitious expression, a light olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "knee-length, short tunic, bare legs, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611410,
+   "image_seed": 2611411,
+   "texture_seed": 2611412
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:20:25.888Z",
+  "requestBody": {
+   "negative_prompt": "knee-length, short tunic, bare legs, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611410,
+   "image_seed": 2611411,
+   "texture_seed": 2611412,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Roman senator of the mid-3rd century AD, a fit man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds down to his ankles all round, so that only the toes of his shoes show beneath it. A long-sleeved white tunic shows on both arms. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with short dark hair brushed forward and a close-trimmed dark beard, a square face with a straight nose and an alert, ambitious expression, a light olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7690,
+  "balanceSnapshotBefore": {
+   "balance": 7690,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "4ebffeea-5bb6-4d9b-8e7a-2133bc8b3278",
+   "state": "accepted",
+   "requestSha256": "05d43145361ab7c54fbdad6511a8264eda9352c7ed46adcd3c82369cc569dff9"
+  },
+  "taskId": "ede29ac3-a84c-4d42-914c-8c492d3ada11",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:22:18.122Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-senator-younger-b.glb",
+  "rawBytes": 43840200,
+  "rawSha256": "36c11d15ddaacc9682abfaacb165d1210ece3648ef7aa7296bbbae17310a8c52",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Roman senator of the mid-3rd century AD, a fit man about forty, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a large plain white wool toga: over the left shoulder, its folds gathered into a broad flat band running diagonally across the chest to the right hip, and falling in heavy vertical folds down to his ankles all round, so that only the toes of his shoes show beneath it. A long-sleeved white tunic shows on both arms. Closed reddish-brown leather shoes laced over the ankles. Both arms free of the toga. Bare head with short dark hair brushed forward and a close-trimmed dark beard, a square face with a straight nose and an alert, ambitious expression, a light olive complexion. Realistic proportions, historically accurate, muted colours. No coloured stripes or borders, no bare legs, no sandals, no armour, no weapons, no cloak, no jewellery, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611411,
+   "model_seed": 2611410,
+   "texture_seed": 2611412,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "knee-length, short tunic, bare legs, bare feet, sandals, purple stripe, coloured border, armour, helmet, weapon, cloak, cape, laurel, crown, gold, jewellery, modern suit, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:20:26.290404Z",
+  "tripoCompletedAt": "2026-11-10T16:22:12.435705Z",
+  "tripoRender": "art-source/models/raw/char-senator-younger-b-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T16:50:22.667Z",
+   "requestBody": {
+    "input": "ede29ac3-a84c-4d42-914c-8c492d3ada11"
+   },
+   "submission": {
+    "id": "e2410b3a-e8a9-4825-8546-0587eab4ddab",
+    "state": "accepted",
+    "requestSha256": "843f71fb8b913b40d7d46c450d25a063c9967c48aeeec3d0fa61f978b8291c86"
+   },
+   "taskId": "d8eb30fb-7d2f-46fc-8d36-812e3e17724f",
+   "status": "success",
+   "output": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  },
+  "rig": {
+   "check": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig",
+   "requestedAt": "2026-11-10T16:50:28.885Z",
+   "requestBody": {
+    "input": "ede29ac3-a84c-4d42-914c-8c492d3ada11",
+    "model": "v1.0-20240301",
+    "rig_type": "biped",
+    "spec": "tripo",
+    "out_format": "glb"
+   },
+   "balanceBefore": 7370,
+   "balanceSnapshotBefore": {
+    "balance": 7370,
+    "frozen": 20
+   },
+   "submission": {
+    "id": "f08dcab4-e348-4c63-ac25-079517acd4fb",
+    "state": "accepted",
+    "requestSha256": "1f4afd88f197f30d696b83d08e8ec37b1e11c5e78c35e49b686f3cf7060655e1"
+   },
+   "taskId": "efd24fa1-008b-4472-94ad-4e0e7c65b3d3",
+   "status": "success",
+   "generatedAt": "2026-11-10T16:51:29.740Z",
+   "output": "model_url",
+   "raw": "art-source/models/raw/char-senator-younger-b-rigged.glb",
+   "rawBytes": 58805068,
+   "rawSha256": "cca01cbd6f8ef4ee88a21d6f0a26366996b676e6a23f5a2bdfbbd43d54512d0e",
+   "tripoInput": {
+    "spec": "tripo",
+    "topology": "biped",
+    "out_format": "glb",
+    "original_model_id": "ede29ac3-a84c-4d42-914c-8c492d3ada11"
+   },
+   "modelVersion": "v1.0-20240301",
+   "modelVersionSource": "submitted request",
+   "creditsSpent": 25,
+   "creditSource": "task.credits_consumed",
+   "tripoCreatedAt": "2026-11-10T16:50:29.297266Z",
+   "tripoCompletedAt": "2026-11-10T16:51:25.861174Z"
+  }
+ }
+}

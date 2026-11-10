@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/camp-abgar.glb",
+  "output": "assets/models/characters/camp-abgar.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 461424,
+    "gzipBytes": 316722,
+    "sha256": "4c05d224c048d68abbd653b9df635014b6c9784cc6ab84cd38c01150e84d94db"
+  },
+  "after": {
+    "bytes": 392492,
+    "gzipBytes": 370432,
+    "sha256": "ea18785af44ae175a97283d34ead33c345dbf22ac9e3107f4b7b87a2333908b0"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13842,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 7180
+      },
+      "bytes": 15568,
+      "psnr": 42.489
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 40558
+      },
+      "bytes": 120695,
+      "psnr": 39.298
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 14164
+      },
+      "bytes": 32552,
+      "psnr": 38.455
+    }
+  ]
+}

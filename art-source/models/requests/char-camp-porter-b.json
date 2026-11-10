@@ -1,0 +1,103 @@
+{
+ "id": "char-camp-porter-b",
+ "status": "G6 batch A: rejected at review (it came holding two wrapped bundles on its palms, though nothing in its hands was asked, where the game puts the porter's load in his hands; the first attempt, char-camp-porter, ships instead); it was never rigged",
+ "chapters": [
+  4,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12
+ ],
+ "use": "The supply orderly who carries the stores in the camps of Chapters IV and VI–XII (data/camps.js): a body of his own, where he has worn the medical orderlies' body. The game puts what he carries in his hands.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body young Roman army servant (calo) of the mid-3rd century AD who carries stores, a wiry youth about eighteen, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a plain short-sleeved knee-length tunic of coarse undyed wool, belted at the waist with a thin plain cord from which hangs one small plain leather pouch, plain wool leg wrappings from ankle to knee tied with thongs, and simple closed leather shoes. Bare head with tousled light brown hair, clean-shaven, a thin freckled face with a cheerful, eager expression, lips closed, and a sunburnt complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no shield, no weapons, no cloak, no fur, no sheepskin, no studs or metal fittings, no straps hanging from the belt, no sacks or baskets, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "fur, fleece, sheepskin, pelt, animal skin, studs, studded belt, military belt, hanging straps, apron, sandals, chainmail, armour, helmet, shield, weapon, sword, cloak, cape, sack, basket, beard, open mouth, teeth, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611590,
+   "image_seed": 2611591,
+   "texture_seed": 2611592
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:43:44.779Z",
+  "requestBody": {
+   "negative_prompt": "fur, fleece, sheepskin, pelt, animal skin, studs, studded belt, military belt, hanging straps, apron, sandals, chainmail, armour, helmet, shield, weapon, sword, cloak, cape, sack, basket, beard, open mouth, teeth, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611590,
+   "image_seed": 2611591,
+   "texture_seed": 2611592,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body young Roman army servant (calo) of the mid-3rd century AD who carries stores, a wiry youth about eighteen, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a plain short-sleeved knee-length tunic of coarse undyed wool, belted at the waist with a thin plain cord from which hangs one small plain leather pouch, plain wool leg wrappings from ankle to knee tied with thongs, and simple closed leather shoes. Bare head with tousled light brown hair, clean-shaven, a thin freckled face with a cheerful, eager expression, lips closed, and a sunburnt complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no shield, no weapons, no cloak, no fur, no sheepskin, no studs or metal fittings, no straps hanging from the belt, no sacks or baskets, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7430,
+  "balanceSnapshotBefore": {
+   "balance": 7430,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "9006d4eb-b7df-4cc5-a861-e04357d6b5d9",
+   "state": "accepted",
+   "requestSha256": "8d54fa30da42dd7ecdf619ccac48a7ced94419818238068d49d63cd7b8e43cc5"
+  },
+  "taskId": "ef3e3254-d495-4d48-a24a-d780f123176b",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:45:18.350Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-porter-b.glb",
+  "rawBytes": 43088664,
+  "rawSha256": "1692a2ed5a64f7d39a7423b7eb74693197722c03243479a401d035e3bd2aa869",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body young Roman army servant (calo) of the mid-3rd century AD who carries stores, a wiry youth about eighteen, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a plain short-sleeved knee-length tunic of coarse undyed wool, belted at the waist with a thin plain cord from which hangs one small plain leather pouch, plain wool leg wrappings from ankle to knee tied with thongs, and simple closed leather shoes. Bare head with tousled light brown hair, clean-shaven, a thin freckled face with a cheerful, eager expression, lips closed, and a sunburnt complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no shield, no weapons, no cloak, no fur, no sheepskin, no studs or metal fittings, no straps hanging from the belt, no sacks or baskets, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611591,
+   "model_seed": 2611590,
+   "texture_seed": 2611592,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "fur, fleece, sheepskin, pelt, animal skin, studs, studded belt, military belt, hanging straps, apron, sandals, chainmail, armour, helmet, shield, weapon, sword, cloak, cape, sack, basket, beard, open mouth, teeth, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:43:45.335340Z",
+  "tripoCompletedAt": "2026-11-10T16:45:09.729205Z",
+  "tripoRender": "art-source/models/raw/char-camp-porter-b-tripo-render.webp"
+ }
+}

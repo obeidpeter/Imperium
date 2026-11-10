@@ -1,0 +1,67 @@
+{
+  "input": "assets/models/characters/camp-barnaios.glb",
+  "output": "assets/models/characters/camp-barnaios.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 496484,
+    "gzipBytes": 343920,
+    "sha256": "113e9fd68458b4f45cc75904302fd3d2d641da46fb61c480bc8a48af7175f731"
+  },
+  "after": {
+    "bytes": 431744,
+    "gzipBytes": 408661,
+    "sha256": "5363441ce9391e7fc8a0ea9668cb09d4a5ef5c223a40f585ec6ca71ab2b810a2"
+  },
+  "geometryUnchanged": true,
+  "triangles": 13793,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 11680
+      },
+      "bytes": 22775,
+      "psnr": 39.203
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 61026
+      },
+      "bytes": 142209,
+      "psnr": 37.159
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 13666
+      },
+      "bytes": 32345,
+      "psnr": 39.261
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+ "id": "char-camp-malku",
+ "status": "bound, quantized and compressed: G6 batch A, accepted at review (as asked, its mantle a brighter blue than the muted colours asked); ships as camp-malku in Chapter IX in the desktop app only (the chapter's web download has no room)",
+ "chapters": [
+  9
+ ],
+ "use": "Malku the incense-seller, who keeps a stall in the canabae of Chapter IX's camp in the east (data/camps.js): a body of his own, where he has worn the escorts' civilian body.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body Palmyrene merchant of the mid-3rd century AD, an incense-seller of the caravan trade, a tall, dignified man about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved tunic to the knee of fine pale linen with a broad embroidered band in dark red and gold-coloured thread at the neck and down the front, embroidered cuffs, wide trousers of the same pale linen with an embroidered band down each leg tucked into soft leather boots, and a long sleeveless mantle of deep blue wool open at the front with both arms free. Bare head with neatly curled black hair and a short neatly curled black beard, a long, composed face with heavy-lidded dark eyes and an olive complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no turban, no crown, no jewellery, no censer, no box, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, turban, hat, crown, jewellery, gold metal, censer, box, bag, modern clothing, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611510,
+   "image_seed": 2611511,
+   "texture_seed": 2611512
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:37:28.861Z",
+  "requestBody": {
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, turban, hat, crown, jewellery, gold metal, censer, box, bag, modern clothing, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611510,
+   "image_seed": 2611511,
+   "texture_seed": 2611512,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body Palmyrene merchant of the mid-3rd century AD, an incense-seller of the caravan trade, a tall, dignified man about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved tunic to the knee of fine pale linen with a broad embroidered band in dark red and gold-coloured thread at the neck and down the front, embroidered cuffs, wide trousers of the same pale linen with an embroidered band down each leg tucked into soft leather boots, and a long sleeveless mantle of deep blue wool open at the front with both arms free. Bare head with neatly curled black hair and a short neatly curled black beard, a long, composed face with heavy-lidded dark eyes and an olive complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no turban, no crown, no jewellery, no censer, no box, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7490,
+  "balanceSnapshotBefore": {
+   "balance": 7490,
+   "frozen": 20
+  },
+  "submission": {
+   "id": "7e45c11a-991f-4053-968c-76a6ec46e101",
+   "state": "accepted",
+   "requestSha256": "bdac82b2a7f3d8a7ec4724062380df44f45a3a45633b8ae150c75fecc260cf7b"
+  },
+  "taskId": "7ecde7f5-1d47-41a2-b5f6-85a6d273365c",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:39:26.720Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-malku.glb",
+  "rawBytes": 45445856,
+  "rawSha256": "11505bad7e73d936049701ec9701f679ad1c661aa21d8e6bf466a2f765c7a3b4",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body Palmyrene merchant of the mid-3rd century AD, an incense-seller of the caravan trade, a tall, dignified man about forty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. He wears a long-sleeved tunic to the knee of fine pale linen with a broad embroidered band in dark red and gold-coloured thread at the neck and down the front, embroidered cuffs, wide trousers of the same pale linen with an embroidered band down each leg tucked into soft leather boots, and a long sleeveless mantle of deep blue wool open at the front with both arms free. Bare head with neatly curled black hair and a short neatly curled black beard, a long, composed face with heavy-lidded dark eyes and an olive complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no helmet, no weapons, no turban, no crown, no jewellery, no censer, no box, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611511,
+   "model_seed": 2611510,
+   "texture_seed": 2611512,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, sword, turban, hat, crown, jewellery, gold metal, censer, box, bag, modern clothing, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:37:29.257014Z",
+  "tripoCompletedAt": "2026-11-10T16:39:17.870927Z",
+  "tripoRender": "art-source/models/raw/char-camp-malku-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T17:01:02.278Z",
+   "requestBody": {
+    "input": "7ecde7f5-1d47-41a2-b5f6-85a6d273365c"
+   },
+   "submission": {
+    "id": "e4ad7bf8-f55e-4763-868d-c00b2af13f29",
+    "state": "accepted",
+    "requestSha256": "f226882997453e43ba7941689741231cb238c9bc03220b857bcb5d40d7106202"
+   },
+   "taskId": "d6a3e5e6-f671-4ca9-b13d-d9445051d57a",
+   "status": "success",
+   "output": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  },
+  "rig": {
+   "check": {
+    "riggable": true,
+    "rig_type": "biped"
+   },
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig",
+   "requestedAt": "2026-11-10T17:01:08.511Z",
+   "requestBody": {
+    "input": "7ecde7f5-1d47-41a2-b5f6-85a6d273365c",
+    "model": "v1.0-20240301",
+    "rig_type": "biped",
+    "spec": "tripo",
+    "out_format": "glb"
+   },
+   "balanceBefore": 7095,
+   "balanceSnapshotBefore": {
+    "balance": 7095,
+    "frozen": 0
+   },
+   "submission": {
+    "id": "dd80f5f1-614b-4dde-ae0a-5ea658c9862c",
+    "state": "accepted",
+    "requestSha256": "6fff113bd82e064d915f7aaf921ed8b81682945a95ed961ff8ce583c39ed5fc4"
+   },
+   "taskId": "a14596c5-d114-462c-b120-787e81331903",
+   "status": "success",
+   "generatedAt": "2026-11-10T17:01:58.903Z",
+   "output": "model_url",
+   "raw": "art-source/models/raw/char-camp-malku-rigged.glb",
+   "rawBytes": 60788116,
+   "rawSha256": "6160d58002166ad1c01eac74f350e4d9bf017ff76511cad9397667484bdcea2a",
+   "tripoInput": {
+    "spec": "tripo",
+    "topology": "biped",
+    "out_format": "glb",
+    "original_model_id": "7ecde7f5-1d47-41a2-b5f6-85a6d273365c"
+   },
+   "modelVersion": "v1.0-20240301",
+   "modelVersionSource": "submitted request",
+   "creditsSpent": 25,
+   "creditSource": "task.credits_consumed",
+   "tripoCreatedAt": "2026-11-10T17:01:08.784690Z",
+   "tripoCompletedAt": "2026-11-10T17:01:55.054578Z"
+  }
+ }
+}

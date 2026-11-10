@@ -2,6 +2,18 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### The rest of G6, the first batch: four faces from portraits, two senators and ten of the camps' people; G6 pauses ([the plan](docs/graphics-tripo-plan.md#the-rest-of-g6-the-first-batch-10-november))
+
+790 credits of the batch's 820: four more faces from portraits, and twelve bodies. Most ship in the desktop app alone, as the web downloads are full.
+
+- **Faces from portraits** for Varro, Sabinus, Crispus and Paullus, in the desktop app: Tripo's image-to-model made busts from their campaign portraits, and each is wrapped onto the shared head as Lucan's was, so the blinks and expressions stay. Each is a body of its own beside the man's first, which the web keeps. The wrap gains `--face-nod`, for a bust that looks down, and `--max-mouth-fit`, for a long face, and fills the texels its bake does not reach from their neighbours. Their eyes glance aside as in the portraits, and the portraits' red cloaks streak the sides of Varro's and Crispus's necks. Severianus's face was made but did not pass review, and he keeps his own head.
+- **The younger and the bearded senators** are remade with their togas falling to their feet, as the elder's was; the bands across their chests take the bloc trims. Their new files are 24 kB smaller between them.
+- **The camps' people in their own dress,** in the desktop app: the gate sentry in mail and a leather-strip skirt, Quartermaster Aper, the veteran instructor in a studded leather jerkin, the supply orderly in fleeces, Caecilia the grain-seller and Licinia the witness (Chapter X), and the traders Barnaios (V), Abgar (VI), Malku (IX) and Atticus (XI). On the web each wears what he or she wore before, but Atticus, who rides in Chapter XI.
+- **A named man can have more than one body,** and wears the first his platform carries in the chapter (`CAST_BODIES` lists them). A body names the chapters each platform carries (`web`, `desktop`), and each build leaves out what only the other carries.
+- **Downloads:** the largest chapter download is 27.98 of 28 MB, Chapter I's 3D download 17.93 of 18, and the complete web game 78.57 of 80. Chapter XI's download rises by 0.36 MB, and the senators' other chapters fall by 25 kB. The four staff bodies first rode the web in Chapter XI, but the complete web game then came to 80.26 MB, so they ship in the desktop app alone; the bearded senator was bound again with smaller detail maps for Chapter XII's room.
+- **G6 pauses at its stop rule.** Four of the batch's 22 generations were rejected at review and redone, and two more did not ship: Dida's body, refused by Tripo's rig check, and Severianus's face. 7 of G6's 27 generations have not shipped (26%), over the plan's 20%, so G6 generates nothing more until the owner decides; the plan recommends going on after G2 for the 70% floor ([the decision](docs/graphics-tripo-plan.md#after-g6s-first-batch-10-november)). The balance went from 7,860 to 7,070.
+- **Records:** the manifest, the requests and reports, the G6 ledger, the art record, the pipeline and provenance notes, the project notices and the Steam AI disclosure, which now counts five faces from portraits. The ledger records G6's pause, and `tests/graphics-g6.test.mjs` holds it to it: past the stop rule's line the ledger must record the pause, and a body the rig check refused is never rigged or shipped. `tests/character-refinement.test.mjs` and `tests/character-surfaces.test.mjs` count the four new faces' bodies.
+
 ### Release G6's pilot: Lucan's face from his portrait, and people in their own dress ([the plan](docs/graphics-tripo-plan.md#g6s-pilot-10-november))
 
 The first of the faces and people, made for 185 credits of the pilot's 200: a face modelled from a picture, and three bodies.

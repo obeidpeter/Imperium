@@ -1,0 +1,118 @@
+{
+ "id": "char-camp-dida",
+ "status": "generated: accepted at review (as asked), then refused by Tripo's free rig check (riggable false: its wide skirt hides the legs), so it was never rigged and does not ship; Dida keeps the procedural woman's figure",
+ "chapters": [
+  8
+ ],
+ "use": "Dida the honey-seller, who keeps a stall in the canabae of Chapter VIII's camp on the Danube (data/camps.js): a body of her own, where she has been drawn as the game's procedural woman. A woman's body, with her own head.",
+ "generator": {
+  "service": "Tripo",
+  "task": "text_to_model",
+  "prompt": "Full-body provincial woman of the lower Danube in the mid-3rd century AD, a honey-seller who keeps a stall outside a Roman army camp, about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length dress of undyed linen, a woven wool apron striped in brick red and brown from the waist to the shins, a fringed shawl of dark brown wool around her shoulders with both arms free, a white linen headscarf tied at the nape over her braided dark hair, and closed leather shoes. A round, open face with grey eyes, rosy cheeks and a fair, weathered complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no jar, no basket, no text, no modern objects, no fantasy elements.",
+  "options": {
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, jar, basket, modern dress, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611460,
+   "image_seed": 2611461,
+   "texture_seed": 2611462
+  }
+ },
+ "budget": {
+  "triangles": 12500,
+  "overviewTriangles": 2900,
+  "texture": 1024,
+  "bytes": 900000,
+  "heightMetres": 1.8,
+  "minHeight": 1.6,
+  "maxHeight": 2
+ },
+ "provenance": {
+  "licence": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement.",
+  "program": "graphics-g6",
+  "creditCeiling": 820,
+  "expectedCredits": 20,
+  "creditAccounting": "batch",
+  "apiVersion": 3,
+  "apiBase": "https://openapi.tripo3d.ai/v3",
+  "endpoint": "/generation/text-to-model",
+  "requestedAt": "2026-11-10T16:29:37.432Z",
+  "requestBody": {
+   "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, jar, basket, modern dress, fantasy, cartoon",
+   "texture": true,
+   "pbr": true,
+   "geometry_quality": "standard",
+   "texture_quality": "standard",
+   "model_seed": 2611460,
+   "image_seed": 2611461,
+   "texture_seed": 2611462,
+   "model": "v3.1-20260211",
+   "texture_version": "v3.0-20250812",
+   "prompt": "Full-body provincial woman of the lower Danube in the mid-3rd century AD, a honey-seller who keeps a stall outside a Roman army camp, about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length dress of undyed linen, a woven wool apron striped in brick red and brown from the waist to the shins, a fringed shawl of dark brown wool around her shoulders with both arms free, a white linen headscarf tied at the nape over her braided dark hair, and closed leather shoes. A round, open face with grey eyes, rosy cheeks and a fair, weathered complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no jar, no basket, no text, no modern objects, no fantasy elements."
+  },
+  "balanceBefore": 7590,
+  "balanceSnapshotBefore": {
+   "balance": 7590,
+   "frozen": 0
+  },
+  "submission": {
+   "id": "de7dc435-d691-4567-b36f-94138f0a5db5",
+   "state": "accepted",
+   "requestSha256": "39a94ea45270681f842c940bf425688246c323e6808392fc8ff409202d9ad725"
+  },
+  "taskId": "b24931cf-66a3-4e67-ae6f-3c370e4010fc",
+  "status": "success",
+  "generatedAt": "2026-11-10T16:31:09.362Z",
+  "output": "model_url",
+  "raw": "art-source/models/raw/char-camp-dida.glb",
+  "rawBytes": 43378012,
+  "rawSha256": "eb66e3583767043dfabfe801be2718d2abb0a3e92cbb92a8cf1d14c3347ab94f",
+  "tripoInput": {
+   "pbr": true,
+   "prompt": "Full-body provincial woman of the lower Danube in the mid-3rd century AD, a honey-seller who keeps a stall outside a Roman army camp, about thirty-five, standing in a T-pose for rigging: arms straight out to the sides, legs straight and slightly apart, facing forward, symmetrical. She wears a long-sleeved ankle-length dress of undyed linen, a woven wool apron striped in brick red and brown from the waist to the shins, a fringed shawl of dark brown wool around her shoulders with both arms free, a white linen headscarf tied at the nape over her braided dark hair, and closed leather shoes. A round, open face with grey eyes, rosy cheeks and a fair, weathered complexion. Realistic proportions, historically accurate, muted colours. Nothing held in the hands. No armour, no weapons, no veil over the face, no crown, no jewellery, no jar, no basket, no text, no modern objects, no fantasy elements.",
+   "texture": true,
+   "export_uv": true,
+   "image_seed": 2611461,
+   "model_seed": 2611460,
+   "texture_seed": 2611462,
+   "model_version": "v3.1-20260211",
+   "negative_prompt": "armour, chainmail, helmet, weapon, cloak, hood, veil over the face, crown, jewellery, gold, low neckline, bare shoulders, jar, basket, modern dress, fantasy, cartoon",
+   "texture_quality": "standard",
+   "texture_version": "v3.0-20250812",
+   "geometry_quality": "standard",
+   "texture_alignment": "geometry"
+  },
+  "modelVersion": "v3.1-20260211",
+  "modelVersionSource": "task response",
+  "creditsSpent": 20,
+  "creditSource": "task.credits_consumed",
+  "tripoCreatedAt": "2026-11-10T16:29:38.130956Z",
+  "tripoCompletedAt": "2026-11-10T16:31:02.182173Z",
+  "tripoRender": "art-source/models/raw/char-camp-dida-tripo-render.webp",
+  "rigCheck": {
+   "apiVersion": 3,
+   "apiBase": "https://openapi.tripo3d.ai/v3",
+   "endpoint": "/animations/rig-check",
+   "requestedAt": "2026-11-10T16:57:35.253Z",
+   "requestBody": {
+    "input": "b24931cf-66a3-4e67-ae6f-3c370e4010fc"
+   },
+   "submission": {
+    "id": "c80d2482-3fa1-438f-8cd3-462b2c8cdf07",
+    "state": "accepted",
+    "requestSha256": "6a9f7d0040799c53926e107925b72606965b5680dcad9fc055a8a5c91ab9a0ba"
+   },
+   "taskId": "e29a8205-ad8e-45b2-8979-5b895db010ff",
+   "status": "success",
+   "output": {
+    "riggable": false,
+    "rig_type": "biped"
+   },
+   "creditsSpent": 0,
+   "creditSource": "task.credits_consumed"
+  }
+ }
+}

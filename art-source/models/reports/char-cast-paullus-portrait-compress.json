@@ -1,0 +1,109 @@
+{
+  "input": "intermediate: cast-paullus-portrait with the wrapped head, quantized (not kept): later refined and repaired (char-cast-paullus-portrait-refinement.json, char-cast-paullus-portrait-surface-repair.json) into assets/models/characters/cast-paullus-portrait.glb",
+  "output": "intermediate: cast-paullus-portrait with the wrapped head, quantized (not kept): later refined and repaired (char-cast-paullus-portrait-refinement.json, char-cast-paullus-portrait-surface-repair.json) into assets/models/characters/cast-paullus-portrait.glb",
+  "encoder": {
+    "basisu": "v1.16.4",
+    "mode": "ETC1S",
+    "quality": 128,
+    "mipmaps": true,
+    "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+  },
+  "before": {
+    "bytes": 680068,
+    "gzipBytes": 511237,
+    "sha256": "e4bbf0deeabc8623ad920eadd48df838df50f750131b22e31f1d44443e8edbcf"
+  },
+  "after": {
+    "bytes": 708928,
+    "gzipBytes": 678376,
+    "sha256": "cda6f19f86c2e2a7086873f838c8f8f89feed866abb89ee0ed8223157b7ddf0c"
+  },
+  "geometryUnchanged": true,
+  "triangles": 15070,
+  "textures": [
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 19098
+      },
+      "bytes": 30566,
+      "psnr": 35.411
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 55814
+      },
+      "bytes": 149801,
+      "psnr": 37.542
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 16960
+      },
+      "bytes": 33884,
+      "psnr": 37.694
+    },
+    {
+      "slots": [
+        "normalTexture"
+      ],
+      "kind": "normal",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 42826
+      },
+      "bytes": 61800,
+      "psnr": 29.678
+    },
+    {
+      "slots": [
+        "baseColorTexture"
+      ],
+      "kind": "srgb",
+      "width": 1024,
+      "height": 1024,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 69274
+      },
+      "bytes": 129892,
+      "psnr": 36.993
+    },
+    {
+      "slots": [
+        "metallicRoughnessTexture"
+      ],
+      "kind": "linear",
+      "width": 512,
+      "height": 512,
+      "from": {
+        "mimeType": "image/webp",
+        "bytes": 24736
+      },
+      "bytes": 37950,
+      "psnr": 36.791
+    }
+  ]
+}

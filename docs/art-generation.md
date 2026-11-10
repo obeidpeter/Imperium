@@ -2315,6 +2315,87 @@ Chapter VII's camp was seen twice at the same moments, in main's desktop build a
 - **The chamber.** In Chapter XI's Contest, restored the same way and seen in the pilot's desktop build, the members who wear the elder's body stand in togas to their feet among the other members' knee-length ones. At the chamber camera's distance the bloc trims on the band are small.
 - **Not seen:** Bassus in the other camps and in Chapter XI on the web, where his body rides; Vibia's absence on the web, where she keeps the procedural woman; and the senators in the chambers of Chapters VII, VIII, X and XII. `tests/actor-bodies.test.mjs` checks that every body is worn in exactly its chapters, in the desktop app and on the web.
 
+## The rest of G6, the first batch · 10 November 2026
+
+The first batch of the rest of release G6 of the [graphics plan](graphics-tripo-plan.md#the-rest-of-g6-the-first-batch-10-november): the faces of Varro, Sabinus, Crispus and Paullus modelled from their campaign portraits, the younger and the bearded senators remade in togas that reach their feet, and bodies of their own for ten of the camps' people. [The asset pipeline](asset-pipeline.md#the-rest-of-g6-the-first-batch-faces-from-portraits-beside-the-first-and-bodies-for-the-desktop-app--2026-11-10) has how the faces are made and where each body rides.
+
+The five busts were generated with Tripo's image-to-model API (`v3.1-20260211`, standard textures and geometry, 30 credits each) on 2026-11-10, each from one picture, the game's own art: the man's campaign portrait (`assets/portraits/<who>.webp`), enlarged twice (Lanczos) to 672 pixels and committed as `art-source/models/inputs/g6-<who>-portrait.png`, which Tripo fetched from the repository at its commit. The bodies were generated with Tripo's text-to-model API (`v3.1-20260211`, standard textures and geometry, 20 credits each) from the text prompts in their requests only, with no reference image or third-party model, and rigged by Tripo's biped auto-rig (25 credits each). The batch cost 790 credits of its 820-credit ceiling, task by task in [the G6 ledger](../art-source/models/graphics-g6-credits.json), and the balance read 7,860 before and 7,070 after. The owner's paid Tripo account gives the owner full rights to use, modify, distribute and commercially exploit them; Tripo holds a royalty-free, non-exclusive licence to display them as needed to provide its service.
+
+| Model | Who | Chapters | Tripo task | Rig task | Triangles | Runtime file |
+| --- | --- | --- | --- | --- | ---: | ---: |
+| g6-face-varro (ships in cast-varro-portrait) | Varro's face, from his portrait | I–VI | `5df507c4-6596-4598-919f-c365aa81416a` | — (his body's) | 15,694 | 709,716 bytes |
+| g6-face-sabinus (ships in cast-sabinus-portrait) | Sabinus's face, from his portrait | II–XII | `c0d04657-2bc4-4c2a-be35-5a2abc136fbb` | — (his body's) | 15,179 | 752,324 bytes |
+| g6-face-crispus (ships in cast-crispus-portrait) | Crispus's face, from his portrait | III, IV, VII, XI | `443bf2a9-3238-42fa-a696-f6280131c472` | — (his body's) | 15,476 | 700,764 bytes |
+| g6-face-paullus (ships in cast-paullus-portrait) | Paullus's face, from his portrait | XI, XII | `c0b11014-54bc-4c16-a4c1-a441f1264f56` | — (his body's) | 15,516 | 740,184 bytes |
+| char-senator-younger-b (ships as senator-younger) | a senator, about forty | VII, VIII, X–XII | `ede29ac3-a84c-4d42-914c-8c492d3ada11` | `efd24fa1-008b-4472-94ad-4e0e7c65b3d3` | 13,971 | 381,376 bytes |
+| char-senator-bearded-c (ships as senator-bearded) | a bearded senator, about fifty | VII, VIII, X–XII | `14495de5-d007-467c-b914-15d6bf8be485` | `e0192c7c-45b1-4c74-a24c-56d7231dea06` | 14,103 | 405,428 bytes |
+| char-camp-sentry (ships as camp-sentry) | the gate sentry | I–XII | `83f33152-9935-4193-87ac-354bfc80511b` | `567b7e4a-0795-4a7a-a263-9341c5131b10` | 13,864 | 450,380 bytes |
+| char-camp-quartermaster (ships as camp-quartermaster) | Quartermaster Aper | I–XII | `1d7aadfa-3648-473e-b9aa-5670b49b4d5b` | `3e84f3a0-0e1b-4736-abe7-a8dc489b5533` | 13,683 | 389,436 bytes |
+| char-camp-instructor (ships as camp-instructor) | the veteran instructor | VI–XII | `c0eddd35-f5e9-483d-b757-cfe60bc4cc17` | `4b9575ee-f8fe-456f-9e19-e3779d2364d0` | 13,880 | 415,704 bytes |
+| char-camp-porter (ships as camp-porter) | the supply orderly | IV, VI–XII | `6ceb64ae-687c-42df-82eb-3d0735f4920d` | `1c1eb9d0-498c-4f3c-9e49-7002f4bbfeec` | 13,971 | 480,872 bytes |
+| char-camp-caecilia (ships as camp-caecilia) | Caecilia the grain-seller | X | `5becd4b4-0c06-4169-bae9-1760960cc7f8` | `085ce4bc-5c47-4c11-9b3a-e92b2af15816` | 13,870 | 445,472 bytes |
+| char-camp-licinia (ships as camp-licinia) | Licinia of the river farms | X | `c93ab59e-5b39-4269-a3bd-c821e206a518` | `93042748-f925-4d92-85db-0a1c3a84a733` | 13,873 | 437,504 bytes |
+| char-camp-barnaios (ships as camp-barnaios) | Barnaios the date-seller | V | `d2f5d081-2508-4adb-a7f8-b69e615b0bc4` | `eab405d5-63fc-4034-b2c4-e55699e6f18d` | 13,793 | 431,744 bytes |
+| char-camp-abgar-b (ships as camp-abgar) | Abgar the water-seller | VI | `60ed7c60-2c9d-4290-a38e-e9321368f2bb` | `64ffd61c-a735-4a42-be6f-bac82f530b74` | 13,842 | 392,492 bytes |
+| char-camp-malku (ships as camp-malku) | Malku the incense-seller | IX | `7ecde7f5-1d47-41a2-b5f6-85a6d273365c` | `a14596c5-d114-462c-b120-787e81331903` | 13,783 | 396,568 bytes |
+| char-camp-atticus-b (ships as camp-atticus) | Atticus the bookseller | XI | `f8d7e2de-b53c-440c-9e34-714d1aaeb26f` | `99a1d665-d470-4296-be01-f49547ac30de` | 13,773 | 403,572 bytes |
+
+A face's triangles are its man's whole figure, his first body with the new face on the shared head, both levels of detail. Every runtime file is quantized and compressed (meshopt geometry, ETC1S KTX2 with mipmaps) and passes `check-model` within 900,000 bytes, its request's triangles and 1,024-pixel textures. The raw files stay outside the repository; their digests, the task IDs and the parameters Tripo reported are in each request file (`art-source/models/requests/`), and the binding, head-wrap, refinement, repair and compression reports in `art-source/models/reports/`, with each face as the wrap's finders saw it (`char-cast-<who>-portrait-faces/`).
+
+Six generations did not ship, 130 credits:
+- **rejected at review, before any rig:** the bearded senator's second (`char-senator-bearded-b`, task `558fcfe2-b8e8-48ad-88c0-3eb840ec7739`), Abgar's first (`char-camp-abgar`, `8f82b862-13a0-4432-a395-e88b4962971f`), Atticus's first (`char-camp-atticus`, `a0f5b21a-4ac9-46fe-b06c-a4381a5f7714`) and the orderly's second (`char-camp-porter-b`, `ef3e3254-d495-4d48-a24a-d780f123176b`);
+- **refused by the rig check:** Dida the honey-seller (`char-camp-dida`, `b24931cf-66a3-4e67-ae6f-3c370e4010fc`), accepted at review, but Tripo's free rig check found her not riggable, her wide skirt hiding her legs. She was never rigged, and keeps the procedural woman's figure;
+- **not passing review once wrapped:** Severianus's face (`g6-face-severianus`, `1629eb7a-45df-4e72-8c8a-584e4583e691`). The bust is kept for a later wrap.
+
+With the pilot's one, 5 of G6's 27 generations were rejected at review; with Dida and Severianus's face, 7 have not shipped, over the plan's 20% stop rule, so G6 pauses for the owner ([the plan](graphics-tripo-plan.md#after-g6s-first-batch-10-november)).
+
+The prompts follow [the historical notes](historical-research.md) where they can: the senators' togas reach their feet with the band across the chest, and the sentry and the instructor wear long sleeves, trousers and closed boots as the soldiers do. The traders' and the women's dress are evocations of provincial dress, not reconstructions:
+- **the senators:** the pilot's prompt for its elder, for a fit man of about forty with a close-trimmed dark beard and a heavy-set man of about fifty with a short full grey beard. The bearded's third prompt asked for the toga's hem at the ground all round, over a tunic that also reaches his ankles;
+- **the gate sentry:** a lean, watchful man of about thirty in a loose short-sleeved shirt of mail to mid-thigh over a long-sleeved dull red tunic, a broad belt and a sword belt with an empty scabbard, dark trousers and boots, bare-headed with a short dark beard;
+- **Quartermaster Aper:** a stocky veteran of about fifty-five in a faded brown knee-length tunic, a belt with a purse and a ring of keys, bald with a grey fringe and a broken nose; no tablets, which the game puts in his hands at work;
+- **the veteran instructor:** a scarred, grey-cropped veteran of about fifty in a red tunic and a thick sleeveless leather jerkin, clean-shaven;
+- **the supply orderly:** a wiry, freckled youth of about eighteen in a coarse undyed tunic and leg wrappings. The second prompt named no sheepskin, fur or studs;
+- **Caecilia and Licinia:** a sturdy grain-seller of about fifty in an ochre tunic and a grey-blue mantle, her greying hair in a low bun, and a travel-worn settler of about twenty-five in a faded green tunic and a hooded brown cape, her hair in a plait;
+- **the traders:** Barnaios, a plump Syrian date-seller in an ochre tunic striped in dark red, white trousers and a brown mantle; Abgar, a lean desert man in a long undyed tunic, dark trousers and a linen cloth wrapped round his head, his waterskin left out at the second attempt; Malku, a tall Palmyrene incense-seller in pale embroidered linen and a deep blue mantle; Atticus, a thin, stooped scholar of about sixty in an off-white tunic to the calf and a hooded brown cape, with nothing in his hands or mouth at the second attempt;
+- **Dida:** a honey-seller of about thirty-five in an undyed linen dress, a striped wool apron, a fringed brown shawl and a white headscarf.
+
+### Reviewed before shipping
+
+Each model was compared with Tripo's render, then bound and seen in the game's figure viewer (`tests/actor-model-browser.html`) beside the figure it replaces, and finally in the desktop build at High. What it showed, and what was kept:
+
+![Four portraits, Tripo's busts from them, and each man's face in the figure viewer before and after](images/g6-batch-a-faces.jpg)
+
+- **The faces** have their portraits' likenesses, as Lucan's has: Varro's short grey hair and grizzled beard, Sabinus's black beard and moustache, Crispus's black curls and Paullus's long, lined face. Before, each wore the face wrapped from his own text-made body. Each was made as Lucan's was, and keeps his own eyes.
+  - **Varro and Crispus** turned to the front by the finder (85° each).
+  - **Sabinus** was turned 78° from review: at the finder's turn its eye finder took a brow for an eye. His curls needed a longer bake still (`--bake-cage 0.12 --bake-reach 0.26`).
+  - **Paullus's** bust looks down, so it was turned 88° and nodded up 12° about the line of its ears (`--face-nod 12`). His long face was fitted to the shared head's lip line by 23%, beyond the 20% the wrap had allowed (`--max-mouth-fit 0.25`), and his scalp let sink to the bust's crown (`--scalp-in 0.04`).
+  - **The holes.** The bake left 131 of Crispus's texels and 882 of Paullus's unpainted; they are filled from their painted neighbours.
+  - **Kept, with notes:** their eyes glance aside, as in the portraits; the portraits' red cloaks streak the sides of Varro's and Crispus's necks, seen above the neckcloth when they turn; Crispus's hair reads as a patchy dark cap, and a fold shows under his chin; Paullus's crown is bald where his portrait's hair is curly, and a dark smudge marks his hairline.
+  - **Severianus's face** did not pass: at every turn and nod tried, his crown came bald and smudged where the bust's high forehead and curls met the shared head's scalp, and his throat took his toga's white. He keeps his own generated head.
+![The bearded and the younger senators in the figure viewer, each before and after: their togas now reach their feet](images/g6-batch-a-senators.jpg)
+
+- **The senators** came as asked but for their feet: their togas fall to their ankles over long tunics, and the band across each chest takes the bloc trims. Both wear open sandals, though closed shoes were asked. The bearded's second attempt was rejected: its toga ended at mid-shin over bare legs.
+- **The sentry** came as asked, with his mail doubled at the shoulders in leather, a ring buckle and a skirt of leather strips, but bald, where short dark hair was asked.
+- **Aper** came as asked, his sleeves darker where dark bands at the cuffs were asked, with a satchel on a strap across his chest.
+- **The instructor** came as asked, his leather jerkin studded at the shoulders like a cuirass.
+- **The orderly** came with two fleeces over his shoulders where a sheepskin vest was asked, a soldier's studded belt with hanging straps where a plain cord was asked, and sandals. He was set aside at first, but the second attempt came holding two wrapped bundles on its palms, where the game puts his load in his hands, and was rejected; the first reads as the camp's porter and ships.
+- **Caecilia** came as asked but without the shorter brown overtunic. **Licinia** came as asked.
+- **Barnaios** came as asked. **Malku** came as asked, his mantle a brighter blue than the muted colours asked.
+- **Abgar's first** was rejected: his waterskin came as a dark ball hanging at his hip, his sheepskin vest as a pelt down one side, and he wore short sleeves and sandals. The second, with the waterskin left out, came as asked but in sandals.
+- **Atticus's first** was rejected: a thin white stick, a pen, at the corner of his mouth read as a cigarette. The second came with nothing in his mouth; his cape hangs open where it was asked closed, and he wears sandals.
+- **Dida** came as asked, but the rig check refused her.
+
+#### In the game
+
+![Ten of the camps' people before and after, in the desktop build at High](images/g6-batch-a-camps.jpg)
+
+The camps of Chapters II, V, VI, IX, X and XI were seen twice at the same moments, in main's desktop build and in this batch's, at High. Each camp was restored through the Restore dialog from a save reached from New Game by legal commands, the soldier walked by legal move commands to stand beside each person, and the view paused and framed with the game's own Follow camera and zoom keys:
+- **Chapter VI:** Aper in his brown tunic, bald with a grey fringe, where he had worn the clerks' white tunic; the orderly in his fleeces, his bucket in his hand, where he had worn the orderlies' tan tunic; and the instructor in his red tunic and studded jerkin, the sentry in mail and a skirt of leather strips, and Abgar with a cloth wrapped round his head, where each had worn the escorts' blue civilian body.
+- **Chapters V, IX and XI:** Barnaios in his ochre tunic and brown mantle, Malku in his deep blue mantle and Atticus, stooped in his hooded brown cape, where each had worn the escorts' blue body too. Each holds the wares the game puts in a trader's hands.
+- **Chapter X:** Caecilia in ochre under a grey-blue mantle, and Licinia in faded green under her brown cape, where both had been the procedural woman.
+- **The faces** are small at the camp camera's distance, as Lucan's is: Varro's grey hair and Paullus's toga read, the faces hardly do. The figure viewer shows them close.
+- **Not seen:** the senators' new togas in a chamber (the figure viewer showed them), the staff in the camps of other chapters, and the web build, where each figure wears what it wore before. `tests/actor-bodies.test.mjs` checks that every body is worn in exactly its chapters, in the desktop app and on the web.
+
 ## Steam achievement icons · 3 November 2026
 
 The 35 achievement icons for Steamworks (`desktop/steam/achievement-icons/`, 64 × 64 JPEG, each with a greyed locked copy) are made by `node scripts/steam-achievement-icons.mjs` from art the game already ships. Nothing new was generated and no credits were spent.
