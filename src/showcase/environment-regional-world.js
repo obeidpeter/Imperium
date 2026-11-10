@@ -8,7 +8,8 @@ import {terrainAt,distantRiverCentre} from './environment-layout.js';
 import {campPropCourt} from './camp-composition.js';
 import {addSmithy} from './environment-smithy.js';
 import {addWayPost} from './environment-waypost.js';
-import {CAMP_PROP_CHAPTERS,LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,TENT_VARIANT_CHAPTERS,worldAssetShown,worldModelUrl} from '../ui/world-catalog.js';
+import {CAMP_PROP_CHAPTERS,LIFE_PROP_CHAPTERS,REGIONAL_PROP_CHAPTERS,REGIONAL_REUSED_PROP_CHAPTERS,TENT_VARIANT_CHAPTERS,CAMP_ANIMALS,ANIMAL_COATS,ANIMAL_COAT_TURN,
+  animalModelUrl,worldAssetShown,worldModelUrl} from '../ui/world-catalog.js';
 import {REGIONAL_WORLD_KITS,REGIONAL_PLANS,REGIONAL_FRONTAGE,REGIONAL_COMPOSITIONS,REGIONAL_CHAPTER_EXTRAS,REGIONAL_HEARINGS,ENCOUNTER_LAYOUTS} from '../ui/world-layouts.js';
 
 // The kits, plans and frontage are data (src/ui/world-layouts.js). Placement
@@ -148,14 +149,31 @@ export function regionalPropPlacements(e,{chapter=regionalChapter(e),tileSize=2.
     const court=campPropCourt(e,id,occupied,{tileSize});
     if(court){
       occupied.push(court.bounds);
-      return {id,url:worldModelUrl(id),x:court.x,z:court.z,yaw:propYaw(id,court.x,court.z,court.approach,court.yaw),court:{service:court.service,approach:court.approach},fitWithin:{width:4.4,depth:4.4},...(courtOnly(id)?{}:{fallbackName:`regional-prop:${id}`})};
+      return {id,url:worldModelUrl(id),x:court.x,z:court.z,yaw:propYaw(id,court.x,court.z,court.approach,court.yaw),court:{service:court.service,approach:court.approach,x:court.x,z:court.z},fitWithin:{width:4.4,depth:4.4},...(courtOnly(id)?{}:{fallbackName:`regional-prop:${id}`})};
     }
     let slot=i,x,z,b;
     do{const column=slot%4,row=Math.floor(slot/4);x=[-10,-4,4,10][column];z=hz+5.5+row*6;slot++;b={minX:x-2.35,maxX:x+2.35,minZ:z-2.35,maxZ:z+2.35};}while(occupied.some(other=>intersects(b,other)));
     occupied.push(b);const column=(slot-1)%4;
     // Life has no code-built stand-in: on Performance, or without its model, the place stays empty.
     return {id,url:worldModelUrl(id),x,z,yaw:propYaw(id,x,z,{x,z:0},column%2?-.12:.12),fitWithin:{width:id==='river-ferry'?4.6:4.4,depth:4.4},...(courtOnly(id)?{}:{fallbackName:`regional-prop:${id}`})};
+  }).flatMap(p=>withAnimals(p,{chapter,hx,hz}));
+}
+// The animals that stand with a piece (graphics plan, G4; CAMP_ANIMALS in world-catalog.js), within its court or its
+// spot in the baggage line: the piece moved aside by its `shift`, then each animal, all in the piece's own frame. With
+// `across`, the frame is mirrored across the piece's length where its -z points toward the board, so the animals stand
+// on its far side. A piece on a service pad has none. Each animal is a placement of its own, standing for no code-built
+// piece and naming the piece it stands with (`host`), so that where the piece is left out, it is too (scenery-models.js).
+function withAnimals(p,{chapter,hx,hz}){
+  const herd=CAMP_ANIMALS[p.id];
+  if(!herd||p.pad||![p.x,p.z].every(Number.isFinite))return [p];
+  const yaw=p.yaw??0,c=Math.cos(yaw),s=Math.sin(yaw),out=(x,z)=>Math.max(Math.abs(x)-hx,Math.abs(z)-hz);
+  const side=herd.across&&out(p.x+s,p.z+c)>out(p.x-s,p.z-c)?-1:1;
+  const at=(x,z)=>({x:p.x+x*c+z*side*s,z:p.z-x*s+z*side*c});
+  const animals=herd.animals.flatMap(([model,x,z,turn],k)=>{
+    const url=animalModelUrl(model,chapter);if(!url)return [];
+    return [{id:model,key:`${p.id}:${model}:${k}`,url,host:p.id,...at(x,z),yaw:yaw+side*turn+(ANIMAL_COATS[model]?ANIMAL_COAT_TURN:0),fitWithin:{width:4.4,depth:4.4}}];
   });
+  return [{...p,...at(...herd.shift)},...animals];
 }
 
 function componentFallback(g,id,d,p,m,chapter){

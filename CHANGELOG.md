@@ -2,6 +2,35 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Release G4's pilot: animals beside the camps' furniture ([the plan](docs/graphics-tripo-plan.md#g4s-pilot-10-november))
+
+The game's first animals other than the cavalry's horses: four Tripo models made for 80 credits, the pack mule step 0's calibration made, and the Roman horse's coat stood at the horse lines. Each stands beside the piece of the camps' furniture or life it belongs to.
+
+- **Who stands where:**
+  - three horses tethered at the horse lines, by the rail and its trough (Chapters VII, IX and XII);
+  - a pair of grey long-horned oxen, unyoked beside the ox cart (VIII and X);
+  - a pair of mules, unhitched beside the covered carriage (VII, XI and XII);
+  - a dromedary under a red and ochre blanket beside the camel gear (VI and IX);
+  - a pack mule with its bundles beside the broken cart or the handcart (II, III, IV and VI);
+  - a tawny dog by the bread oven or the field oven (I–IV, VI and VIII–X).
+
+  They stand in the piece's court beyond a camp's board, on its far side from the board, and where the piece also stands in a battle's baggage line, there too. An animal stands only where its piece does, and on Performance or after a failed download its place stays empty.
+- **The horses cost nothing:** the scenery stands the Roman horse's coat, which those chapters already download for their cavalry, as plain meshes in its rest pose, exactly as its skeleton holds it.
+- **Static for now:** Tripo refused a four-legged rig, and nothing in the game yet walks an animal without a rider. The rest of G4 proposes walking a few of them, bound to the game's horse skeleton, at no credit cost.
+- **Reviewed in the game** in the camps of Chapters II, III, VI, VII, VIII, IX, XI and XII, before and after in VII, VIII and IX ([the art record](docs/art-generation.md#g4s-pilot-animals--10-november-2026)):
+  - the horses, oxen, camel and pack mule read at once beside their pieces;
+  - the dog, the smallest, reads as a dog beside its oven;
+  - the pale mules read as a team, though their long ears are less plain from the camp camera.
+- **None of the four generations was rejected.** The mule came paler and slighter than asked; it was kept.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web the pack mule and the dog ride in Chapters II and III and the mules in XI, and the horses wherever their horse lines stand; the other chapters' pieces stand alone there. Chapter III's download rises to 27.50 of 28 MB, the largest is still 27.96, and the complete web game is 76.72 of 80 MB.
+- **Checks:** `tests/graphics-g4.test.mjs` covers:
+  - the pilot's ledger, and every shipped model's task, manifest entry and budget, the pack mule's the calibration's own;
+  - each animal's chapters and web room;
+  - every animal, in every camp and battle reached by legal commands, standing inside its piece's court or line spot, clear of the piece and of the others, on its far side from the board, and only where its piece stands;
+  - the horse's coat standing within a micrometre of where its skeleton holds it, as plain meshes that take no picks, and Performance placing none.
+
+  The camps' composition, regional-world and world-catalog tests take the animals in: a court is checked about its own middle, with its piece moved aside within it; a horse at the horse lines rides in its chapter's pack with the cavalry; and an animal, like life, has no code-built stand-in.
+
 ### Release G5, the last batch: the signal posts and boats on the river; G5 closes ([the plan](docs/graphics-tripo-plan.md#the-last-of-g5-10-november))
 
 Four Tripo models, made for 80 credits. A survey of what the battles still drew in code narrowed the first batch's proposal of about fifty: every battle's surroundings are already its chapter's regional kit, and the fortified gates, breaches and bridges the board kit's, so the one field object left was the signal station. G5 closes at 660 of its 1,845 credits, with 28 models.

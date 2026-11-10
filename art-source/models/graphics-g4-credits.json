@@ -1,0 +1,83 @@
+{
+ "scope": "Release G4 of the graphics plan (docs/graphics-tripo-plan.md): animals",
+ "authorization": {
+  "credits": 600,
+  "approvedBy": "Owner",
+  "source": "docs/graphics-tripo-plan.md: release G4, capped at 600 credits on 8 November 2026; decision 9 (9 November 2026) leaves the rest of the plan to my judgement within each release's cap, each pilot reviewed in the game before the rest of its release is generated. The held credits the plan proposes for G4 (500 of G3's and 320 of G5's) are not drawn on by the pilot"
+ },
+ "pricing": {
+  "textWithStandardTextures": 20,
+  "source": "the calibration's measured prices (docs/graphics-calibration.md); each task's reported credits_consumed is recorded below"
+ },
+ "spentCredits": 80,
+ "remainingAuthorization": 520,
+ "batches": [
+  {
+   "batch": "pilot",
+   "date": "2026-11-10",
+   "ceilingCredits": 100,
+   "plannedCredits": 80,
+   "spentCredits": 80,
+   "items": [
+    "g4-ox",
+    "g4-mule",
+    "g4-camel",
+    "g4-dog"
+   ],
+   "note": "Four animals at standard texture and geometry, 20 credits each, within the pilot's 100-credit ceiling (one redo). They stand in the camps' courts beyond the board beside the furniture they belong to. The calibration's pack mule ships with them from its own task, and the camps' horse lines take the Roman horse's coat, which those chapters already download, neither for any credits.",
+   "balance": {
+    "before": 8285,
+    "after": 8205,
+    "source": "the account balance read before the first task and after the last (frozen 0)"
+   },
+   "tasks": [
+    {
+     "id": "g4-ox",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "5cfeabc3-89c7-459a-8adb-f52dd82dd1da",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g4-mule",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "b826b863-2b43-4779-a60b-c3f70af6565b",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g4-camel",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "ab72a253-cbc6-41fb-b379-a896c3b273cf",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    },
+    {
+     "id": "g4-dog",
+     "operation": "text_to_model",
+     "expectedCredits": 20,
+     "status": "success",
+     "taskId": "4c1b7ba5-ae04-4a4d-9574-5e35efe1e05e",
+     "creditsReported": 20,
+     "creditSource": "task.credits_consumed",
+     "accountedCredits": 20
+    }
+   ],
+   "rejected": {
+    "count": 0,
+    "of": 4,
+    "items": [],
+    "note": "None of the four generations was rejected at review."
+   }
+  }
+ ]
+}

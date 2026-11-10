@@ -19912,6 +19912,288 @@
         }
       },
       "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g4-ox",
+      "path": "assets/models/world/g4-ox.glb",
+      "subject": "Release G4 animal: a grey long-horned draught ox in a rope halter",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "5cfeabc3-89c7-459a-8adb-f52dd82dd1da",
+        "generatedAt": "2026-11-10T05:24:44.178Z",
+        "prompt": "art-source/models/requests/g4-ox.json",
+        "rawBytes": 42899376,
+        "rawSha256": "8f1f05fa72dc5468ac8fb54494637e318b1cb8c5dfc408a70ff012cd9755f151",
+        "program": "graphics-g4",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.6,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g4-ox.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g4-ox-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "An animal of the camps (graphics plan, G4): two draught oxen, one model set out twice, unyoked beside the ox cart (life-ox-cart), on the piece's far side from the board within its court beyond a camp's board, or by its spot in the baggage line beyond a battle's southern edge, in Chapters VIII and X (CAMP_ANIMALS, src/ui/world-catalog.js; environment-regional-world.js). Only where its piece stands, with no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 8, 10 at Balanced/High, preloaded with the scene's scenery; not on the web: the web downloads of Chapters VIII and X have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave its place empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 224444,
+        "gzipBytes": 217299,
+        "sha256": "4219e9dd351f8f619c2530d5f25dfe776eda76936418c22d2a5cd94854f552f4",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.2541,
+          "height": 1.6,
+          "depth": 0.8887
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g4-mule",
+      "path": "assets/models/world/g4-mule.glb",
+      "subject": "Release G4 animal: a pale grey draught mule in a leather headstall and breast strap",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "b826b863-2b43-4779-a60b-c3f70af6565b",
+        "generatedAt": "2026-11-10T05:26:32.458Z",
+        "prompt": "art-source/models/requests/g4-mule.json",
+        "rawBytes": 43825124,
+        "rawSha256": "a869abb5f2c92993d5fc0ee38c1a7a30e861623ef4473506541804cf3bfafa1d",
+        "program": "graphics-g4",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.95,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g4-mule.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g4-mule-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "An animal of the camps (graphics plan, G4): two draught mules, one model set out twice, unhitched beside the covered carriage (the carpentum, usually drawn by a pair of mules) (life-travel-carriage), on the piece's far side from the board within its court beyond a camp's board, or by its spot in the baggage line beyond a battle's southern edge, in Chapters VII, XI and XII (CAMP_ANIMALS, src/ui/world-catalog.js; environment-regional-world.js). Only where its piece stands, with no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 7, 11, 12 at Balanced/High, preloaded with the scene's scenery; on the web only 11: the web downloads of Chapters VII and XII have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave its place empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 216436,
+        "gzipBytes": 209271,
+        "sha256": "29090efc201a0ddf21a1db3c5b8f24f53877dd99648a7798dec29d630ce8ab95",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.0683,
+          "height": 1.95,
+          "depth": 0.68
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g4-camel",
+      "path": "assets/models/world/g4-camel.glb",
+      "subject": "Release G4 animal: a dromedary under a red and ochre woven blanket, in a rope halter",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "ab72a253-cbc6-41fb-b379-a896c3b273cf",
+        "generatedAt": "2026-11-10T05:28:09.978Z",
+        "prompt": "art-source/models/requests/g4-camel.json",
+        "rawBytes": 46229008,
+        "rawSha256": "f79bf0282b0d6601d4e7bca0d60249d90f7ff37f210afd3d0fcf97b196626643",
+        "program": "graphics-g4",
+        "credits": 20,
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 2.2,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false,
+          "turn": 90.0
+        },
+        "report": "art-source/models/reports/g4-camel.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g4-camel-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "An animal of the camps (graphics plan, G4): a dromedary beside the camel gear (life-camel-gear), on the piece's far side from the board within its court beyond a camp's board, or by its spot in the baggage line beyond a battle's southern edge, in Chapters VI and IX (CAMP_ANIMALS, src/ui/world-catalog.js; environment-regional-world.js). Only where its piece stands, with no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 6, 9 at Balanced/High, preloaded with the scene's scenery; not on the web: the web downloads of Chapters VI and IX have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave its place empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 243120,
+        "gzipBytes": 235660,
+        "sha256": "fbe1b9312891d20754a6456b0b5636d07e9e5ec68402985c6e998ad64ce76848",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.8014,
+          "height": 2.2,
+          "depth": 0.9713
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g4-dog",
+      "path": "assets/models/world/g4-dog.glb",
+      "subject": "Release G4 animal: a tawny molossian camp dog with a black muzzle and a leather collar",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "4c1b7ba5-ae04-4a4d-9574-5e35efe1e05e",
+        "generatedAt": "2026-11-10T05:29:52.748Z",
+        "prompt": "art-source/models/requests/g4-dog.json",
+        "rawBytes": 45862136,
+        "rawSha256": "2561ce4e1e0d54ce5798b102c7517eefb0ea014eaabf84edf23c8a2f60ff11d0",
+        "program": "graphics-g4",
+        "credits": 20,
+        "processing": {
+          "triangles": 3000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 0.85,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g4-dog.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g4-dog-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "An animal of the camps (graphics plan, G4): a camp dog beside the bread oven or the field oven (life-bread-oven and g3-field-oven), on the piece's far side from the board within its court beyond a camp's board, or by its spot in the baggage line beyond a battle's southern edge, in Chapters I, II, III, IV, VI, VIII, IX and X (CAMP_ANIMALS, src/ui/world-catalog.js; environment-regional-world.js). Only where its piece stands, with no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 1, 2, 3, 4, 6, 8, 9, 10 at Balanced/High, preloaded with the scene's scenery; on the web only 2, 3: the web downloads of Chapters I, IV, VI, VIII, IX and X have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave its place empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 178972,
+        "gzipBytes": 173244,
+        "sha256": "061156c5c60770c393ac7e8241cacd46abbd109a8737b73249578f3cc507979b",
+        "triangles": 2940,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 1.2451,
+          "height": 0.85,
+          "depth": 0.385
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
+    },
+    {
+      "id": "g4-pack-mule",
+      "path": "assets/models/world/g4-pack-mule.glb",
+      "subject": "Release G4 animal: a bay pack mule under a wooden pack saddle with two bundles",
+      "source": {
+        "method": "Tripo H3.1 from an original text prompt, processed locally in Blender 5.2.2 LTS; no reference image or third-party mesh",
+        "generator": "Tripo",
+        "modelVersion": "v3.1-20260211",
+        "taskId": "f8179353-4ce1-4cbf-a39e-1f3a51a59a67",
+        "generatedAt": "2026-11-08T20:21:44.888Z",
+        "prompt": "art-source/models/requests/g4-pack-mule.json",
+        "rawBytes": 45513812,
+        "rawSha256": "81440102004a62b4f0be302e58f3dc29d25c01fdfd67367a6cb0b592a2acfacb",
+        "program": "graphics-g4",
+        "credits": 0,
+        "creditsNote": "No credits of release G4: paid in step 0's calibration (art-source/models/graphics-calibration-credits.json) as cal-mule",
+        "processing": {
+          "triangles": 5000,
+          "texture": 512,
+          "webpQuality": 80,
+          "height": 1.75,
+          "sharpAngle": 35.0,
+          "mergeDistance": 0.0001,
+          "keepSkin": false
+        },
+        "report": "art-source/models/reports/g4-pack-mule.json",
+        "compression": {
+          "tool": "scripts/assets/compress.mjs",
+          "report": "art-source/models/reports/g4-pack-mule-compress.json",
+          "geometryUnchanged": true,
+          "encoder": {
+            "basisu": "v1.16.4",
+            "mode": "ETC1S",
+            "quality": 128,
+            "mipmaps": true,
+            "meshopt": "EXT_meshopt_compression, reorder for size, no filters"
+          }
+        }
+      },
+      "usage": "An animal of the camps (graphics plan, G4): a pack mule beside the broken baggage cart or the handcart (broken-baggage-cart and life-handcart), on the piece's far side from the board within its court beyond a camp's board, or by its spot in the baggage line beyond a battle's southern edge, in Chapters II, III, IV and VI (CAMP_ANIMALS, src/ui/world-catalog.js; environment-regional-world.js). Only where its piece stands, with no code-built stand-in. Decorative only: it stands off the board, takes no picks and changes no route.",
+      "loading": "Deferred chapter packs 2, 3, 4, 6 at Balanced/High, preloaded with the scene's scenery; on the web only 2, 3: the web downloads of Chapters IV and VI have no room for it, so it ships there in the desktop app alone (src/ui/world-catalog.js). Performance and a failed download leave its place empty.",
+      "export": {
+        "format": "GLB 2.0 with KTX2 textures (Basis Universal ETC1S with mipmaps, KHR_texture_basisu) and meshopt-compressed geometry (EXT_meshopt_compression)",
+        "bytes": 252532,
+        "gzipBytes": 244149,
+        "sha256": "2fa5f57f1d2944d3d7db7ea7754c4170f7c51ee986f2644418ac3cf1bc9749e7",
+        "triangles": 4900,
+        "textures": 3,
+        "textureEdge": 512,
+        "sizeMetres": {
+          "width": 2.1428,
+          "height": 1.75,
+          "depth": 0.957
+        }
+      },
+      "license": "Generated with the owner's paid Tripo account (API credits). Tripo's terms for paid users, as confirmed by the owner on 2026-10-20: the owner has full rights to use, modify, distribute and commercially exploit the generated model; Tripo receives a royalty-free, non-exclusive licence to use and display it as necessary to provide its service. Provenance does not guarantee exclusive copyright or non-infringement."
     }
   ],
   "developmentAssets": [
@@ -20001,13 +20283,13 @@
     "animation": 5,
     "showcase": 9,
     "audio": 14,
-    "models": 213,
+    "models": 218,
     "textures": 15,
     "src": 1,
     "items": 1
   },
   "totalAudioBytes": 2234206,
-  "totalBundledAssetBytes": 81791737,
-  "totalModelBytes": 66488259,
+  "totalBundledAssetBytes": 82907241,
+  "totalModelBytes": 67603763,
   "derivedGeometryBytes": 47428
 }

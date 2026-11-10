@@ -77,7 +77,8 @@ export function createCampGroundSampler(e,{tileSize=2.5,props=[]}={}){
   }
   // Ground extends to the furnishings only when its straight apron does not
   // pass through an architectural solid; the caller supplies checked courts.
-  for(const p of props)if(p.court){add(p.court.approach,p);courts.push({id:p.id,x:p.x,z:p.z,radius:2.7});}
+  // A piece with animals stands aside within its court (G4), so the apron and the worn ground go to the court's middle.
+  for(const p of props)if(p.court){const middle={x:p.court.x??p.x,z:p.court.z??p.z};add(p.court.approach,middle);courts.push({id:p.id,...middle,radius:2.7});}
   const buckets=new Map(),size=5;
   const insert=(item,minX,minZ,maxX,maxZ)=>{for(let z=Math.floor(minZ/size);z<=Math.floor(maxZ/size);z++)for(let x=Math.floor(minX/size);x<=Math.floor(maxX/size);x++){const key=`${x},${z}`;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(item);}};
   for(const [a,b]of segments.values())insert({a,b},Math.min(a.x,b.x)-2,Math.min(a.z,b.z)-2,Math.max(a.x,b.x)+2,Math.max(a.z,b.z)+2);

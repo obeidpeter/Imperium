@@ -32,7 +32,7 @@ Each release's changelog entry records what it actually delivered, spent and mea
 | G1 | Armies | 1,005 | done: the [pilot](#g1s-pilot-8-november) (310 credits) and [the rest](#the-rest-of-g1-9-november) (695): 22 bodies and 2 horses. Its other 1,295 credits went to G3 and G5 |
 | G2 | Arms and standards | 700 | |
 | G3 | Camps | 2,400 | done: [the tent lines](#g3s-tent-lines-9-november), with no credits, [the pilot](#g3s-pilot-9-november) (180 credits) and [the rest](#the-rest-of-g3-9-november) (380): 26 models. Its other 1,840 credits are [held for the releases after it](#what-g3-leaves) |
-| G4 | Animals | 600 | |
+| G4 | Animals | 600 | [the pilot](#g4s-pilot-10-november) done (80 credits): four animals, the calibration's pack mule and the horse lines' horses; the rest next |
 | G5 | Battle and siege | 1,845 | done: [the pilot](#g5s-pilot-9-november) (140 credits), [the first batch](#the-rest-of-g5-the-first-batch-9-november) (440) and [the last](#the-last-of-g5-10-november) (80): 28 models. Its other 1,185 credits [join G3's held 1,840](#what-g5-leaves) for G4, G6 and G2 |
 | G6 | Faces and people | 1,100 | |
 | G7 | Backdrops | — | skipped by the owner; its 750 credits went to G3 and G5 |
@@ -443,6 +443,45 @@ G5's other 1,185 credits join the 1,840 held from G3: 3,025 for the three releas
 - **Each release's pilot proposes its counts,** as G3's and G5's did.
 
 The order stays: the animals (G4) next, then the faces and people (G6), then the arms and standards (G2). If all of it is spent, the plan ends near 7,840 of its 7,900 credits, 73.3% of the balance.
+
+### G4's pilot (10 November)
+
+The game's first animals other than the cavalry's horses. Each stands beside the piece of the camps' furniture or life it belongs to: in that piece's court beyond a camp's board, and where the piece also stands in a battle's baggage line beyond the southern edge, there too.
+
+- **Standing, not walking, for now.** Tripo's rig check refused a four-legged rig for the calibration's mule, and nothing in the game yet walks an animal without a rider. Standing animals need neither, and read in the courts and the baggage lines. Walking ones need a rider-less horse figure and a scale for each species, which the rest of G4 can add at no credit cost.
+
+| Animal | Where it stands | Chapters | Credits |
+| --- | --- | --- | --- |
+| three Roman horses, tethered by the rail and its trough | at the horse lines | VII, IX, XII | none: the Roman horse's coat, which those chapters already download for their cavalry, stood as scenery |
+| two grey long-horned draught oxen, unyoked | beside the ox cart | VIII, X | 20 |
+| two draught mules, unhitched, the *carpentum*'s usual team | beside the covered carriage | VII, XI, XII | 20 |
+| a dromedary under a red and ochre blanket | beside the camel gear | VI, IX | 20 |
+| a tawny molossian dog | beside the bread oven or the field oven | I–IV, VI, VIII–X | 20 |
+| a bay pack mule with its bundles | beside the broken cart or the handcart | II, III, IV, VI | none: step 0's calibration mule |
+
+- **Credits:** 80 of the pilot's 100-credit ceiling: four generations at 20, none rejected. [The ledger](../art-source/models/graphics-g4-credits.json) has every task. The balance went from 8,285 to 8,205.
+- **Where they stand:** in the piece's own frame, on its far side from the board, where the camera looks in, the piece moved aside in its court to make room. Every animal stays inside its piece's court or line spot, clear of the piece and of the others, in every camp and every battle. An animal stands only where its piece does, and has no code-built stand-in.
+- **The horses:** the scenery loader stands a skinned model as plain meshes in its rest pose, so the horse lines take the coat their chapters' cavalry already download, exactly as its skeleton holds it.
+- **Downloads:** each model downloads with its chapters in the desktop app. On the web:
+  - the pack mule and the dog ride in Chapters II and III, and the mules in XI;
+  - the horses stand wherever their horse lines do;
+  - the other chapters' downloads have no room, so their pieces stand alone there;
+  - Chapter II's download rises from 26.15 to 26.57 MB and III's from 27.08 to 27.50, the largest is still 27.96 of 28 MB, and the complete web game is 76.72 of 80 MB.
+- **The review** was in the desktop build at High, each camp restored through the Restore dialog from a save reached from New Game by legal commands: before and after in Chapters VII, VIII and IX, and with the animals in II, III, VI, XI and XII.
+  - The horses, the oxen, the camel and the pack mule read at once beside their pieces.
+  - The mules read as a pale team, but their long ears are less plain from the camp camera than in the four views.
+  - The dog is the smallest of them, but reads as a dog beside its oven.
+  - Not seen: the oxen in Chapter X, the dog by Chapter VIII's field oven, the animals of Chapters I and IV, and the battles' baggage lines, which the tests check.
+
+![The camps before and with the pilot's animals, in the desktop build at High](images/g4-pilot-camps.jpg)
+
+#### What the pilot proposes for the rest of G4
+
+- **At no credit cost:**
+  - the pilot's animals beside more pieces: oxen by the Gothic wagons beyond the north edge of the Gothic battles, and mules by the engines behind the Roman line;
+  - walking animals: the ox, the mules and the camel bound to the game's horse skeleton as the calibration's mule was, a few of them led along the roads beyond the board. Each species takes its own scale, which also mends the northern horse's size.
+- **About ten new animals, near 200 credits:** a small flock of sheep and goats by the stalls and hay ricks, a donkey with panniers, a dark ox to pair with the grey, a camel couched at rest and a cart horse.
+- **Credits:** G4 would then end near 300 of its 600 credits, without the 820 held credits the plan proposed for it. The plan would have spent about 2,715, and its 70% floor (7,490) would rest on G6 and G2: about 4,800 of the 5,200 credits the plan would have left.
 
 ## Around every release, at no credit cost
 

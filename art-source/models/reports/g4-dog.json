@@ -1,0 +1,49 @@
+{
+  "tool": "scripts/assets/process-model.py",
+  "blender": "5.2.2 LTS",
+  "input": {
+    "path": "art-source/models/raw/g4-dog.glb",
+    "bytes": 45862136,
+    "sha256": "2561ce4e1e0d54ce5798b102c7517eefb0ea014eaabf84edf23c8a2f60ff11d0",
+    "triangles": 1494862
+  },
+  "output": {
+    "path": "assets/models/world/g4-dog.glb",
+    "bytes": 150624,
+    "sha256": "486f4a5f9bf73e58d5b80f9549d62f947ba72e2744666e86b4318164c647236b",
+    "triangles": 2940
+  },
+  "settings": {
+    "triangles": 3000,
+    "texture": 512,
+    "webpQuality": 80,
+    "height": 0.85,
+    "sharpAngle": 35.0,
+    "mergeDistance": 0.0001,
+    "keepSkin": false
+  },
+  "scale": 1.245993990574116,
+  "sizeMetres": {
+    "width": 1.2451,
+    "height": 0.85,
+    "depth": 0.385
+  },
+  "materials": 1,
+  "textures": [
+    {
+      "name": "Color_4c1b7ba5-ae04-4a4d-9574-5e35efe1e05e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "NormalGL_4c1b7ba5-ae04-4a4d-9574-5e35efe1e05e",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "ORM_4c1b7ba5-ae04-4a4d-9574-5e35efe1e05e",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

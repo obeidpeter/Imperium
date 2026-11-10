@@ -617,3 +617,30 @@ Four more Tripo props ([the plan](graphics-tripo-plan.md#the-last-of-g5-10-novem
 
   Both boats float in all nine battles.
 - **Downloads.** On the web the Roman post rides in Chapters II and III, the eastern post in V, and the boats in II. The other chapters' downloads have no room (`G5_WEB_ROOM`), so their web builds keep the code-built mast and leave the river empty. The desktop app carries all four.
+
+## G4's pilot: animals beside the camps' furniture · 2026-11-10
+
+Four Tripo animals and the calibration's pack mule ([the plan](graphics-tripo-plan.md#g4s-pilot-10-november), [the art record](art-generation.md#g4s-pilot-animals--10-november-2026)), processed and compressed like every prop, and the Roman horse's coat stood at the horse lines:
+
+- **Static, beside a piece.** Tripo's rig check refused a four-legged rig for the calibration's mule, and nothing in the game yet walks an animal without a rider, so the pilot's animals stand still. Each stands with a piece of the camps' furniture or of life about them, the piece it belongs to (`CAMP_ANIMALS` in [`world-catalog.js`](../src/ui/world-catalog.js)):
+  - three horses at the horse lines;
+  - a pair of oxen by the ox cart, and a pair of mules by the covered carriage;
+  - a camel by the camel gear, and a pack mule by the broken cart and the handcart;
+  - a dog by the bread oven and the field oven.
+- **Where they stand.** `regionalPropPlacements` ([`environment-regional-world.js`](../src/showcase/environment-regional-world.js)) places the piece as before, in its court beyond a camp's board or at its spot in the baggage line beyond a battle's southern edge. In the piece's own frame it then moves the piece aside by its `shift` and stands each animal at its spot, facing along the piece by its `yaw`.
+  - **The far side.** With `across`, the animals stand on the piece's far side from the board, toward the camera, which looks from the south-east. Where the piece's own -z points toward the board, the layout is mirrored across its length.
+  - **Inside the court.** Every animal stays inside its piece's court, or its line spot, clear of the piece and of the others. `tests/graphics-g4.test.mjs` checks this in every camp and every battle reached by legal commands, with each model's footprint as it loads.
+  - **The court stays.** A piece moved aside for its animals keeps its court: the placement records the court's middle (`court.x`, `court.z`), and the camp's worn apron and ground go there as before (`createCampGroundSampler` in [`camp-composition.js`](../src/showcase/camp-composition.js)). Every other placement in every camp and battle is as it was.
+  - **Only with its piece.** Each animal is a placement of its own that names its piece (`host`). Where the piece is left out, as Chapter XII's web build leaves out its horse lines, `sceneryPlacements` leaves the animals out too. Animals have no code-built stand-in: on Performance and after a failed download, the place stays empty.
+- **The horse's coat stood as scenery.** A generated horse is skinned to the game's horse skeleton (`assets/models/horses/`). Chapters VII, IX and XII already download the Roman horse's coat for their cavalry, and the horse lines stand in those chapters.
+  - **No new file.** The scenery loader stands any skinned model it loads as plain meshes in its rest pose (`standSkinnedModel` in [`scenery-models.js`](../src/showcase/scenery-models.js)), so the horse lines take that coat with no file of their own.
+  - **Exact.** The skeleton loads in its bind pose, so the vertices need no change; a test finds the plain coat within a micrometre of the skinned one, posed by its skeleton.
+  - **Lighter.** The far-off overview surface is left out, since scenery has no levels of detail, and the plain meshes share the scenery's shader programs (`model-materials.js`).
+- **Facing.** The generated animals face their own +x once processed; the camel came facing +z and was processed with `--turn 90`. A horse's coat faces its +z and turns a quarter (`ANIMAL_COAT_TURN`).
+- **Downloads.** On the web an animal rides only where its chapter's download has room (`G4_WEB_ROOM`):
+  - the pack mule and the dog in Chapters II and III, and the mules in XI;
+  - the horses wherever their horse lines stand, since their coat is already in the download;
+  - every other animal ships in the desktop app alone, and its piece stands by itself on the web.
+
+  The largest chapter download is still 27.96 of 28 MB, Chapter III's rises to 27.50, and the complete web game is 76.72 of 80 MB.
+- **The idle cache.** Chapter IX's camp in the desktop app now keeps 34 models in its working set, under `SCENERY_IDLE_MASTERS` (36).

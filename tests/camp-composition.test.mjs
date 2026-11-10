@@ -85,7 +85,9 @@ test('camp props form service groups with clear aisles and no overlap with archi
         const x=Math.floor(((south?mouth.x+offset:mouth.x-Math.sign(mouth.x)*.1)+e.width*1.25)/2.5),y=Math.floor(((south?mouth.z-.1:mouth.z+offset)+e.height*1.25)/2.5);
         assert.ok(!['rock','wall','river','rubble'].includes(e.terrain[y][x]),`${chapter}:${p.id} apron meets an open boundary across its width`);
       }
-      const box={minX:p.x-2.4,maxX:p.x+2.4,minZ:p.z-2.4,maxZ:p.z+2.4};
+      // The court's footprint, about its middle; a piece with animals stands aside within it (G4).
+      const box={minX:p.court.x-2.4,maxX:p.court.x+2.4,minZ:p.court.z-2.4,maxZ:p.court.z+2.4};
+      assert.ok(p.x>box.minX&&p.x<box.maxX&&p.z>box.minZ&&p.z<box.maxZ,`${chapter}:${p.id} stands within its court`);
       assert.ok(box.maxX < -e.width*1.25||box.minX > e.width*1.25||box.maxZ < -e.height*1.25||box.minZ > e.height*1.25);
       assert.ok(occupied.every(b=>!overlap(box,b)),`${chapter}:${p.id} complete footprint is clear`);
       occupied.push(box);
