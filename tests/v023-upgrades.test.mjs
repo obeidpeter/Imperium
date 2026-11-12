@@ -88,7 +88,7 @@ test('v0.23.0 Dynamic 3D Weather & Night-March Torchlight: scene profiles and de
 
   const cloud=createWeatherField(null);
   assert.ok(cloud.geometry.attributes.position.count>=128&&cloud.geometry.attributes.position.count<=640,'Weather stays inside the supported GPU particle budget');
-  for(const weather of ['rain','embers','dust','mist']){
+  for(const weather of ['rain','embers','dust']){
     sampleWeatherParticles(cloud,weather,1.25,{reducedMotion:false});
     assert.equal(cloud.visible,true,`${weather} field should be visible`);
     const sampleA=[...cloud.geometry.attributes.position.array];
@@ -97,6 +97,8 @@ test('v0.23.0 Dynamic 3D Weather & Night-March Torchlight: scene profiles and de
     assert.deepEqual(sampleA,sampleB,`${weather} particle sampling must be deterministic`);
     assert.ok(sampleA.every(Number.isFinite),`${weather} particle coordinates must be finite`);
   }
+  sampleWeatherParticles(cloud,'mist',1.25,{reducedMotion:false});
+  assert.equal(cloud.visible,false,'Mist draws no particles: its sprites drifted over the camp as a light');
   sampleWeatherParticles(cloud,'clear',1.25,{reducedMotion:false});
   assert.equal(cloud.visible,false,'Clear weather hides weather particles cleanly');
 });

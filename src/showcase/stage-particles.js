@@ -79,11 +79,14 @@ export function sampleImpactParticles(cloud,point,progress,{shield=false,source}
   v.needsUpdate=true;cloud.material.opacity=(1-t)**2*(shield?.82:.42);cloud.material.size=shield?.055:.10;cloud.material.color.set(shield?'#ffdc96':'#b3a58c');
 }
 
+// Mist has no field of its own. Its sprites lay a regular lattice of pale blobs over the
+// board round the camera and slid with the wind, which read as a light moving over the
+// camp (Chapter I, 12 November 2026). Mist shows in the ground haze, the banks over water,
+// the softer cloud shadows and the shafts of light.
 const WEATHER_SPECS={
   rain:{mode:0,color:'#b8cddb',size:.72,opacity:.38,alphaTest:.04,vy:-8.2,spanY:11},
   embers:{mode:1,color:'#ffb15e',size:.09,opacity:.62,alphaTest:.04,vy:1.05,spanY:7},
   dust:{mode:2,color:'#d4be96',size:1.45,opacity:.12,alphaTest:.001,vy:.06,spanY:4.5},
-  mist:{mode:3,color:'#cfdcd8',size:2.9,opacity:.085,alphaTest:.001,vy:.025,spanY:2.5},
 };
 export function createWeatherField(mask,{quality='balanced'}={}){
   const count=quality==='performance'?128:quality==='high'?640:384,positions=new Float32Array(count*3);
@@ -100,8 +103,8 @@ export function sampleWeatherParticles(cloud,weather='clear',time=0,{reducedMoti
   if(!spec||indoors){cloud.visible=false;cloud.material.opacity=0;return;}
   cloud.visible=true;cloud.userData.weather=weather;
   cloud.material.color.set(spec.color);cloud.material.size=spec.size;cloud.material.opacity=reducedMotion?spec.opacity*.55:spec.opacity;
-  // Mist/dust have faint feathered edges: the rain cutoff would discard the
-  // whole falloff and leave hard circular cores, especially in reduced motion.
+  // Dust has faint feathered edges: the rain cutoff would discard the whole
+  // falloff and leave hard circular cores, especially in reduced motion.
   // Both cutoffs remain positive, preserving the shared alpha-test program.
   cloud.material.alphaTest=spec.alphaTest;
   const t=reducedMotion?0:(Number.isFinite(time)?time%3600:0),u=cloud.material.userData.weatherUniforms,wind=sampleWorldWind(t,{chapter,weather,reducedMotion});

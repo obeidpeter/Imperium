@@ -2,6 +2,13 @@
 
 ## Unreleased — 0.40: real time with pause, Phases 0–4
 
+### Fix: the light that moved over Chapter I's camp (the owner's report, 12 November)
+
+- **Mist draws no sprites round the camera.** In the misty chapters (I, IV and VIII) mist was drawn as a field of pale sprites round the point the camera looks at. They lay in a regular lattice of pale blobs and slid with the wind; when one crossed the field's edge it vanished and came back on the other side. Over the camp and the field they read as a light moving over the ground. Now the field draws nothing in mist ([`stage-particles.js`](src/showcase/stage-particles.js)).
+- **Mist keeps its other signs:** the low haze in the distance, the banks over water, the softer cloud shadows and the shafts of light. Rain, dust and embers are unchanged, as are the 2D view's faint mist streaks and the story paintings' mist. Mist's rules (sight and missiles) are unchanged.
+- **Checked in the game:** Chapter I's camp, restored from a save reached from New Game by legal commands, the camera at rest. In the desktop build at High, a quarter of the view (26.4%) changed in 4 s before the fix and 1.4% after: the grass, the figures and the ring under the soldier ([before and after](docs/images/ch1-mist-fix.jpg)). In the web build at Balanced, after the fix, 0.8% changed.
+- **Tests:** `tests/regional-atmosphere.test.mjs` checks that mist hides the field in Chapters I, IV and VIII at every quality, moving or still, and that its haze, banks, cloud shade and shafts stay; it fails on the old code.
+
 ### Release G2's pilot: the standards; G2 pauses ([the plan](docs/graphics-tripo-plan.md#g2s-pilot-10-november))
 
 80 credits of the pilot's 100: a century's signum, a legion's eagle and the finale's vexilla, in the desktop app.
