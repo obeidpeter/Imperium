@@ -4,6 +4,9 @@ import * as T from '../vendor/three/three.module.js';
 import {sampleWorldWind,regionalTreePlacements,regionalTreeSpecies,waterCurrentDirection} from '../src/showcase/world-weather.js';
 import {createParticleMask,createWeatherField,sampleWeatherParticles,createFlamePlume,sampleFlamePlume} from '../src/showcase/stage-particles.js';
 import {getSceneProfile} from '../src/showcase/campaign-scene-profile.js';
+import {cloudStrength,groundMistStrength,shaftsWanted} from '../src/showcase/atmosphere.js';
+import {mistBankStrength} from '../src/showcase/water-mist.js';
+import {chapterWeather} from '../src/ui/chapter-weather.js';
 import {sampleWaterSurface} from '../src/showcase/environment-surface-shaders.js';
 import {createEnvironmentMaterials} from '../src/showcase/environment-materials.js';
 
@@ -37,7 +40,7 @@ test('Camera-local weather updates uniforms without uploading geometry; quality,
   for(const quality of ['performance','balanced','high']){
     const cloud=createWeatherField(null,{quality}),position=cloud.geometry.attributes.position,version=position.version,original=position.array.slice();
     assert.ok(position.count>previous&&position.count<=640);previous=position.count;
-    for(const weather of ['rain','dust','mist','embers']){
+    for(const weather of ['rain','dust','embers']){
       sampleWeatherParticles(cloud,weather,13,{anchor:{x:90,y:1.6,z:-75},chapter:5});
       const u=cloud.material.userData.weatherUniforms;
       assert.deepEqual(u.weatherAnchor.value.toArray(),[90,1.6,-75]);assert.equal(u.weatherTime.value,13);assert.equal(cloud.visible,true);
@@ -68,7 +71,7 @@ test('One flame draw contains warm fire, cooler expanding smoke and a stable red
   cloud.geometry.dispose();cloud.material.dispose();
 });
 
-test('Mist and dust retain their faint soft edges without changing the shared alpha-test program',()=>{
+test('Dust retains its faint soft edges, and mist hides the field, without changing the shared alpha-test program',()=>{
   const mask=createParticleMask(),cloud=createWeatherField(mask),material=cloud.material,version=material.version,key=material.customProgramCacheKey();
   // A texel in the falloff, roughly 60% of the way from centre to edge. The
   // old .04 cutoff removed it in both ordinary and reduced-motion weather.
@@ -78,14 +81,37 @@ test('Mist and dust retain their faint soft edges without changing the shared al
     sampleWeatherParticles(cloud,weather,3,{reducedMotion});
     assert.equal(material.version,version,'Changing a positive cutoff must not compile a new material variant');
     assert.equal(material.customProgramCacheKey(),key);assert.ok(material.alphaTest>0);
-    if(weather==='mist'||weather==='dust'){
+    if(weather==='dust'){
       const edgeAlpha=material.opacity*texelAlpha*softness*softness;
       assert.ok(edgeAlpha>.001&&edgeAlpha<.04,'The regression texel is soft but was discarded by the old threshold');
       assert.ok(edgeAlpha>material.alphaTest,'Its faint outer falloff now survives');
-      assert.equal(material.size,weather==='mist'?2.9:1.45);assert.equal(material.opacity,(weather==='mist'?.085:.12)*(reducedMotion?.55:1));
-    }else assert.equal(material.alphaTest,.04,'Rain and embers keep their existing cutoff');
+      assert.equal(material.size,1.45);assert.equal(material.opacity,.12*(reducedMotion?.55:1));
+    }else if(weather==='mist'){assert.equal(cloud.visible,false);assert.equal(material.opacity,0);}
+    else assert.equal(material.alphaTest,.04,'Rain and embers keep their existing cutoff');
   }
   cloud.geometry.dispose();material.dispose();mask.dispose();
+});
+
+// The owner's report (12 November 2026): in Chapter I a light kept moving over the camp. It was
+// the mist's sprites round the camera, a lattice of pale blobs sliding with the wind. Mist
+// keeps its other signs, which stay still or move as weather does.
+test('Mist draws no sprites round the camera in the misty chapters; its haze, banks, cloud shade and shafts stay',()=>{
+  const misty=Array.from({length:12},(_,i)=>i+1).filter(chapter=>chapterWeather(chapter)==='mist');
+  assert.deepEqual(misty,[1,4,8]);
+  for(const quality of ['performance','balanced','high']){
+    const mask=createParticleMask(),cloud=createWeatherField(mask,{quality});
+    for(const chapter of misty){
+      const profile=getSceneProfile({id:`ch${chapter}-camp`,width:16,height:12},{chapter});assert.equal(profile.weather,'mist');
+      for(const time of [0,2.5,61])for(const reducedMotion of [false,true]){
+        sampleWeatherParticles(cloud,'dust',time,{chapter});assert.equal(cloud.visible,true,'a weather that draws shows the field');
+        sampleWeatherParticles(cloud,profile.weather,time,{reducedMotion,anchor:{x:5.5,y:0,z:28},chapter,indoors:profile.civic});
+        assert.equal(cloud.visible,false);assert.equal(cloud.material.opacity,0);
+      }
+      assert.ok(groundMistStrength(profile)>groundMistStrength({...profile,weather:'clear'}),'the low haze thickens');
+      assert.ok(mistBankStrength(profile)>0,'mist lies over water');assert.ok(cloudStrength(profile)>0);assert.equal(shaftsWanted(profile),true);
+    }
+    cloud.geometry.dispose();cloud.material.dispose();mask.dispose();
+  }
 });
 
 test('Current cues follow the authored channel and all water materials share its direction without another draw',()=>{
